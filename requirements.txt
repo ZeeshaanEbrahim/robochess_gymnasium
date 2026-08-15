@@ -1,3 +1,4 @@
+# torch must resolve to a CUDA build (2.13.0+cu130 or compatible) — the plain pin below cannot enforce this, so check torch.cuda.is_available() after any reinstall from this file.
 absl-py==2.5.0
 ale-py==0.12.0
 chess==1.11.2
