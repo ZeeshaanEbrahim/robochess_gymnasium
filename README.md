@@ -59,6 +59,13 @@ configs/             experiment and hyperparameter configs
 tests/               test suite
 ```
 
+## Training defaults
+
+State-vector (MLP-policy) configs set `device: cpu` explicitly for both PPO and
+SAC; image/CNN-policy configs stay on the default so they resolve to CUDA. See
+`configs/README.md` for the rationale and `scripts/benchmark_device.py` for the
+measurement behind it.
+
 ## Reproducing the dependency set
 
 Pinned versions are in `requirements.txt`. MuJoCo and Gymnasium both make
