@@ -1,0 +1,152 @@
+<mujoco model="robochess_scene">
+  <!--
+    P1 scene: UR5e + Robotiq 2F-85 over an 8x8 board at 78 mm squares.
+
+    Square pitch (78 mm, not the 57 mm tournament standard) is decision D1 in
+    DECISIONS.md; the layout and reach numbers below are decision D2. Rationale and
+    measurements live there, not here.
+
+    Geometry (all metres, z is up from the floor):
+      table top surface   z = 0.750
+      board slab          12 mm thick, playing surface at z = 0.762
+      playing surface     0.624 x 0.624 m  (8 x 78 mm)
+      board centre        (0, 0.52)
+      arm base            (0, 0, 0.85), on a pedestal standing on the table
+
+    Reach: all 64 squares solve for a top-down grasp, but the corners sit at ~99% of
+    the UR5e's rated reach. See D2 in DECISIONS.md before moving anything here.
+
+    Assets are project-local copies under assets/ur5e/ and assets/robotiq_2f85/;
+    nothing here points into ~/reference_assets. The mesh directories themselves are
+    gitignored -- run scripts/fetch_assets.sh to populate them.
+
+    Load with:  python -m mujoco.viewer --mjcf=assets/scene.xml
+  -->
+
+  <compiler angle="radian" autolimits="true"/>
+
+  <!-- Must match the arm/gripper submodels' own <option> or the attach warns and
+       silently keeps the parent's defaults. -->
+  <option integrator="implicitfast" cone="elliptic" impratio="10"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.2 0.2 0.2" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <!-- offwidth/offheight raise the offscreen framebuffer above the 640x480 default,
+         so offscreen renders (image-policy observations, debug captures) are not
+         silently capped. -->
+    <global azimuth="140" elevation="-25" offwidth="1920" offheight="1080"/>
+  </visual>
+
+  <asset>
+    <model name="arm" file="ur5e/ur5e.xml"/>
+
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+      markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+
+    <material name="table" rgba="0.55 0.42 0.30 1"/>
+    <material name="pedestal" rgba="0.30 0.30 0.32 1"/>
+    <material name="board_light" rgba="0.88 0.82 0.68 1"/>
+    <material name="board_dark" rgba="0.36 0.22 0.13 1"/>
+    <material name="piece_white" rgba="0.90 0.88 0.82 1"/>
+  </asset>
+
+  <default>
+    <!-- Dark squares are decoration only: no contact, group 2. The single board slab
+         underneath carries all board collision. -->
+    <default class="square_dark">
+      <geom type="box" size="0.0390 0.0390 0.0005" material="board_dark"
+        contype="0" conaffinity="0" group="2"/>
+    </default>
+
+    <!-- Piece: collision tree is cylinder + capsule primitives only (see below).
+         Visual and collision geoms are deliberately separate sets. -->
+    <default class="piece_visual">
+      <geom contype="0" conaffinity="0" group="2" mass="0" material="piece_white"/>
+    </default>
+    <default class="piece_collision">
+      <geom group="3" rgba="0.9 0.5 0.2 0.35" friction="0.7 0.02 0.001" priority="1"
+        solimp="0.95 0.99 0.001" solref="0.004 1"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <light pos="0 0.4 2.2" dir="0 0 -1" directional="true"/>
+    <light pos="0.6 -0.2 2.0" dir="-0.3 0.3 -1" directional="true"/>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+
+    <!-- Table: solid block up to z=0.75. -->
+    <geom name="table" type="box" size="0.75 0.75 0.3750" pos="0 0.4 0.3750"
+      material="table"/>
+
+    <!-- Arm pedestal, standing on the table, top at z=0.85. -->
+    <geom name="pedestal" type="box" size="0.09 0.09 0.0500"
+      pos="0 0 0.8000" material="pedestal"/>
+
+    <body name="arm_base" pos="0 0 0.85">
+      <attach model="arm" body="base" prefix="ur_"/>
+    </body>
+
+    <!-- Board. Slab is the only collision geom; the 32 dark squares are visual. -->
+    <body name="board" pos="0 0.52 0.7560">
+      <geom name="board_slab" type="box" size="0.312 0.312 0.006"
+        material="board_light" friction="0.7 0.02 0.001"/>
+      <geom class="square_dark" name="sq_a1" pos="-0.273 -0.273 0.0065"/>
+      <geom class="square_dark" name="sq_a3" pos="-0.273 -0.117 0.0065"/>
+      <geom class="square_dark" name="sq_a5" pos="-0.273 0.039 0.0065"/>
+      <geom class="square_dark" name="sq_a7" pos="-0.273 0.195 0.0065"/>
+      <geom class="square_dark" name="sq_b2" pos="-0.195 -0.195 0.0065"/>
+      <geom class="square_dark" name="sq_b4" pos="-0.195 -0.039 0.0065"/>
+      <geom class="square_dark" name="sq_b6" pos="-0.195 0.117 0.0065"/>
+      <geom class="square_dark" name="sq_b8" pos="-0.195 0.273 0.0065"/>
+      <geom class="square_dark" name="sq_c1" pos="-0.117 -0.273 0.0065"/>
+      <geom class="square_dark" name="sq_c3" pos="-0.117 -0.117 0.0065"/>
+      <geom class="square_dark" name="sq_c5" pos="-0.117 0.039 0.0065"/>
+      <geom class="square_dark" name="sq_c7" pos="-0.117 0.195 0.0065"/>
+      <geom class="square_dark" name="sq_d2" pos="-0.039 -0.195 0.0065"/>
+      <geom class="square_dark" name="sq_d4" pos="-0.039 -0.039 0.0065"/>
+      <geom class="square_dark" name="sq_d6" pos="-0.039 0.117 0.0065"/>
+      <geom class="square_dark" name="sq_d8" pos="-0.039 0.273 0.0065"/>
+      <geom class="square_dark" name="sq_e1" pos="0.039 -0.273 0.0065"/>
+      <geom class="square_dark" name="sq_e3" pos="0.039 -0.117 0.0065"/>
+      <geom class="square_dark" name="sq_e5" pos="0.039 0.039 0.0065"/>
+      <geom class="square_dark" name="sq_e7" pos="0.039 0.195 0.0065"/>
+      <geom class="square_dark" name="sq_f2" pos="0.117 -0.195 0.0065"/>
+      <geom class="square_dark" name="sq_f4" pos="0.117 -0.039 0.0065"/>
+      <geom class="square_dark" name="sq_f6" pos="0.117 0.117 0.0065"/>
+      <geom class="square_dark" name="sq_f8" pos="0.117 0.273 0.0065"/>
+      <geom class="square_dark" name="sq_g1" pos="0.195 -0.273 0.0065"/>
+      <geom class="square_dark" name="sq_g3" pos="0.195 -0.117 0.0065"/>
+      <geom class="square_dark" name="sq_g5" pos="0.195 0.039 0.0065"/>
+      <geom class="square_dark" name="sq_g7" pos="0.195 0.195 0.0065"/>
+      <geom class="square_dark" name="sq_h2" pos="0.273 -0.195 0.0065"/>
+      <geom class="square_dark" name="sq_h4" pos="0.273 -0.039 0.0065"/>
+      <geom class="square_dark" name="sq_h6" pos="0.273 0.117 0.0065"/>
+      <geom class="square_dark" name="sq_h8" pos="0.273 0.273 0.0065"/>
+    </body>
+
+    <!-- One piece, on e4. Pawn-ish: 30 mm dia, 50 mm tall.
+         COLLISION TREE IS PRIMITIVES ONLY (2 cylinders + 1 capsule), per the project
+         rule -- no Staunton mesh anywhere in the contact path. -->
+    <body name="piece_a" pos="0.0390 0.4810 0.7620">
+      <freejoint name="piece_a_free"/>
+      <geom class="piece_collision" name="piece_a_base" type="cylinder" size="0.015 0.009" pos="0 0 0.009"/>
+      <geom class="piece_collision" name="piece_a_stem" type="cylinder" size="0.008 0.008" pos="0 0 0.026"/>
+      <geom class="piece_collision" name="piece_a_head" type="capsule" size="0.009 0.001" pos="0 0 0.040"/>
+      <geom class="piece_visual" type="cylinder" size="0.015 0.009" pos="0 0 0.009"/>
+      <geom class="piece_visual" type="cylinder" size="0.008 0.008" pos="0 0 0.026"/>
+      <geom class="piece_visual" type="capsule" size="0.009 0.001" pos="0 0 0.040"/>
+    </body>
+  </worldbody>
+
+  <keyframe>
+    <!-- Arm at the UR5e menagerie home pose, which puts the gripper above the board
+         with the fingers pointing straight down; gripper fully open (driver joints at
+         their q=0 open limit, actuator ctrl 0). -->
+    <key name="home"
+      qpos="-1.5708 -1.5708 1.5708 -1.5708 -1.5708 0  0 0 0 0 0 0 0 0  0.0390 0.4810 0.7620 1 0 0 0"
+      ctrl="-1.5708 -1.5708 1.5708 -1.5708 -1.5708 0  0"/>
+  </keyframe>
+</mujoco>

@@ -1,0 +1,3 @@
+# Test/development dependencies, kept out of requirements.txt so the frozen
+# experiment set stays exactly what training runs against.
+pytest==9.1.1

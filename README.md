@@ -44,6 +44,20 @@ Reference robot and gripper models come from
 separately from this repository. Files are **copied** from there into `assets/`
 and modified here — never edited in place inside that clone.
 
+The model XML files under `assets/` are tracked in git, because they carry local
+modifications. The mesh files they reference (~34 MB of `.obj`/`.stl`) are **not**
+tracked, and are fetched on demand instead. **After cloning, run this before
+anything else — no scene will load until you do:**
+
+```bash
+scripts/fetch_assets.sh
+```
+
+It copies the meshes out of the Menagerie clone into `assets/ur5e/assets/` and
+`assets/robotiq_2f85/assets/`, and is safe to re-run. It defaults to
+`~/reference_assets/mujoco_menagerie`; override with `$MUJOCO_MENAGERIE_DIR` or
+by passing the path as an argument.
+
 For headless/cluster runs (no display), see the commented `MUJOCO_GL` block in
 `~/.bashrc`: `egl` for GPU-accelerated headless rendering, `osmesa` as a CPU
 fallback.
@@ -65,6 +79,18 @@ State-vector (MLP-policy) configs set `device: cpu` explicitly for both PPO and
 SAC; image/CNN-policy configs stay on the default so they resolve to CUDA. See
 `configs/README.md` for the rationale and `scripts/benchmark_device.py` for the
 measurement behind it.
+
+## Gotchas
+
+Things that look like bugs but are not. Add to this list rather than
+rediscovering them.
+
+- **UR5e position actuators droop ~1.5° under gravity.** Settling 5000 steps from
+  the `home` keyframe in `assets/scene.xml`, the gripper approach axis drifts from
+  the keyframe's exact `(0, 0, -1)` to `(0, -0.0258, -0.9997)`. This is normal
+  finite-gain position-actuator behaviour holding against gravity, not a modelling
+  error. If `reset`/`step` reports an end-effector orientation slightly off the
+  keyframe value, that is why — don't chase it.
 
 ## Reproducing the dependency set
 

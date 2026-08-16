@@ -1,0 +1,77 @@
+<mujoco model="scale_test">
+  <!--
+    Throwaway scale-check scene: Robotiq 2F-85 (fixed in space, no arm) over two rows
+    of pawn-footprint cylinder placeholders at two candidate square pitches.
+
+      Row A (front, y = -0.09): 57 mm center-to-center  (standard tournament)
+      Row B (back,  y = +0.09): 78 mm center-to-center
+
+    Pieces: 30 mm diameter x 50 mm tall -> radius 0.015, half-height 0.025.
+    Static (no freejoint) so the scene is a stable ruler, not a physics demo -- open
+    and close the fingers with the actuator slider and look at where they land.
+
+    This scene is the evidence behind decision D1 (board scale) in DECISIONS.md --
+    see there for the measurements and the reasoning.
+
+    Load with:  python -m mujoco.viewer --mjcf=assets/scale_test.xml
+  -->
+
+  <compiler angle="radian" autolimits="true"/>
+
+  <option cone="elliptic" impratio="10"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="90" elevation="-30"/>
+  </visual>
+
+  <asset>
+    <model name="gripper" file="robotiq_2f85/2f85.xml"/>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+      markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+    <material name="piece_light" rgba="0.85 0.82 0.75 1"/>
+    <material name="piece_dark" rgba="0.25 0.22 0.20 1"/>
+  </asset>
+
+  <default>
+    <default class="piece">
+      <geom type="cylinder" size="0.015 0.025"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <light pos="0 0 1.2"/>
+    <light pos="0 -0.3 1.2" dir="0 0.3 -0.9" directional="true"/>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+
+    <!-- Gripper: fixed in space, fingers pointing down, pinch point at mid-piece height.
+         Parked over piece a1 in the 57 mm row (the binding case).
+         For the 78 mm row instead, use pos="-0.039 0.09 0.185". -->
+    <body name="gripper_mount" pos="-0.0285 -0.09 0.185" quat="0 1 0 0">
+      <attach model="gripper" body="base_mount" prefix="g_"/>
+    </body>
+
+    <!-- Row A: 57 mm pitch, centered on x = 0 -->
+    <body name="a0" pos="-0.0855 -0.09 0.025"><geom class="piece" material="piece_light"/></body>
+    <body name="a1" pos="-0.0285 -0.09 0.025"><geom class="piece" material="piece_dark"/></body>
+    <body name="a2" pos=" 0.0285 -0.09 0.025"><geom class="piece" material="piece_light"/></body>
+    <body name="a3" pos=" 0.0855 -0.09 0.025"><geom class="piece" material="piece_dark"/></body>
+
+    <!-- Row B: 78 mm pitch, centered on x = 0 -->
+    <body name="b0" pos="-0.117 0.09 0.025"><geom class="piece" material="piece_light"/></body>
+    <body name="b1" pos="-0.039 0.09 0.025"><geom class="piece" material="piece_dark"/></body>
+    <body name="b2" pos=" 0.039 0.09 0.025"><geom class="piece" material="piece_light"/></body>
+    <body name="b3" pos=" 0.117 0.09 0.025"><geom class="piece" material="piece_dark"/></body>
+  </worldbody>
+
+  <keyframe>
+    <!-- Pre-grasp aperture, ctrl=140 (39.3 mm free-space gap). qpos is a settled,
+         constraint-consistent pose for the closed-loop linkage, so the fingers do not
+         snap on load. -->
+    <key name="pregrasp" ctrl="140"
+      qpos="0.441223 9.51943e-05 0.440517 -0.423113 0.441223 9.51943e-05 0.440517 -0.423113"/>
+  </keyframe>
+</mujoco>

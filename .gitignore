@@ -7,3 +7,13 @@ logs/
 outputs/
 *.zip
 .ipynb_checkpoints/
+MUJOCO_LOG.TXT
+
+# Vendor meshes from mujoco_menagerie (~34 MB). Not tracked -- run
+# scripts/fetch_assets.sh to populate. The model XML files alongside these
+# directories ARE tracked, since they carry local modifications.
+assets/ur5e/assets/
+assets/robotiq_2f85/assets/
+
+# pytest
+.pytest_cache/

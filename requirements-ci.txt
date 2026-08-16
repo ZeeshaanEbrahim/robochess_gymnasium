@@ -1,0 +1,26 @@
+# CI dependency set.
+#
+# requirements.txt is the FROZEN EXPERIMENT SET and is never installed in CI:
+# it pins a CUDA torch build plus ~15 nvidia-* packages, roughly 4.5 GB of
+# wheels, on runners that have no GPU to use them. This file installs the same
+# torch *version* built for CPU instead, so CI exercises the same code paths
+# without the CUDA payload.
+#
+# Versions here mirror requirements.txt deliberately. If you bump a pin there
+# and it is listed below, bump it here too -- there is no automatic link.
+
+--index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://pypi.org/simple
+
+# Test tooling.
+-r requirements-dev.txt
+
+# Runtime dependencies the test suite actually imports.
+gymnasium==1.3.0
+mujoco==3.11.0
+numpy==2.4.6
+
+# CPU build of the pinned torch version. Nothing under tests/ imports torch
+# today; it is installed so that when SB3-backed tests arrive they resolve
+# against this CPU wheel rather than silently dragging in the CUDA stack.
+torch==2.13.0+cpu
