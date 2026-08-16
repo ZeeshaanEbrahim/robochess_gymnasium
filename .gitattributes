@@ -1,0 +1,9 @@
+# Force LF in the working tree on checkout, regardless of the cloning user's
+# core.autocrlf setting.
+#
+# Without this, a clone made with core.autocrlf=true (the default in this
+# project's global git config) writes scripts/fetch_assets.sh with CRLF line
+# endings, which makes its shebang unrunnable on Linux/WSL:
+#     /usr/bin/env: 'bash\r': No such file or directory
+# That breaks the very first setup step the README tells people to run.
+* text=auto eol=lf
