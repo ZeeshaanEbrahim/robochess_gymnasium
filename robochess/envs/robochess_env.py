@@ -46,6 +46,11 @@ class RoboChessEnv(gym.Env):
     ==================  =====  =============================================
 
     Actions are 7-dimensional position targets: 6 arm joints + 1 gripper.
+
+    Success requires the piece to be *placed*, not merely carried near the
+    target: within ``goal_tolerance`` in XY, within ``rest_tolerance`` of the
+    board surface in z, and with the gripper open past
+    ``gripper_open_threshold``. See :meth:`_success_terms`.
     """
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 25}
@@ -56,6 +61,8 @@ class RoboChessEnv(gym.Env):
         max_episode_steps: int = 200,
         frame_skip: int = 20,
         goal_tolerance: float = 0.03,
+        rest_tolerance: float = 0.01,
+        gripper_open_threshold: float = 0.2,
         normalize_action: bool = True,
         render_mode: str | None = None,
         render_width: int = 640,
@@ -77,6 +84,8 @@ class RoboChessEnv(gym.Env):
         self.max_episode_steps = int(max_episode_steps)
         self.frame_skip = int(frame_skip)
         self.goal_tolerance = float(goal_tolerance)
+        self.rest_tolerance = float(rest_tolerance)
+        self.gripper_open_threshold = float(gripper_open_threshold)
         self.normalize_action = bool(normalize_action)
 
         if render_mode is not None and render_mode not in self.metadata["render_modes"]:
@@ -100,8 +109,19 @@ class RoboChessEnv(gym.Env):
         self._piece_qadr = int(self.model.jnt_qposadr[piece_jid])
         self._piece_vadr = int(self.model.jnt_dofadr[piece_jid])
 
-        # Gripper aperture proxy: one of the two driver joints.
+        # Gripper aperture proxy: one of the two driver joints. Range [0, 0.8]
+        # rad, 0 = fully open. Measured reference points: 0.003 fully open,
+        # 0.542 gripping a 30 mm piece, 0.630 closed on nothing -- so the
+        # default gripper_open_threshold of 0.2 sits well clear of any aperture
+        # at which a 30 mm piece could still be held.
         self._grip_qadr, self._grip_vadr = self._joint_adr("ur_gripper_right_driver_joint")
+
+        # Top face of the board slab: the height a piece's origin sits at when
+        # resting on the playing surface. Derived from the model, not hardcoded.
+        self._board_surface_z = float(
+            self.model.body_pos[self._body_id("board")][2]
+            + self.model.geom_size[self._geom_id("board_slab")][2]
+        )
 
         # Geoms whose contact with the arm/gripper means the episode has gone
         # wrong (the arm has driven into the furniture).
@@ -313,11 +333,50 @@ class RoboChessEnv(gym.Env):
                 return True
         return False
 
+    # -------------------------------------------------------------- success
+    def _success_terms(self) -> tuple[bool, bool, bool, float]:
+        """The three independent conditions for a successful placement.
+
+        A 3D distance-to-goal test alone is not enough: with a 30 mm tolerance a
+        piece still clamped in the gripper 25 mm above its target square scores
+        as a success, which is exactly what the scripted expert did before this
+        was fixed -- every episode "succeeded" mid-air and never released. So
+        success requires all three of:
+
+          on_square  piece within goal_tolerance of the goal in XY
+          resting    piece origin at board height (not still elevated)
+          released   gripper open wide enough that it cannot be holding the piece
+
+        Note for HER: `is_success` is therefore NOT a pure function of
+        (achieved_goal, desired_goal) -- `released` depends on the gripper
+        state. `compute_reward` remains a pure function of the goals, so goal
+        relabelling is unaffected, but a relabelled transition's success flag
+        cannot be recomputed from goals alone.
+        """
+        achieved = self._achieved_goal()
+        xy_dist = float(np.linalg.norm(achieved[:2] - self._desired_goal[:2]))
+        on_square = xy_dist < self.goal_tolerance
+        resting = abs(float(achieved[2]) - self._board_surface_z) < self.rest_tolerance
+        released = float(self.data.qpos[self._grip_qadr]) < self.gripper_open_threshold
+        return on_square, resting, released, xy_dist
+
+    def _is_success(self) -> bool:
+        on_square, resting, released, _ = self._success_terms()
+        return bool(on_square and resting and released)
+
     def _build_info(self, terminated_reason: str | None) -> dict[str, Any]:
         dist = float(np.linalg.norm(self._achieved_goal() - self._desired_goal))
+        on_square, resting, released, xy_dist = self._success_terms()
         return {
-            "is_success": bool(dist < self.goal_tolerance),
+            "is_success": bool(on_square and resting and released),
             "distance_to_goal": dist,
+            # The three success terms are reported separately so a failure says
+            # which condition was missing rather than just "not close enough".
+            "xy_distance_to_goal": xy_dist,
+            "piece_on_square": bool(on_square),
+            "piece_resting": bool(resting),
+            "gripper_released": bool(released),
+            "piece_height_above_board": float(self._achieved_goal()[2] - self._board_surface_z),
             "piece_off_board": bool(self._piece_off_board()),
             "bad_contact": bool(self._bad_contact()),
             "terminated_reason": terminated_reason,
@@ -338,7 +397,7 @@ class RoboChessEnv(gym.Env):
         reward = float(self.compute_reward(achieved, self._desired_goal))
         dist = -reward
 
-        success = bool(dist < self.goal_tolerance)
+        success = self._is_success()
         off_board = self._piece_off_board()
         bad_contact = self._bad_contact()
 

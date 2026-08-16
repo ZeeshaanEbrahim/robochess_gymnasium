@@ -129,13 +129,84 @@ def test_episode_truncates_at_exactly_max_episode_steps():
         env.close()
 
 
+def _place_piece(env, pos, gripper_qpos=0.0):
+    """Teleport the tracked piece and set the gripper aperture directly."""
+    qadr = env._piece_qadr
+    env.data.qpos[qadr : qadr + 3] = pos
+    env.data.qvel[env._piece_vadr : env._piece_vadr + 6] = 0.0
+    env.data.qpos[env._grip_qadr] = gripper_qpos
+
+
+def test_success_requires_the_piece_to_be_resting(env):
+    """A piece held at the right XY but still in the air is NOT a success.
+
+    This is the regression that motivated the criterion: with a plain 3D
+    distance test, the scripted expert 'succeeded' in all 50 episodes with the
+    piece still clamped 25 mm above the target square.
+    """
+    env.reset(seed=0)
+    goal = env._desired_goal
+    _place_piece(env, [goal[0], goal[1], env._board_surface_z + 0.025], gripper_qpos=0.0)
+
+    _, _, terminated, _, info = env.step(env.home_action())
+    assert info["piece_on_square"] is True
+    assert info["gripper_released"] is True
+    assert info["piece_resting"] is False
+    assert info["is_success"] is False
+    assert terminated is False
+
+
+def test_success_requires_the_gripper_to_be_open(env):
+    """A piece on the square and at board height but still gripped is NOT a success."""
+    env.reset(seed=0)
+    goal = env._desired_goal
+    _place_piece(env, [goal[0], goal[1], env._board_surface_z], gripper_qpos=0.54)
+
+    # Command the gripper closed so it stays shut for this step.
+    action = env.home_action().copy()
+    action[6] = 1.0
+    _, _, terminated, _, info = env.step(action)
+
+    assert info["piece_on_square"] is True
+    assert info["piece_resting"] is True
+    assert info["gripper_released"] is False
+    assert info["is_success"] is False
+    assert terminated is False
+
+
+def test_success_when_all_three_conditions_hold(env):
+    env.reset(seed=0)
+    goal = env._desired_goal
+    _place_piece(env, [goal[0], goal[1], env._board_surface_z], gripper_qpos=0.0)
+
+    _, _, terminated, truncated, info = env.step(env.home_action())
+    assert (info["piece_on_square"], info["piece_resting"], info["gripper_released"]) == (
+        True,
+        True,
+        True,
+    )
+    assert info["is_success"] is True
+    assert terminated is True
+    assert truncated is False
+
+
+def test_board_surface_height_is_read_from_the_model(env):
+    """The resting height must track the scene, not a hardcoded constant."""
+    board_z = env.model.body_pos[env._body_id("board")][2]
+    slab_half = env.model.geom_size[env._geom_id("board_slab")][2]
+    assert env._board_surface_z == pytest.approx(board_z + slab_half)
+
+    obs, _ = env.reset(seed=0)
+    # The piece spawns at rest on the board, so its origin is exactly there.
+    assert obs["achieved_goal"][2] == pytest.approx(env._board_surface_z, abs=1e-6)
+
+
 def test_terminated_and_truncated_are_mutually_exclusive(env):
     """A success on the final step must report terminated, not truncated."""
     env.reset(seed=0)
-    # Teleport the piece onto the goal, then take one step.
-    qadr = env._piece_qadr
-    env.data.qpos[qadr : qadr + 3] = env._desired_goal
-    env.data.qvel[env._piece_vadr : env._piece_vadr + 6] = 0.0
+    # Teleport the piece onto the goal (which is at board height) with the
+    # gripper open, so all three success conditions hold, then take one step.
+    _place_piece(env, env._desired_goal, gripper_qpos=0.0)
 
     _, _, terminated, truncated, info = env.step(env.home_action())
     assert terminated is True

@@ -149,3 +149,35 @@ nothing useful about how close a manipulation came to succeeding.
 - Board-state reasoning (legality, whose square is whose) is deliberately *not*
   in the goal. If a task class needs it, it belongs in the observation or the
   reward, not the goal vector.
+- **`is_success` is not a pure function of the goal pair.** Success also requires
+  the piece to be resting on the board and the gripper to be open (see the
+  amendment below), and gripper state is not part of `achieved_goal`.
+  `compute_reward` remains a pure function of the goals, so HER relabelling
+  itself is unaffected — but a relabelled transition's success flag cannot be
+  recomputed from goals alone. Anything that needs per-transition success after
+  relabelling must recompute it from stored state, not from the goals.
+
+### Amendment, 2026-08-16: success is placement, not proximity
+
+The original criterion was a single 3D distance test against `desired_goal`.
+That was wrong: with a 30 mm tolerance, a piece still clamped in the gripper
+25 mm above its target square scored as a success. The scripted expert
+(`scripts/scripted_expert.py`) hit this in **all 50 of 50** episodes — every one
+"succeeded" in mid-air and never ran its release or retreat waypoints.
+
+Success now requires three independent conditions, all reported separately in
+`info` so a failure says which one was missing:
+
+| condition | test |
+| --- | --- |
+| `piece_on_square` | XY distance to the goal < `goal_tolerance` (30 mm) |
+| `piece_resting` | piece origin within `rest_tolerance` (10 mm) of the board surface |
+| `gripper_released` | gripper driver joint < `gripper_open_threshold` (0.2 rad) |
+
+The gripper threshold is set from measurement, not guessed: the driver joint
+reads 0.003 rad fully open, 0.542 gripping a 30 mm piece and 0.630 closed on
+nothing, so 0.2 sits clear of any aperture that could still hold a piece.
+
+Note this criterion has no *velocity* gate, so success can fire during the
+settling wobble just after release. Adding one is a live option if placement
+turns out to be scored while a piece is still toppling.

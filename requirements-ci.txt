@@ -15,10 +15,14 @@
 # Test tooling.
 -r requirements-dev.txt
 
-# Runtime dependencies the test suite actually imports.
+# Runtime dependencies CI needs.
 gymnasium==1.3.0
 mujoco==3.11.0
 numpy==2.4.6
+# mink is not imported by tests/, but scripts/scripted_expert.py needs it for
+# IK. Included so the CI environment can run everything in the repo rather than
+# only the test suite.
+mink==1.2.0
 
 # CPU build of the pinned torch version. Nothing under tests/ imports torch
 # today; it is installed so that when SB3-backed tests arrive they resolve
