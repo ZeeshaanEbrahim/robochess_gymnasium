@@ -244,3 +244,6 @@ against the numbers above.
 
 The state-only number (100-400x faster, no rendering path at all) is backend-
 independent and not subject to the caveat above.
+
+This is one of Gate M1's exit criteria ("training budget revised in
+writing") -- see `ROADMAP.md` for the full gate definition and status.
