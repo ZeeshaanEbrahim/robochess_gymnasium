@@ -1,0 +1,16 @@
+obs_mode,cameras,resolution,workers,vec_steps,env_steps,seconds,steps_per_sec,hours_for_500k,backend,error
+state-only,0,0,1,2000,2000,4.67,428.5,0.32,osmesa,
+state-only,0,0,8,2000,16000,13.92,1149.4,0.12,osmesa,
+state-only,0,0,16,2000,32000,22.53,1420.3,0.1,osmesa,
+state+1cam @64x64,1,64,1,226,226,60.02,3.8,36.88,osmesa,
+state+1cam @64x64,1,64,8,72,576,60.31,9.6,14.54,osmesa,
+state+1cam @64x64,1,64,16,38,608,60.27,10.1,13.77,osmesa,
+state+1cam @128x128,1,128,1,241,241,60.14,4.0,34.66,osmesa,
+state+1cam @128x128,1,128,8,74,592,60.37,9.8,14.16,osmesa,
+state+1cam @128x128,1,128,16,35,560,60.03,9.3,14.89,osmesa,
+state+2cam @64x64,2,64,1,122,122,60.02,2.0,68.33,osmesa,
+state+2cam @64x64,2,64,8,43,344,61.48,5.6,24.82,osmesa,
+state+2cam @64x64,2,64,16,16,256,62.79,4.1,34.07,osmesa,
+state+2cam @128x128,2,128,1,134,134,60.24,2.2,62.44,osmesa,
+state+2cam @128x128,2,128,8,42,336,61.13,5.5,25.27,osmesa,
+state+2cam @128x128,2,128,16,3,48,64.44,0.7,186.46,osmesa,"measured under memory pressure (7.2GB/7.7GB RAM + swap on retry attempt 1, which OOM-adjacent-hung and left orphaned workers, since fixed); only 3 vec-steps captured, rate is not a reliable sustained figure and is LOWER than the 8-worker rate for the same config -- do not use for planning, see profiling/README.md"
