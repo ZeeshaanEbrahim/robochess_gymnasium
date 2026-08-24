@@ -181,3 +181,66 @@ nothing, so 0.2 sits clear of any aperture that could still hold a piece.
 Note this criterion has no *velocity* gate, so success can fire during the
 settling wobble just after release. Adding one is a live option if placement
 turns out to be scored while a piece is still toppling.
+
+---
+
+## D4 — Training-budget implication: image-observation configs need a wall-clock revision before P4
+
+**Date:** 2026-08-24
+**Status:** flagged, not resolved — needs a decision before P4 commits to a run schedule
+**Evidence:** `scripts/profile_env.py`, full grid in `profiling/p1_throughput.csv`,
+narrative in `profiling/README.md`
+
+### Finding
+
+Measured locally (WSL2, `MUJOCO_GL=osmesa`, software rasterization), image
+observation configs run **100-400x slower** than state-only:
+
+| observation mode | best measured steps/s | 500k-step projection |
+| --- | ---: | ---: |
+| state-only | 1420 (16 workers) | 0.10 h |
+| state + 1 camera | 10.1 (16 workers, 64x64) | 13.8 h |
+| state + 2 cameras | 5.6 (8 workers, 64x64) | 24.8 h |
+
+The 500k figure is the pilot-matrix budget mentioned in the roadmap. These are
+env-throughput-only projections (no policy-update cost included), so they are
+a *lower bound* on wall-clock, not a training-time estimate.
+
+### Why this matters
+
+If the proposal's pilot-matrix wall-clock budget was built on an assumption
+close to **~1 ms/step** (1000 steps/s) for every observation condition — which
+is roughly what state-only delivers here — that assumption does not hold for
+any image-observation config. At the measured local rates, a single
+image-observation pilot run costs **13-25 hours** of env time alone, not
+minutes. **Any image-config wall-clock budget in the proposal needs revision
+before P4 locks in a run schedule** — either the per-run budget grows by
+roughly two orders of magnitude, or the pilot matrix drops/reduces the
+image-observation conditions, or both. This is a planning input, not something
+this repo can resolve unilaterally.
+
+### Why the rate is what it is
+
+Direct measurement of `mujoco.Renderer.render()` in isolation found the cost
+is dominated by the scene's 185,489 mesh faces (mostly the UR5e's visual
+meshes) and is **nearly independent of resolution** — 64x64 and 128x128 cost
+the same. OSMesa's software rasterizer is spending its time on geometry
+processing, not pixel fill, at these sizes. See `profiling/README.md` for the
+full breakdown.
+
+### What these numbers are NOT
+
+**These are a local OSMesa floor, not a cluster prediction.** `MUJOCO_GL=egl`
+was tried on this machine and was not faster (WSL2 has no usable GPU
+passthrough for rendering here, and EGL contexts actively crashed under
+multi-worker `SubprocVecEnv`). A GPU-backed EGL renderer on real cluster
+hardware should be substantially faster per frame, and the resolution-
+independence seen here is a geometry-bound artifact that may not hold once
+rendering is fill-bound on a GPU. **Re-run `scripts/profile_env.py` on the
+cluster before finalizing any image-config wall-clock budget** — do not plan
+against the numbers above.
+
+### What does travel
+
+The state-only number (100-400x faster, no rendering path at all) is backend-
+independent and not subject to the caveat above.
