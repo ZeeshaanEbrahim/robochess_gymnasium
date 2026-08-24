@@ -89,6 +89,14 @@
       <attach model="arm" body="base" prefix="ur_"/>
     </body>
 
+    <!-- Static third-person camera for image observations. Offset to the side so
+         the arm does not occlude the board, and aimed at the board body so the
+         framing survives any change to the board's position.
+         The wrist camera is the other half of the 2-camera condition; it lives in
+         assets/ur5e/ur5e.xml because it has to hang off the wrist body, which is
+         inside the attached submodel. It appears here as "ur_wrist". -->
+    <camera name="overhead" pos="0.62 0.18 1.52" mode="targetbody" target="board" fovy="45"/>
+
     <!-- Board. Slab is the only collision geom; the 32 dark squares are visual. -->
     <body name="board" pos="0 0.52 0.7560">
       <geom name="board_slab" type="box" size="0.312 0.312 0.006"

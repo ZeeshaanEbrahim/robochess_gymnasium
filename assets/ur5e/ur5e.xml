@@ -131,6 +131,13 @@
                        +z, which points out of the flange. -->
                   <body name="tool_mount" pos="0 0.1 0" quat="-1 1 0 0">
                     <attach model="gripper" body="base_mount" prefix="gripper_"/>
+                    <!-- LOCAL: wrist camera for image observations. In this frame
+                         +z is the tool approach direction, and a MuJoCo camera
+                         looks down its own -z, so xyaxes flips z to point the
+                         camera along the approach axis (down, at the fingers).
+                         Offset in -y to sit behind the gripper body rather than
+                         inside it. In the assembled scene this is "ur_wrist". -->
+                    <camera name="wrist" pos="0 -0.085 -0.06" xyaxes="1 0 0 0 -1 0" fovy="62"/>
                   </body>
                 </body>
               </body>
