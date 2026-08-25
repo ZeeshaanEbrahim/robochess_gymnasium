@@ -66,11 +66,11 @@ algebraic square naming (78 mm pitch, D1) shared across the task family.
 | unit tests (task + wrapper files) | 30 new tests, 99% line coverage (`robochess/tasks/*`) |
 | `check_env` on the wrapped T1 env | passes; only the two expected wrapper-detection warnings, no space-contract violation |
 | scripted-expert regression, P1-identical conditions (fixed near-board squares, e.g. e4->e5) | 100%, matches P1 |
-| scripted-expert regression, default random square sampling (all 64 squares) | 64% (32/50) -- see D6, not a T1 bug, root cause unresolved |
-| HER + SAC smoke test, 8k steps | completes cleanly, no crash/NaN; 0/100 episodes successful in this short a run (expected -- not a convergence check, see D6's caveat and the roadmap's own note that short runs shouldn't be over-interpreted) |
+| scripted-expert regression, default random square sampling (all 64 squares) | 64% (32/50) -- see D7, not a T1 bug, root cause unresolved |
+| HER + SAC smoke test, 8k steps | completes cleanly, no crash/NaN; 0/100 episodes successful in this short a run (expected -- not a convergence check, see D7's caveat and the roadmap's own note that short runs shouldn't be over-interpreted) |
 | full test suite under `requirements-ci.txt` | 48/48 pass (18 P1 + 30 T1) |
 
-**Open item before this can be called done:** D6 in `DECISIONS.md` --
+**Open item before this can be called done:** D7 in `DECISIONS.md` --
 default random square sampling surfaces a square-dependent grasp-reliability
 problem on the far half of the board, unrelated to T1's own code. Needs a
 decision (narrow the default reachable set, root-cause the dynamics, or

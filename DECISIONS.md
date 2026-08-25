@@ -281,7 +281,7 @@ factorial design where HER is paired with the sparse arm.
 
 ---
 
-## D6 — Grasp reliability degrades on the far half of the board; not caused by T1's wrapping, not yet explained
+## D7 — Grasp reliability degrades on the far half of the board; not caused by T1's wrapping, not yet explained
 
 **Date:** 2026-08-25
 **Status:** flagged, not resolved — needs a decision before P2 relies on

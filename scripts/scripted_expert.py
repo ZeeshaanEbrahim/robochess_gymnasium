@@ -63,6 +63,13 @@ IK_ORI_TOL = 1e-2  # radians
 
 ARM_DOF = 6
 
+# D7 diagnostics (DECISIONS.md): phases logged when `run_episode(log=...)`
+# is given a list. "Through the approach and grasp-close phase" is read as
+# the whole pre-lift span -- approach, descend, close -- since descend is
+# where the arm actually travels down to grasp height and any tilt drift or
+# torque buildup could start there, not only once the gripper starts closing.
+LOGGED_PHASES = frozenset({"approach", "descend", "close"})
+
 
 class IKFailure(RuntimeError):
     """Raised when the IK solver cannot reach a waypoint."""
@@ -110,6 +117,28 @@ class ScriptedExpert:
         # Top-down tool orientation, taken from the home keyframe (site +z points
         # straight down there) and held fixed for every waypoint.
         self.tool_rotation = mink.SO3.from_matrix(data.site_xmat[sid].reshape(3, 3).copy())
+        self._ee_sid = sid
+
+        # --- D7 diagnostics setup ------------------------------------
+        # Pad geoms (for contact-force logging) and piece geoms (any geom on
+        # the tracked piece's body -- robust to which geoms make up the piece,
+        # not hardcoded to today's base/stem/head split).
+        self._left_pad_geom_ids = self._geoms_named_like("ur_gripper_left_pad")
+        self._right_pad_geom_ids = self._geoms_named_like("ur_gripper_right_pad")
+        self._pad_geom_ids = self._left_pad_geom_ids | self._right_pad_geom_ids
+        self._piece_geom_ids = {
+            g for g in range(self.model.ngeom) if self.model.geom_bodyid[g] == self.base._piece_bid
+        }
+        # Joint limits, for the joint-limit-proximity check in step 3.
+        self._jnt_limited = self.model.jnt_limited[:ARM_DOF].copy()
+        self._jnt_range = self.model.jnt_range[:ARM_DOF].copy()
+
+    def _geoms_named_like(self, prefix: str) -> set[int]:
+        return {
+            g
+            for g in range(self.model.ngeom)
+            if (mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_GEOM, g) or "").startswith(prefix)
+        }
 
     # -------------------------------------------------------------- actions
     def _to_action(self, q_arm: np.ndarray, gripper_ctrl: float) -> np.ndarray:
@@ -153,8 +182,109 @@ class ScriptedExpert:
             f"ori err {np.linalg.norm(err[3:]):.3f} rad"
         )
 
+    # --------------------------------------------------------- diagnostics
+    def _pad_piece_contacts(self) -> dict:
+        """Contact force between each gripper pad and the tracked piece.
+
+        Uses `mj_contactForce`, which returns the 6D wrench (normal,
+        2 tangential, torsional, 2 rolling) in the contact frame -- summed
+        per pad side so a left/right imbalance is directly visible.
+        """
+        base = self.base
+        data = base.data
+        totals = {"left": [0.0, 0.0], "right": [0.0, 0.0]}  # [normal, tangential]
+        n_contacts = 0
+        wrench = np.zeros(6)
+        for k in range(data.ncon):
+            c = data.contact[k]
+            g1, g2 = int(c.geom1), int(c.geom2)
+            if g1 in self._piece_geom_ids and g2 in self._pad_geom_ids:
+                pad_geom = g2
+            elif g2 in self._piece_geom_ids and g1 in self._pad_geom_ids:
+                pad_geom = g1
+            else:
+                continue
+            n_contacts += 1
+            mujoco.mj_contactForce(base.model, data, k, wrench)
+            side = "left" if pad_geom in self._left_pad_geom_ids else "right"
+            totals[side][0] += abs(float(wrench[0]))
+            totals[side][1] += float(np.hypot(wrench[1], wrench[2]))
+        return {
+            "n_pad_piece_contacts": n_contacts,
+            "left_pad_normal_force": totals["left"][0],
+            "right_pad_normal_force": totals["right"][0],
+            "left_pad_tangent_force": totals["left"][1],
+            "right_pad_tangent_force": totals["right"][1],
+        }
+
+    def _ee_tilt(self) -> dict:
+        """End-effector orientation deviation from the fixed top-down target.
+
+        Decomposed into roll/pitch/yaw of the *deviation* rotation (current
+        relative to the nominal `self.tool_rotation`, same for every
+        waypoint), plus a single combined tilt-from-vertical angle (angle
+        between the site's local +z axis and world straight-down) as a
+        sanity-check figure against the decomposition.
+        """
+        ee_xmat = self.base.data.site_xmat[self._ee_sid].reshape(3, 3)
+        r_dev = ee_xmat @ self.tool_rotation.as_matrix().T
+        roll = np.degrees(np.arctan2(r_dev[2, 1], r_dev[2, 2]))
+        pitch = np.degrees(np.arctan2(-r_dev[2, 0], np.hypot(r_dev[2, 1], r_dev[2, 2])))
+        yaw = np.degrees(np.arctan2(r_dev[1, 0], r_dev[0, 0]))
+        z_axis = ee_xmat[:, 2]
+        total_tilt = np.degrees(np.arccos(np.clip(np.dot(z_axis, [0.0, 0.0, -1.0]), -1.0, 1.0)))
+        return {
+            "ee_roll_deg": float(roll),
+            "ee_pitch_deg": float(pitch),
+            "ee_yaw_deg": float(yaw),
+            "ee_tilt_from_vertical_deg": float(total_tilt),
+        }
+
+    def _joint_limit_margins(self) -> list[float | None]:
+        """Distance (rad) from each arm joint's current angle to its nearer
+        limit; None for unlimited joints."""
+        qpos = self.base.data.qpos[:ARM_DOF]
+        margins: list[float | None] = []
+        for j in range(ARM_DOF):
+            if not self._jnt_limited[j]:
+                margins.append(None)
+                continue
+            lo, hi = self._jnt_range[j]
+            margins.append(float(min(qpos[j] - lo, hi - qpos[j])))
+        return margins
+
+    def _diagnostics_sample(self, phase: str, phase_step: int) -> dict:
+        base = self.base
+        data = base.data
+        piece_vel = data.qvel[base._piece_vadr : base._piece_vadr + 6]
+        sample = {
+            "global_step": int(base._elapsed_steps),
+            "phase": phase,
+            "phase_step": int(phase_step),
+            "qpos": data.qpos[:ARM_DOF].copy().tolist(),
+            "qvel": data.qvel[:ARM_DOF].copy().tolist(),
+            "qfrc_actuator": data.qfrc_actuator[:ARM_DOF].copy().tolist(),
+            "joint_limit_margin_rad": self._joint_limit_margins(),
+            "gripper_aperture": float(data.qpos[base._grip_qadr]),
+            "gripper_velocity": float(data.qvel[base._grip_vadr]),
+            "ee_pos": data.site_xpos[self._ee_sid].copy().tolist(),
+            "piece_pos": data.xpos[base._piece_bid].copy().tolist(),
+            "piece_lin_speed": float(np.linalg.norm(piece_vel[:3])),
+            "piece_ang_speed": float(np.linalg.norm(piece_vel[3:])),
+        }
+        sample.update(self._ee_tilt())
+        sample.update(self._pad_piece_contacts())
+        return sample
+
     # --------------------------------------------------------------- drive
-    def _drive_to(self, q_arm: np.ndarray, gripper_ctrl: float, budget: int):
+    def _drive_to(
+        self,
+        q_arm: np.ndarray,
+        gripper_ctrl: float,
+        budget: int,
+        label: str | None = None,
+        log: list[dict] | None = None,
+    ):
         """Hold a joint target until arm *and* gripper settle, or the budget runs out.
 
         The gripper condition matters: the 2F-85's closing stroke takes far longer
@@ -162,11 +292,17 @@ class ScriptedExpert:
         exits the "close" waypoint after a single step and the fingers never reach
         the piece.
 
+        If `log` is a list, one diagnostics dict (D7) is appended per step,
+        captured immediately after `env.step()` so it reflects the resulting
+        state. Purely additive: reads state, writes nothing back into the sim.
+
         Yields the env's step tuple so the caller can react to termination.
         """
         action = self._to_action(q_arm, gripper_ctrl)
         for i in range(budget):
             obs, reward, terminated, truncated, info = self.env.step(action)
+            if log is not None:
+                log.append(self._diagnostics_sample(label, i))
             yield obs, reward, terminated, truncated, info
             if terminated or truncated:
                 return
@@ -196,7 +332,13 @@ class ScriptedExpert:
         ]
 
     # ------------------------------------------------------------- episode
-    def run_episode(self, seed: int | None = None, jitter: float = 0.0) -> dict:
+    def run_episode(
+        self, seed: int | None = None, jitter: float = 0.0, log: list[dict] | None = None
+    ) -> dict:
+        """`log`, if a list, is appended in place with one diagnostics dict
+        (D7) per timestep of the LOGGED_PHASES ("approach", "descend",
+        "close") -- opt-in, no effect on control flow or on the returned
+        record when omitted."""
         obs, info = self.env.reset(seed=seed)
         piece_xy = obs["achieved_goal"][:2].astype(float)
         goal_xy = obs["desired_goal"][:2].astype(float)
@@ -231,7 +373,10 @@ class ScriptedExpert:
                 record["steps"] = self.base._elapsed_steps
                 return record
 
-            for obs, _, terminated, truncated, info in self._drive_to(q_arm, grip, budget):
+            phase_log = log if (log is not None and label in LOGGED_PHASES) else None
+            for obs, _, terminated, truncated, info in self._drive_to(
+                q_arm, grip, budget, label=label, log=phase_log
+            ):
                 pass
 
             if label == "lift":
