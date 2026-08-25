@@ -284,10 +284,14 @@ factorial design where HER is paired with the sparse arm.
 ## D7 — Grasp reliability degrades on the far half of the board; not caused by T1's wrapping, not yet explained
 
 **Date:** 2026-08-25
-**Status:** flagged, not resolved — needs a decision before P2 relies on
-full-board random square sampling for training
+**Status:** diagnosis closed by decision (see "Diagnostic passes" below) —
+mechanism partially characterized, not fully explained. A decision on how
+T1 should handle this (narrow `reachable_squares`, accept and document, or
+something else) is still open and deferred to a separate mitigation-design
+task, not attempted here.
 **Evidence:** `scripts/scripted_expert.py --task t1`, full 64-square scan
-(script run ad hoc, not checked in — reproducible via the snippet below)
+(script run ad hoc, not checked in — reproducible via the snippet below);
+instrumented diagnostics in `scripts/scripted_expert.py` (`run_episode(log=...)`)
 
 ### Finding
 
@@ -346,6 +350,89 @@ solver instability to launch the piece. This is unconfirmed -- it was not
 isolated further (e.g. by comparing a direct-teleport-to-grasp-pose against
 the waypoint-driven approach) before this was written down.
 
+### Diagnostic passes 1-3 (2026-08-25): what's confirmed, ruled out, and still open
+
+Three follow-up diagnostic passes instrumented `scripts/scripted_expert.py`
+(per-timestep joint state/torque, end-effector tilt, per-pad contact
+force, and a `frame_skip=1` probe for sub-macro-step contact timing) and
+compared e4 (reliable) against the far-board failures. This closes out the
+diagnostic effort by decision -- not because the mechanism is now fully
+understood, but because the returns on further isolation were diminishing
+relative to the time spent. **Mitigation design (what T1 actually does
+about this) is separate, upcoming work, not attempted here.**
+
+**Ruled out, with evidence:**
+- *Wrist tilt.* Present (1-2° larger on far squares than on e4) but small
+  in absolute terms, and doesn't spike at the failure moment -- if anything
+  it *decreases* as the piece is flung. Not the trigger.
+- *Joint-limit proximity.* The opposite of causal: catastrophic squares sit
+  *farther* from every joint limit (~2.0 rad margin) than the reliable e4
+  (~0.92 rad margin at the elbow). Ruled out.
+- *Singular configuration.* Checked via Jacobian condition number at the
+  pinch site: elevated on far squares (~11 vs e4's ~7.7) but nowhere near
+  singular (smallest singular value stays >=0.17 throughout), and flat
+  across the whole `close` phase -- can't explain *when* the piece gets
+  flung. Ruled out as the trigger.
+- *End-effector yaw / orientation drift.* Essentially zero (<0.02°) and
+  identical between paired squares. The top-down grasp fully specifies a
+  6D pose for a 6-DOF arm, so yaw is pinned by the IK target, not free.
+  Ruled out.
+- *IK path-dependence.* `solve_ik` seeds from the arm's live `qpos`
+  (path-dependent by construction), but empirically, solving the same
+  target from the home keyframe vs. from a real episode's post-descend
+  state converged to the same joint solution (<0.09° apart) for the one
+  case tested. Doesn't explain the asymmetry, though only one case was checked.
+- *Contact-timing offset alone.* Pads contact 4-18ms apart, not
+  simultaneously -- but the offset's direction and magnitude are similar
+  for both members of a mirror pair regardless of outcome (e.g. d8 and e8
+  both show the right pad touching first, 6ms and 10ms respectively; one
+  goes catastrophic, the other doesn't). Timing offset alone doesn't
+  discriminate.
+- *Peak tangential force as a simple threshold.* Tabulated peak tangential
+  pad force across all 10 diagnosed squares (e4, c8, and the four mirror
+  pairs): d8 (catastrophic) has the *lowest* peak of the entire set
+  (23.2N), below every partial (30-59N) and every success (31-34N); h7
+  (partial) sits above it at 30.0N, essentially level with h8 (success,
+  31.4N). No magnitude cleanly separates outcomes. One outlier (b8, 715N)
+  suggests the mechanism can run away once triggered, but the other two
+  catastrophic squares don't show that same extreme, so this doesn't
+  rescue a threshold reading of the set.
+
+**Confirmed / correlated, not fully explanatory:**
+- *Tangential (shear) contact-force imbalance at first pad contact* is the
+  most timing-precise anomaly found: normal forces stay roughly balanced at
+  first touch in every case, but tangential forces are heavily one-sided
+  (ratios up to 16:1) in every catastrophic square and mild in every
+  success, including the far-but-reliable h8 -- ruling out "far squares
+  always show this."
+- *The second pad to make contact tends to bear the dominant tangential
+  force* in catastrophic cases: true in 3/3 tested (d8, b8, a7). Not
+  sufficient on its own -- h7 shows the identical signature and only
+  reaches a partial, not catastrophic, outcome.
+- *Reach distance* correlates moderately with severity across the full
+  64-square grid (Pearson r=+0.72) but leaves roughly half the variance
+  unexplained, and individual joint angles at the grasp pose (elbow,
+  shoulder_lift, wrist_1) correlate about as strongly as distance and no
+  more -- expected, since they're kinematically coupled to distance, not
+  an independent factor.
+- *A left/right handedness asymmetry* shows up in mirror-pair outcomes
+  (same distance, opposite-sign azimuth, different outcome in 4/5 pairs
+  tested, files a-d consistently worse than their e-h mirror) that
+  distance or joint-angle *magnitude* cannot produce by themselves, since
+  those are identical for a mirror pair. Points at something with a
+  definite sign/handedness -- solver branch selection, or a real asymmetry
+  in the model -- but which one is unconfirmed.
+
+**Genuinely unexplained, left open:**
+- *Why* the tangential contact becomes asymmetric in the first place on
+  far squares -- this is upstream of everything measured and was not
+  isolated.
+- *What determines escalation.* The second-pad-dominant signature appears
+  in both catastrophic and merely-partial cases (h7 vs. d8/b8/a7); nothing
+  found here explains why some instances run away and others don't.
+- *The origin of the handedness asymmetry itself* (solver artifact vs.
+  model geometry) was not distinguished.
+
 ### Why this might not matter for training
 
 The scripted expert is a fixed, open-loop, joint-space controller tuned
@@ -366,7 +453,9 @@ claim is still correct for all 64. But this means uniform random square
 sampling -- T1's default reset behaviour -- will keep drawing squares from
 the unreliable far half during training. **Needs a decision before the P2
 Gate M2 training runs and before the pilot matrix (P3):** narrow
-`reachable_squares` to the validated-reliable subset for now, spend time
-root-causing the dynamics issue directly, or accept it and treat any
+`reachable_squares` to the validated-reliable subset for now, spend more
+time root-causing the dynamics issue directly, or accept it and treat any
 resulting depressed success rate on far-half episodes as expected until
-this is resolved.
+this is resolved. **Diagnosis is closed as of 2026-08-25 (see "Diagnostic
+passes 1-3" above) without a confirmed root cause** -- this consequence and
+its options stand as written; mitigation design is separate, upcoming work.

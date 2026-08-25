@@ -72,7 +72,20 @@ algebraic square naming (78 mm pitch, D1) shared across the task family.
 
 **Open item before this can be called done:** D7 in `DECISIONS.md` --
 default random square sampling surfaces a square-dependent grasp-reliability
-problem on the far half of the board, unrelated to T1's own code. Needs a
-decision (narrow the default reachable set, root-cause the dynamics, or
-accept and document) before P2's training runs or P3's pilot matrix lean on
-uniform square sampling.
+problem on the far half of the board, unrelated to T1's own code. A
+three-pass diagnostic effort (2026-08-25) instrumented per-timestep joint
+state, contact force, and end-effector orientation to isolate it: ruled out
+wrist tilt, joint-limit proximity, singularity, yaw drift, and IK
+path-dependence as the trigger; found a tangential (shear) contact-force
+imbalance at first pad contact as the most timing-precise anomaly, with the
+second-touching pad usually bearing the dominant force in catastrophic
+cases (3/3 tested) -- but confirmed this isn't sufficient on its own (one
+partial-outcome square shows the identical signature without going
+catastrophic) and that peak force magnitude does not separate outcomes as
+a threshold (the lowest-magnitude case in the whole diagnosed set is
+catastrophic). Diagnosis is closed by decision, not because the mechanism
+is fully understood -- see D7's "Diagnostic passes 1-3" section for the
+full breakdown. **Still needs a decision** (narrow the default reachable
+set, accept and document, or something else) before P2's training runs or
+P3's pilot matrix lean on uniform square sampling; that decision and any
+mitigation design are separate, upcoming work.

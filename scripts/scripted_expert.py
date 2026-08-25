@@ -259,6 +259,7 @@ class ScriptedExpert:
         piece_vel = data.qvel[base._piece_vadr : base._piece_vadr + 6]
         sample = {
             "global_step": int(base._elapsed_steps),
+            "sim_time": float(data.time),
             "phase": phase,
             "phase_step": int(phase_step),
             "qpos": data.qpos[:ARM_DOF].copy().tolist(),
