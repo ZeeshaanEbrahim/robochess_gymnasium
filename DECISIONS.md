@@ -247,3 +247,126 @@ independent and not subject to the caveat above.
 
 This is one of Gate M1's exit criteria ("training budget revised in
 writing") -- see `ROADMAP.md` for the full gate definition and status.
+
+---
+
+## D5 — HER decision, locked for T1: state-vector observations only
+
+**Date:** 2026-08-25
+**Status:** accepted (not a new decision -- writing down a constraint that
+was already the working assumption, same posture as D3's original entry)
+**Implemented by:** `robochess/tasks/t1_pick_and_place.py`
+
+### Decision
+
+T1's HER-compatible configuration is state-vector observations only.
+RoboChessEnv has no image observation mode at all today, so there is
+currently nothing to build or omit -- this entry exists so the constraint is
+on record before P2/P3 add one, per the memory-wall arithmetic in the
+roadmap: two 128x128x3 uint8 camera views at a 1M-transition buffer is
+roughly 196 GB, not feasible. When an image observation mode is added, it
+must not be paired with `HerReplayBuffer` under the current buffer sizing;
+either keep HER to state-vector configs or drop to a much smaller,
+lower-resolution image buffer (~100k transitions, 64x64, single camera) and
+re-derive the memory budget explicitly before using it.
+
+### Consequence for reward wrappers
+
+`ShapedPickAndPlaceReward`'s gripper-approach term reads the live pinch-site
+position, which is not recoverable from `(achieved_goal, desired_goal)`
+alone, so its `compute_reward` is deliberately left unoverridden (falls back
+to the base env's goal-only placeholder if HER is attempted with it anyway).
+Only `SparsePickAndPlaceReward` is HER-safe, matching the proposal's
+factorial design where HER is paired with the sparse arm.
+
+---
+
+## D6 — Grasp reliability degrades on the far half of the board; not caused by T1's wrapping, not yet explained
+
+**Date:** 2026-08-25
+**Status:** flagged, not resolved — needs a decision before P2 relies on
+full-board random square sampling for training
+**Evidence:** `scripts/scripted_expert.py --task t1`, full 64-square scan
+(script run ad hoc, not checked in — reproducible via the snippet below)
+
+### Finding
+
+Running the scripted expert through `T1PickAndPlaceTask` with squares
+sampled uniformly over all 64 reachable squares (per D2) gives **32/50
+(64%) success**, against P1's 100/50 (100%) on its single fixed square (e4).
+Restricting the *start* square and re-running singly across all 64 squares
+(target held at e4, seed=0) shows the failures are not random:
+
+```
+     a  b  c  d  e  f  g  h
+  8  ..  XX  XX  XX  ..  XX  ..  OK
+  7  XX  ..  ..  XX  ..  ..  ..  ..
+  6  ..  ..  ..  ..  ..  ..  ..  ..
+  5  OK  OK  ..  ..  ..  OK  OK  OK
+  4  ..  OK  OK  OK  OK  ..  OK  OK
+  3  OK  OK  OK  OK  OK  OK  OK  OK
+  2  OK  OK  OK  OK  OK  OK  OK  OK
+  1  OK  OK  OK  ..  OK  OK  OK  OK
+```
+(OK = success, XX = `piece_off_board` during the `close` waypoint -- the
+piece is flung 400-3800 mm off the table while the arm is holding still and
+only the gripper is closing -- `..` = reaches the goal sequence but doesn't
+land the placement criteria, not a catastrophic failure)
+
+Ranks 1-4 (the half of the board nearer the arm base, which is where P1's
+e4 sits) are almost universally reliable. Ranks 5-8 (the far half) are
+mostly degraded or catastrophically unreliable, with the single exception of
+h8, which succeeds cleanly despite being the single most extended square in
+the whole 64-square set per D2's own sweep.
+
+### What this is NOT
+
+- **Not a T1PickAndPlaceTask bug.** The failure is 100% determined by the
+  *start* square alone -- holding start fixed and varying the target has no
+  effect (`h8 -> h7`, `h8 -> e4` both succeed; `d8 -> b3`, `d8 -> h1` both
+  fail the same way). T1's teleport/goal-set/info-augmentation code is
+  identical regardless of which square is involved.
+- **Not a contradiction of D2.** D2 swept static top-down IK convergence,
+  which still holds -- `solve_ik` converges for every failing square here too
+  (zero `ik_failure` outcomes in either run). This is a *dynamics/grasp*
+  problem that only shows up when the waypoint sequence actually executes
+  contact-rich manipulation, not a kinematic reachability problem. D2's
+  reach-envelope numbers are unaffected.
+
+### What it might be (not confirmed)
+
+The `close` waypoint holds the arm still and only closes the gripper
+(`ctrl=255`) -- the piece is flung away during that hold, not during any
+arm motion. The leading hypothesis is that arm configurations required to
+reach the far half of the board need larger held-position corrective
+torques (less favourable moment arms against gravity than the
+near-central e4 configuration the scripted expert's heights were tuned
+against), and closing the gripper on top of that injects enough contact-
+solver instability to launch the piece. This is unconfirmed -- it was not
+isolated further (e.g. by comparing a direct-teleport-to-grasp-pose against
+the waypoint-driven approach) before this was written down.
+
+### Why this might not matter for training
+
+The scripted expert is a fixed, open-loop, joint-space controller tuned
+once against a single square; an RL policy uses closed-loop, continuous
+control and never blindly repeats that exact tuned trajectory, so it may
+not hit the same failure mode at all. But it's also possible the underlying
+cause is a genuine simulation robustness issue at more-extended arm poses
+that would affect any controller, scripted or learned. Nothing in this repo
+resolves which of those is true.
+
+### Consequence
+
+`T1PickAndPlaceTask`'s default `reachable_squares` was left at all 64
+squares (`REACHABLE_SQUARES = ALL_SQUARES`) rather than narrowed to the
+reliable near-half, since narrowing it unilaterally would silently shrink
+the task class's scope without sign-off, and D2's kinematic reachability
+claim is still correct for all 64. But this means uniform random square
+sampling -- T1's default reset behaviour -- will keep drawing squares from
+the unreliable far half during training. **Needs a decision before the P2
+Gate M2 training runs and before the pilot matrix (P3):** narrow
+`reachable_squares` to the validated-reliable subset for now, spend time
+root-causing the dynamics issue directly, or accept it and treat any
+resulting depressed success rate on far-half episodes as expected until
+this is resolved.

@@ -49,3 +49,30 @@ adjacent-square goal, with randomization deferred to P2's task classes).
 
 Not yet defined in this repository. Record it here once it exists, in the
 same evidence-linked format as Gate M1 above.
+
+### T1 status (in progress, 2026-08-25)
+
+Not a gate claim -- Gate M2 needs all five task classes. Recording where T1
+stands so a future session doesn't have to re-derive it from git history.
+
+Built: `robochess/tasks/t1_pick_and_place.py` (`T1PickAndPlaceTask`,
+`ShapedPickAndPlaceReward`, `SparsePickAndPlaceReward`), composed as
+Gymnasium wrappers over `RoboChessEnv` rather than a subclass, per the
+precedent the roadmap set for T2-T5. `robochess/tasks/squares.py` gives
+algebraic square naming (78 mm pitch, D1) shared across the task family.
+
+| check | result |
+| --- | --- |
+| unit tests (task + wrapper files) | 30 new tests, 99% line coverage (`robochess/tasks/*`) |
+| `check_env` on the wrapped T1 env | passes; only the two expected wrapper-detection warnings, no space-contract violation |
+| scripted-expert regression, P1-identical conditions (fixed near-board squares, e.g. e4->e5) | 100%, matches P1 |
+| scripted-expert regression, default random square sampling (all 64 squares) | 64% (32/50) -- see D6, not a T1 bug, root cause unresolved |
+| HER + SAC smoke test, 8k steps | completes cleanly, no crash/NaN; 0/100 episodes successful in this short a run (expected -- not a convergence check, see D6's caveat and the roadmap's own note that short runs shouldn't be over-interpreted) |
+| full test suite under `requirements-ci.txt` | 48/48 pass (18 P1 + 30 T1) |
+
+**Open item before this can be called done:** D6 in `DECISIONS.md` --
+default random square sampling surfaces a square-dependent grasp-reliability
+problem on the far half of the board, unrelated to T1's own code. Needs a
+decision (narrow the default reachable set, root-cause the dynamics, or
+accept and document) before P2's training runs or P3's pilot matrix lean on
+uniform square sampling.

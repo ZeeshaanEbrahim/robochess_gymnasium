@@ -32,6 +32,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from robochess.envs import RoboChessEnv  # noqa: E402
+from robochess.tasks import T1PickAndPlaceTask  # noqa: E402
 
 # --- controller geometry -------------------------------------------------
 # Heights are for the *pinch* point (between the fingertips), in world z.
@@ -72,7 +73,13 @@ class ScriptedExpert:
 
     def __init__(self, env: RoboChessEnv, settle_tol: float = 0.02, max_steps_per_waypoint: int = 40):
         self.env = env
-        self.model = env.model
+        # `env` may be RoboChessEnv directly or wrapped (e.g. T1PickAndPlaceTask):
+        # step()/reset() go through whatever wrapping is present, via self.env,
+        # but MuJoCo internals (model, data, private joint/keyframe handles) are
+        # only ever on the base env, and gymnasium's Wrapper no longer forwards
+        # arbitrary attribute access -- so those go through `self.base` instead.
+        self.base: RoboChessEnv = env.unwrapped
+        self.model = self.base.model
         self.settle_tol = settle_tol
         self.max_steps_per_waypoint = max_steps_per_waypoint
 
@@ -95,7 +102,7 @@ class ScriptedExpert:
         # Measured from the model rather than hardcoded, so it tracks any change
         # to how the gripper is mounted.
         data = mujoco.MjData(self.model)
-        mujoco.mj_resetDataKeyframe(self.model, data, env._home_key)
+        mujoco.mj_resetDataKeyframe(self.model, data, self.base._home_key)
         mujoco.mj_forward(self.model, data)
         sid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, "ur_attachment_site")
         pid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, "ur_gripper_pinch")
@@ -125,7 +132,7 @@ class ScriptedExpert:
             mink.SE3.from_rotation_and_translation(self.tool_rotation, site_target)
         )
         # Seed from the arm's current pose for continuity between waypoints.
-        self.configuration.update(self.env.data.qpos.copy())
+        self.configuration.update(self.base.data.qpos.copy())
 
         for _ in range(IK_MAX_ITERS):
             err = self.task.compute_error(self.configuration)
@@ -163,8 +170,8 @@ class ScriptedExpert:
             yield obs, reward, terminated, truncated, info
             if terminated or truncated:
                 return
-            arm_settled = np.max(np.abs(self.env.data.qpos[:ARM_DOF] - q_arm)) < self.settle_tol
-            grip_settled = abs(self.env.data.qvel[self.env._grip_vadr]) < 0.02
+            arm_settled = np.max(np.abs(self.base.data.qpos[:ARM_DOF] - q_arm)) < self.settle_tol
+            grip_settled = abs(self.base.data.qvel[self.base._grip_vadr]) < 0.02
             if i >= 2 and arm_settled and grip_settled:
                 return
 
@@ -221,7 +228,7 @@ class ScriptedExpert:
                 record["outcome"] = "ik_failure"
                 record["failed_phase"] = label
                 record["detail"] = str(exc)
-                record["steps"] = self.env._elapsed_steps
+                record["steps"] = self.base._elapsed_steps
                 return record
 
             for obs, _, terminated, truncated, info in self._drive_to(q_arm, grip, budget):
@@ -237,7 +244,7 @@ class ScriptedExpert:
                 record["failed_phase"] = label
                 break
 
-        record["steps"] = self.env._elapsed_steps
+        record["steps"] = self.base._elapsed_steps
         record["final_distance"] = float(info["distance_to_goal"])
         record["success"] = bool(info["is_success"])
 
@@ -265,14 +272,22 @@ def main() -> int:
         help="std-dev (m) of noise added to the CONTROLLER's estimate of the piece and "
              "target positions. Stands in for pose-estimation error; the env is untouched. "
              "The env reset is deterministic, so jitter=0 makes every episode identical.")
+    parser.add_argument(
+        "--task", choices=["base", "t1"], default="base",
+        help="'base' drives RoboChessEnv directly (P1's fixed adjacent-square goal). "
+             "'t1' wraps it in T1PickAndPlaceTask (P2), so start/target squares vary "
+             "per episode -- this is the regression check that T1's wrapping did not "
+             "change the underlying pick-and-place behaviour RoboChessEnv already validated.")
     args = parser.parse_args()
 
     env = RoboChessEnv(max_episode_steps=args.max_episode_steps)
+    if args.task == "t1":
+        env = T1PickAndPlaceTask(env)
     expert = ScriptedExpert(env)
 
     print(f"tool length (attachment_site -> pinch): {expert.tool_length*1000:.1f} mm")
     print(f"grasp height {GRASP_Z:.3f}, transit height {CLEAR_Z:.3f}, "
-          f"goal tolerance {env.goal_tolerance*1000:.0f} mm")
+          f"goal tolerance {expert.base.goal_tolerance*1000:.0f} mm")
     print(f"controller waypoint jitter: {args.jitter*1000:.1f} mm"
           + ("  (env reset is deterministic -> all episodes identical)" if args.jitter == 0 else "")
           + "\n")

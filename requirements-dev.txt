@@ -1,3 +1,12 @@
 # Test/development dependencies, kept out of requirements.txt so the frozen
 # experiment set stays exactly what training runs against.
 pytest==9.1.1
+
+# Coverage reporting. Measure with `coverage run --source=robochess -m pytest
+# tests/` then `coverage report --include="robochess/tasks/*"` (or whichever
+# subpackage), NOT `pytest --cov=robochess.tasks`: passing a dotted
+# subpackage name to --cov/--source before it's on sys.path makes numpy fail
+# to import ("cannot load module more than once per process") in this
+# environment. --source=robochess (top-level, already importable via
+# conftest.py's path insertion) works fine, as does --include on a report.
+pytest-cov==7.1.0

@@ -15,5 +15,6 @@ MUJOCO_LOG.TXT
 assets/ur5e/assets/
 assets/robotiq_2f85/assets/
 
-# pytest
+# pytest / coverage
 .pytest_cache/
+.coverage
