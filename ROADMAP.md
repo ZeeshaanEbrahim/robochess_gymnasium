@@ -66,26 +66,31 @@ algebraic square naming (78 mm pitch, D1) shared across the task family.
 | unit tests (task + wrapper files) | 30 new tests, 99% line coverage (`robochess/tasks/*`) |
 | `check_env` on the wrapped T1 env | passes; only the two expected wrapper-detection warnings, no space-contract violation |
 | scripted-expert regression, P1-identical conditions (fixed near-board squares, e.g. e4->e5) | 100%, matches P1 |
-| scripted-expert regression, default random square sampling (all 64 squares) | 64% (32/50) -- see D7, not a T1 bug, root cause unresolved |
-| HER + SAC smoke test, 8k steps | completes cleanly, no crash/NaN; 0/100 episodes successful in this short a run (expected -- not a convergence check, see D7's caveat and the roadmap's own note that short runs shouldn't be over-interpreted) |
+| scripted-expert regression, default random square sampling (all 64 squares) | 64% (32/50) originally -- root-caused and fixed as D7 (`8139b27`); CLI regression now 46/50 (92%) with the residual traced to D8 |
+| HER + SAC smoke test, 8k steps | completes cleanly, no crash/NaN; 0/100 episodes successful in this short a run (expected -- not a convergence check; short runs shouldn't be over-interpreted) |
 | full test suite under `requirements-ci.txt` | 48/48 pass (18 P1 + 30 T1) |
 
-**Open item before this can be called done:** D7 in `DECISIONS.md` --
-default random square sampling surfaces a square-dependent grasp-reliability
-problem on the far half of the board, unrelated to T1's own code. A
-three-pass diagnostic effort (2026-08-25) instrumented per-timestep joint
-state, contact force, and end-effector orientation to isolate it: ruled out
-wrist tilt, joint-limit proximity, singularity, yaw drift, and IK
-path-dependence as the trigger; found a tangential (shear) contact-force
-imbalance at first pad contact as the most timing-precise anomaly, with the
-second-touching pad usually bearing the dominant force in catastrophic
-cases (3/3 tested) -- but confirmed this isn't sufficient on its own (one
-partial-outcome square shows the identical signature without going
-catastrophic) and that peak force magnitude does not separate outcomes as
-a threshold (the lowest-magnitude case in the whole diagnosed set is
-catastrophic). Diagnosis is closed by decision, not because the mechanism
-is fully understood -- see D7's "Diagnostic passes 1-3" section for the
-full breakdown. **Still needs a decision** (narrow the default reachable
-set, accept and document, or something else) before P2's training runs or
-P3's pilot matrix lean on uniform square sampling; that decision and any
-mitigation design are separate, upcoming work.
+**Open item before this can be called done:** D8 in `DECISIONS.md` -- D7
+(the far-half grasp-reliability problem) is resolved (`8139b27`, 2026-08-27):
+root cause was a lack of gravity compensation on the UR5e's position
+actuators, producing a reach-dependent steady-state tracking error; fixed
+via task-space residual compensation on the `descend` waypoint plus a
+`GRASP_Z` recalibration to a validated head-only grasp (0.79925). Validated
+18/18 on the diagnosed sample and 46/50 (92%) on the CLI regression, up
+from the 64% baseline, with no catastrophic `piece_off_board` failures
+remaining -- see D7's "Resolution" section in `DECISIONS.md` for the full
+account, including four earlier fix attempts that failed for confirmed,
+distinct reasons.
+
+That same validation scan surfaced a **second, separate** failure
+population, diagnosed as D8 (2026-08-27, not yet fixed): the head-only
+grasp D7 committed to is rotationally underconstrained, and the instant the
+gripper opens at `release`, the piece spins violently (12.8-30.3 rad/s) --
+universally, across passing and failing squares alike, not only the ones
+that end up failing. Whether the spin resolves inside tolerance (pass), or
+the piece tumbles-and-resettles shifted sideways, or lands perched in a
+still-spinning metastable state above the board, is chaotic; no
+discriminating variable (wrist orientation, spin magnitude, reach) was
+found despite checking. See D8 in `DECISIONS.md` for the full diagnostic
+account. **Fix design is separate, upcoming work, not attempted as part of
+either D7 or D8's diagnosis** -- this task class isn't done until it lands.

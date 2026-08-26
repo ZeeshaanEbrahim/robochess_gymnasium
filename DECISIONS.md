@@ -281,14 +281,15 @@ factorial design where HER is paired with the sparse arm.
 
 ---
 
-## D7 — Grasp reliability degrades on the far half of the board; not caused by T1's wrapping, not yet explained
+## D7 — Grasp reliability degrades on the far half of the board — RESOLVED: no gravity compensation on the UR5e's position actuators
 
-**Date:** 2026-08-25
-**Status:** diagnosis closed by decision (see "Diagnostic passes" below) —
-mechanism partially characterized, not fully explained. A decision on how
-T1 should handle this (narrow `reachable_squares`, accept and document, or
-something else) is still open and deferred to a separate mitigation-design
-task, not attempted here.
+**Date:** 2026-08-25 (diagnosis); **RESOLVED 2026-08-27, commit `8139b27`**
+**Status:** resolved. Root cause confirmed: steady-state PD tracking error
+from uncompensated gravity load on the arm's position actuators, which also
+required correcting `GRASP_Z`'s grasp-geometry rationale (see "Resolution"
+below). The residual ~8-16% failure rate remaining on the broad 64-square
+scan is a *separate*, already-diagnosed mechanism — see D8 — not a
+recurrence of this one.
 **Evidence:** `scripts/scripted_expert.py --task t1`, full 64-square scan
 (script run ad hoc, not checked in — reproducible via the snippet below);
 instrumented diagnostics in `scripts/scripted_expert.py` (`run_episode(log=...)`)
@@ -433,29 +434,267 @@ about this) is separate, upcoming work, not attempted here.**
 - *The origin of the handedness asymmetry itself* (solver artifact vs.
   model geometry) was not distinguished.
 
-### Why this might not matter for training
+### Why this might not matter for training (superseded, see Resolution below)
 
-The scripted expert is a fixed, open-loop, joint-space controller tuned
-once against a single square; an RL policy uses closed-loop, continuous
-control and never blindly repeats that exact tuned trajectory, so it may
-not hit the same failure mode at all. But it's also possible the underlying
-cause is a genuine simulation robustness issue at more-extended arm poses
-that would affect any controller, scripted or learned. Nothing in this repo
-resolves which of those is true.
+This subsection reflects the state of understanding as of 2026-08-25, when
+the mechanism was still unconfirmed: the scripted expert is a fixed,
+open-loop, joint-space controller tuned once against a single square, and
+it was genuinely unknown whether a closed-loop RL policy would hit the same
+failure mode or not. **This is no longer an open question about *whether*
+the cause is controller-specific or a general simulation issue** — it is
+confirmed as the latter (uncompensated gravity load on the arm's own
+actuators, a property of the model, not the scripted expert's control
+scheme). What remains open, and is now P3's job to check rather than
+speculate about, is narrower: whether an RL policy's continuous per-step
+feedback lets it compensate for this tracking error on its own during
+training, the way the scripted expert had to be given an explicit fix to
+do. See "Resolution" below and the Consequence section that follows it.
+
+### Resolution (2026-08-27, commit `8139b27`)
+
+**Root cause, confirmed with physical/geometric evidence, not just
+correlation:** the UR5e's position actuators have no gravity compensation
+(`gainprm` 2000/500, `gravcomp` unset, confirmed inherited unchanged from
+`mujoco_menagerie`), so holding any joint target against gravity leaves a
+**steady-state** PD tracking error — a static equilibrium, not a slow
+transient. Measured 1.54 deg at `shoulder_lift` on the far rank, against
+1.615 deg predicted directly from `qfrc_bias/kp`. In task space this is
+~27 mm of vertical sag and ~12 mm of horizontal under-reach at rank 8 —
+enough to drop the grasp off its intended contact band and push the pinch
+point past the gripper pad's ~11.00 mm half-extent, which is what separated
+catastrophic squares from surviving ones across the 18 squares diagnosed in
+"Diagnostic passes 1-3" above. That session's own findings (the tangential
+contact-force imbalance, the second-pad-dominant signature, the left/right
+handedness asymmetry) are consequences of this one cause — the piece being
+contacted at the wrong height/offset before closing ever starts — not
+independent clues pointing at separate mechanisms.
+
+**Four fix attempts, tried in order, each failed for a confirmed and
+distinct reason — do not retry these in this form:**
+
+1. **Uniform closing-velocity ramp.** Broke the previously-reliable e4
+   baseline: slowing the close phase let the gripper settle into a
+   shallower, weaker equilibrium than the abrupt close it replaced.
+2. **Contact-triggered dwell.** Preserved e4, but had zero effect on the
+   four originally-catastrophic squares — the piece is already
+   mispositioned before closing starts, so waiting longer after contact
+   doesn't help.
+3. **Retargeting `solve_ik()` from the attachment site to the pinch site.**
+   Changed the pre-close offset by <0.1 mm on every square tested. IK
+   converges to essentially the same pose regardless of which site it
+   targets, so the residual was never coming from *what point* IK aimed at
+   — it is downstream of IK, in physical tracking under load.
+4. **Tightening `settle_tol` from 0.02 to 0.002 rad.** Failed its own
+   verification: every waypoint on every square exhausted its full step
+   budget without ever reading "settled," and the catastrophic squares
+   stayed catastrophic even at full budget — proof the residual is a floor
+   (steady-state tracking error), not something more time resolves.
+
+**The fix that worked: task-space residual compensation, `descend` only.**
+After driving to a waypoint, `_run_waypoint()` measures where the pinch
+site actually ended up, feeds the shortfall back into the IK target,
+re-solves, and re-drives — capped at `MAX_RESIDUAL_ITERS = 2` (converges to
+1-2 mm in practice, since the error is a stable offset, not something that
+oscillates). `close` and `release` reuse the pose their predecessor
+converged to rather than re-solving back to the uncompensated target.
+Compensating `place` as well was tried and rejected: by the time `place`
+runs, the piece is already in contact with the board, so the measured
+"shortfall" partly reflects the board pushing back rather than free-space
+tracking error, and the correction loop fights that contact — at larger
+correction budgets it drove the piece off the board entirely. See
+`COMPENSATED_WAYPOINTS = frozenset({"descend"})` in `scripts/scripted_expert.py`.
+
+**`GRASP_Z` recalibrated 0.8035 -> 0.79925, and the original P1 rationale
+corrected.** The original value was tuned by outcome while the arm still
+had this uncorrected sag, so 0.8035 was never actually commanding the
+"stem above centre-of-mass" grasp P1's comment claimed — sag was doing the
+calibration by accident (~5.6 mm at e4), landing the true contact on the
+piece's head regardless of what anyone intended. Investigating this
+directly (not just recalibrating and moving on) found:
+
+- A pure stem-only grasp is **geometrically impossible**: the piece's head
+  radius (9 mm) exceeds its stem radius (8 mm), and the gripper pad's own
+  vertical extent is taller than the stem band, so no height exists that
+  contacts only the stem.
+- A "form-closure" straddle grasp (base below + head above) was proposed as
+  the safety criterion to replace "above COM," but **failed direct
+  measurement**: at the geometric window's centre, tilt during lift
+  reproduced P1's original tipping failure almost exactly (68-71 deg vs.
+  P1's ~58 deg), aperture converged short (0.542 rad, not ~0.65), and
+  contacts were base-only, not base+head.
+- Root mechanism: gripper closing is **"first significant contact wins,"
+  not a static overlap calculation** — the controller stops the instant it
+  meets resistance from whichever feature enters the pad's range first. A
+  height overlapping both the base and a narrower feature above it
+  converges to a shallow base-only grip, not a deeper grip past it. A
+  sweep confirmed a sharp discontinuity in converged aperture (0.647 at one
+  height, 0.54 barely 1 mm away) that a static geometry calculation could
+  not have predicted.
+- **Final validated value, `GRASP_Z = 0.79925`:** clears the base with real
+  margin and grips the piece's **head only**. Validated directly across an
+  18-square sample spanning 43-99% of rated reach, all four quadrants,
+  multiple mirror pairs: tilt stays low through the lift, aperture
+  converges to 0.645-0.647 uniformly (matching the original ~0.65 target).
+
+**Validation:** 18/18 succeed with no regressions on the previously-working
+squares; all 6 previously-catastrophic squares (a7, b8, c8, d8, e8, a8) now
+succeed. Full 64-square scan (target e5): 51/63, as measured and recorded
+at commit time. CLI regression, 50 random-square episodes: 46/50 (92%), up
+from the 64% historical baseline, with no catastrophic `piece_off_board`
+failures remaining. **The residual failures are a separate, already-
+diagnosed mechanism — see D8 — not a recurrence of this one.**
+
+(A later re-run of the same 64-square scan, during D8's diagnostic pass on
+2026-08-27, measured 53/63 on identical code — 2 squares better than the
+51/63 recorded above. This is expected, not a discrepancy in D7's fix
+itself: the extra 2 squares are release-phase outcomes, D8's chaotic
+mechanism, sensitive to run-to-run environment numerics. D7's own claims —
+the 18/18 grasp-reliability sample and the elimination of the 6
+catastrophic squares — do not depend on that number and are unaffected.
+See D8's own note on environment sensitivity.)
+
+### Consequence (superseded the "needs a decision" framing below as of the Resolution above)
+
+With D7 resolved, `T1PickAndPlaceTask`'s default `reachable_squares` stays
+at all 64 squares (`REACHABLE_SQUARES = ALL_SQUARES`) — narrowing it is no
+longer the live question D7 originally posed, since the fix restores
+reliability across the reach envelope rather than only on a near half.
+D2's kinematic reachability claim was correct for all 64 squares throughout
+and needed no revisiting.
+
+The question this resolution hands to P3 instead: **does the real RL
+action space for T1-T5 drive the same uncompensated position actuators the
+scripted expert needed explicit compensation for**, meaning a trained
+policy could inherit the same gravity-droop tracking error. RL policies get
+continuous per-step joint feedback (unlike the scripted expert's open-loop
+waypoints), so may compensate for this on their own during training — but
+that needs checking directly before P3's pilot matrix, not assumed.
+
+---
+
+## D8 — Release-induced rotational instability on the head-only grasp; universal across passes and fails, chaotic in outcome
+
+**Date:** 2026-08-27
+**Status:** diagnosed, not fixed. Fix design is separate, upcoming work —
+not attempted here, per this project's diagnose-then-fix convention.
+**Evidence:** `scripts/scripted_expert.py --task t1`, driven through a
+diagnostic subclass (ad hoc, not checked in) that extends `LOGGED_PHASES`
+to the post-grasp waypoints (`lift`, `traverse`, `place`, `release`,
+`retreat`) and logs the pinch site's own position directly — D7's logging
+stopped at `close` and used the attachment site, not the pinch point,
+because D7's mechanism was fully upstream of the grasp.
+
+### Finding
+
+The full 64-square scan (target fixed at e5, every other square as start)
+that validated D7's fix surfaces a second, separate failure population,
+downstream of a clean grasp: **10 of 63 squares fail** (b5, c1, e2, e6, f1,
+f3, f6, g6, g7, h6; 53/63 succeed, as measured directly in this session —
+see the discrepancy note below on why this differs from an earlier
+snapshot).
+
+Per-waypoint tracing (piece position, gripper aperture, pad-piece contact
+count, and pinch-to-piece distance at every step of every waypoint, for all
+10 failing squares) shows:
+
+- Grip is continuous through `lift`, `traverse`, and `place` for all 10 —
+  pad-piece contact stays nonzero (6-8) throughout, and piece-to-pinch
+  offset barely moves.
+- At the end of `place`, every failing square has the piece within 5-11 mm
+  of the goal — well inside the 30 mm `goal_tolerance`. Placement accuracy
+  itself is not the problem.
+- The divergence starts precisely at `release`: pad-piece contact drops to
+  0 within 0-1 steps of the gripper beginning to open, and the piece's
+  angular speed spikes violently — 12.8-23 rad/s across the 10 failures.
+
+### What this rules out
+
+**Not an uncompensated place/release tracking-error problem, and not the
+same family as D7.** `place`/`release` genuinely receive no task-space
+compensation (`COMPENSATED_WAYPOINTS = frozenset({"descend"})`, confirmed
+both from the code and from `compensation_iters` in the run record), but
+the place waypoint's own tracking error is small and is not the source of
+the eventual 20-103 mm final errors — the corruption happens entirely
+after a good placement, during release itself. This was the leading
+candidate mechanism going into this diagnostic pass; the data does not
+support it.
+
+**Not reach-dependent.** Pearson r(reach, fail) = -0.06 across all 63
+squares, confirming the roadmap's own earlier note and ruling out a
+D7-style, reach-scaling mechanism.
+
+### Mechanism
+
+One shared cause, not two, despite the bimodal final-distance groups:
+
+- **Group A** (b5, c1, e6, f6): tumbles at release, then settles flat back
+  onto the board — just shifted sideways, landing 30-33 mm from target.
+- **Group B** (e2, f1, f3, g6, g7, h6): lands in a metastable
+  perched/edge-balanced state, still spinning, piece height stuck 15-19 mm
+  above the board (five of six at *exactly* 0.7809 m — consistent with
+  balancing on a specific geometric edge of the piece's base) and never
+  settles within the episode's remaining step budget.
+
+Both are outcomes of the same event: the release waypoint commands an
+abrupt, uncushioned transition from fully closed (`ctrl=255`) to fully open
+(`ctrl=0`) on a grasp that D7 deliberately committed to gripping the
+piece's **head only** — a rotationally underconstrained, near-spherical
+contact. The instant compressive force drops, the piece is free to spin.
+
+Critically, **this spin is universal, not specific to the squares that
+fail.** A sample of 12 passing squares showed the same peak
+release-angular-speed range (mean 13.65 rad/s, up to 30.34 rad/s on a1) as
+the 10 failures (mean 16.65, range 12.78-23.05). Every T1 episode using
+this grasp geometry undergoes a violent release event; passing squares are
+landing inside tolerance essentially by chance from a chaotic process, not
+because release is reliable there. **The current ~84% (53/63) pass rate on
+this scan is sitting on a chaotic edge, not a robust margin.**
+
+This is the flip side of D7's own fix, not an independent bug:
+`scripts/scripted_expert.py`'s comment on `GRASP_Z` already warned, before
+D7's recalibration, that "a pure head grasp is a single sphere and simply
+rotates in the fingers (measured: piece placed 38 mm off target)." D7
+committed to exactly that grasp geometry to solve the pre-grasp reliability
+problem, and this is that warning materializing on the release side.
+
+### Checked and ruled out as a clean discriminator
+
+Neither wrist orientation at grasp (`wrist_3 mod 180`, checked across both
+outcome groups) nor peak release angular-speed magnitude cleanly separates
+successes from failures, or Group A from Group B — ranges overlap heavily
+in both cases. This mirrors D7's own "first significant contact wins"
+finding: a chaotic threshold effect, not a variable with a clean cutoff. No
+discriminating variable was found despite checking.
+
+### On the 12-vs-10 discrepancy with the external roadmap doc
+
+An earlier snapshot (recorded outside this repo, in the project's roadmap
+doc) reported 12 failing squares on this same scan, including four (c6,
+d6, c7, f7) that this session's runs do not reproduce, and missing two
+(f6, g7) that this session's runs do. Two independent runs in this
+environment reproduced the identical 10-square failure set both times, so
+this is not run-to-run noise within a single environment. Given the
+mechanism identified above — a chaotic process sensitive to the exact
+release dynamics — small numeric differences between environments (BLAS
+backend, MuJoCo point version) are expected to tip a handful of borderline
+squares between outcomes. **This is consistent with, not contrary to, the
+diagnosis:** the specific failing-square list is not a stable fact about
+the environment; only the existence and rate of this failure mode is. Treat
+any specific square list (this one included) as a snapshot of one
+environment, not a fixed property of the task. D7's own 51/63-vs-53/63
+discrepancy (see D7's Resolution section) is the same phenomenon.
 
 ### Consequence
 
-`T1PickAndPlaceTask`'s default `reachable_squares` was left at all 64
-squares (`REACHABLE_SQUARES = ALL_SQUARES`) rather than narrowed to the
-reliable near-half, since narrowing it unilaterally would silently shrink
-the task class's scope without sign-off, and D2's kinematic reachability
-claim is still correct for all 64. But this means uniform random square
-sampling -- T1's default reset behaviour -- will keep drawing squares from
-the unreliable far half during training. **Needs a decision before the P2
-Gate M2 training runs and before the pilot matrix (P3):** narrow
-`reachable_squares` to the validated-reliable subset for now, spend more
-time root-causing the dynamics issue directly, or accept it and treat any
-resulting depressed success rate on far-half episodes as expected until
-this is resolved. **Diagnosis is closed as of 2026-08-25 (see "Diagnostic
-passes 1-3" above) without a confirmed root cause** -- this consequence and
-its options stand as written; mitigation design is separate, upcoming work.
+Not attempted here, by the project's diagnose-then-fix convention.
+Candidate directions for a future fix-design session, not evaluated here:
+damping the release open-command (a velocity ramp, analogous to D7's
+rejected closing-side attempt, though D7's attempt failed for the closing
+case for reasons that may or may not transfer to opening); a grasp geometry
+with more rotational constraint than a pure head contact (revisits the same
+base/stem/head tradeoff D7 already investigated); or a settle-and-check
+step after release before declaring the waypoint sequence finished, so a
+piece caught mid-spin gets more time rather than being scored against
+whatever state the episode happens to end in. All of these need actual
+verification before adoption, per this project's standing lesson that a
+plausible-sounding fix must be measured, not inferred.
