@@ -38,13 +38,25 @@ from robochess.tasks import T1PickAndPlaceTask  # noqa: E402
 # Heights are for the *pinch* point (between the fingertips), in world z.
 # The board playing surface is at z = 0.762.
 #
-# GRASP_Z targets the piece's STEM (18-34 mm above its base), not the wider
-# base cylinder. The piece's centre of mass is 17.5 mm up -- the top edge of
-# the base -- so a base grasp puts the whole contact patch *below* the COM and
-# the piece pivots out of the fingers during the lift (measured: 58 degrees of
-# tilt by the top of the lift, ending on its side). Gripping the stem puts the
-# contact above the COM and it hangs stably: 1.1 degrees of tilt instead.
-GRASP_Z = 0.8035
+# GRASP_Z puts the pads around the piece's WAIST: the narrow stem (r 8 mm,
+# 0.780-0.796) sits between them while they clamp the base's top edge and the
+# head's underside (0.7885-0.8073 with the 9.4 mm half-height pads). That is a
+# form-closure grasp, and the contact patch straddles the centre of mass at
+# 0.7795 rather than sitting under it -- a pure base grasp puts the whole patch
+# below the COM and the piece pivots out during the lift (measured: 58 deg of
+# tilt, ending on its side); a pure head grasp is a single sphere and simply
+# rotates in the fingers (measured: piece placed 38 mm off target).
+#
+# RECALIBRATED from 0.8035 to 0.79925 (D7, attempt 5). The original value was
+# tuned by outcome while the arm still had an uncorrected gravity-droop error,
+# so what P1 validated as a stem grasp was really the COMMAND 0.8035 minus
+# ~5.6 mm of sag at e4 -- i.e. an actual pinch height of 0.7979. The sag was
+# doing the calibration. With task-space residual compensation the arm now
+# tracks the command, so commanding 0.8035 lands the pads on the head alone.
+# 0.7979 is therefore not a new grasp geometry: it is the geometry P1 actually
+# validated at 100/100, now commanded explicitly and reach-independently
+# instead of arrived at by however far the arm happened to sag on one square.
+GRASP_Z = 0.79925
 CLEAR_Z = 0.882  # 12 cm above the board: transit height
 # Set the piece down before opening. Releasing from higher drops it and topples it.
 PLACE_Z = 0.7935
@@ -54,6 +66,59 @@ GRIPPER_OPEN_CTRL = 0.0
 # free-space gap at ctrl=200, so anything less never actually clamps it.
 # Grip force stays bounded by the actuator's own forcerange either way.
 GRIPPER_GRIP_CTRL = 255.0
+
+
+# General settle-check fix (D7 mitigation follow-up): a waypoint is only
+# declared "settled" after this many CONSECUTIVE macro-steps of low arm and
+# gripper velocity, not a single instantaneous reading. 3 is chosen as the
+# smallest value that comfortably exceeds a one-step contact-deceleration
+# transient (the specific failure observed) while staying small relative to
+# every waypoint's budget (>=25 macro-steps) so it doesn't meaningfully
+# lengthen episodes that were already genuinely settling.
+SETTLE_CONSECUTIVE_STEPS = 3
+
+# --- task-space residual compensation (D7 fix, attempt 5) ----------------
+# The UR5e's actuators are plain affine PD position servos with no gravcomp
+# (gainprm 2000/500, confirmed inherited unchanged from mujoco_menagerie), so
+# holding a joint target against gravity leaves a STEADY-STATE error of
+# roughly qfrc_bias/kp. That is a static equilibrium, not a slow transient:
+# measured 1.54 deg at shoulder_lift on the far rank vs 1.615 deg predicted.
+# In task space it reaches ~27 mm of vertical sag and ~12 mm of horizontal
+# under-reach at rank 8 -- enough to drop the grasp off the piece's stem and
+# back onto its base (below the centre of mass, the exact failure P1 already
+# diagnosed), and to push the piece past the gripper pad's 11.00 mm
+# half-extent, which is what separated catastrophic from surviving squares
+# across all 18 diagnosed squares.
+#
+# Attempts 1-4 all failed because none of them could move a static
+# equilibrium: two adjusted the CLOSING phase (the piece is already
+# mispositioned before closing starts), one retargeted which site IK aims at
+# (the error is downstream of IK, in physical tracking), and one simply
+# waited longer for a floor that never converges.
+#
+# This corrects the only thing that can be corrected: the COMMANDED target.
+# Drive to the waypoint, measure where the pinch site actually ended up, add
+# the shortfall back into the IK target, re-solve, re-drive. Because the
+# error is a stable static offset, the correction converges in one or two
+# passes rather than oscillating. Measuring the real pinch site also absorbs
+# wrist-tilt error automatically, which is what retargeting IK could not do.
+RESIDUAL_TOL = 1e-3          # 1 mm: the "sub-mm" convergence bar
+MAX_RESIDUAL_ITERS = 2       # hard cap; warn rather than loop on
+RESIDUAL_BUDGET = 10         # macro-steps per correction pass (small move)
+
+# Waypoints where the pinch point's absolute accuracy actually determines the
+# outcome, so they are worth spending correction steps on:
+#   descend  the pre-close grasp pose -- sets grip height on the piece AND
+#            the in-pad alignment that D7 turned on.
+# "place" was tried and rejected: by the time it runs, the piece is already
+# resting in contact with the board, so the measured "shortfall" partly
+# reflects the board pushing back rather than free-space tracking error, and
+# the correction loop fights that contact -- at larger RESIDUAL_BUDGET values
+# it drove the piece back off the board entirely. The transit waypoints
+# (approach, lift, traverse, retreat) only need to clear obstacles, and
+# "close"/"release" deliberately REUSE the pose their predecessor converged
+# to, rather than re-solving back to the uncompensated target.
+COMPENSATED_WAYPOINTS = frozenset({"descend"})
 
 IK_SOLVER = "daqp"
 IK_DT = 0.02
@@ -78,7 +143,15 @@ class IKFailure(RuntimeError):
 class ScriptedExpert:
     """Open-loop waypoint controller driving RoboChessEnv through step()."""
 
-    def __init__(self, env: RoboChessEnv, settle_tol: float = 0.02, max_steps_per_waypoint: int = 40):
+    # settle_tol: BASELINE 0.02 rad. D7 fix attempt 4 tightened this to 0.002
+    # and it failed its own verification -- every waypoint on every square
+    # exhausted its full step budget without ever reading "settled", and the
+    # catastrophic squares stayed catastrophic even at full budget. Reverted;
+    # 0.02 is the value all pre-attempt-4 measurements were taken under and is
+    # the base config for any new D7 data.
+    SETTLE_TOL_DEFAULT = 0.02
+
+    def __init__(self, env: RoboChessEnv, settle_tol: float = SETTLE_TOL_DEFAULT, max_steps_per_waypoint: int = 40):
         self.env = env
         # `env` may be RoboChessEnv directly or wrapped (e.g. T1PickAndPlaceTask):
         # step()/reset() go through whatever wrapping is present, via self.env,
@@ -114,6 +187,9 @@ class ScriptedExpert:
         sid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, "ur_attachment_site")
         pid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, "ur_gripper_pinch")
         self.tool_length = float(data.site_xpos[sid][2] - data.site_xpos[pid][2])
+        # Needed by the residual compensation below: the pinch point is what
+        # has to land accurately, and it is not the frame IK regulates.
+        self._pinch_sid = pid
         # Top-down tool orientation, taken from the home keyframe (site +z points
         # straight down there) and held fixed for every waypoint.
         self.tool_rotation = mink.SO3.from_matrix(data.site_xmat[sid].reshape(3, 3).copy())
@@ -293,6 +369,18 @@ class ScriptedExpert:
         exits the "close" waypoint after a single step and the fingers never reach
         the piece.
 
+        Settling requires SETTLE_CONSECUTIVE_STEPS in a row of low arm/gripper
+        velocity, not a single reading (general fix, D7 mitigation follow-up):
+        a single instantaneous low-velocity reading can be a transient -- e.g.
+        the brief deceleration right as a pad first contacts the piece -- and
+        was previously misread as "the grip has settled," exiting before the
+        gripper had actually pressed in to a firm hold. This showed up two
+        ways: silently, as the likely cause of the false-negative early exit
+        during the D7 frame_skip=1 diagnostic probe (`_drive_to` was checked
+        20x more often there, making a one-step transient far more likely to
+        be caught); and visibly, as an earlier ramp-based mitigation attempt
+        stopping at a shallow aperture instead of a firm one.
+
         If `log` is a list, one diagnostics dict (D7) is appended per step,
         captured immediately after `env.step()` so it reflects the resulting
         state. Purely additive: reads state, writes nothing back into the sim.
@@ -300,6 +388,7 @@ class ScriptedExpert:
         Yields the env's step tuple so the caller can react to termination.
         """
         action = self._to_action(q_arm, gripper_ctrl)
+        settled_streak = 0
         for i in range(budget):
             obs, reward, terminated, truncated, info = self.env.step(action)
             if log is not None:
@@ -307,10 +396,88 @@ class ScriptedExpert:
             yield obs, reward, terminated, truncated, info
             if terminated or truncated:
                 return
+
             arm_settled = np.max(np.abs(self.base.data.qpos[:ARM_DOF] - q_arm)) < self.settle_tol
             grip_settled = abs(self.base.data.qvel[self.base._grip_vadr]) < 0.02
-            if i >= 2 and arm_settled and grip_settled:
+            settled_streak = settled_streak + 1 if (arm_settled and grip_settled) else 0
+            if settled_streak >= SETTLE_CONSECUTIVE_STEPS:
                 return
+
+    def pinch_pos(self) -> np.ndarray:
+        """Where the pinch point ACTUALLY is right now, in world coordinates."""
+        return self.base.data.site_xpos[self._pinch_sid].copy()
+
+    def _run_waypoint(
+        self,
+        pinch_target: np.ndarray,
+        grip: float,
+        budget: int,
+        label: str,
+        log: list[dict] | None,
+        q_arm: np.ndarray,
+        compensate: bool,
+    ) -> dict:
+        """Drive one waypoint, optionally correcting its task-space residual.
+
+        Drives to `q_arm`, then -- if `compensate` -- measures how far the
+        pinch point actually ended up from `pinch_target` and adds that
+        shortfall back into the commanded IK target before re-solving and
+        re-driving. Capped at MAX_RESIDUAL_ITERS passes; if the residual is
+        still above RESIDUAL_TOL after that, it warns and gives up rather
+        than looping or eating into later waypoints' budgets.
+
+        Returns a dict with the final joint target (so a following waypoint
+        holding the SAME pose can reuse it instead of re-solving back to the
+        uncompensated one), plus the env's last step tuple and diagnostics.
+        """
+        for obs, _, terminated, truncated, info in self._drive_to(
+            q_arm, grip, budget, label=label, log=log
+        ):
+            pass
+
+        result = {
+            "q_arm": q_arm, "obs": obs, "info": info,
+            "terminated": terminated, "truncated": truncated,
+            "iters": 0, "ik_failed": False,
+            "residual_mm": float(np.linalg.norm(pinch_target - self.pinch_pos())) * 1000.0,
+        }
+        if not compensate or terminated or truncated:
+            return result
+
+        # The commanded target drifts away from the true target by exactly the
+        # tracking shortfall; the true target itself never moves.
+        commanded = np.asarray(pinch_target, dtype=float).copy()
+        while result["iters"] < MAX_RESIDUAL_ITERS and result["residual_mm"] > RESIDUAL_TOL * 1000.0:
+            commanded = commanded + (pinch_target - self.pinch_pos())
+            result["iters"] += 1
+            try:
+                q_arm = self.solve_ik(commanded)
+            except IKFailure as exc:
+                # The compensated target sits slightly further out than the
+                # original, which can push a corner square past the arm's
+                # reach. Degrade to the uncompensated pose rather than failing
+                # the episode outright -- and say so.
+                print(f"  [warn] {label}: IK failed on compensated target "
+                      f"(iter {result['iters']}): {exc}")
+                result["ik_failed"] = True
+                result["iters"] -= 1
+                break
+            for obs, _, terminated, truncated, info in self._drive_to(
+                q_arm, grip, RESIDUAL_BUDGET, label=label, log=log
+            ):
+                pass
+            result.update(q_arm=q_arm, obs=obs, info=info,
+                          terminated=terminated, truncated=truncated)
+            result["residual_mm"] = float(
+                np.linalg.norm(pinch_target - self.pinch_pos())) * 1000.0
+            if terminated or truncated:
+                return result
+
+        if result["residual_mm"] > RESIDUAL_TOL * 1000.0 and not result["ik_failed"]:
+            print(f"  [warn] {label}: pinch residual {result['residual_mm']:.2f} mm still "
+                  f"above {RESIDUAL_TOL*1000:.1f} mm after {result['iters']} correction "
+                  f"pass(es); continuing uncorrected.")
+        return result
 
     def waypoints(self, piece_xy: np.ndarray, goal_xy: np.ndarray):
         """(label, pinch position, gripper ctrl, step budget) for the pick-and-place.
@@ -364,21 +531,42 @@ class ScriptedExpert:
         }
 
         terminated = truncated = False
+        record["compensation_iters"] = {}
+        record["residual_mm"] = {}
+        prev_target = None
+        prev_q = None
         for label, pinch_target, grip, budget in self.waypoints(piece_xy, goal_xy):
-            try:
-                q_arm = self.solve_ik(pinch_target)
-            except IKFailure as exc:
-                record["outcome"] = "ik_failure"
-                record["failed_phase"] = label
-                record["detail"] = str(exc)
-                record["steps"] = self.base._elapsed_steps
-                return record
+            # A waypoint that holds the SAME pinch target as its predecessor
+            # ("close" after "descend", "release" after "place") must reuse the
+            # pose that predecessor actually converged to. Re-solving would
+            # command the uncompensated target again and throw the correction
+            # away at exactly the moment it matters.
+            reuse = prev_target is not None and np.allclose(pinch_target, prev_target)
+            if reuse:
+                q_arm = prev_q
+            else:
+                try:
+                    q_arm = self.solve_ik(pinch_target)
+                except IKFailure as exc:
+                    record["outcome"] = "ik_failure"
+                    record["failed_phase"] = label
+                    record["detail"] = str(exc)
+                    record["steps"] = self.base._elapsed_steps
+                    return record
 
             phase_log = log if (log is not None and label in LOGGED_PHASES) else None
-            for obs, _, terminated, truncated, info in self._drive_to(
-                q_arm, grip, budget, label=label, log=phase_log
-            ):
-                pass
+            wp = self._run_waypoint(
+                pinch_target, grip, budget, label, phase_log, q_arm,
+                compensate=(label in COMPENSATED_WAYPOINTS and not reuse),
+            )
+            obs, info = wp["obs"], wp["info"]
+            terminated, truncated = wp["terminated"], wp["truncated"]
+            prev_target, prev_q = np.asarray(pinch_target, dtype=float), wp["q_arm"]
+            if label in COMPENSATED_WAYPOINTS:
+                record["compensation_iters"][label] = wp["iters"]
+                record["residual_mm"][label] = wp["residual_mm"]
+                if wp["ik_failed"]:
+                    record.setdefault("compensation_ik_failures", []).append(label)
 
             if label == "lift":
                 # Diagnostic only: did the piece actually come up with the gripper?
