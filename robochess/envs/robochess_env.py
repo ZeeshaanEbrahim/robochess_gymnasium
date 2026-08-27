@@ -30,6 +30,16 @@ DEFAULT_SCENE = Path(__file__).resolve().parents[2] / "assets" / "scene.xml"
 # the two halves are scaled completely differently (see __init__).
 N_ARM_ACTUATORS = 6
 
+# D9 (DECISIONS.md): is_success previously had no requirement that the piece
+# itself be at rest, and was found to register success while the piece still
+# had substantial angular velocity (observed up to 17.7 rad/s during D8's
+# release-instability investigation). These are the same threshold and
+# streak length established as the corrected criterion throughout that
+# investigation (and used identically in scripts/scripted_expert.py's own
+# D8 release fix) -- not re-derived here, must stay in sync if ever revisited.
+PIECE_ANG_SETTLE_TOL = 0.05  # rad/s
+PIECE_SETTLE_CONSECUTIVE_STEPS = 3
+
 
 class RoboChessEnv(gym.Env):
     """UR5e + Robotiq 2F-85 manipulating a chess piece on a 78 mm board.
@@ -193,6 +203,11 @@ class RoboChessEnv(gym.Env):
 
         self._elapsed_steps = 0
         self._desired_goal = np.zeros(3, dtype=np.float32)
+        # D9 fix: consecutive-low-angular-velocity streak gating is_success's
+        # new piece-settle requirement. Must be reset in reset() (below) --
+        # a forgotten reset here would silently let one episode's settled
+        # state leak into the next episode's early steps.
+        self._piece_ang_settled_streak = 0
 
     # ------------------------------------------------------------------ ids
     def _body_id(self, name: str) -> int:
@@ -305,6 +320,7 @@ class RoboChessEnv(gym.Env):
 
         self._desired_goal = self._sample_desired_goal()
         self._elapsed_steps = 0
+        self._piece_ang_settled_streak = 0  # D9: must not leak across episodes
 
         obs = self._get_obs()
         info = self._build_info(terminated_reason=None)
@@ -334,48 +350,62 @@ class RoboChessEnv(gym.Env):
         return False
 
     # -------------------------------------------------------------- success
-    def _success_terms(self) -> tuple[bool, bool, bool, float]:
-        """The three independent conditions for a successful placement.
+    def _success_terms(self) -> tuple[bool, bool, bool, bool, float]:
+        """The four independent conditions for a successful placement.
 
         A 3D distance-to-goal test alone is not enough: with a 30 mm tolerance a
         piece still clamped in the gripper 25 mm above its target square scores
         as a success, which is exactly what the scripted expert did before this
         was fixed -- every episode "succeeded" mid-air and never released. So
-        success requires all three of:
+        success requires all four of:
 
           on_square  piece within goal_tolerance of the goal in XY
           resting    piece origin at board height (not still elevated)
           released   gripper open wide enough that it cannot be holding the piece
+          settled    piece's own angular speed has stayed below
+                     PIECE_ANG_SETTLE_TOL for PIECE_SETTLE_CONSECUTIVE_STEPS
+                     consecutive step() calls (D9, DECISIONS.md)
+
+        `settled` exists because on_square+resting+released alone can be
+        satisfied while the piece is still spinning (D8/D9): a chess piece
+        gripped by a rotationally-underconstrained head-only grasp can pass
+        through a valid position/height/release state mid-spin, not only once
+        genuinely at rest. `_piece_ang_settled_streak` (updated in `step()`)
+        tracks this across steps; it is reset to 0 in `reset()` and must never
+        be allowed to leak between episodes.
 
         Note for HER: `is_success` is therefore NOT a pure function of
-        (achieved_goal, desired_goal) -- `released` depends on the gripper
-        state. `compute_reward` remains a pure function of the goals, so goal
-        relabelling is unaffected, but a relabelled transition's success flag
-        cannot be recomputed from goals alone.
+        (achieved_goal, desired_goal) -- `released` and `settled` depend on
+        gripper and velocity state respectively. `compute_reward` remains a
+        pure function of the goals, so goal relabelling is unaffected, but a
+        relabelled transition's success flag cannot be recomputed from goals
+        alone.
         """
         achieved = self._achieved_goal()
         xy_dist = float(np.linalg.norm(achieved[:2] - self._desired_goal[:2]))
         on_square = xy_dist < self.goal_tolerance
         resting = abs(float(achieved[2]) - self._board_surface_z) < self.rest_tolerance
         released = float(self.data.qpos[self._grip_qadr]) < self.gripper_open_threshold
-        return on_square, resting, released, xy_dist
+        settled = self._piece_ang_settled_streak >= PIECE_SETTLE_CONSECUTIVE_STEPS
+        return on_square, resting, released, settled, xy_dist
 
     def _is_success(self) -> bool:
-        on_square, resting, released, _ = self._success_terms()
-        return bool(on_square and resting and released)
+        on_square, resting, released, settled, _ = self._success_terms()
+        return bool(on_square and resting and released and settled)
 
     def _build_info(self, terminated_reason: str | None) -> dict[str, Any]:
         dist = float(np.linalg.norm(self._achieved_goal() - self._desired_goal))
-        on_square, resting, released, xy_dist = self._success_terms()
+        on_square, resting, released, settled, xy_dist = self._success_terms()
         return {
-            "is_success": bool(on_square and resting and released),
+            "is_success": bool(on_square and resting and released and settled),
             "distance_to_goal": dist,
-            # The three success terms are reported separately so a failure says
+            # The success terms are reported separately so a failure says
             # which condition was missing rather than just "not close enough".
             "xy_distance_to_goal": xy_dist,
             "piece_on_square": bool(on_square),
             "piece_resting": bool(resting),
             "gripper_released": bool(released),
+            "piece_settled": bool(settled),
             "piece_height_above_board": float(self._achieved_goal()[2] - self._board_surface_z),
             "piece_off_board": bool(self._piece_off_board()),
             "bad_contact": bool(self._bad_contact()),
@@ -392,6 +422,17 @@ class RoboChessEnv(gym.Env):
         # final substep, so no extra mj_forward is needed here.
 
         self._elapsed_steps += 1
+
+        # D9: consecutive-low-angular-velocity streak for is_success's piece-
+        # settle requirement. Updated every step regardless of the other
+        # success terms, so it reflects the piece's own physical state, not
+        # whether a placement attempt happens to be in progress.
+        piece_ang_speed = float(
+            np.linalg.norm(self.data.qvel[self._piece_vadr + 3: self._piece_vadr + 6])
+        )
+        self._piece_ang_settled_streak = (
+            self._piece_ang_settled_streak + 1 if piece_ang_speed < PIECE_ANG_SETTLE_TOL else 0
+        )
 
         achieved = self._achieved_goal()
         reward = float(self.compute_reward(achieved, self._desired_goal))

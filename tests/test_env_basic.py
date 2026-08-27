@@ -15,6 +15,7 @@ from gymnasium.utils.env_checker import check_env
 
 import robochess  # noqa: F401  -- registers RoboChess-v0
 from robochess.envs import RoboChessEnv
+from robochess.envs.robochess_env import PIECE_SETTLE_CONSECUTIVE_STEPS
 
 
 @pytest.fixture
@@ -175,9 +176,18 @@ def test_success_requires_the_gripper_to_be_open(env):
 
 
 def test_success_when_all_three_conditions_hold(env):
+    """D9: is_success also requires PIECE_SETTLE_CONSECUTIVE_STEPS
+    consecutive steps of low piece angular velocity, counted from step()
+    calls (not from reset()). The piece starts at rest here (_place_piece
+    zeros qvel) and `home_action()` doesn't disturb it, so driving that many
+    steps lets the streak complete instead of asserting on step one."""
     env.reset(seed=0)
     goal = env._desired_goal
     _place_piece(env, [goal[0], goal[1], env._board_surface_z], gripper_qpos=0.0)
+
+    for _ in range(PIECE_SETTLE_CONSECUTIVE_STEPS - 1):
+        _, _, terminated, _, info = env.step(env.home_action())
+        assert terminated is False, "must not succeed before the settle streak completes"
 
     _, _, terminated, truncated, info = env.step(env.home_action())
     assert (info["piece_on_square"], info["piece_resting"], info["gripper_released"]) == (
@@ -202,11 +212,16 @@ def test_board_surface_height_is_read_from_the_model(env):
 
 
 def test_terminated_and_truncated_are_mutually_exclusive(env):
-    """A success on the final step must report terminated, not truncated."""
+    """A success on the final settled step must report terminated, not truncated."""
     env.reset(seed=0)
     # Teleport the piece onto the goal (which is at board height) with the
-    # gripper open, so all three success conditions hold, then take one step.
+    # gripper open, so all success conditions can hold; D9 additionally
+    # requires PIECE_SETTLE_CONSECUTIVE_STEPS consecutive low-velocity steps,
+    # counted from step() calls, so drive up to the last one before asserting.
     _place_piece(env, env._desired_goal, gripper_qpos=0.0)
+
+    for _ in range(PIECE_SETTLE_CONSECUTIVE_STEPS - 1):
+        env.step(env.home_action())
 
     _, _, terminated, truncated, info = env.step(env.home_action())
     assert terminated is True

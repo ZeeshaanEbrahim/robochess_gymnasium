@@ -17,6 +17,7 @@ import pytest
 from gymnasium.utils.env_checker import check_env
 
 from robochess.envs import RoboChessEnv
+from robochess.envs.robochess_env import PIECE_SETTLE_CONSECUTIVE_STEPS
 from robochess.tasks import (
     REACHABLE_SQUARES,
     ShapedPickAndPlaceReward,
@@ -252,9 +253,17 @@ def test_not_success_while_gripper_still_closed(sparse_env):
 
 
 def test_success_when_all_three_conditions_hold(sparse_env):
+    """D9: is_success also requires PIECE_SETTLE_CONSECUTIVE_STEPS
+    consecutive steps of low piece angular velocity, counted from step()
+    calls, so drive up to the last one before asserting the reward/success."""
     sparse_env.reset(seed=0)
     base = sparse_env.unwrapped
     _place_piece(sparse_env, base._desired_goal, gripper_qpos=0.0)
+
+    for _ in range(PIECE_SETTLE_CONSECUTIVE_STEPS - 1):
+        _, reward, terminated, _, info = sparse_env.step(base.home_action())
+        assert terminated is False
+        assert reward == 0.0
 
     _, reward, terminated, truncated, info = sparse_env.step(base.home_action())
     assert info["is_success"] is True
@@ -284,10 +293,16 @@ def test_episode_truncates_at_exactly_max_episode_steps(base_env):
 
 # --------------------------------------------------------------- sparse reward
 def test_sparse_reward_is_exactly_zero_or_one(sparse_env):
+    """D9: is_success also requires PIECE_SETTLE_CONSECUTIVE_STEPS
+    consecutive steps of low piece angular velocity, so the 1.0 case needs
+    that many steps before it registers."""
     sparse_env.reset(seed=0)
     base = sparse_env.unwrapped
 
     _place_piece(sparse_env, base._desired_goal, gripper_qpos=0.0)
+    for _ in range(PIECE_SETTLE_CONSECUTIVE_STEPS - 1):
+        _, reward, _, _, _ = sparse_env.step(base.home_action())
+        assert reward == 0.0
     _, reward, _, _, _ = sparse_env.step(base.home_action())
     assert reward in (0.0, 1.0)
     assert reward == 1.0

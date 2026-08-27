@@ -66,7 +66,7 @@ algebraic square naming (78 mm pitch, D1) shared across the task family.
 | unit tests (task + wrapper files) | 30 new tests, 99% line coverage (`robochess/tasks/*`) |
 | `check_env` on the wrapped T1 env | passes; only the two expected wrapper-detection warnings, no space-contract violation |
 | scripted-expert regression, P1-identical conditions (fixed near-board squares, e.g. e4->e5) | 100%, matches P1 |
-| scripted-expert regression, default random square sampling (all 64 squares) | 64% (32/50) originally -- root-caused and fixed as D7 (`8139b27`); CLI regression now 46/50 (92%) with the residual traced to D8 |
+| scripted-expert regression, default random square sampling (all 64 squares) | 64% (32/50) originally -- root-caused and fixed as D7 (`8139b27`); 46/50 (92%) with the residual traced to D8; D8/D9 now resolved (Candidate 1 + is_success piece-settle fix) -- CLI regression 50/50 (100%) |
 | HER + SAC smoke test, 8k steps | completes cleanly, no crash/NaN; 0/100 episodes successful in this short a run (expected -- not a convergence check; short runs shouldn't be over-interpreted) |
 | full test suite under `requirements-ci.txt` | 48/48 pass (18 P1 + 30 T1) |
 
@@ -83,14 +83,34 @@ account, including four earlier fix attempts that failed for confirmed,
 distinct reasons.
 
 That same validation scan surfaced a **second, separate** failure
-population, diagnosed as D8 (2026-08-27, not yet fixed): the head-only
-grasp D7 committed to is rotationally underconstrained, and the instant the
-gripper opens at `release`, the piece spins violently (12.8-30.3 rad/s) --
-universally, across passing and failing squares alike, not only the ones
-that end up failing. Whether the spin resolves inside tolerance (pass), or
-the piece tumbles-and-resettles shifted sideways, or lands perched in a
-still-spinning metastable state above the board, is chaotic; no
-discriminating variable (wrist orientation, spin magnitude, reach) was
-found despite checking. See D8 in `DECISIONS.md` for the full diagnostic
-account. **Fix design is separate, upcoming work, not attempted as part of
-either D7 or D8's diagnosis** -- this task class isn't done until it lands.
+population, diagnosed as D8: the head-only grasp D7 committed to is
+rotationally underconstrained, and the instant the gripper opens at
+`release`, the piece spins violently (12.8-30.3 rad/s) -- universally,
+across passing and failing squares alike, not only the ones that end up
+failing. See D8 in `DECISIONS.md` for the full diagnostic account.
+
+A follow-on issue surfaced while investigating D8's release instability:
+D9 in `DECISIONS.md` -- the production `is_success` check had no
+velocity/settle requirement on the piece itself, and could register success
+while the piece was still spinning (observed up to 17.7 rad/s).
+
+**Both D8 and D9 are now RESOLVED (2026-08-27, fix-design session).** D9
+was fixed at the source (`RoboChessEnv._is_success()`/`_build_info()` now
+require the piece's own angular speed to stay below 0.05 rad/s for 3
+consecutive steps, tracked as new per-episode state, reset every
+`reset()`). D8 was fixed as Candidate 1: `release` ramps the gripper open
+command gradually instead of jumping, gated on the piece genuinely
+settling rather than the arm/gripper settle-check every other waypoint
+uses -- validated as a real release-dynamics effect (not a time-budget or
+success-check-timing artifact) via a paired A/B/C comparison, then at full
+64-square-board scale across 3 targets: 98.9% (187/189), zero regressions
+vs. the old release. Real CLI regression (`--task t1 --episodes 50`):
+**100% (50/50)**, up from the historical 46/50. See D8's "Resolution" and
+D9's "Resolution" sections in `DECISIONS.md` for the full account,
+including the single-environment-build caveat on these exact figures.
+
+Two residual failures at full-board scale (c2->a1, h1->h8), unrelated to
+D8/D9 (both `piece_off_board` during `traverse`/`place`, before release is
+ever reached, identical under old and new release), are logged separately
+as **D10** in `DECISIONS.md` -- open, not yet investigated, not a blocker
+for calling D8/D9 done.

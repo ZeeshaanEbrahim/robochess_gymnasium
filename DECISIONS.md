@@ -574,9 +574,8 @@ that needs checking directly before P3's pilot matrix, not assumed.
 
 ## D8 — Release-induced rotational instability on the head-only grasp; universal across passes and fails, chaotic in outcome
 
-**Date:** 2026-08-27
-**Status:** diagnosed, not fixed. Fix design is separate, upcoming work —
-not attempted here, per this project's diagnose-then-fix convention.
+**Date:** 2026-08-27 (diagnosis); **RESOLVED 2026-08-27** (fix-design
+session, Candidate 1 -- see "Resolution" below).
 **Evidence:** `scripts/scripted_expert.py --task t1`, driven through a
 diagnostic subclass (ad hoc, not checked in) that extends `LOGGED_PHASES`
 to the post-grasp waypoints (`lift`, `traverse`, `place`, `release`,
@@ -684,10 +683,10 @@ any specific square list (this one included) as a snapshot of one
 environment, not a fixed property of the task. D7's own 51/63-vs-53/63
 discrepancy (see D7's Resolution section) is the same phenomenon.
 
-### Consequence
+### Consequence (superseded — see "Resolution" below)
 
-Not attempted here, by the project's diagnose-then-fix convention.
-Candidate directions for a future fix-design session, not evaluated here:
+Not attempted at diagnosis time, by the project's diagnose-then-fix
+convention. Candidate directions floated for a future fix-design session:
 damping the release open-command (a velocity ramp, analogous to D7's
 rejected closing-side attempt, though D7's attempt failed for the closing
 case for reasons that may or may not transfer to opening); a grasp geometry
@@ -695,6 +694,204 @@ with more rotational constraint than a pure head contact (revisits the same
 base/stem/head tradeoff D7 already investigated); or a settle-and-check
 step after release before declaring the waypoint sequence finished, so a
 piece caught mid-spin gets more time rather than being scored against
-whatever state the episode happens to end in. All of these need actual
-verification before adoption, per this project's standing lesson that a
-plausible-sounding fix must be measured, not inferred.
+whatever state the episode happens to end in. The first and third of these
+are what the Resolution below actually combines.
+
+### Resolution (2026-08-27, fix-design session)
+
+**Candidate 1 adopted: ramped release + piece-settle gate.**
+`scripts/scripted_expert.py`'s `release` waypoint no longer commands the
+open ctrl in one jump; it ramps linearly from fully closed to fully open
+over `RELEASE_RAMP_MACRO_STEPS = 15` macro-steps (`_release_ramp`), and the
+waypoint's own completion is gated on ctrl having reached its final open
+value AND the piece's angular speed staying below `PIECE_ANG_SETTLE_TOL`
+(0.05 rad/s) for `SETTLE_CONSECUTIVE_STEPS` (3) consecutive macro-steps
+counted from that point forward — not on the arm/gripper settle check every
+other waypoint uses. `release`'s own budget was raised 35 -> 120 macro-steps
+to give this room to run (measured up to 69 macro-steps needed on one
+square in validation). The mechanism: a gradual force reduction gives the
+piece's board contact time to damp out uneven pad-loading before full
+separation, instead of removing it all at once while spin is still
+building.
+
+**This was validated, not assumed, against a specific alternative
+hypothesis: that the ramp's apparent fix was really a time-budget
+artifact, or worse, a success-check timing artifact (see D9).** A three-way
+paired comparison on 20 squares — (A) instant release, (B) the ramp, (C)
+instant release plus a no-op dwell padded to match (B)'s own total
+macro-step count exactly — found C behaved like A (70% success), not B
+(100%), even though C had at least as much total time as B on every square.
+This ruled out "more time alone" as the explanation. It also directly
+surfaced D9 (is_success had no piece-settle requirement, so B's early
+100% figure was partly an artifact of checking success while the ramp was
+still mid-transition) — D9 was fixed first, and the ramp was re-validated
+against the corrected, now-production `is_success`, not the criterion that
+produced the original misleading 100%.
+
+**Full-board validation (Section 5 Part D), corrected `is_success`
+throughout, 3 fixed targets (e5, a1, h8) x 63 start squares each, 350-step
+episode budget:**
+- (ii) old instant release: 149/189 (78.8%)
+- (iii) Candidate 1: **187/189 (98.9%)**, zero regressions relative to (ii)
+  on any square across all three targets.
+
+Real CLI regression (`scripts/scripted_expert.py --task t1 --episodes 50
+--max-episode-steps 350`, default random start/target sampling — the actual
+suite D7 originally reported 46/50 against): **50/50 (100%)**, confirming
+no D7 regression from either the release-ramp change or the `is_success`
+piece-settle requirement.
+
+**Residual, out of scope:** 2 of the 189 full-board episodes still fail
+(c2->a1, h1->h8), both `piece_off_board` during `traverse`/`place` --
+*before release even begins* -- present under both (ii) and (iii)
+identically, so not a Candidate-1 regression. This is a different,
+unrelated mechanism, logged separately as D10.
+
+**Single-environment-build caveat:** all of the above (the A/B/C
+comparison, the full-board validation, the CLI regression) was run in one
+process, on one MuJoCo/BLAS build, within one session. D7 and D8's own
+diagnostic history (the 51/63-vs-53/63 discrepancy, the 12-vs-10
+failing-square-list discrepancy) already established that this specific
+system is sensitive to small numeric differences between environments
+(BLAS backend, MuJoCo point version) — enough to tip a handful of
+borderline squares between outcomes. The 98.9%/100% figures above should be
+read as "this fix is a large, real improvement, validated at full-board
+scale," not as "exactly 187/189 and 50/50 are stable constants that will
+reproduce bit-for-bit on a different machine or a future MuJoCo version."
+Re-validating on the actual training/cluster environment before leaning on
+these exact numbers (e.g. before finalising P3's pilot matrix) is still
+worth doing, per the same standing lesson.
+
+---
+
+## D9 — `is_success` has no piece-velocity/settle requirement; can register success mid-spin
+
+**Date:** 2026-08-27
+**Status:** RESOLVED, fixed at the source in `robochess_env.py`.
+
+**Finding:** the production `_is_success()`/`_build_info()` criterion
+(`on_square` AND `resting` AND `released`) has no requirement that the piece
+itself be at rest -- no velocity or settle-streak check on the piece's
+linear/angular velocity, unlike the analogous arm/gripper settle-check
+(`SETTLE_CONSECUTIVE_STEPS = 3` in `scripts/scripted_expert.py`), which does
+require multiple consecutive low-velocity readings before treating a
+waypoint as settled. Traced at per-physics-substep resolution across
+several squares' unmodified (instant) release, `is_success` fires while the
+piece still has substantial angular velocity in multiple cases -- observed
+up to 17.7 rad/s (f6), 13.16 rad/s (e2), 7.82 rad/s (c1), 5.52 rad/s (g7),
+4.91 rad/s (f1) -- not at rest by any reasonable standard.
+
+**Consequence for existing numbers:** every D7 and D8 success/failure count
+to date (18/18, 46/50 CLI regression, 51-53/63 full scan) was measured
+against this same under-specified criterion, so in principle some recorded
+"successes" could be catching the piece mid-transient rather than
+genuinely settled. A direct recheck was run: the same 20-square sample used
+in D8's release-instrumentation work (the 10 originally-failing squares
+plus 10 chosen passing squares) was re-evaluated under a corrected
+criterion -- requiring ctrl to have reached its fully-open target, plus the
+piece's angular speed below 0.05 rad/s for 3 consecutive macro-steps
+counted from that point forward, not from episode/phase start -- and **no
+square's pass/fail outcome flipped**. The existing rates therefore likely
+hold approximately, but this has only been confirmed at n=20, not at the
+original 50-63 square sample sizes, so they remain formally unverified at
+those larger Ns.
+
+**Standing rule:** any future D8 fix must be validated against this
+corrected (settled) success criterion, not the current production one -- a
+fix that only looks good under the current criterion could be passing
+because it moves *when* success is checked (catching a calmer instant)
+rather than because it genuinely resolves the release-induced instability.
+This was directly observed during D8's fix-design work: an initial 15-step
+gripper-open ramp appeared to fix 100% of a small sample under the
+production criterion, but tracing revealed success was registering while
+ctrl was still mid-ramp (not yet at its open target) in every case -- see
+D8's fix-design session log for the full account, including the corrected
+re-run that confirmed the ramp's benefit holds even under the tightened
+criterion.
+
+### Resolution (2026-08-27)
+
+**Option chosen: add the missing piece-settle requirement directly to
+`RoboChessEnv._is_success()`/`_build_info()`** (the alternative considered
+was a lighter single-step velocity check with no consecutive-streak
+requirement, which would have avoided adding new per-episode state but
+reintroduces the exact "a single instantaneous reading can be a transient"
+risk this project already fixed once for the arm/gripper settle-check --
+rejected for the same reason).
+
+`_success_terms()` now returns a fourth condition, `settled`: the piece's
+own angular speed has stayed below `PIECE_ANG_SETTLE_TOL` (0.05 rad/s -- the
+same value established throughout this investigation, not re-derived) for
+`PIECE_SETTLE_CONSECUTIVE_STEPS` (3) consecutive `step()` calls, counted
+continuously rather than gated by the other three conditions. This required
+new persistent state, `self._piece_ang_settled_streak`, since everything
+`_is_success()` previously computed was a pure function of the current
+physics state with no memory across steps. It is initialised in `__init__`
+and explicitly reset to 0 in `reset()`, so it cannot leak between episodes
+(a forgotten reset here would have silently corrupted the following
+episode's early steps rather than failing loudly).
+
+**Blast radius, checked before implementing:**
+- `RoboChessEnv.step()`'s own `terminated` depends on `_is_success()`, so
+  every consumer now takes longer to terminate on success, not only the
+  scripted expert -- this was already anticipated from Section 5 Part A's
+  step-budget investigation.
+- `SparsePickAndPlaceReward.step()` uses `info["is_success"]` directly as
+  the real (non-relabelled) training reward -- this change alters actual RL
+  reward *value* timing for the sparse arm of the 2x2x2 study, not just
+  diagnostics. `ShapedPickAndPlaceReward` was checked and is NOT affected in
+  its reward *value* (it computes a continuous distance-based reward every
+  step, independent of `is_success`); it only inherits the same later-
+  termination timing every consumer gets.
+- Four existing unit tests constructed a scenario, took exactly one
+  `env.step()`, and asserted immediate success/termination -- these needed
+  updating to drive `PIECE_SETTLE_CONSECUTIVE_STEPS - 1` steps first:
+  `tests/test_env_basic.py::test_success_when_all_three_conditions_hold`,
+  `tests/test_env_basic.py::test_terminated_and_truncated_are_mutually_exclusive`,
+  `tests/test_t1_pick_and_place.py::test_success_when_all_three_conditions_hold`,
+  and `tests/test_t1_pick_and_place.py::test_sparse_reward_is_exactly_zero_or_one`.
+  The fourth of these was missed in the initial grep-based blast-radius scan
+  (it doesn't reference `is_success`/`piece_resting`/etc. by name, only
+  `reward`) and was only caught by actually running the full suite --
+  worth remembering that a name-based blast-radius search is not a
+  substitute for running the tests.
+
+**Validation:** full test suite 48/48 passing after the fix and test
+updates. Full-board validation (Section 5 Part D): three conditions across
+3 fixed targets (e5, a1, h8) x 63 start squares each, corrected
+(now-production) `is_success` throughout --
+(ii) old instant release + 350-step budget: 149/189 (78.8%);
+(iii) Candidate 1 (ramped release + piece-settle gate) + 350-step budget:
+187/189 (98.9%), zero regressions relative to (ii) on any square across all
+three targets. See D8's entry for the two residual failures (both
+`piece_off_board` during `traverse`/`place`, before release even begins --
+a different, out-of-scope mechanism, present under both conditions, not a
+Candidate-1 regression).
+
+---
+
+## D10 — `piece_off_board` during `traverse`/`place` on long diagonal reaches (c2->a1, h1->h8); not a D8/D9 mechanism
+
+**Date:** 2026-08-27
+**Status:** open, not investigated. Logged so it isn't lost, not diagnosed.
+
+**Finding:** Section 5 Part D's full-board validation (3 targets x 63 start
+squares, both the old-release and Candidate-1 conditions) found 2 episodes
+that fail regardless of the release fix: c2->a1 and h1->h8, both reported
+as `outcome: "piece_off_board"`, with `failed_phase` `"place"` (c2->a1) and
+`"traverse"` (h1->h8) respectively -- i.e. the piece leaves the board
+*before release is ever reached*, while still gripped and in transit.
+Identical under both (ii) (old instant release) and (iii) (Candidate 1),
+confirming this is not a release-mechanism issue and not a Candidate-1
+regression.
+
+**Not yet investigated:** whether this is reach-dependent (both failing
+pairs are long diagonal traversals, though not the most extreme corner-to-
+corner cases), a grip-security issue distinct from D7/D8's grasp-height
+findings, or something else entirely. No diagnostic work has been done
+beyond noticing the two cases and confirming they predate the release fix.
+
+**Consequence:** not a blocker for closing D8/D9 -- both are release-phase
+fixes and this failure occurs upstream of release. Worth root-causing
+before leaning on a "100% board coverage" claim anywhere, but does not
+need to hold up the current commit.

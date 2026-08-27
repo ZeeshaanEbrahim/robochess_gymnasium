@@ -24,6 +24,7 @@ import argparse
 import collections
 import sys
 from pathlib import Path
+from typing import Callable
 
 import mink
 import mujoco
@@ -134,6 +135,45 @@ ARM_DOF = 6
 # where the arm actually travels down to grasp height and any tilt drift or
 # torque buildup could start there, not only once the gripper starts closing.
 LOGGED_PHASES = frozenset({"approach", "descend", "close"})
+
+# --- D8 fix, Candidate 1: ramped release + piece-settle gate -------------
+# D8 (DECISIONS.md) found the instant gripper-open command at "release"
+# imparts violent, chaotic spin on the piece (12-30 rad/s, later measured up
+# to ~50 rad/s at per-substep resolution, universal across passing and
+# failing squares alike) -- the head-only grasp D7 committed to is
+# rotationally underconstrained, and dropping compressive force in one step
+# lets it spin freely. Validated fix: ramp the open command down gradually
+# instead of jumping, which gives the piece's board contact time to damp out
+# uneven pad-loading before full separation, rather than removing it all at
+# once while spin is still building. A paired A/B/C comparison (fix-design
+# session, 2026-08-27) confirmed this is a genuine release-dynamics effect,
+# not merely a larger time budget -- an instant-release control given the
+# same total macro-step budget as the ramp did not match the ramp's success
+# rate.
+RELEASE_RAMP_MACRO_STEPS = 15
+
+# D9 (DECISIONS.md): the production is_success check has no requirement
+# that the piece itself be at rest, and was found to register success while
+# the piece still had substantial angular velocity. "release" is therefore
+# NOT considered complete on the arm/gripper settle check every other
+# waypoint uses -- it instead requires ctrl to have reached its fully-open
+# target AND the piece's own angular speed to stay below this threshold for
+# SETTLE_CONSECUTIVE_STEPS consecutive macro-steps, counted from the
+# macro-step ctrl first reaches that target (not from waypoint start).
+# 0.05 rad/s sits an order of magnitude above the ~0.00-0.01 rad/s noise
+# floor measured on already-settled pieces during that investigation.
+PIECE_ANG_SETTLE_TOL = 0.05  # rad/s
+
+
+def _release_ramp(i: int) -> float:
+    """Gripper ctrl for macro-step `i` of the "release" waypoint: linear
+    ramp from fully closed to fully open over RELEASE_RAMP_MACRO_STEPS,
+    then held open. Lands on exactly GRIPPER_OPEN_CTRL at
+    i == RELEASE_RAMP_MACRO_STEPS - 1, which `_drive_to`'s piece-settle gate
+    relies on to detect "ctrl has reached its final target"."""
+    if i < RELEASE_RAMP_MACRO_STEPS:
+        return GRIPPER_GRIP_CTRL * (1.0 - (i + 1) / RELEASE_RAMP_MACRO_STEPS)
+    return GRIPPER_OPEN_CTRL
 
 
 class IKFailure(RuntimeError):
@@ -361,6 +401,8 @@ class ScriptedExpert:
         budget: int,
         label: str | None = None,
         log: list[dict] | None = None,
+        gripper_ctrl_fn: Callable[[int], float] | None = None,
+        piece_settle: bool = False,
     ):
         """Hold a joint target until arm *and* gripper settle, or the budget runs out.
 
@@ -381,15 +423,35 @@ class ScriptedExpert:
         be caught); and visibly, as an earlier ramp-based mitigation attempt
         stopping at a shallow aperture instead of a firm one.
 
+        `gripper_ctrl_fn`, if given, overrides `gripper_ctrl` with
+        `gripper_ctrl_fn(i)` recomputed each macro-step -- used by "release"
+        (D8 fix, Candidate 1) to ramp the open command down gradually
+        instead of commanding it in one jump.
+
+        `piece_settle`, if True, replaces the arm/gripper settle check above
+        with: ctrl has reached its final commanded value for this waypoint
+        AND the piece's own angular speed has stayed below
+        PIECE_ANG_SETTLE_TOL for SETTLE_CONSECUTIVE_STEPS consecutive
+        macro-steps, counted from the macro-step ctrl first reaches that
+        final value (not from waypoint start). D9 (DECISIONS.md) found the
+        production is_success check has no such requirement on the piece
+        itself and can register success mid-spin; this is that corrected
+        criterion, used here to decide when "release" is actually done,
+        independent of whatever is_success later reports.
+
         If `log` is a list, one diagnostics dict (D7) is appended per step,
         captured immediately after `env.step()` so it reflects the resulting
         state. Purely additive: reads state, writes nothing back into the sim.
 
         Yields the env's step tuple so the caller can react to termination.
         """
-        action = self._to_action(q_arm, gripper_ctrl)
+        base = self.base
+        ctrl_reached_final_step: int | None = None
+        piece_settled_streak = 0
         settled_streak = 0
         for i in range(budget):
+            step_ctrl = gripper_ctrl_fn(i) if gripper_ctrl_fn is not None else gripper_ctrl
+            action = self._to_action(q_arm, step_ctrl)
             obs, reward, terminated, truncated, info = self.env.step(action)
             if log is not None:
                 log.append(self._diagnostics_sample(label, i))
@@ -397,11 +459,26 @@ class ScriptedExpert:
             if terminated or truncated:
                 return
 
-            arm_settled = np.max(np.abs(self.base.data.qpos[:ARM_DOF] - q_arm)) < self.settle_tol
-            grip_settled = abs(self.base.data.qvel[self.base._grip_vadr]) < 0.02
-            settled_streak = settled_streak + 1 if (arm_settled and grip_settled) else 0
-            if settled_streak >= SETTLE_CONSECUTIVE_STEPS:
-                return
+            if not piece_settle:
+                arm_settled = np.max(np.abs(base.data.qpos[:ARM_DOF] - q_arm)) < self.settle_tol
+                grip_settled = abs(base.data.qvel[base._grip_vadr]) < 0.02
+                settled_streak = settled_streak + 1 if (arm_settled and grip_settled) else 0
+                if settled_streak >= SETTLE_CONSECUTIVE_STEPS:
+                    return
+                continue
+
+            if ctrl_reached_final_step is None and step_ctrl == gripper_ctrl:
+                ctrl_reached_final_step = i
+                piece_settled_streak = 0
+            if ctrl_reached_final_step is not None:
+                piece_ang_speed = float(np.linalg.norm(
+                    base.data.qvel[base._piece_vadr + 3: base._piece_vadr + 6]
+                ))
+                piece_settled_streak = (
+                    piece_settled_streak + 1 if piece_ang_speed < PIECE_ANG_SETTLE_TOL else 0
+                )
+                if piece_settled_streak >= SETTLE_CONSECUTIVE_STEPS:
+                    return
 
     def pinch_pos(self) -> np.ndarray:
         """Where the pinch point ACTUALLY is right now, in world coordinates."""
@@ -429,9 +506,18 @@ class ScriptedExpert:
         Returns a dict with the final joint target (so a following waypoint
         holding the SAME pose can reuse it instead of re-solving back to the
         uncompensated one), plus the env's last step tuple and diagnostics.
+
+        `label == "release"` gets the D8 fix (Candidate 1): the open command
+        is ramped down gradually (`_release_ramp`) instead of commanded in
+        one jump, and completion is gated on the piece itself settling
+        (`piece_settle=True` in `_drive_to`) rather than the arm/gripper
+        settle check every other waypoint uses.
         """
+        is_release = label == "release"
         for obs, _, terminated, truncated, info in self._drive_to(
-            q_arm, grip, budget, label=label, log=log
+            q_arm, grip, budget, label=label, log=log,
+            gripper_ctrl_fn=_release_ramp if is_release else None,
+            piece_settle=is_release,
         ):
             pass
 
@@ -495,7 +581,12 @@ class ScriptedExpert:
             ("lift", np.array([px, py, CLEAR_Z]), GRIPPER_GRIP_CTRL, 25),
             ("traverse", np.array([gx, gy, CLEAR_Z]), GRIPPER_GRIP_CTRL, 30),
             ("place", np.array([gx, gy, PLACE_Z]), GRIPPER_GRIP_CTRL, 25),
-            ("release", np.array([gx, gy, PLACE_Z]), GRIPPER_OPEN_CTRL, 35),
+            # Budget raised from 35 (D8 fix, Candidate 1): the ramp itself
+            # takes RELEASE_RAMP_MACRO_STEPS=15, and the piece-settle gate
+            # (see PIECE_ANG_SETTLE_TOL above) can take well beyond that on
+            # slower-to-damp squares -- measured up to 69 macro-steps in one
+            # 20-square validation sample. 120 leaves real margin above that.
+            ("release", np.array([gx, gy, PLACE_Z]), GRIPPER_OPEN_CTRL, 120),
             ("retreat", np.array([gx, gy, CLEAR_Z]), GRIPPER_OPEN_CTRL, 25),
         ]
 
