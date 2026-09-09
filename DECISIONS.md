@@ -744,8 +744,10 @@ piece-settle requirement.
 **Residual, out of scope:** 2 of the 189 full-board episodes still fail
 (c2->a1, h1->h8), both `piece_off_board` during `traverse`/`place` --
 *before release even begins* -- present under both (ii) and (iii)
-identically, so not a Candidate-1 regression. This is a different,
-unrelated mechanism, logged separately as D10.
+identically, so not a Candidate-1 regression. Later measurement showed these
+are two *different* unrelated mechanisms, not one: h1->h8 is a geometric
+excursion with the grip intact (**D10**) and c2->a1 is a contact-solver force
+spike and ejection (**D11**). Both are logged separately.
 
 **Single-environment-build caveat:** all of the above (the A/B/C
 comparison, the full-board validation, the CLI regression) was run in one
@@ -870,28 +872,179 @@ Candidate-1 regression).
 
 ---
 
-## D10 — `piece_off_board` during `traverse`/`place` on long diagonal reaches (c2->a1, h1->h8); not a D8/D9 mechanism
+## D10 — `piece_off_board` on h1->h8: the carried piece clips the board's XY bound during `traverse`, grip fully intact
 
-**Date:** 2026-08-27
-**Status:** open, not investigated. Logged so it isn't lost, not diagnosed.
+**Date:** 2026-08-27 (logged); characterized 2026-09-10 (verification session)
+**Status:** open — characterized, not root-caused. No fix attempted.
 
-**Finding:** Section 5 Part D's full-board validation (3 targets x 63 start
-squares, both the old-release and Candidate-1 conditions) found 2 episodes
-that fail regardless of the release fix: c2->a1 and h1->h8, both reported
-as `outcome: "piece_off_board"`, with `failed_phase` `"place"` (c2->a1) and
-`"traverse"` (h1->h8) respectively -- i.e. the piece leaves the board
-*before release is ever reached*, while still gripped and in transit.
-Identical under both (ii) (old instant release) and (iii) (Candidate 1),
-confirming this is not a release-mechanism issue and not a Candidate-1
-regression.
+**Split note:** this entry and D11 were originally logged as a single D10
+covering both residual full-board failures, on the assumption they shared a
+mechanism ("long diagonal reaches"). Measurement showed they do not share
+one — the two failures have nothing in common beyond both setting
+`piece_off_board` — so they were split. See "Correction to the original
+framing" below; D11 carries the c2->a1 case.
 
-**Not yet investigated:** whether this is reach-dependent (both failing
-pairs are long diagonal traversals, though not the most extreme corner-to-
-corner cases), a grip-security issue distinct from D7/D8's grasp-height
-findings, or something else entirely. No diagnostic work has been done
-beyond noticing the two cases and confirming they predate the release fix.
+**Finding:** on h1->h8 the piece trips `_piece_off_board()` at global step
+76, in `traverse`, at `phase_step` 2, on the `outside_xy` branch. The grip
+is entirely secure at that moment and the piece's own dynamics are
+unremarkable. It is carried out of the board's XY footprint by the arm; it
+does not fall, slip, or come loose.
 
-**Consequence:** not a blocker for closing D8/D9 -- both are release-phase
-fixes and this failure occurs upstream of release. Worth root-causing
-before leaning on a "100% board coverage" claim anywhere, but does not
-need to hold up the current commit.
+Board geometry: centre (0.0000, 0.5200), slab half-extent (0.3120, 0.3120),
+plus the predicate's 0.5 * SQUARE_PITCH margin (0.0390) gives an XY bound of
+0.3510.
+
+```
+step  phase      pstep  piece_xyz                   lin    ang   ncon  Lnorm  Rnorm
+  73  lift          17  ( 0.2668, 0.2446, 0.8373)  0.01   0.00     6  44.61  44.62
+  74  traverse       0  ( 0.2817, 0.2940, 0.8391)  2.60   0.53     6  44.57  45.58
+  75  traverse       1  ( 0.3305, 0.3759, 0.8541)  2.17   0.41     6  44.35  44.79
+  76  traverse       2  ( 0.3551, 0.4504, 0.8602)  1.77   0.32     6  44.45  44.73  <-- trips
+```
+
+At the trip: 6 pad-piece contacts, left/right normal forces balanced at
+44.45 / 44.73 N (the ordinary steady-grip value), angular speed 0.32 rad/s,
+linear speed 1.77 m/s, height 0.8602 (transit height, well clear of the
+board). x = 0.3551 against the 0.3510 bound — **an excess of 4.05 mm**.
+
+**The excursion is in the path, not in the piece.** h1 and h8 are on the
+same file: h1 = (0.273, 0.247), h8 = (0.273, 0.793). A straight-line
+traverse holds x = 0.273 and clears the bound by 78 mm. The executed path
+bulges outward in +x over three macro-steps — 0.2678 (end of `lift`) ->
+0.2817 -> 0.3305 -> 0.3551 — i.e. the arm swings an arc that leaves the
+board footprint while the piece is still gripped and airborne.
+
+**h1->h8 is the extreme member of a cluster, not an isolated case.** Peak
+XY excursion beyond the bound across all 189 episodes (negative = margin
+remaining):
+
+```
+  +145.13  c2->a1   FAIL   place       (D11, a different mechanism)
+    +4.05  h1->h8   FAIL   traverse
+   -16.50  h2->h8   ok     traverse
+   -27.92  g1->h8   ok     traverse
+   -37.02  a8->a1   ok     traverse
+   -38.37  h3->h8   ok     traverse
+```
+
+187 of 189 never exceed the bound, and only one passing episode comes within
+20 mm of it. But the near-bound cases form an ordered family — h1, h2, h3
+-> h8 and g1, g2 -> h8 — all shaving the same edge during `traverse`. h1->h8
+is the first to cross, not a singular outlier.
+
+**Deterministic.** Identical `outcome` / `failed_phase` / `steps`
+(`piece_off_board` / `traverse` / 76) across 5 seeds and across 3 repeat runs
+at the same seed. This is expected rather than informative: with jitter=0 the
+env reset is deterministic and the squares are forced, so the seed cannot
+influence anything. There is no stochastic component here.
+
+**Not a release mechanism.** Identical under condition (ii) (old instant
+release) and (iii) (Candidate 1), and the episode terminates in `traverse`,
+two waypoints before `release` is ever entered — the release code does not
+execute on this episode at all.
+
+**Correction to the original framing.** The first version of this entry
+described both residual failures as "long diagonal traversals". That is
+wrong on the measured geometry and would misdirect a fix: h1->h8 is a
+straight 546 mm traverse along a single file with zero diagonal component,
+and D11's c2->a1 is a 174 mm move of 2 files and 1 rank — one of the shorter
+moves in the set. Neither is a long diagonal.
+
+**Untested hypothesis — reach extremity.** Both this failure and D11's
+target a corner square (h8 here, a1 there), which D2 measured at ~99% of the
+UR5e's 850 mm rated reach, and there were zero failures across all 63 starts
+for the central target e5. That is suggestive but **not yet distinguishable
+from coincidence**: only 3 targets were swept and 2 of them are corners, so
+"the target is a corner" and "the target is not e5" select exactly the same
+episodes in this data. The observation has no discriminating power until the
+sweep is widened. What would separate them: add non-corner edge targets (e.g.
+a4, d1, h4) and the remaining corners (a8, h1) and compare per-target rates.
+Logged here rather than acted on.
+
+**Also unexamined:** `_piece_off_board()` is a pure XY/Z extent test with no
+reference to grip state or height, so it fires on a securely gripped piece in
+mid-transit. Whether that is the intended contract for the predicate is a
+separate question from why the trajectory bulges, and neither has been
+settled.
+
+**Consequence:** not a blocker for D8/D9 — both are release-phase fixes and
+this occurs upstream of release. Worth root-causing before leaning on a
+"100% board coverage" claim anywhere.
+
+---
+
+## D11 — `piece_off_board` on c2->a1: contact-force spike during `place`, piece ejected
+
+**Date:** 2026-08-27 (logged as part of D10); split out and characterized
+2026-09-10 (verification session)
+**Status:** open, not investigated beyond the measurements below. No fix
+attempted.
+
+**Finding:** on c2->a1 the piece trips `_piece_off_board()` at global step
+118, in `place`, at `phase_step` 23, on the `outside_xy` branch. Unlike D10
+this is not a boundary graze — the piece is violently ejected from a
+nominally settled placement.
+
+```
+step  phase   pstep  piece_xyz                     lin      ang    ncon  Lnorm   Rnorm
+ 112  place      17  (-0.2705, 0.2431, 0.7614)    0.00     0.02     16   43.54  194.98
+ 113  place      18  (-0.2710, 0.2424, 0.7610)    0.44    32.59     13   69.02  108.05
+ 114  place      19  (-0.2703, 0.2433, 0.7607)    0.07     5.43     18  318.61  306.55
+ 115  place      20  (-0.2709, 0.2442, 0.7605)    0.08    13.81      9   42.94   75.28
+ 116  place      21  (-0.2699, 0.2425, 0.7604)    1.04    60.17     12    4.45   22.93
+ 117  place      22  (-0.2697, 0.2399, 0.7536)    1.10    61.80      6   11.40    0.00
+ 118  place      23  ( 0.4961, 0.3462, 2.0674)  151.86    71.38      0    0.00    0.00  <-- trips
+```
+
+The piece is at the a1 target ((-0.273, 0.247)) at board height when the
+sequence starts. Then, over six macro-steps:
+
+- pad-piece contact count thrashes: 16 -> 13 -> 18 -> 9 -> 12 -> 6 -> 0
+- normal forces spike to **318.61 N / 306.55 N**, against the ~44 N
+  steady-grip baseline seen everywhere else (see D10's log for comparison)
+- left/right loading goes badly asymmetric before that — 43.54 vs 194.98 N
+  at step 112
+- angular speed climbs 0.02 -> 32.59 -> 5.43 -> 13.81 -> 60.17 -> 61.80 rad/s
+- the piece exits at **151.86 m/s** to (0.4961, 0.3462, 2.0674), i.e. 2.07 m
+  up, with zero remaining contacts
+
+Peak excursion beyond the board's XY bound is **+145.13 mm**, against
++4.05 mm for D10 — the two are not the same size of event, let alone the same
+kind.
+
+**Observation, not a diagnosis:** ~300 N contact forces and a 151.86 m/s exit
+velocity on a piece that was stationary six steps earlier are characteristic
+of a contact-solver blow-up rather than of the piece being pushed or dropped
+off the board. That is where the measurements point; it has not been
+confirmed, and no attempt has been made to identify what drives the solver
+into that state. Per the D7 and D8 pattern, the first plausible-sounding
+mechanism is not being adopted.
+
+**Deterministic.** Identical `outcome` / `failed_phase` / `steps`
+(`piece_off_board` / `place` / 118) across 5 seeds and 3 repeat runs at the
+same seed, for the same reason as D10 — the reset is deterministic and the
+squares are forced.
+
+**Not a release mechanism.** Identical under condition (ii) (old instant
+release) and (iii) (Candidate 1), and the episode terminates in `place`, one
+waypoint before `release` is entered.
+
+**Geometry, against the original framing:** c2 = (-0.117, 0.325),
+a1 = (-0.273, 0.247) — a 174 mm move of 2 files and 1 rank, one of the
+*shorter* moves in the sweep. The "long diagonal reach" description this
+failure inherited from the original combined D10 entry does not hold. See
+D10's "Correction to the original framing".
+
+**Open question not yet answered:** the captured log begins at `place` step
+15 and the left/right asymmetry is already present at step 112 (43.54 vs
+194.98 N), so whatever initiates this may originate earlier in `place`, or in
+`descend`/`close`. Logging the full episode from `approach` is the obvious
+next measurement.
+
+**Reach hypothesis:** this failure also targets a corner square (a1, ~99% of
+rated reach per D2). See D10's "Untested hypothesis — reach extremity" — the
+same caveat applies, and the same widened sweep would test it for both.
+
+**Consequence:** not a blocker for D8/D9 — a release-phase fix cannot affect
+an episode that terminates before `release`. Does need root-causing before
+any "100% board coverage" claim.

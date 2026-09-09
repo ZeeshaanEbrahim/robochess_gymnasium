@@ -111,6 +111,12 @@ including the single-environment-build caveat on these exact figures.
 
 Two residual failures at full-board scale (c2->a1, h1->h8), unrelated to
 D8/D9 (both `piece_off_board` during `traverse`/`place`, before release is
-ever reached, identical under old and new release), are logged separately
-as **D10** in `DECISIONS.md` -- open, not yet investigated, not a blocker
-for calling D8/D9 done.
+ever reached, identical under old and new release), are logged separately in
+`DECISIONS.md`. Diagnostic characterization showed they do not share a
+mechanism, so they are split: **D10** (h1->h8 -- the arm carries a securely
+gripped piece 4.05 mm past the board's XY bound during `traverse`; a
+trajectory/predicate issue, with no anomaly in the piece's own dynamics) and
+**D11** (c2->a1 -- pad contact forces spike to ~300 N during `place` and the
+piece is ejected at 151.86 m/s). Both open, neither root-caused, neither a
+blocker for calling D8/D9 done. The full-board sweep behind these figures is
+reproducible via `scripts/fullboard_validation.py`.
