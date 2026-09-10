@@ -1204,6 +1204,53 @@ Asymmetry does track corner placement — the `e5` controls peak at 20.0 and
 above, it does not predict failure among corner placements. Five targets is a
 thin basis and no cause is proposed.
 
+**Upstream perturbation resamples the failure set (new lead, 2026-09-10, from
+D10's fix work — not chased).** D10's fix changes only `traverse`, one
+waypoint upstream of `place`. Running the same 5-target / 315-episode sweep
+with it off, on, and on in a variant that also re-solves the final traverse
+pose gives 6, 4 and 7 failures — and **no pair fails in all three runs**. 13
+distinct pairs appear as failures across them. D10's own two pairs are the
+only ones that move deterministically; everything else here moves.
+
+What makes this more than noise is that the piece's own state entering
+`place` is *unchanged*. On the four instances above, with the fix off vs on:
+
+| pair | entry lin (m/s) | entry ang (rad/s) | peak force in `place` (N) | peak ang in `place` (rad/s) | outcome |
+|---|---|---|---|---|---|
+| c2->a1 | 0.391 / 0.390 | 0.045 / 0.046 | 625.2 / 246.2 | 71.4 / 71.5 | fails / fails |
+| a4->h1 | 0.395 / 0.392 | 0.064 / 0.065 | 506.3 / 248.1 | 104.7 / **0.67** | fails / **succeeds** |
+| g5->h1 | 0.396 / 0.393 | 0.074 / 0.066 | 556.5 / 254.8 | 42.4 / **0.60** | fails / **succeeds** |
+| g2->h1 | 0.392 / 0.392 | 0.072 / 0.071 | 366.3 / 308.6 | 113.3 / 54.9 | fails / **succeeds** |
+
+Entry linear and angular speed agree to three decimals in every row, while
+peak pad force halves and the outcome flips. So whatever the fix changed, it
+is not what `place` inherits in the piece's velocity — the candidate is the
+**arm's joint configuration at the start of `place`**, which sets the
+joint-space path `place` takes down to the board. That is D10's own mechanism
+applied to a different waypoint, and it is the first variable proposed here
+that is about the *arm* rather than the piece and the pads. Every measure
+tested in this entry so far — pre-existing rotation, asymmetry magnitude,
+peak total force — is a property of the piece or the contact, which may be
+why none of them discriminated.
+
+Two cautions before anyone chases it. First, the "no re-solve" variant holds
+the final commanded traverse pose *identical* to baseline and still resamples
+the failure set, so configuration at the waypoint's end cannot be the whole
+story — the route taken to it matters too. Second, and more important, a
+resampled failure set at a roughly constant rate is the signature of
+sensitive dependence, not of a discriminator waiting to be found: it may be
+that no upstream variable predicts individual failures and only the *rate* is
+meaningful. That would make "which squares fail" the wrong question, and it
+is consistent with this entry's existing "chaotic in outcome"
+characterization and with D8's. Either way, an aggregate improvement measured
+on one draw (D10's fix scoring 98.7% against a 98.1% baseline) is not
+evidence of a real gain — the spread across variants is wider than the
+difference between them.
+
 **Consequence:** not a blocker for D8/D9, which are release-phase fixes; all
-four instances lose the piece before `release` does anything. Does need
-root-causing before any "100% board coverage" claim.
+four instances lose the piece before `release` does anything. It *is* now the
+blocker for D10: D10's fix is implemented, validated on its own terms, and
+held disabled behind `TRAVERSE_TASK_SPACE` because enabling it trades four
+previously-passing episodes for the two it fixes, and D11 is not understood
+well enough to say whether that trade is real or an artifact of resampling.
+Does need root-causing before any "100% board coverage" claim.
