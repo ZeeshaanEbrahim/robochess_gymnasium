@@ -135,7 +135,29 @@ they do not share a mechanism, so they are split:
   changing what `place` inherits in the piece's own velocity. That is what
   gates D10's fix.
 
-Neither blocks calling D8/D9 done. The sweep behind these figures is 5
+**D14 (2026-09-10) is a candidate blocker for P3, currently mitigated but not
+cured.** Separately from D10/D11, a solver-side contact instability was
+measured on `f4->h1`: the piece gains 682 J and 4225 rad/s while the arm is
+stationary at a converged joint target with every commanded value in range,
+against ~1.75 W of available actuator power. It is deterministic, independent
+of the controller, and therefore reachable by any RL policy driving these
+actuators -- so a pilot-matrix cell that hits one trains on corrupted
+transitions. `RoboChessEnv` now truncates and labels any implausible piece
+state, which catches the class without curing it. See D14 in `DECISIONS.md`.
+
+**What T2's figures do and do not show (D15).** The T2 obstacle term fired
+**0/315 in both** T2 sweeps, with a maximum obstacle displacement of 0.000 mm
+anywhere. The scripted expert makes no attempt to avoid obstacles and still
+never disturbs one: the transit corridor clears a standing piece, and the
+placement policy excludes the only squares the gripper comes near. **T2 as
+currently configured therefore measures task completion with static clutter
+present, not active obstacle avoidance under pressure**, and its results must
+not be reported as the latter. The file-adjacent exclusion behind that policy
+is a kept precaution based on a bounding-sphere overestimate, not a measured
+clearance requirement -- see D15 in `DECISIONS.md`, which also lists what
+would need to change to make T2 a genuine avoidance task.
+
+Neither D10 nor D11 blocks calling D8/D9 done. The sweep behind these figures is 5
 targets x 63 starts = 315 episodes, 6 failures (98.1%), reproducible via
 `scripts/fullboard_validation.py --targets e5,a1,h8,a8,h1`. Widening it from
 3 targets to 5 also killed the "reach extremity" hypothesis the original

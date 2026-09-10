@@ -1247,6 +1247,32 @@ on one draw (D10's fix scoring 98.7% against a 98.1% baseline) is not
 evidence of a real gain — the spread across variants is wider than the
 difference between them.
 
+**Reclassified 2026-09-11: c2->a1 belongs to D14, not here.** D14's guard was
+sized against measured piece kinetic energy, and measuring these four
+instances separates them cleanly:
+
+| instance | peak piece KE | reads as |
+|---|---|---|
+| g2->h1 | 0.0665 J | D11 |
+| g5->h1 | 0.2143 J | D11 |
+| a4->h1 | 0.2247 J | D11 |
+| **c2->a1** | **224.90 J** | **D14** |
+
+c2->a1 is three orders of magnitude outside the range of the other three and
+within a factor of three of D14's own f4->h1 event (563 J). Its 151.86 m/s
+exit was always the outlier of this entry -- the original text called it
+"characteristic of a contact-solver blow-up rather than of the piece being
+pushed or dropped off the board", which is exactly what D14 later established
+independently, with the commanded side measured and ruled out. It is
+therefore counted under D14 from here on, and under D14's guard it now
+reports `terminated_reason = "solver_instability"` rather than
+`piece_off_board`.
+
+The historical record above is left as written rather than rewritten: the
+measurements in this entry were taken before D14 existed and are correct as
+measurements. What changes is which mechanism they are attributed to. The
+"four instances" framing of this entry now covers three.
+
 **Consequence:** not a blocker for D8/D9, which are release-phase fixes; all
 four instances lose the piece before `release` does anything. It *is* now the
 blocker for D10: D10's fix is implemented, validated on its own terms, and
@@ -1254,3 +1280,282 @@ held disabled behind `TRAVERSE_TASK_SPACE` because enabling it trades four
 previously-passing episodes for the two it fixes, and D11 is not understood
 well enough to say whether that trade is real or an artifact of resampling.
 Does need root-causing before any "100% board coverage" claim.
+
+---
+
+## D12 — T2's observation gains the obstacle positions, added at the wrapper, not in `RoboChessEnv`
+
+**Date:** 2026-09-10 (T2 design session)
+**Status:** decided and implemented.
+
+**The problem.** `RoboChessEnv._get_obs()` builds its vector by explicit index
+— arm qpos/qvel, gripper qpos/qvel, then the tracked piece's 7 qpos — so
+adding obstacle bodies to a scene does **not** change the observation. T2's
+obstacles would therefore be invisible to a policy, and T2 would be a task
+whose central difficulty the agent cannot perceive: it could only learn a
+cautious average policy, never obstacle avoidance. Measured incidentally: the
+observation stayed 21-dimensional with four obstacle bodies present, and T1's
+`test_reset_returns_correctly_shaped_obs` passed unchanged.
+
+**Decision.** T2's observation appends the (x, y) of every pool slot, taking
+the vector from 21 to 29 dimensions.
+
+**Where it is applied: on the wrapper, not the env.** `T2ObstacleTask`
+declares its own `observation_space` and extends the dict returned by
+`reset`/`step`. `RoboChessEnv._get_obs()` and its `observation_space` are
+untouched, as is `t1_pick_and_place.py`. T1's 48 existing tests pass
+unmodified, which is the check this rests on rather than inspection. The
+alternative — widening the base env — would have changed T1's observation
+contract to serve a task T1 does not have, and would have put D5's
+locked state-vector HER configuration in scope for a T2 change.
+
+**Constant size regardless of obstacle count.** All four slots always report,
+and an unused slot reports its fixed parked position (`PARKED_XY`, on the
+floor at (1.20 + 0.20i, -1.20)). A vector whose width varied with
+`n_obstacles` would make the observation space a function of an episode
+parameter, which P4's factorial cannot carry. The parked coordinates are a
+documented constant for this reason, not an arbitrary "somewhere off to the
+side".
+
+**Consequence for the reward arms, which must be named in the writeup.**
+`ShapedPickAndPlaceReward` and `SparsePickAndPlaceReward` are reused
+unchanged, which is the reusability goal T1's module docstring states, and
+the sparse arm picks up obstacles for free because T2 amends
+`info["is_success"]` with its fifth success term. The shaped arm does not.
+Its reward is a pure function of two distances — piece-to-goal and
+gripper-to-piece — and it never reads `is_success`, so **it receives no
+per-step signal about obstacles at all and can only avoid them by accident.**
+
+That is a real asymmetry between the two arms of the factorial, not a
+detail: any shaped-vs-sparse comparison on T2 is partly a comparison between
+a reward that can see the task's obstacles and one that structurally cannot.
+**This must be stated explicitly when T2's results are analysed**, not left
+for a reader to infer from the reward definitions. A third
+`ObstaclePenaltyReward` wrapper was considered and rejected for now: it would
+add a reward formulation the study design does not have.
+
+A related asymmetry already documented for T1 extends to obstacles:
+`compute_reward`, which HER uses to score relabelled goals, sees only
+`(achieved_goal, desired_goal)` and so cannot score obstacle disturbance —
+the same limitation that already applies to `released` and `settled`.
+
+---
+
+## D13 — T2 gets its own generated scene; the obstacle pool must not go in the shared `scene.xml`
+
+**Date:** 2026-09-10 (T2 implementation session)
+**Status:** decided and implemented.
+
+**Finding.** Adding T2's four free-jointed obstacle bodies to `assets/scene.xml`
+changes T1's behaviour, even though the obstacles are parked 1.2 m away on the
+floor and never touched by any episode:
+
+| | five-target sweep (315 episodes) |
+|---|---|
+| committed `scene.xml` | **309/315 (98.1%)** |
+| `scene.xml` + 4 parked obstacle bodies | **306/315 (97.1%)** |
+
+**149 of 315 episodes differ numerically.** Seven cross the success line:
+`g2->h1` and `g5->h1` start passing; `b2->a1`, `b2->h1`, `c3->h1`, `f4->h1`
+and `f8->e5` start failing, one of them flinging the piece 20 m. Extra DOFs
+change the constraint solve, and per D11 the marginal placement population is
+resampled by any such perturbation. D10's two pairs are bit-identical across
+both scenes (76 and 143 steps, same distances), as expected — that mechanism
+is structural, not marginal.
+
+**Why this mattered enough to change the design.** File-level isolation was
+not sufficient. `robochess_env.py`, `t1_pick_and_place.py` and `tests/` were
+untouched and all 48 tests passed — and T1's validated 309/315 still stopped
+reproducing. Every sweep figure recorded in D8, D9, D10 and D11 refers to the
+model as it was; sharing the scene would have silently made all of them refer
+to a different model.
+
+**Decision.** T2 loads `assets/scene_t2.xml`, via `RoboChessEnv`'s existing
+`scene_path` argument. `scene.xml` is unchanged, byte for byte.
+
+**Generated, not hand-maintained.** `scripts/build_t2_scene.py` produces
+`scene_t2.xml` from `scene.xml`; the generated file is committed, and a unit
+test in the normal suite asserts that regenerating reproduces it byte for
+byte, so the two cannot drift when board or piece geometry changes. The
+generator is the only thing that writes the file, and it says so in a header
+comment.
+
+**Consequence for T2's numbers.** T2's control is **not** T1's 309/315.
+The pool bodies perturb the solve whether or not obstacles are placed, so the
+only honest control for T2 is T2's own scene with `n_obstacles=0`, measured
+on the same five targets. Any T2-vs-T1 comparison that skips that control is
+comparing two different models.
+
+---
+
+## D14 — solver-side contact energy injection: the physics, not the controller, produces a ~600 J event
+
+**Date:** 2026-09-10 (T2 validation session)
+**Status:** open on cause, **mitigated** by a guard in `RoboChessEnv`.
+Remains a candidate blocker for P3's pilot matrix until the underlying
+instability is addressed. Deliberately NOT filed as a D11 instance — see
+"Why this is not D11" below.
+
+**Finding.** On `f4->h1`, the tracked piece acquires **682 J of kinetic
+energy** and 4224.69 rad/s of angular speed while the arm is essentially
+stationary and holding a converged joint target. The episode ends
+`piece_off_board` at step 117 with the piece **20.3 m** from the goal.
+
+```
+step pstep  lin m/s  ang rad/s      KE (J)  arm qvel  qfrc_con  ncon
+ 115    19     0.29      37.51      0.0038     0.064      11.0    26
+ 116    20   234.62    3541.22    563.5395     0.071    1411.5    24
+ 117    21   257.02    4224.69    682.2587     0.069       0.2    12
+```
+
+**The controller is not the source, and this was measured rather than
+assumed.** At the blow-up step:
+
+| quantity | value | normal? |
+|---|---|---|
+| commanded-vs-actual joint gap | 0.008 rad (0.5 deg) | arm is *at* its target |
+| `ctrl` | -2.7787 ... -1.2079 | range is +/-6.283; nowhere near a limit |
+| `ctrl` ever out of range, whole episode | never | — |
+| max normalized action | 1.000 | inside the [-1, 1] action space |
+| max actuator torque | 25.7 Nm | forcerange is 150/28 Nm |
+| max arm joint velocity | 0.069 rad/s | the arm is nearly still |
+
+The piece masses 0.0195 kg and gains **563.5 J inside a single 0.04 s
+macro-step (~14 kW)**, while the actuators, moving at 0.07 rad/s under
+<= 26 Nm, can deliver on the order of **1.75 W**. That is four orders of
+magnitude of energy the controller cannot have supplied, alongside a
+`qfrc_constraint` spike to 1411.5 and pad contacts collapsing to zero. The
+energy is injected by the constraint solve.
+
+**Deterministic, and not obstacle-related.** Identical across three repeat
+runs at jitter=0, seed=0, and identical at 0, 2 and 4 obstacles — placed or
+parked makes no difference.
+
+**Triggered by the presence of extra bodies, not by their behaviour.** The
+same pair is a clean success on T1's scene:
+
+| model | result |
+|---|---|
+| `scene.xml` (baseline, and 3 traverse-fix variants) | success, 135 steps, 1.3 mm |
+| `scene_t2.xml` (obstacle pool present, parked or placed) | 20256.5 mm |
+
+This is the D11 resampling sensitivity again — extra DOFs change the
+constraint solve — but the *magnitude* here is a different thing entirely.
+
+**Why this is not D11.** D11's four instances run 229.8-504.1 N of pad force
+with rotation onsets of 27.6-39.1 rad/s, and are consistent with a piece being
+squeezed out of a gripper. This is 3541-4225 rad/s and 682 J with the arm
+holding still: two orders of magnitude past D11's measured range, with no
+commanded motion to explain it. D11's own entry does already read
+"characteristic of a contact-solver blow-up", so the two may eventually merge
+— but merging them now would lose the distinction that matters, which is that
+this one is provably independent of what the controller does.
+
+**Consequence for P3, which is why this blocks rather than annoys.** A policy
+under PPO/SAC drives the same position actuators through the same
+`_scale_action` clip into the same model. Nothing about the scripted expert
+was protective: its commands were unremarkable and in range. A learning
+policy will visit far more pad-piece contact configurations than a tuned
+waypoint sequence does, and a single such event injects hundreds of joules
+into a transition the agent then trains on. Any pilot-matrix cell that hits
+one is learning from corrupted data, and neither the reward nor the success
+criterion currently notices.
+
+**Observation, not a diagnosis:** the piece geoms carry `solref = [0.004, 1]`
+against `timestep = 0.002` -- a contact time constant of exactly 2x the
+timestep, the documented minimum. The board slab is five times softer at
+`0.02`. Whether that margin is what makes this configuration brittle is
+untested as of this entry.
+
+**Mitigation in place, cause still open.** `RoboChessEnv` now carries a guard
+(`_solver_instability`): if the tracked piece's linear speed, angular speed
+or kinetic energy passes a sanity bound -- 10 m/s, 200 rad/s, 1 J, each set
+far above every legitimate figure this project has measured -- the episode is
+truncated immediately, `info["solver_instability"]` is set and
+`terminated_reason` becomes `"solver_instability"`, so the class is caught
+whatever produces it.
+
+Two details of the guard:
+
+* It **truncates rather than terminates** -- a solver artefact is not an MDP
+  terminal state, and labelling it terminal would teach a value function that
+  this configuration is a genuine end-state of the task.
+* On trigger it returns the **last known-good observation**, not the current
+  one. SB3 bootstraps the value function off the final observation when an
+  episode is truncated (unlike termination, where it does not), so returning
+  the spike state would feed it straight to the value estimate -- the one
+  path by which the corrupted state would still reach the learner despite the
+  episode ending. Measured on f4->h1: the returned `achieved_goal` is
+  `[0.2707, 0.2476, 0.7597]`, the piece resting where it was before the
+  spike, instead of `[-5.0, 2.3562, 5.0]` -- the corrupt state clipped to the
+  observation space's own bounds.
+
+Measured cost of the guard: a full 315-episode T1 sweep with it active
+returns the identical 309/315 and the identical failure set -- zero false
+positives. Ordinary successful episodes peak at 0.012-0.032 J and ordinary
+D11 instances at 0.067-0.225 J, against the 1 J bound.
+
+**The cause is not fixed by this.** The guard catches the event; it does not
+prevent it. D14 stays a candidate blocker until the underlying instability is
+addressed.
+
+---
+
+## D15 — T2's obstacle exclusion is a kept precaution, not a measured requirement; and T2 as configured tests clutter, not avoidance
+
+**Date:** 2026-09-11 (T2 validation session)
+**Status:** decided, and recorded chiefly so the second half is not forgotten
+when T2's results are written up.
+
+**What the exclusion is.** `T2ObstacleTask` draws obstacle squares at random,
+excluding the start square, the target square, and the *file-adjacent*
+neighbours of both (`file_adjacent_squares`). The stated reason was that the
+2F-85's open fingers overhang the file-adjacent square during `descend`.
+
+**That reason was an overestimate, and the correction belongs on the record.**
+It came from sweeping every moving geom against a standing piece's envelope
+with each geom treated as its MuJoCo **bounding sphere**, which put
+`ur_gripper_left_pad1` ~4 mm inside the file-adjacent square's envelope on
+every start square tested (rank-adjacent squares ~14 mm clear). Bounding
+spheres are larger than the pad boxes they enclose. Measured against real
+contacts instead:
+
+* An obstacle standing on a file-adjacent square is **never touched**. Over a
+  full episode its only contact, every step, is `obstacle_1_base` against
+  `board_slab`.
+* Forcing an obstacle onto a file-adjacent square (d4, f4, g1) or onto the
+  transit line (e5) produces no displacement at all: 0.00 mm, term never
+  fires, episode succeeds.
+* The measurement path is not silently broken -- forcing an obstacle onto the
+  *target* square does fire it, at 15.29 mm (e4->e6) and 174.21 mm (a1->h8).
+
+**Decision: keep the exclusion anyway.** It costs 2-4 squares out of 64, the
+margin is small either way, and a bystander adjacent to the square being
+grasped is the placement most likely to become unsafe if the grasp geometry,
+the approach, or `CLEAR_Z` changes. What must not happen is the exclusion
+being cited as a measured collision requirement, which is what the original
+docstring did; that wording is corrected.
+
+**The part that matters for the writeup.** Across both five-target
+315-episode T2 sweeps -- `n_obstacles=0` and `n_obstacles=2` -- the obstacle
+term fired **0/315 in both**, and the maximum obstacle displacement anywhere
+was 0.000 mm. The scripted expert makes no attempt whatsoever to avoid
+obstacles, and still never disturbs one.
+
+So, stated plainly: **T2 as currently configured measures task completion
+with static clutter present on the board. It does not measure active
+obstacle avoidance under pressure.** The transit corridor clears a standing
+piece, the exclusion removes the only squares the gripper comes near, and
+nothing in the task forces the arm to route around anything. That is a
+legitimate first version of an obstacle task and it exercises the machinery
+-- placement, the fifth success term, the observation extension -- end to
+end. It is not evidence that a policy can avoid obstacles, and no T2 result
+should be reported as if it were.
+
+What would change that, if a later phase wants the harder task: allow
+obstacles on the excluded squares, raise the obstacle count toward the full
+pool of 4, place obstacles deliberately on the straight line between start
+and target, or lower `CLEAR_Z` so transit no longer clears a standing piece
+by ~9-13 mm. Each is a deliberate difficulty increase, none is a bug fix, and
+none has been attempted.
+

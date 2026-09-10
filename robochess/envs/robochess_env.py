@@ -24,6 +24,32 @@ from gymnasium import spaces
 # Board square pitch. 78 mm, not the 57 mm tournament standard -- decision D1.
 SQUARE_PITCH = 0.078
 
+# --- D14: solver-instability guard ---------------------------------------
+# D14 (DECISIONS.md) measured the contact solver injecting ~563 J into the
+# tracked piece inside a single macro-step, taking it to 4224 rad/s and
+# 257 m/s, while the arm was stationary at a converged joint target with every
+# commanded value inside its actuator range and only ~1.75 W of actuator power
+# available. The controller cannot produce that, so no controller-side change
+# prevents it, and a learning policy driving the same actuators is exposed to
+# the same event -- with the corrupted transition landing in its replay buffer.
+#
+# These are sanity bounds, not task tolerances: anything past them is not a
+# hard episode, it is a physics artefact, and the episode is ended and
+# labelled rather than allowed to continue into the next observation.
+#
+# Sizing, against what this project has actually measured:
+#   linear   the tool itself peaks at ~2.6 m/s during `traverse`, and a piece
+#            dropped from transit height lands at ~1.5 m/s. 10 m/s is ~4x any
+#            legitimate figure and ~26x below D14's 257 m/s.
+#   angular  D8 measured release spin up to ~50 rad/s at per-substep
+#            resolution, the highest legitimate reading in the project.
+#            200 rad/s is 4x that and ~21x below D14's 4224 rad/s.
+#   energy   a 50 rad/s spin on this piece is ~0.005 J; 1 J is ~200x that
+#            and ~680x below D14's 682 J.
+PIECE_LIN_SPEED_SANITY = 10.0    # m/s
+PIECE_ANG_SPEED_SANITY = 200.0   # rad/s
+PIECE_KINETIC_ENERGY_SANITY = 1.0  # joules
+
 DEFAULT_SCENE = Path(__file__).resolve().parents[2] / "assets" / "scene.xml"
 
 # Number of arm actuators; the 7th actuator is the gripper. Split out because
@@ -323,6 +349,10 @@ class RoboChessEnv(gym.Env):
         self._piece_ang_settled_streak = 0  # D9: must not leak across episodes
 
         obs = self._get_obs()
+        # D14: the observation handed back if the solver guard fires. Seeded
+        # here so an instability on the very first step still has something
+        # uncorrupted to return.
+        self._last_good_obs = {k: v.copy() for k, v in obs.items()}
         info = self._build_info(terminated_reason=None)
         return obs, info
 
@@ -393,6 +423,31 @@ class RoboChessEnv(gym.Env):
         on_square, resting, released, settled, _ = self._success_terms()
         return bool(on_square and resting and released and settled)
 
+    def _piece_kinetic_energy(self) -> float:
+        """Translational + rotational KE of the tracked piece, in joules."""
+        v = self.data.qvel[self._piece_vadr : self._piece_vadr + 6]
+        mass = float(self.model.body_mass[self._piece_bid])
+        inertia = self.model.body_inertia[self._piece_bid]
+        return float(
+            0.5 * mass * float(np.dot(v[:3], v[:3]))
+            + 0.5 * float(np.dot(inertia, np.square(v[3:])))
+        )
+
+    def _solver_instability(self) -> bool:
+        """True if the piece's own state is physically implausible (D14).
+
+        A guard, not a task condition: it fires on states the contact solver
+        produced rather than on anything the controller commanded, and it is
+        deliberately set far above every legitimate figure this project has
+        measured (see the constants' sizing note).
+        """
+        v = self.data.qvel[self._piece_vadr : self._piece_vadr + 6]
+        return bool(
+            float(np.linalg.norm(v[:3])) > PIECE_LIN_SPEED_SANITY
+            or float(np.linalg.norm(v[3:])) > PIECE_ANG_SPEED_SANITY
+            or self._piece_kinetic_energy() > PIECE_KINETIC_ENERGY_SANITY
+        )
+
     def _build_info(self, terminated_reason: str | None) -> dict[str, Any]:
         dist = float(np.linalg.norm(self._achieved_goal() - self._desired_goal))
         on_square, resting, released, settled, xy_dist = self._success_terms()
@@ -409,6 +464,10 @@ class RoboChessEnv(gym.Env):
             "piece_height_above_board": float(self._achieved_goal()[2] - self._board_surface_z),
             "piece_off_board": bool(self._piece_off_board()),
             "bad_contact": bool(self._bad_contact()),
+            # D14. Always present so the info schema does not change shape
+            # depending on whether the guard fired.
+            "solver_instability": bool(self._solver_instability()),
+            "piece_kinetic_energy_j": self._piece_kinetic_energy(),
             "terminated_reason": terminated_reason,
             "elapsed_steps": int(self._elapsed_steps),
         }
@@ -438,23 +497,53 @@ class RoboChessEnv(gym.Env):
         reward = float(self.compute_reward(achieved, self._desired_goal))
         dist = -reward
 
-        success = self._is_success()
+        # D14: checked before anything else reads the state. A solver blow-up
+        # can satisfy the ordinary conditions on its way past them (the piece
+        # can cross its goal square at 250 m/s), so this takes precedence over
+        # success, off-board and bad-contact alike -- otherwise the episode
+        # would be recorded under whichever of those it happened to trip.
+        unstable = self._solver_instability()
+
+        success = (not unstable) and self._is_success()
         off_board = self._piece_off_board()
         bad_contact = self._bad_contact()
 
         reason = None
-        if success:
+        if unstable:
+            reason = "solver_instability"
+        elif success:
             reason = "success"
         elif off_board:
             reason = "piece_off_board"
         elif bad_contact:
             reason = "bad_contact"
 
-        terminated = reason is not None
-        truncated = (not terminated) and self._elapsed_steps >= self.max_episode_steps
+        # Truncation, not termination: the state is an artefact, not an MDP
+        # terminal state, and labelling it terminal would teach a value
+        # function that this configuration is a real end-state of the task.
+        if unstable:
+            terminated = False
+            truncated = True
+        else:
+            terminated = reason is not None
+            truncated = (not terminated) and self._elapsed_steps >= self.max_episode_steps
 
         info = self._build_info(reason)
-        return self._get_obs(), reward, terminated, truncated, info
+
+        obs = self._get_obs()
+        if unstable:
+            # D14: hand back the last uncorrupted observation, not this step's.
+            # SB3 bootstraps the value function off the FINAL observation when
+            # an episode is truncated (unlike termination, where it does not),
+            # so returning the spike state would feed a 250 m/s piece position
+            # straight into the value estimate -- the one place the corrupted
+            # state would still reach the learner despite the episode ending.
+            # truncated/info are unchanged: the episode still ends here and is
+            # still labelled solver_instability.
+            obs = {k: v.copy() for k, v in self._last_good_obs.items()}
+        else:
+            self._last_good_obs = {k: v.copy() for k, v in obs.items()}
+        return obs, reward, terminated, truncated, info
 
     # --------------------------------------------------------------- render
     def _make_camera(self) -> mujoco.MjvCamera:

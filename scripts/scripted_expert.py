@@ -820,10 +820,17 @@ class ScriptedExpert:
         if record["success"]:
             record["outcome"] = "success"
             record["failed_phase"] = None
+        elif info.get("terminated_reason"):
+            # Checked BEFORE the generic truncation label. D14's guard ends the
+            # episode by truncating rather than terminating (a solver artefact
+            # is not an MDP terminal state), so with the old ordering every
+            # solver_instability was reported as "truncated_step_limit" and
+            # vanished into the step-limit bucket. An ordinary step-limit
+            # truncation leaves terminated_reason None and still falls through
+            # to the branch below.
+            record["outcome"] = info["terminated_reason"]
         elif truncated:
             record["outcome"] = "truncated_step_limit"
-        elif info.get("terminated_reason"):
-            record["outcome"] = info["terminated_reason"]
         elif info.get("piece_off_board"):
             record["outcome"] = "piece_off_board"
         else:
