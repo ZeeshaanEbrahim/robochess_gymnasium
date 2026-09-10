@@ -1273,9 +1273,35 @@ measurements in this entry were taken before D14 existed and are correct as
 measurements. What changes is which mechanism they are attributed to. The
 "four instances" framing of this entry now covers three.
 
-**Consequence:** not a blocker for D8/D9, which are release-phase fixes; all
-four instances lose the piece before `release` does anything. It *is* now the
-blocker for D10: D10's fix is implemented, validated on its own terms, and
+**SUBSTANTIALLY RESOLVED (2026-09-11), as a side effect of D14.** Widening
+the piece's contact time constant from `solref = 0.004` (2x timestep) to
+`0.008` clears every instance in this entry. On the five-target 315-episode
+sweep, T1 goes from 309/315 to **313/315**, and the four failures that
+disappear are precisely a4->h1, c2->a1, g2->h1 and g5->h1 -- this entry's
+whole population -- with **zero newly broken episodes**. The only remaining
+failures on the board are D10's two structural pairs.
+
+So the mechanism this entry describes -- pad load going asymmetric and the
+piece being squeezed out of a still-closed gripper -- appears to have been a
+contact-stiffness artefact rather than a property of the head-only grasp D7
+committed to. That also explains why no measured variable ever discriminated
+failures from successes here: the discriminating variable was not in the
+grasp at all.
+
+Two reasons this says "substantially" and not "resolved":
+
+1. Per this entry's own resampling finding, one draw is one draw. What makes
+   this more than a lucky resample is the *shape* of the result -- every
+   previous perturbation moved the failure set to different pairs at a
+   similar count (6, 7, 4, 6, 9), whereas this shrinks it to exactly the two
+   deterministic kinematic pairs and adds nothing. But it has been measured
+   at one alternative `solref` value, not swept.
+2. Nothing here was root-caused in the sense D14 was. No trace shows *why*
+   the marginal loading became unstable at 2x timestep; the evidence is that
+   it stops happening at 4x.
+
+**Consequence:** no longer a blocker for anything, and no longer the blocker
+for D10: D10's fix is implemented, validated on its own terms, and
 held disabled behind `TRAVERSE_TASK_SPACE` because enabling it trades four
 previously-passing episodes for the two it fixes, and D11 is not understood
 well enough to say whether that trade is real or an artifact of resampling.
@@ -1391,10 +1417,11 @@ comparing two different models.
 ## D14 — solver-side contact energy injection: the physics, not the controller, produces a ~600 J event
 
 **Date:** 2026-09-10 (T2 validation session)
-**Status:** open on cause, **mitigated** by a guard in `RoboChessEnv`.
-Remains a candidate blocker for P3's pilot matrix until the underlying
-instability is addressed. Deliberately NOT filed as a D11 instance — see
-"Why this is not D11" below.
+**Status:** **RESOLVED** (2026-09-11): root-caused to the piece's contact
+time constant sitting at MuJoCo's documented minimum, fixed by widening it,
+and additionally guarded in `RoboChessEnv` so the failure class is caught
+whatever its cause. No longer a P3 blocker. Deliberately NOT filed as a D11
+instance — see "Why this is not D11" below.
 
 **Finding.** On `f4->h1`, the tracked piece acquires **682 J of kinetic
 energy** and 4224.69 rad/s of angular speed while the arm is essentially
@@ -1461,21 +1488,38 @@ into a transition the agent then trains on. Any pilot-matrix cell that hits
 one is learning from corrupted data, and neither the reward nor the success
 criterion currently notices.
 
-**Observation, not a diagnosis:** the piece geoms carry `solref = [0.004, 1]`
-against `timestep = 0.002` -- a contact time constant of exactly 2x the
-timestep, the documented minimum. The board slab is five times softer at
-`0.02`. Whether that margin is what makes this configuration brittle is
-untested as of this entry.
+**RESOLVED (2026-09-11) by widening the piece's contact time constant, plus
+a guard that stands regardless.**
 
-**Mitigation in place, cause still open.** `RoboChessEnv` now carries a guard
-(`_solver_instability`): if the tracked piece's linear speed, angular speed
-or kinetic energy passes a sanity bound -- 10 m/s, 200 rad/s, 1 J, each set
-far above every legitimate figure this project has measured -- the episode is
-truncated immediately, `info["solver_instability"]` is set and
-`terminated_reason` becomes `"solver_instability"`, so the class is caught
-whatever produces it.
+The observation logged with this entry -- that the piece geoms carried
+`solref = [0.004, 1]` against `timestep = 0.002`, a contact time constant of
+exactly 2x the timestep, MuJoCo's documented minimum -- turned out to be the
+cause. Tested in isolation on f4->h1, three runs each:
 
-Two details of the guard:
+| piece `solref` | outcome | peak angular speed | peak KE |
+|---|---|---|---|
+| `0.004` (2x timestep, as committed) | `piece_off_board`, 20256.5 mm | 4224.7 rad/s | **682.26 J** |
+| `0.008` (4x timestep) | **success**, 5.0 mm | 2.7 rad/s | 0.0184 J |
+| `0.02` (the board slab's value) | success, 6.7 mm | 1.4 rad/s | 0.0177 J |
+
+**`solref = 0.008` is adopted; `0.02` is not.** The softer value fixes
+f4->h1 too but is catastrophic elsewhere -- a full 315-episode T1 sweep at
+`0.02` scores 283/315 (89.8%) and breaks 29 previously-passing episodes,
+almost all long traverses to h1. This is exactly why the change was measured
+across the whole board before adoption rather than validated on the pair it
+was designed to fix.
+
+**The guard (`_solver_instability`) is kept even though the cause is fixed.**
+Nothing establishes that this was the only reachable unstable configuration,
+and P3 needs a policy that meets one to fail loudly rather than train on the
+transition. Measured cost of keeping it: a full T1 sweep with the guard active
+and the old `solref` returns the identical 309/315 and the identical failure
+set -- zero false positives in 315 episodes. Measured margins: ordinary
+successful episodes peak at 0.012-0.032 J, ordinary D11 instances at
+0.067-0.225 J, the threshold is 1 J, and the two real events sit at 224.90 J
+and 563.54 J.
+
+Two details of the guard worth knowing:
 
 * It **truncates rather than terminates** -- a solver artefact is not an MDP
   terminal state, and labelling it terminal would teach a value function that
@@ -1489,15 +1533,6 @@ Two details of the guard:
   `[0.2707, 0.2476, 0.7597]`, the piece resting where it was before the
   spike, instead of `[-5.0, 2.3562, 5.0]` -- the corrupt state clipped to the
   observation space's own bounds.
-
-Measured cost of the guard: a full 315-episode T1 sweep with it active
-returns the identical 309/315 and the identical failure set -- zero false
-positives. Ordinary successful episodes peak at 0.012-0.032 J and ordinary
-D11 instances at 0.067-0.225 J, against the 1 J bound.
-
-**The cause is not fixed by this.** The guard catches the event; it does not
-prevent it. D14 stays a candidate blocker until the underlying instability is
-addressed.
 
 ---
 

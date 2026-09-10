@@ -135,15 +135,32 @@ they do not share a mechanism, so they are split:
   changing what `place` inherits in the piece's own velocity. That is what
   gates D10's fix.
 
-**D14 (2026-09-10) is a candidate blocker for P3, currently mitigated but not
-cured.** Separately from D10/D11, a solver-side contact instability was
-measured on `f4->h1`: the piece gains 682 J and 4225 rad/s while the arm is
-stationary at a converged joint target with every commanded value in range,
-against ~1.75 W of available actuator power. It is deterministic, independent
-of the controller, and therefore reachable by any RL policy driving these
-actuators -- so a pilot-matrix cell that hits one trains on corrupted
-transitions. `RoboChessEnv` now truncates and labels any implausible piece
-state, which catches the class without curing it. See D14 in `DECISIONS.md`.
+**D14 (2026-09-10) is RESOLVED (2026-09-11), and it took D11 with it.**
+A solver-side contact instability was measured on `f4->h1`: the piece gained
+682 J and 4225 rad/s while the arm was stationary at a converged joint target
+with every commanded value in range, against ~1.75 W of available actuator
+power -- deterministic, independent of the controller, and therefore
+reachable by any RL policy driving these actuators. Root cause: the piece's
+contact time constant sat at `solref = 0.004`, exactly 2x the 0.002 timestep
+and MuJoCo's documented minimum. Widening it to `0.008` (4x) removes the
+event, and `RoboChessEnv` additionally carries a guard that truncates and
+labels any implausible piece state whatever its cause. See D14 and D11 in
+`DECISIONS.md`.
+
+> **Baseline note.** Every success percentage recorded in D7-D13 was measured
+> under the old `solref = 0.004` and is superseded as a *current* figure,
+> though each remains correct as a measurement of the model at the time. The
+> current baseline, on the same five-target 63-start sweep (315 episodes):
+>
+> | sweep | old (`0.004`) | **new (`0.008`)** |
+> |---|---|---|
+> | T1, `scene.xml` | 309/315 (98.1%) | **313/315 (99.4%)** |
+> | T2 control, 0 obstacles | 306/315 (97.1%) | **313/315 (99.4%)** |
+> | T2, 2 obstacles | 309/315 (98.1%) | **313/315 (99.4%)** |
+>
+> Zero newly-broken episodes in any of the three. In all three the only
+> remaining failures are D10's `h1->h8` and `h8->h1`, which are kinematic and
+> unaffected by contact stiffness.
 
 **What T2's figures do and do not show (D15).** The T2 obstacle term fired
 **0/315 in both** T2 sweeps, with a maximum obstacle displacement of 0.000 mm
