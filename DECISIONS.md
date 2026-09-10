@@ -940,9 +940,20 @@ larger, in a trajectory that never touches the solver.
 widely-separated poses swings the end effector, and the piece it carries,
 outside the board footprint even when both endpoints sit well inside it. h1
 and h8 are both at x = 0.273, 78 mm clear of the bound; the arc between them
-is not. This is also what the ordered family below is made of: the near-bound
-passing cases are all traverses to h8 from the h and g files — the same arc,
-taken slightly shorter.
+is not. The ordered family below is largely this same arc taken shorter:
+h2->h8, g1->h8 and h3->h8 are all traverses to h8 from the h and g files. The
+one member of that list which is not, `a8->a1`, is the mirror geometry on the
+a file — the other full-length corner-to-corner traverse in the sweep — and it
+too sits among the closest approaches to the bound.
+
+**Second instance: the reverse pair h8->h1.** The widened five-target sweep
+also fails `h8->h1`, the same file traversed in the opposite direction. It is
+classified as this entry's mechanism rather than D11's. Reversing the
+direction of travel does not avoid the arc, which is what the mechanism
+predicts — the joint-space path between the same two widely-separated poses
+is the same curve traversed either way. No per-episode trace for `h8->h1` is
+reproduced here; it is counted against the `h1` target in the per-target
+table below, since that is the square it places on.
 
 **h1->h8 is the extreme member of a cluster, not an isolated case.** Peak
 XY excursion beyond the bound across all 189 episodes (negative = margin
@@ -990,18 +1001,21 @@ corners `a8` and `h1`. The hypothesis does not survive it:
 | target | planar reach from shoulder | failures / 63 starts | which |
 |---|---|---|---|
 | `a1` (near corner) | 0.3682 m | 1 | c2->a1 (D11) |
-| `h1` (near corner) | 0.3682 m | 3 | a4->h1, g5->h1, g2->h1 (D11) |
+| `h1` (near corner) | 0.3682 m | 4 | a4->h1, g5->h1, g2->h1 (D11); h8->h1 (this entry) |
 | `e5` (centre) | 0.5604 m | 0 | — |
 | `a8` (far corner, ~99% reach) | 0.8387 m | **0** | — |
 | `h8` (far corner, ~99% reach) | 0.8387 m | 1 | h1->h8 (this entry) |
 
-5 failures across 315 episodes. `a8` is h8's mirror-image corner at the
-identical 0.8387 m planar reach and is **clean at 0/63** — if reach extremity
-drove this failure, a8 would fail at h8's rate, and it does not fail at all.
-The two *near* corners, 0.3682 m out and nowhere near the reach limit, carry
-4 of the 5 failures (all of them D11's mechanism, per that entry's own target
-association). Reach extremity predicts neither failure and is dropped. The
-kinematic result above replaces it: what distinguishes h1->h8 is the shape of
+6 failures across 315 episodes — 309 clean, 98.1%. Failures are counted
+against the square the episode *places on*, regardless of which mechanism
+they belong to. `a8` is h8's mirror-image corner at the identical 0.8387 m
+planar reach and is **clean at 0/63** — if reach extremity drove this
+failure, a8 would fail at h8's rate, and it does not fail at all. The two
+*near* corners, 0.3682 m out and nowhere near the reach limit, carry 5 of the
+6 failures (four of them D11's mechanism, per that entry's own target
+association; the fifth is this entry's reverse pair h8->h1). Reach extremity
+predicts neither failure and is dropped. The kinematic result above replaces
+it: what distinguishes h1->h8 is the shape of
 the joint-space arc to that target, not how far away the target is.
 
 **Also unexamined:** `_piece_off_board()` is a pure XY/Z extent test with no

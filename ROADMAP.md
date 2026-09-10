@@ -114,8 +114,8 @@ before release is ever reached and are identical under old and new release),
 are logged separately in `DECISIONS.md`. Diagnostic characterization showed
 they do not share a mechanism, so they are split:
 
-- **D10** (h1->h8) is **root-caused**: `traverse` is commanded as a single
-  joint-space target, and the forward kinematics of a joint-space
+- **D10** (h1->h8, and its reverse h8->h1) is **root-caused**: `traverse` is
+  commanded as a single joint-space target, and the FK of a joint-space
   interpolation between two widely-separated poses is an arc that leaves the
   board footprint even though both endpoints sit 78 mm inside it. The planned
   path overshoots the XY bound by 25-27 mm; the executed path overshoots by
@@ -127,8 +127,8 @@ they do not share a mechanism, so they are split:
   merely ending up on the wrong square) remains **open and not root-caused**.
 
 Neither blocks calling D8/D9 done. The sweep behind these figures is 5
-targets x 63 starts = 315 episodes, 5 failures, reproducible via
+targets x 63 starts = 315 episodes, 6 failures (98.1%), reproducible via
 `scripts/fullboard_validation.py --targets e5,a1,h8,a8,h1`. Widening it from
 3 targets to 5 also killed the "reach extremity" hypothesis the original
-combined entry carried: `a8`, the far corner at ~99% of rated reach, is clean at 0/63,
-while the two *near* corners account for 4 of the 5 failures.
+combined entry carried: `a8`, the far corner at ~99% of rated reach, is clean
+at 0/63, while the two *near* corners account for 5 of the 6 failures.
