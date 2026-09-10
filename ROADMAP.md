@@ -114,17 +114,26 @@ before release is ever reached and are identical under old and new release),
 are logged separately in `DECISIONS.md`. Diagnostic characterization showed
 they do not share a mechanism, so they are split:
 
-- **D10** (h1->h8, and its reverse h8->h1) is **root-caused**: `traverse` is
-  commanded as a single joint-space target, and the FK of a joint-space
-  interpolation between two widely-separated poses is an arc that leaves the
-  board footprint even though both endpoints sit 78 mm inside it. The planned
-  path overshoots the XY bound by 25-27 mm; the executed path overshoots by
-  4.05 mm, so actuator lag *reduces* the excursion rather than causing it.
-  Grip and piece dynamics are unremarkable throughout. No fix designed yet.
+- **D10** (h1->h8, and its reverse h8->h1) is **root-caused, with a fix
+  implemented but disabled**: `traverse` is commanded as a single joint-space
+  target, and the FK of a joint-space interpolation between two
+  widely-separated poses is an arc that leaves the board footprint even
+  though both endpoints sit 78 mm inside it. The planned path overshoots the
+  XY bound by 25-27 mm; the executed path overshoots by 4.05 mm, so actuator
+  lag *reduces* the excursion rather than causing it. Grip and piece dynamics
+  are unremarkable throughout. Walking the traverse in task space instead
+  removes the excursion on both pairs (+4.05 -> -74.65 mm, +4.36 -> -75.82 mm)
+  and takes the sweep to 311/315, but it breaks four episodes that passed at
+  baseline, so it ships behind `TRAVERSE_TASK_SPACE = False` pending D11.
+  **D10 is not resolved** — the default path still fails both pairs.
 - **D11** (pad load goes strongly asymmetric during `place` and the piece is
   squeezed out of a still-closed gripper; 4 known instances, peak pad force
   229.8-504.1 N, aftermath ranging from a 151.86 m/s ejection to the piece
-  merely ending up on the wrong square) remains **open and not root-caused**.
+  merely ending up on the wrong square) remains **open and not root-caused**,
+  and is now known to be *chaotic under upstream perturbation*: changing the
+  traverse resamples which squares fail, at a roughly constant rate, without
+  changing what `place` inherits in the piece's own velocity. That is what
+  gates D10's fix.
 
 Neither blocks calling D8/D9 done. The sweep behind these figures is 5
 targets x 63 starts = 315 episodes, 6 failures (98.1%), reproducible via

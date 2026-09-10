@@ -875,9 +875,14 @@ Candidate-1 regression).
 ## D10 — `piece_off_board` on h1->h8: joint-space interpolation carries the gripped piece outside the board footprint during `traverse`
 
 **Date:** 2026-08-27 (logged); characterized 2026-09-10 (verification
-session); root-caused 2026-09-10 (kinematic replay, same session)
-**Status:** **root-caused — mechanism confirmed.** Fix not yet designed, not
-attempted.
+session); root-caused 2026-09-10 (kinematic replay, same session); fix
+implemented and measured 2026-09-10 (fix-design session)
+**Status:** **root-caused; fix implemented, validated, and left DISABLED.**
+The fix removes the excursion on both D10 pairs with ~75 mm of measured
+margin, but enabling it reshuffles the marginal placement population that D11
+describes, so it ships behind `TRAVERSE_TASK_SPACE = False` in
+`scripts/scripted_expert.py` pending D11. See "The fix, and why it is off by
+default" below. **D10 is not resolved.**
 
 **Split note:** this entry and D11 were originally logged as a single D10
 covering both residual full-board failures, on the assumption they shared a
@@ -947,13 +952,36 @@ a file — the other full-length corner-to-corner traverse in the sweep — and 
 too sits among the closest approaches to the bound.
 
 **Second instance: the reverse pair h8->h1.** The widened five-target sweep
-also fails `h8->h1`, the same file traversed in the opposite direction. It is
-classified as this entry's mechanism rather than D11's. Reversing the
-direction of travel does not avoid the arc, which is what the mechanism
-predicts — the joint-space path between the same two widely-separated poses
-is the same curve traversed either way. No per-episode trace for `h8->h1` is
-reproduced here; it is counted against the `h1` target in the per-target
-table below, since that is the square it places on.
+also fails `h8->h1`, the same file traversed in the opposite direction, and
+it is this entry's mechanism rather than D11's — measured, not inferred from
+direction symmetry:
+
+```
+step  phase      pstep  piece_xyz                   lin    ang   ncon  Lnorm  Rnorm   exc_mm
+ 139  lift         24  ( 0.2686,  0.7845,  0.8116)  0.00   0.00     7  44.65  44.66   -82.41
+ 140  traverse      0  ( 0.2740,  0.7273,  0.8028)  2.20   1.11    10  44.25  46.21   -76.97
+ 141  traverse      1  ( 0.3174,  0.6417,  0.8212)  2.37   0.56     8  43.25  45.90   -33.61
+ 142  traverse      2  ( 0.3460,  0.5640,  0.8379)  1.85   0.37     8  44.09  45.15    -5.00
+ 143  traverse      3  ( 0.3554,  0.4992,  0.8471)  1.46   0.25     8  44.36  44.84    +4.36  <-- trips
+```
+
+Peak excursion **+4.36 mm** at `traverse` p3, with the grip completely
+intact: 8 pad contacts at the trip and never below 7, left/right normal
+forces 44.36 / 44.84 N (0.48 N imbalance, 2.7 N maximum across the whole
+lift+traverse span), total pad force 89.2-90.5 N against D11's 229.8-504.1 N,
+and piece angular speed 0.25 rad/s at the trip against D11's 27.6-39.1 rad/s
+onsets. Every discriminator reads D10, none reads D11. x walks outward
+0.2686 -> 0.2740 -> 0.3174 -> 0.3460 -> 0.3554 between two squares that both
+sit at x = 0.273, with y inside bound throughout: the violated axis is x
+alone.
+
+Reversing the direction of travel does not avoid the arc, which is what the
+mechanism predicts — the joint-space path between the same two
+widely-separated poses is the same curve traversed either way. It clips
+slightly *harder* in reverse (+4.36 vs +4.05 mm), so it is the tighter of the
+two cases and the one any fix should be checked against. It is counted
+against the `h1` target in the per-target table below, since that is the
+square it places on.
 
 **h1->h8 is the extreme member of a cluster, not an isolated case.** Peak
 XY excursion beyond the bound across all 189 episodes (negative = margin
@@ -1024,19 +1052,80 @@ mid-transit. Whether that is the intended contract for the predicate is a
 separate question from why the trajectory bulges, and neither has been
 settled.
 
-**Fix not yet designed.** Per this project's diagnose/fix separation, no fix
-was attempted in the session that root-caused this. The two obvious
-directions — subdividing `traverse` into task-space waypoints so the
-commanded route stays near the Cartesian straight line, and reconsidering
-whether `_piece_off_board()` should fire on a securely gripped piece in
-mid-transit at all — are candidates only; neither has been designed, costed
-or measured.
+**The fix, and why it is off by default.** `_traverse_legs()` in
+`scripts/scripted_expert.py` walks the pinch point along the straight line to
+the traverse target in ~50 mm legs, re-solving IK at each and driving each for
+3 macro-steps with no settle requirement, then lets the ordinary settle drive
+finish on the final pose. Arc sag falls as ~1/N^2, so at 11 legs on the
+longest traverse the residual bulge is three orders under the 78 mm margin —
+structural, not tuned to the margin it has to clear.
+
+*It works, on its own terms.* Measured peak excursion, against the same
+predicate:
+
+| pair | fix off | fix on |
+|---|---|---|
+| h1->h8 | **+4.05 mm** (fails) | **-74.65 mm** — success, 8.2 mm from goal |
+| h8->h1 | **+4.36 mm** (fails) | **-75.82 mm** — success, 3.9 mm from goal |
+
+*It is still disabled*, because it does not leave the rest of the board
+alone. Three runs of the same 5-target / 315-episode sweep:
+
+| variant | result | failures |
+|---|---|---|
+| fix off (baseline) | 309/315 (98.1%) | a4->h1, c2->a1, g2->h1, g5->h1, h1->h8, h8->h1 |
+| fix on | **311/315 (98.7%)** | b2->h1, c3->h1, f2->a1, h2->a1 |
+| fix on, final pose re-solved from the post-walk configuration | 308/315 (97.8%) | a8->e5, b8->e5, c2->a1, c3->h1, f7->e5, g3->e5, h3->a1 |
+
+**No pair fails in all three runs**, and 13 distinct pairs appear as failures
+across them. D10's own two pairs are the only ones that behave
+deterministically: they fail with the fix off and pass with it on, in both
+variants. Everything else is the D11 population being resampled. The best
+aggregate of the three (98.7%) is therefore not evidence that the fix is
+safe — it is one draw from a distribution whose spread is wider than the
+difference between the variants. Four episodes that passed at baseline fail
+with the fix on, and that is the number that governs. See D11's "Upstream
+perturbation resamples the failure set".
+
+Committed behind `TRAVERSE_TASK_SPACE = False`. With the flag off the branch
+never runs: a flag-off sweep reproduces the baseline in all 315 episodes,
+identical in outcome, failing phase, step count and final distance, so the
+default path is unchanged by this commit. Turn it on when D11 is root-caused,
+not before.
+
+**A trap this mechanism sets for any future fix.** The measured excursion is
+4.05 mm but the *planned* arc overshoots by 25-27 mm — physics currently
+reduces the excursion by ~20 mm, because the arm never fully tracks the
+commanded corner. Any change that makes the arm follow the commanded
+joint-space path more faithfully — more joint-space waypoints, a tighter
+settle tolerance, slower motion — therefore makes D10 **worse**, not better.
+Only re-specifying the path in task space changes the arc itself.
+
+**Also considered and not adopted as the fix:** relaxing `_piece_off_board()`
+so it ignores a gripped, airborne piece. That removes the symptom while the
+arm still swings outside the board footprint, which in a physical cell is a
+collision-envelope question rather than a bookkeeping one. Whether the
+predicate's contract should change is a real question, kept separate below.
+
+**Forward-note for T2 — the fix assumes free space at `CLEAR_Z`.** A
+straight line between the two transit poses is only safe because in T1 the
+volume above the board is empty: one piece, no obstacles, both endpoints at
+the same height. Note the direction of the old failure — the joint-space arc
+bulged *outward*, away from the board, which meant it was incidentally clear
+of anything standing *on* the board. The straight line is not. **T2's obstacle
+task must re-verify this before reusing the traverse logic**: with other
+pieces on the board a straight line at `CLEAR_Z` can pass directly over or
+through them, and the fix would need to become a collision-aware path rather
+than a linear interpolation. The assumption is recorded in the constants block
+in `scripts/scripted_expert.py` as well, where a T2 implementer will meet it.
 
 **Consequence:** not a blocker for D8/D9 — both are release-phase fixes and
-this occurs upstream of release. Does need fixing before leaning on a
-"100% board coverage" claim anywhere, and the cluster above says the margin
-on the passing cases is thin enough that a change of transit height or board
-placement could put more episodes over the bound.
+this occurs upstream of release. Still open in effect, since the fix is
+disabled: the two pairs continue to fail on the default path, and the cluster
+above says the margin on the passing cases is thin enough that a change of
+transit height or board placement could put more episodes over the bound.
+D10 cannot be called resolved, and no "100% board coverage" claim can be made,
+until the flag can be turned on — which is gated on D11.
 
 ---
 

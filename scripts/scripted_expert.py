@@ -164,6 +164,69 @@ RELEASE_RAMP_MACRO_STEPS = 15
 # floor measured on already-settled pieces during that investigation.
 PIECE_ANG_SETTLE_TOL = 0.05  # rad/s
 
+# --- D10 fix: task-space traverse ---------------------------------------
+# D10 (DECISIONS.md): "traverse" was commanded as a single joint-space target,
+# and the forward kinematics of a joint-space interpolation between two
+# widely-separated poses is a Cartesian ARC, not a Cartesian straight line.
+# The arc leaves the board footprint even when both endpoints sit 78 mm inside
+# it: h1->h8 and h8->h1 both carry a securely gripped piece past the board's
+# XY bound (+4.05 mm and +4.36 mm) with the grip completely intact.
+#
+# The fix re-specifies the PATH rather than the endpoint: walk the pinch point
+# along the straight line between the two poses, re-solving IK at each
+# intermediate point, so the commanded route stays where the straight line is.
+#
+# Why not simply subdivide in joint space, or track the existing command more
+# tightly: the measured excursion is 4.05 mm but the PLANNED arc overshoots by
+# 25-27 mm -- physics currently REDUCES the excursion by ~20 mm, because the
+# arm never fully tracks the commanded corner of the arc. Any change that
+# makes the arm follow the commanded joint-space path more faithfully (more
+# joint-space waypoints, tighter settle tolerance, slower motion) therefore
+# makes D10 WORSE, not better. Only re-specifying the path in task space
+# changes the arc itself.
+#
+# Sizing: legs are capped at TRAVERSE_MAX_CARTESIAN_STEP, so the longest
+# traverse on the board (546 mm) gets 11 legs. Arc sag falls as ~1/N^2, which
+# puts the residual bulge three orders of magnitude under the 78 mm margin --
+# the fix is structural, not tuned to the margin it has to clear.
+# OFF BY DEFAULT. The fix does what it was designed to do -- it removes the
+# excursion on both D10 pairs, with ~75 mm of measured margin where the old
+# path had -4 mm -- but enabling it perturbs the marginal placement
+# population downstream, and D11 is not understood well enough to say that
+# trade is safe. Measured over the same 5-target/315-episode sweep:
+#
+#   off (baseline)                309/315 (98.1%)  a4->h1 c2->a1 g2->h1
+#                                                  g5->h1 h1->h8 h8->h1
+#   on                            311/315 (98.7%)  b2->h1 c3->h1 f2->a1 h2->a1
+#   on, + re-solving the final
+#   pose from the post-walk pose  308/315 (97.8%)  a8->e5 b8->e5 c2->a1 c3->h1
+#                                                  f7->e5 g3->e5 h3->a1
+#
+# D10's own two pairs pass in both "on" variants and fail in "off", which is
+# the part that is deterministic. Everything else moves: no pair fails in all
+# three runs, and 13 distinct pairs appear as failures across them. See D11 in
+# DECISIONS.md -- the marginal population is resampled by any upstream change,
+# so a better aggregate here (98.7% vs 98.1%) is not evidence the fix is safe.
+# Turn this on once D11 is root-caused, not before.
+TRAVERSE_TASK_SPACE = False
+
+TRAVERSE_MAX_CARTESIAN_STEP = 0.05   # metres of pinch travel per leg
+#
+# Intermediate legs are transit, not destinations: they are driven for a fixed
+# handful of macro-steps with no settle requirement. Requiring each to settle
+# would multiply the step cost and turn a smooth sweep into stop-start motion
+# that the carried piece has to absorb.
+TRAVERSE_LEG_BUDGET = 3              # macro-steps per intermediate leg
+#
+# FREE-SPACE ASSUMPTION (forward-note for T2): this straight line is only safe
+# because at CLEAR_Z the volume above the board is empty in T1 -- one piece, no
+# obstacles, and the line runs between two points at the same transit height.
+# The old joint-space arc bulged OUTWARD, away from the board, so it was
+# incidentally clear of anything standing ON the board; the straight line is
+# not. T2's obstacle task MUST re-verify this before reusing this logic: with
+# other pieces on the board, a straight line at CLEAR_Z can pass directly over
+# (or through) them, and the fix would need a collision-aware path instead.
+
 
 def _release_ramp(i: int) -> float:
     """Gripper ctrl for macro-step `i` of the "release" waypoint: linear
@@ -480,6 +543,68 @@ class ScriptedExpert:
                 if piece_settled_streak >= SETTLE_CONSECUTIVE_STEPS:
                     return
 
+    def _traverse_legs(
+        self,
+        pinch_target: np.ndarray,
+        grip: float,
+        q_arm: np.ndarray,
+        log: list[dict] | None,
+    ):
+        """D10 fix: walk the pinch point along the straight line to `pinch_target`.
+
+        Interpolates from where the pinch point ACTUALLY is (not the pose the
+        previous waypoint was commanded to -- the same reasoning as D7's
+        residual compensation: the measured position is the one the piece is
+        at) to the traverse target, re-solving IK at each intermediate point
+        and driving it briefly. The caller then drives the final point itself
+        with the ordinary settle check, so this walks legs 1..N-1 only.
+
+        Returns `(last_step_tuple_or_None, q_arm)`. `q_arm` is re-solved from
+        the pose the walk actually ended in, so the caller's final drive is
+        continuous with it rather than with the pre-walk seed; on IK failure
+        the caller's original `q_arm` is handed back unchanged and the
+        single-target drive stands, which is exactly the pre-fix behaviour.
+        """
+        start = self.pinch_pos()
+        target = np.asarray(pinch_target, dtype=float)
+        n_legs = int(np.ceil(
+            float(np.linalg.norm(target - start)) / TRAVERSE_MAX_CARTESIAN_STEP))
+        if n_legs < 2:
+            # Short enough that the arc has nothing to bulge across.
+            return None, q_arm
+
+        last = None
+        for i in range(1, n_legs):
+            via = start + (target - start) * (i / n_legs)
+            try:
+                q_via = self.solve_ik(via)
+            except IKFailure as exc:
+                # Every via-point lies on a straight line between two
+                # reachable poses at transit height, so this should not fire.
+                # Degrade to the single-target traverse rather than failing
+                # the episode -- the pre-fix path, which mostly works.
+                print(f"  [warn] traverse: IK failed on via-point {i}/{n_legs} "
+                      f"{np.round(via, 4)}: {exc}; falling back to the "
+                      f"single-target traverse.")
+                return last, q_arm
+            for step in self._drive_to(q_via, grip, TRAVERSE_LEG_BUDGET,
+                                       label="traverse", log=log):
+                last = step
+                if step[2] or step[3]:      # terminated / truncated
+                    return last, q_arm
+
+        # The final pose is NOT re-solved from the post-walk configuration.
+        # Re-solving lands on whatever IK branch the walk arrived in, which
+        # changes the arm's joint configuration at the START of "place" --
+        # and the joint-space path "place" then takes down to the board is
+        # D10's own mechanism applied to a different waypoint. Measured: a
+        # re-solving version fixed both D10 pairs but reshuffled the marginal
+        # population, breaking 6 previously-passing episodes while
+        # incidentally fixing 3 of D11's 4 instances. Driving the pose the
+        # caller already solved keeps the configuration entering "place"
+        # exactly what it was before this fix.
+        return last, q_arm
+
     def pinch_pos(self) -> np.ndarray:
         """Where the pinch point ACTUALLY is right now, in world coordinates."""
         return self.base.data.site_xpos[self._pinch_sid].copy()
@@ -514,6 +639,25 @@ class ScriptedExpert:
         settle check every other waypoint uses.
         """
         is_release = label == "release"
+
+        # D10 fix: "traverse" is walked as a straight line in TASK space
+        # before its final point is driven normally below. Every other
+        # waypoint is unchanged -- they are all short moves whose arc has no
+        # room to leave the board. Gated on TRAVERSE_TASK_SPACE, which is off
+        # by default: with it off this branch never runs and the traverse is
+        # the single joint-space target it has always been.
+        if label == "traverse" and TRAVERSE_TASK_SPACE:
+            last, q_arm = self._traverse_legs(pinch_target, grip, q_arm, log)
+            if last is not None and (last[2] or last[3]):
+                obs, _, terminated, truncated, info = last
+                return {
+                    "q_arm": q_arm, "obs": obs, "info": info,
+                    "terminated": terminated, "truncated": truncated,
+                    "iters": 0, "ik_failed": False,
+                    "residual_mm": float(
+                        np.linalg.norm(pinch_target - self.pinch_pos())) * 1000.0,
+                }
+
         for obs, _, terminated, truncated, info in self._drive_to(
             q_arm, grip, budget, label=label, log=log,
             gripper_ctrl_fn=_release_ramp if is_release else None,
