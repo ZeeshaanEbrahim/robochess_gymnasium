@@ -872,10 +872,12 @@ Candidate-1 regression).
 
 ---
 
-## D10 — `piece_off_board` on h1->h8: the carried piece clips the board's XY bound during `traverse`, grip fully intact
+## D10 — `piece_off_board` on h1->h8: joint-space interpolation carries the gripped piece outside the board footprint during `traverse`
 
-**Date:** 2026-08-27 (logged); characterized 2026-09-10 (verification session)
-**Status:** open — characterized, not root-caused. No fix attempted.
+**Date:** 2026-08-27 (logged); characterized 2026-09-10 (verification
+session); root-caused 2026-09-10 (kinematic replay, same session)
+**Status:** **root-caused — mechanism confirmed.** Fix not yet designed, not
+attempted.
 
 **Split note:** this entry and D11 were originally logged as a single D10
 covering both residual full-board failures, on the assumption they shared a
@@ -914,6 +916,34 @@ bulges outward in +x over three macro-steps — 0.2678 (end of `lift`) ->
 0.2817 -> 0.3305 -> 0.3551 — i.e. the arm swings an arc that leaves the
 board footprint while the piece is still gripped and airborne.
 
+**Root cause: the planned path leaves the footprint before physics is
+involved.** `traverse` is commanded as a single joint-space target — the
+expert solves IK for the traverse pose and `_drive_to()` holds that target
+while the position actuators drive to it. Nothing constrains the *route*
+between the lift pose and the traverse pose, and the forward kinematics of a
+straight line in joint space between two widely-separated poses is a
+Cartesian arc, not a Cartesian straight line.
+
+Replaying that planned path kinematically — forward kinematics along the
+joint-space interpolation between the two poses, with no physics stepped at
+all — puts the carried piece **25-27 mm outside the 0.3510 m XY bound** at
+peak. The executed path exceeds the bound by 4.05 mm.
+
+So physics *reduces* the excursion by roughly 20 mm rather than causing it:
+the arm never fully tracks the commanded corner of the arc, and the realized
+path cuts inside the planned one. This rules the dynamics out from the other
+direction as well as the trace above does — contact, grip and the piece's own
+behaviour cannot be responsible for an overshoot that is already present, and
+larger, in a trajectory that never touches the solver.
+
+**Mechanism (confirmed):** joint-space interpolation between two
+widely-separated poses swings the end effector, and the piece it carries,
+outside the board footprint even when both endpoints sit well inside it. h1
+and h8 are both at x = 0.273, 78 mm clear of the bound; the arc between them
+is not. This is also what the ordered family below is made of: the near-bound
+passing cases are all traverses to h8 from the h and g files — the same arc,
+taken slightly shorter.
+
 **h1->h8 is the extreme member of a cluster, not an isolated case.** Peak
 XY excursion beyond the bound across all 189 episodes (negative = margin
 remaining):
@@ -950,16 +980,29 @@ straight 546 mm traverse along a single file with zero diagonal component,
 and D11's c2->a1 is a 174 mm move of 2 files and 1 rank — one of the shorter
 moves in the set. Neither is a long diagonal.
 
-**Untested hypothesis — reach extremity.** Both this failure and D11's
-target a corner square (h8 here, a1 there), which D2 measured at ~99% of the
-UR5e's 850 mm rated reach, and there were zero failures across all 63 starts
-for the central target e5. That is suggestive but **not yet distinguishable
-from coincidence**: only 3 targets were swept and 2 of them are corners, so
-"the target is a corner" and "the target is not e5" select exactly the same
-episodes in this data. The observation has no discriminating power until the
-sweep is widened. What would separate them: add non-corner edge targets (e.g.
-a4, d1, h4) and the remaining corners (a8, h1) and compare per-target rates.
-Logged here rather than acted on.
+**Tested and rejected — reach extremity.** The earlier version of this entry
+logged, as an explicitly untested hypothesis, that both residual failures
+targeted a corner at ~99% of the UR5e's 850 mm rated reach (D2), and that the
+3-target sweep could not separate "the target is a corner" from "the target
+is not e5". The sweep was widened to five targets, adding the two remaining
+corners `a8` and `h1`. The hypothesis does not survive it:
+
+| target | planar reach from shoulder | failures / 63 starts | which |
+|---|---|---|---|
+| `a1` (near corner) | 0.3682 m | 1 | c2->a1 (D11) |
+| `h1` (near corner) | 0.3682 m | 3 | a4->h1, g5->h1, g2->h1 (D11) |
+| `e5` (centre) | 0.5604 m | 0 | — |
+| `a8` (far corner, ~99% reach) | 0.8387 m | **0** | — |
+| `h8` (far corner, ~99% reach) | 0.8387 m | 1 | h1->h8 (this entry) |
+
+5 failures across 315 episodes. `a8` is h8's mirror-image corner at the
+identical 0.8387 m planar reach and is **clean at 0/63** — if reach extremity
+drove this failure, a8 would fail at h8's rate, and it does not fail at all.
+The two *near* corners, 0.3682 m out and nowhere near the reach limit, carry
+4 of the 5 failures (all of them D11's mechanism, per that entry's own target
+association). Reach extremity predicts neither failure and is dropped. The
+kinematic result above replaces it: what distinguishes h1->h8 is the shape of
+the joint-space arc to that target, not how far away the target is.
 
 **Also unexamined:** `_piece_off_board()` is a pure XY/Z extent test with no
 reference to grip state or height, so it fires on a securely gripped piece in
@@ -967,84 +1010,97 @@ mid-transit. Whether that is the intended contract for the predicate is a
 separate question from why the trajectory bulges, and neither has been
 settled.
 
+**Fix not yet designed.** Per this project's diagnose/fix separation, no fix
+was attempted in the session that root-caused this. The two obvious
+directions — subdividing `traverse` into task-space waypoints so the
+commanded route stays near the Cartesian straight line, and reconsidering
+whether `_piece_off_board()` should fire on a securely gripped piece in
+mid-transit at all — are candidates only; neither has been designed, costed
+or measured.
+
 **Consequence:** not a blocker for D8/D9 — both are release-phase fixes and
-this occurs upstream of release. Worth root-causing before leaning on a
-"100% board coverage" claim anywhere.
+this occurs upstream of release. Does need fixing before leaning on a
+"100% board coverage" claim anywhere, and the cluster above says the margin
+on the passing cases is thin enough that a change of transit height or board
+placement could put more episodes over the bound.
 
 ---
 
-## D11 — `piece_off_board` on c2->a1: contact-force spike during `place`, piece ejected
+## D11 — pad-load asymmetry during `place` squeezes the piece out of a still-closed gripper; 4 known instances, varying aftermath
 
-**Date:** 2026-08-27 (logged as part of D10); split out and characterized
-2026-09-10 (verification session)
-**Status:** open, not investigated beyond the measurements below. No fix
-attempted.
+**Date:** 2026-08-27 (logged as part of D10); split out 2026-09-10; scope
+widened to 4 instances 2026-09-10 after the a8/h1 target sweep
+**Status:** open, not root-caused. No fix attempted.
 
-**Finding:** on c2->a1 the piece trips `_piece_off_board()` at global step
-118, in `place`, at `phase_step` 23, on the `outside_xy` branch. Unlike D10
-this is not a boundary graze — the piece is violently ejected from a
-nominally settled placement.
+**Scope note:** this entry was first written around c2->a1 alone and framed
+as "piece ejected". A later sweep adding targets `a8` and `h1` found three
+more failures with the same measured signature, and showed that the ejection
+is only the most violent of several aftermaths. The entry now covers all four
+as one mechanism. The severity range is wide enough that the outcome label
+and the failing waypoint differ between instances — see "Labels mark
+detection, not cause" below.
 
-```
-step  phase   pstep  piece_xyz                     lin      ang    ncon  Lnorm   Rnorm
- 112  place      17  (-0.2705, 0.2431, 0.7614)    0.00     0.02     16   43.54  194.98
- 113  place      18  (-0.2710, 0.2424, 0.7610)    0.44    32.59     13   69.02  108.05
- 114  place      19  (-0.2703, 0.2433, 0.7607)    0.07     5.43     18  318.61  306.55
- 115  place      20  (-0.2709, 0.2442, 0.7605)    0.08    13.81      9   42.94   75.28
- 116  place      21  (-0.2699, 0.2425, 0.7604)    1.04    60.17     12    4.45   22.93
- 117  place      22  (-0.2697, 0.2399, 0.7536)    1.10    61.80      6   11.40    0.00
- 118  place      23  ( 0.4961, 0.3462, 2.0674)  151.86    71.38      0    0.00    0.00  <-- trips
-```
+**The four instances:**
 
-The piece is at the a1 target ((-0.273, 0.247)) at board height when the
-sequence starts. Then, over six macro-steps:
+| pair | grip lost at | peak pad force | aftermath | `outcome` | `failed_phase` |
+|---|---|---|---|---|---|
+| c2->a1 | step 117, `place` p22 | 318.6 N | ejected at 151.86 m/s to z=2.07 m | `piece_off_board` | `place` |
+| a4->h1 | step 123, `place` p20 | 504.1 N | pops out, lands, slides off (+16.13 mm) | `piece_off_board` | `place` |
+| g5->h1 | step 128, `place` p23 | 370.3 N | drifts free, trips bound later (+24.44 mm) | `piece_off_board` | `release` |
+| g2->h1 | step 114, `place` p21 | 229.8 N | stays on the board, ends 290.9 mm from goal | `sequence_finished_not_at_goal` | none |
 
-- pad-piece contact count thrashes: 16 -> 13 -> 18 -> 9 -> 12 -> 6 -> 0
-- normal forces spike to **318.61 N / 306.55 N**, against the ~44 N
-  steady-grip baseline seen everywhere else (see D10's log for comparison)
-- left/right loading goes badly asymmetric before that — 43.54 vs 194.98 N
-  at step 112
-- angular speed climbs 0.02 -> 32.59 -> 5.43 -> 13.81 -> 60.17 -> 61.80 rad/s
-- the piece exits at **151.86 m/s** to (0.4961, 0.3462, 2.0674), i.e. 2.07 m
-  up, with zero remaining contacts
+**Shared signature.** In all four, with the gripper still commanded closed
+(aperture ~0.63 throughout, no release command issued):
 
-Peak excursion beyond the board's XY bound is **+145.13 mm**, against
-+4.05 mm for D10 — the two are not the same size of event, let alone the same
-kind.
+1. Pad normal load becomes strongly asymmetric over roughly 5-10 macro-steps
+   while the piece stays rotationally quiet.
+2. The piece's angular speed jumps suddenly — 32.59, 39.11, 27.64 and 35.22
+   rad/s respectively — **exactly one macro-step before** peak total pad
+   force.
+3. Total pad force peaks (229.8-504.1 N against a ~44 N steady-grip
+   baseline), contact count collapses, and the piece leaves the pads.
 
-**Observation, not a diagnosis:** ~300 N contact forces and a 151.86 m/s exit
-velocity on a piece that was stationary six steps earlier are characteristic
-of a contact-solver blow-up rather than of the piece being pushed or dropped
-off the board. That is where the measurements point; it has not been
-confirmed, and no attempt has been made to identify what drives the solver
-into that state. Per the D7 and D8 pattern, the first plausible-sounding
-mechanism is not being adopted.
+**Labels mark detection, not cause.** g5->h1 is recorded as failing in
+`release`, but its last pad contact is step 128 and the `release` waypoint
+does not begin until step 130 — the piece is already free two steps before
+release starts. It fails identically under both release conditions
+(`--release old` and `--release new`, step 141 both), which is expected once
+the causal event is located in `place`. g2->h1 never sets `piece_off_board`
+at all and is only visible as a distance failure. Classifying these by
+`failed_phase` or `outcome` would have split one mechanism into three.
 
-**Deterministic.** Identical `outcome` / `failed_phase` / `steps`
-(`piece_off_board` / `place` / 118) across 5 seeds and 3 repeat runs at the
-same seed, for the same reason as D10 — the reset is deterministic and the
-squares are forced.
+**Tested and not supported: pre-existing rotation (a D8 carry-over).** If
+this were D8's rotationally-underconstrained head-only grasp finding a second
+entry point during `place`, the piece should already be rotating on the way
+in. It is not. Peak angular speed over the whole `place` phase before the
+rotation onset is 0.44, 0.67, 0.94 and 0.70 rad/s for the four failures —
+squarely inside the range measured on successful places at the same targets
+(0.26 to 4.47 rad/s across eight controls). The rotation is a *consequence*
+of the load event, not a precondition. What is *not* excluded: the rotation
+onset magnitudes (27.6-39.1 rad/s) overlap D8's observed release spin
+(12.8-30.3 rad/s), and the grasp geometry is the same head-only grasp D7
+committed to, so a shared underlying susceptibility remains plausible — it
+simply is not evidenced by pre-spike rotation.
 
-**Not a release mechanism.** Identical under condition (ii) (old instant
-release) and (iii) (Candidate 1), and the episode terminates in `place`, one
-waypoint before `release` is entered.
+**Tested and not supported: asymmetry as the discriminator.** Peak left/right
+imbalance during `place` does not separate failures from successes. Failures
+span 136.0-223.2 N; successful controls at the same targets reach comparable
+or higher values (f6->h1 199.9 N, e7->h1 183.8 N, d4->h1 168.8 N, c3->a1
+149.0 N), and c3->a1 even shows a rotation onset at the same `phase_step` as
+the failures and still succeeds. Peak *total* force does not separate them
+either (failures 184.0-240.7 N, controls 201.0-239.7 N). So the asymmetric
+loading is a normal feature of placing at these squares, not a fault
+signature, and whatever tips a marginal case into failure is not captured by
+either measure. This echoes D8's own "chaotic in outcome" characterization.
 
-**Geometry, against the original framing:** c2 = (-0.117, 0.325),
-a1 = (-0.273, 0.247) — a 174 mm move of 2 files and 1 rank, one of the
-*shorter* moves in the sweep. The "long diagonal reach" description this
-failure inherited from the original combined D10 entry does not hold. See
-D10's "Correction to the original framing".
+**Target association.** All four instances place at `a1` or `h1` — the two
+*near* corners, 0.3682 m planar from the shoulder. Zero instances at `e5`
+(0.5604 m) or at `a8`/`h8` (0.8387 m, the ~99%-of-rated-reach corners).
+Asymmetry does track corner placement — the `e5` controls peak at 20.0 and
+26.8 N imbalance versus 123-223 N at corner targets — but, per the paragraph
+above, it does not predict failure among corner placements. Five targets is a
+thin basis and no cause is proposed.
 
-**Open question not yet answered:** the captured log begins at `place` step
-15 and the left/right asymmetry is already present at step 112 (43.54 vs
-194.98 N), so whatever initiates this may originate earlier in `place`, or in
-`descend`/`close`. Logging the full episode from `approach` is the obvious
-next measurement.
-
-**Reach hypothesis:** this failure also targets a corner square (a1, ~99% of
-rated reach per D2). See D10's "Untested hypothesis — reach extremity" — the
-same caveat applies, and the same widened sweep would test it for both.
-
-**Consequence:** not a blocker for D8/D9 — a release-phase fix cannot affect
-an episode that terminates before `release`. Does need root-causing before
-any "100% board coverage" claim.
+**Consequence:** not a blocker for D8/D9, which are release-phase fixes; all
+four instances lose the piece before `release` does anything. Does need
+root-causing before any "100% board coverage" claim.

@@ -92,6 +92,16 @@ rediscovering them.
   error. If `reset`/`step` reports an end-effector orientation slightly off the
   keyframe value, that is why — don't chase it.
 
+- **`failed_phase` and `outcome` mark where a failure was *detected*, not where it
+  was *caused*.** `_piece_off_board()` is a plain XY/Z extent test with no reference
+  to grip state, so it fires whenever the piece is outside the footprint —
+  including while it is securely gripped and airborne, and including many
+  macro-steps after whatever actually went wrong. D11 in `DECISIONS.md` has one
+  instance labelled `failed_phase: "release"` whose grip was already lost two
+  steps *before* the release waypoint began, and another that never sets
+  `piece_off_board` at all and surfaces only as `sequence_finished_not_at_goal`.
+  Classify failures from the contact/velocity trace, not from these labels.
+
 ## Reproducing the dependency set
 
 Pinned versions are in `requirements.txt`. MuJoCo and Gymnasium both make

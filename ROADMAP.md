@@ -109,14 +109,26 @@ vs. the old release. Real CLI regression (`--task t1 --episodes 50`):
 D9's "Resolution" sections in `DECISIONS.md` for the full account,
 including the single-environment-build caveat on these exact figures.
 
-Two residual failures at full-board scale (c2->a1, h1->h8), unrelated to
-D8/D9 (both `piece_off_board` during `traverse`/`place`, before release is
-ever reached, identical under old and new release), are logged separately in
-`DECISIONS.md`. Diagnostic characterization showed they do not share a
-mechanism, so they are split: **D10** (h1->h8 -- the arm carries a securely
-gripped piece 4.05 mm past the board's XY bound during `traverse`; a
-trajectory/predicate issue, with no anomaly in the piece's own dynamics) and
-**D11** (c2->a1 -- pad contact forces spike to ~300 N during `place` and the
-piece is ejected at 151.86 m/s). Both open, neither root-caused, neither a
-blocker for calling D8/D9 done. The full-board sweep behind these figures is
-reproducible via `scripts/fullboard_validation.py`.
+Residual failures at full-board scale, unrelated to D8/D9 (they occur
+before release is ever reached and are identical under old and new release),
+are logged separately in `DECISIONS.md`. Diagnostic characterization showed
+they do not share a mechanism, so they are split:
+
+- **D10** (h1->h8) is **root-caused**: `traverse` is commanded as a single
+  joint-space target, and the forward kinematics of a joint-space
+  interpolation between two widely-separated poses is an arc that leaves the
+  board footprint even though both endpoints sit 78 mm inside it. The planned
+  path overshoots the XY bound by 25-27 mm; the executed path overshoots by
+  4.05 mm, so actuator lag *reduces* the excursion rather than causing it.
+  Grip and piece dynamics are unremarkable throughout. No fix designed yet.
+- **D11** (pad load goes strongly asymmetric during `place` and the piece is
+  squeezed out of a still-closed gripper; 4 known instances, peak pad force
+  229.8-504.1 N, aftermath ranging from a 151.86 m/s ejection to the piece
+  merely ending up on the wrong square) remains **open and not root-caused**.
+
+Neither blocks calling D8/D9 done. The sweep behind these figures is 5
+targets x 63 starts = 315 episodes, 5 failures, reproducible via
+`scripts/fullboard_validation.py --targets e5,a1,h8,a8,h1`. Widening it from
+3 targets to 5 also killed the "reach extremity" hypothesis the original
+combined entry carried: `a8`, the far corner at ~99% of rated reach, is clean at 0/63,
+while the two *near* corners account for 4 of the 5 failures.
