@@ -1,0 +1,22 @@
+# Experiment cell: T1 / PPO / sparse reward / state-vector obs.
+# One cell per file by design (not Hydra): flat, diffable, archivable.
+# A seed sweep is one copy of this file per seed, with `seed` and nothing else changed.
+
+task: t1
+algorithm: ppo
+reward_type: sparse
+observation: state
+seed: 0
+total_timesteps: 500000
+
+# device: cpu -- MLP/state-vector policies train faster on CPU than GPU here.
+# Measured on the real T1 env (PPO, MultiInputPolicy, 20k steps, RTX 2060):
+#   cpu 104.75 s (190.9 steps/s) vs cuda 253.06 s (79.0 steps/s), CPU 2.42x faster.
+# Leave image/CNN configs without `device` so they resolve to "auto" -> CUDA.
+device: cpu
+
+max_episode_steps: 100
+n_obstacles: 0
+checkpoint_freq: 100000
+output_root: runs
+notes: ""

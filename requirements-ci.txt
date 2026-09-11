@@ -28,3 +28,6 @@ mink==1.2.0
 # today; it is installed so that when SB3-backed tests arrive they resolve
 # against this CPU wheel rather than silently dragging in the CUDA stack.
 torch==2.13.0+cpu
+
+# Config loading (scripts/train.py, robochess/experiment.py).
+PyYAML==6.0.2

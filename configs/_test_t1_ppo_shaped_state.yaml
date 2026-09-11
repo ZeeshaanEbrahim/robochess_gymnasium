@@ -1,0 +1,15 @@
+# NOT an experiment cell. A tiny config for exercising the training pipeline
+# locally (manifest, VecNormalize branch, logger, checkpointing) in seconds.
+# The leading underscore keeps it out of the experiment grid alphabetically.
+
+task: t1
+algorithm: ppo
+reward_type: shaped
+observation: state
+seed: 0
+total_timesteps: 2048
+device: cpu
+max_episode_steps: 50
+checkpoint_freq: 1024
+output_root: runs_test
+notes: "pipeline smoke test, not a result"

@@ -54,6 +54,7 @@ pygame-ce==2.5.8
 Pygments==2.20.0
 PyOpenGL==3.1.10
 pyparsing==3.3.2
+PyYAML==6.0.2
 python-chess==1.999
 python-dateutil==2.9.0.post0
 qpsolvers==4.13.0

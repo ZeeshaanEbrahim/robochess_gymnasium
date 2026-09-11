@@ -18,3 +18,5 @@ assets/robotiq_2f85/assets/
 # pytest / coverage
 .pytest_cache/
 .coverage
+runs/
+runs_test/
