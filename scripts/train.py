@@ -26,7 +26,9 @@ sys.path.insert(0, str(REPO_ROOT))
 
 import gymnasium as gym  # noqa: E402
 from stable_baselines3 import PPO, SAC  # noqa: E402
+from stable_baselines3.common.callbacks import CheckpointCallback  # noqa: E402
 from stable_baselines3.common.logger import configure  # noqa: E402
+from stable_baselines3.common.monitor import Monitor  # noqa: E402
 from stable_baselines3.common.utils import get_device  # noqa: E402
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize  # noqa: E402
 
@@ -74,6 +76,10 @@ VECNORMALIZE_ALGORITHMS = frozenset({"ppo"})
 # section-2 report -- this is a judgement call, flagged for confirmation.
 VECNORMALIZE_OBS_KEYS = ["observation"]
 
+# Checkpoint filenames are <prefix>_<steps>_steps.zip, which is SB3's own
+# naming; keeping the prefix a constant means analysis code can glob for it.
+CHECKPOINT_PREFIX = "rc"
+
 
 def build_env(cfg: dict) -> gym.Env:
     """Construct the task+reward stack described by `cfg` (no vectorisation)."""
@@ -88,12 +94,20 @@ def build_env(cfg: dict) -> gym.Env:
     return REWARD_WRAPPERS[cfg["reward_type"]](task)
 
 
-def build_vec_env(cfg: dict) -> DummyVecEnv | VecNormalize:
+def build_vec_env(cfg: dict, monitor_dir: Path | None = None) -> DummyVecEnv | VecNormalize:
     """Vectorise the env, applying VecNormalize to the PPO branch only.
 
     The algorithm branch here is the one visible place this decision is made.
+
+    Monitor sits INSIDE VecNormalize deliberately: it must see the env's raw
+    reward, so that rollout/ep_rew_mean is comparable across normalised (PPO)
+    and unnormalised (SAC) runs. Wrapped the other way round, PPO's episode
+    returns would be logged in normalised units and silently incomparable.
+    Without Monitor at all, SB3 has no episode statistics to log and
+    rollout/ep_rew_mean and ep_len_mean never appear in the CSV.
     """
-    venv = DummyVecEnv([lambda: build_env(cfg)])
+    monitor_path = str(monitor_dir / "monitor") if monitor_dir is not None else None
+    venv = DummyVecEnv([lambda: Monitor(build_env(cfg), filename=monitor_path)])
 
     algorithm = cfg["algorithm"]
     if algorithm == "ppo":
@@ -209,11 +223,36 @@ def main() -> int:
     logger = configure(str(log_dir), ["stdout", "csv", "tensorboard"])
     print(f"logs     : {log_dir} (csv primary, tensorboard secondary)")
 
-    env = build_vec_env(cfg)
+    env = build_vec_env(cfg, monitor_dir=log_dir)
     print(f"vecnormalize: {isinstance(env, VecNormalize)} (algorithm={cfg['algorithm']})")
     model = build_model(cfg, env)
     model.set_logger(logger)
-    model.learn(total_timesteps=cfg["total_timesteps"])
+
+    # --- checkpointing -------------------------------------------------
+    # save_vecnormalize matters for the PPO branch: a policy reloaded without
+    # the running observation/reward statistics it was trained under sees
+    # differently-scaled inputs and does not reproduce its own behaviour.
+    # It is a no-op when the env is not a VecNormalize (the SAC branch).
+    ckpt_dir = run_dir / "checkpoints"
+    checkpoint_cb = CheckpointCallback(
+        save_freq=cfg["checkpoint_freq"],
+        save_path=str(ckpt_dir),
+        name_prefix=CHECKPOINT_PREFIX,
+        save_vecnormalize=True,
+        verbose=1,
+    )
+    print(f"checkpoints: every {cfg['checkpoint_freq']:,} steps -> {ckpt_dir}")
+
+    model.learn(total_timesteps=cfg["total_timesteps"], callback=checkpoint_cb)
+
+    # A final save regardless of where total_timesteps falls relative to
+    # save_freq, so a finished run always has a loadable terminal model.
+    final_path = run_dir / "final_model.zip"
+    model.save(str(final_path))
+    if isinstance(env, VecNormalize):
+        env.save(str(run_dir / "final_vecnormalize.pkl"))
+    print(f"final model: {final_path}")
+
     env.close()
     return 0
 

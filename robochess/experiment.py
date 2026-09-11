@@ -251,6 +251,14 @@ def _thread_provenance() -> dict[str, Any]:
     return info
 
 
+def _repo_relative(path: Path) -> str:
+    resolved = Path(path).resolve()
+    try:
+        return str(resolved.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(resolved)
+
+
 def build_manifest(
     config_path: str | Path,
     raw_config: dict[str, Any],
@@ -265,7 +273,9 @@ def build_manifest(
         "run_name": resolved_config["run_name"],
         "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "seed": resolved_config["seed"],
-        "config_path": str(config_path.resolve().relative_to(REPO_ROOT)),
+        # Repo-relative where possible (stable across machines), absolute
+        # otherwise -- a config kept outside the repo must not crash the run.
+        "config_path": _repo_relative(config_path),
         "config_sha256": hashlib.sha256(config_path.read_bytes()).hexdigest(),
         "config_raw": raw_config,
         "config_resolved": resolved_config,
