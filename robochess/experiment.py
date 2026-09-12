@@ -45,6 +45,14 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "max_episode_steps": 100,
     "n_obstacles": 0,          # t2 only; must stay 0 for t1
     "checkpoint_freq": 100_000,
+    # Pinned to 1 by default, and this is a REPRODUCIBILITY setting, not a
+    # performance one. Measured: runs are bit-identical across processes at a
+    # fixed thread count, but 6 threads vs 1 thread diverges from the very
+    # first policy forward pass (BLAS reduction order, the D8 class of
+    # effect). Left unpinned, torch infers the count from the host's core
+    # count, so the same config on a different machine silently produces
+    # different numbers. 1 is the only value that is portable by default.
+    "num_threads": 1,
     "output_root": "runs",
     "run_name": None,          # None -> derived from the config filename + seed
     "notes": "",
@@ -111,13 +119,14 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
         if value not in allowed:
             raise ConfigError(f"{key}={value!r} is not one of {list(allowed)}")
 
-    for key in ("seed", "total_timesteps", "max_episode_steps", "checkpoint_freq", "n_obstacles"):
+    for key in ("seed", "total_timesteps", "max_episode_steps", "checkpoint_freq",
+                "n_obstacles", "num_threads"):
         value = cfg[key]
         if not isinstance(value, int) or isinstance(value, bool):
             raise ConfigError(f"{key} must be an int, got {value!r}")
     if cfg["seed"] < 0:
         raise ConfigError(f"seed must be >= 0, got {cfg['seed']}")
-    for key in ("total_timesteps", "max_episode_steps", "checkpoint_freq"):
+    for key in ("total_timesteps", "max_episode_steps", "checkpoint_freq", "num_threads"):
         if cfg[key] <= 0:
             raise ConfigError(f"{key} must be > 0, got {cfg[key]}")
 

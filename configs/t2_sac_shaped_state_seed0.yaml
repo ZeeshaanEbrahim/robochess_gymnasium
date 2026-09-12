@@ -15,6 +15,13 @@ total_timesteps: 500000
 # Leave image/CNN configs without `device` so they resolve to "auto" -> CUDA.
 device: cpu
 
+# Pinned for reproducibility, not performance: runs are bit-identical across
+# processes at a fixed thread count, but diverge between different counts
+# (BLAS reduction order -- the D8 class of effect). Unpinned, torch infers the
+# count from the host's core count, so this config would not reproduce on a
+# machine with a different core count.
+num_threads: 1
+
 max_episode_steps: 100
 n_obstacles: 2
 checkpoint_freq: 100000

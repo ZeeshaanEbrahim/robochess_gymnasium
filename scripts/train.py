@@ -18,21 +18,17 @@ for a run whose numbers are going to be reported.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-import gymnasium as gym  # noqa: E402
-from stable_baselines3 import PPO, SAC  # noqa: E402
-from stable_baselines3.common.callbacks import CheckpointCallback  # noqa: E402
-from stable_baselines3.common.logger import configure  # noqa: E402
-from stable_baselines3.common.monitor import Monitor  # noqa: E402
-from stable_baselines3.common.utils import get_device  # noqa: E402
-from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize  # noqa: E402
-
-from robochess.envs import RoboChessEnv  # noqa: E402
+# Only robochess.experiment is imported at module scope. It pulls in yaml and
+# nothing else heavy -- critically, NOT torch, numpy or mujoco. Every import
+# that would initialise a BLAS or OpenMP thread pool is deferred until after
+# `apply_thread_pinning` has run; see its docstring for why the order matters.
 from robochess.experiment import (  # noqa: E402
     DirtyWorkingTreeError,
     build_manifest,
@@ -40,18 +36,55 @@ from robochess.experiment import (  # noqa: E402
     resolve_config,
     write_manifest,
 )
-from robochess.tasks import (  # noqa: E402
-    ShapedPickAndPlaceReward,
-    SparsePickAndPlaceReward,
-    T1PickAndPlaceTask,
-    T2ObstacleTask,
-    make_t2_env,
-)
 
-REWARD_WRAPPERS = {
-    "shaped": ShapedPickAndPlaceReward,
-    "sparse": SparsePickAndPlaceReward,
-}
+THREAD_ENV_VARS = ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS")
+
+
+def apply_thread_pinning(num_threads: int) -> dict[str, object]:
+    """Pin every thread pool to `num_threads`. MUST run before torch is imported.
+
+    Two mechanisms, because neither alone is sufficient:
+
+      * The OMP/MKL/OPENBLAS environment variables are read by those runtimes
+        when their thread pools are constructed, which happens at import time.
+        Setting them after `import torch` is too late -- the pool already
+        exists and keeps its original size. Hence the deferred imports.
+      * `torch.set_num_threads` covers torch's own intra-op pool, which does
+        not necessarily follow OMP_NUM_THREADS on every build.
+
+    The variables are set unconditionally rather than with setdefault: relying
+    on them being exported externally is exactly the failure this is meant to
+    remove, and an inherited value from a shell or a scheduler would silently
+    override the config.
+
+    Returns what was actually applied, for the manifest.
+    """
+    for var in THREAD_ENV_VARS:
+        os.environ[var] = str(num_threads)
+
+    import torch  # deferred on purpose -- see above
+
+    torch.set_num_threads(num_threads)
+    # Inter-op parallelism can only be set before any parallel work starts;
+    # if something already touched it, leave it rather than crash the run.
+    try:
+        torch.set_num_interop_threads(num_threads)
+        interop_set = True
+    except RuntimeError:
+        interop_set = False
+
+    return {
+        "requested": num_threads,
+        "env": {var: os.environ[var] for var in THREAD_ENV_VARS},
+        "torch_num_threads": torch.get_num_threads(),
+        "torch_num_interop_threads": torch.get_num_interop_threads(),
+        "interop_set": interop_set,
+    }
+
+def _reward_wrappers() -> dict:
+    from robochess.tasks import ShapedPickAndPlaceReward, SparsePickAndPlaceReward
+
+    return {"shaped": ShapedPickAndPlaceReward, "sparse": SparsePickAndPlaceReward}
 
 # --- VecNormalize policy --------------------------------------------------
 # The standing decision is that observation/reward normalisation applies to the
@@ -81,8 +114,11 @@ VECNORMALIZE_OBS_KEYS = ["observation"]
 CHECKPOINT_PREFIX = "rc"
 
 
-def build_env(cfg: dict) -> gym.Env:
+def build_env(cfg: dict):
     """Construct the task+reward stack described by `cfg` (no vectorisation)."""
+    from robochess.envs import RoboChessEnv
+    from robochess.tasks import T1PickAndPlaceTask, T2ObstacleTask, make_t2_env
+
     if cfg["task"] == "t1":
         base = RoboChessEnv(max_episode_steps=cfg["max_episode_steps"])
         task = T1PickAndPlaceTask(base)
@@ -91,10 +127,10 @@ def build_env(cfg: dict) -> gym.Env:
         task = T2ObstacleTask(base, n_obstacles=cfg["n_obstacles"])
     else:  # unreachable -- resolve_config validates the enum
         raise ValueError(f"unknown task {cfg['task']!r}")
-    return REWARD_WRAPPERS[cfg["reward_type"]](task)
+    return _reward_wrappers()[cfg["reward_type"]](task)
 
 
-def build_vec_env(cfg: dict, monitor_dir: Path | None = None) -> DummyVecEnv | VecNormalize:
+def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
     """Vectorise the env, applying VecNormalize to the PPO branch only.
 
     The algorithm branch here is the one visible place this decision is made.
@@ -106,6 +142,9 @@ def build_vec_env(cfg: dict, monitor_dir: Path | None = None) -> DummyVecEnv | V
     Without Monitor at all, SB3 has no episode statistics to log and
     rollout/ep_rew_mean and ep_len_mean never appear in the CSV.
     """
+    from stable_baselines3.common.monitor import Monitor
+    from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
+
     monitor_path = str(monitor_dir / "monitor") if monitor_dir is not None else None
     venv = DummyVecEnv([lambda: Monitor(build_env(cfg), filename=monitor_path)])
 
@@ -150,6 +189,8 @@ def build_model(cfg: dict, env):
     so the policy is MultiInputPolicy -- an MLP feature extractor over vector
     inputs. MlpPolicy cannot accept a Dict space; there is no CNN here.
     """
+    from stable_baselines3 import PPO, SAC
+
     common = dict(policy="MultiInputPolicy", env=env, seed=cfg["seed"],
                   device=cfg["device"], verbose=1)
     if cfg["algorithm"] == "ppo":
@@ -175,6 +216,21 @@ def main() -> int:
     raw = load_config(args.config)
     cfg = resolve_config(raw, config_path=args.config)
 
+    # Thread pinning comes FIRST, before any import that builds a thread pool
+    # and before any env or model is constructed. Everything below this line
+    # may safely import torch.
+    threads = apply_thread_pinning(cfg["num_threads"])
+    print(f"threads  : {cfg['num_threads']} "
+          f"(torch={threads['torch_num_threads']}, "
+          f"interop={threads['torch_num_interop_threads']}"
+          f"{'' if threads['interop_set'] else ', interop already fixed'}, "
+          f"OMP/MKL/OPENBLAS={threads['env']['OMP_NUM_THREADS']})")
+
+    from stable_baselines3.common.callbacks import CheckpointCallback
+    from stable_baselines3.common.logger import configure
+    from stable_baselines3.common.utils import get_device
+    from stable_baselines3.common.vec_env import VecNormalize
+
     # `device: auto` is resolved eagerly so the manifest records the device the
     # run ACTUALLY used, not the string "auto" -- otherwise the provenance
     # record cannot distinguish a CPU fallback from an intended GPU run.
@@ -194,6 +250,7 @@ def main() -> int:
                 "device_requested": cfg["device"],
                 "device_actual": resolved_device,
                 "vecnormalize": cfg["algorithm"] in VECNORMALIZE_ALGORITHMS,
+                "threads": threads,
             }},
         )
     except DirtyWorkingTreeError as exc:
