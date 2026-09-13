@@ -295,6 +295,17 @@ def main() -> int:
                 "vecnormalize": cfg["algorithm"] in VECNORMALIZE_ALGORITHMS,
                 "her": (cfg["algorithm"], cfg["reward_type"]) in HER_CELLS,
                 "threads": threads,
+                # Stated in every manifest so a result can never be read as
+                # reproducible under a different thread count. Measured, not
+                # assumed: PPO and SAC+HER are both bit-identical across
+                # separate processes at a fixed count, and both diverge between
+                # counts (SAC from its first gradient update).
+                "reproducibility": {
+                    "scope": "bit-identical across processes ONLY at this num_threads",
+                    "num_threads": cfg["num_threads"],
+                    "other_thread_counts": "not reproducible: results diverge once "
+                                           "gradient updates begin",
+                },
             }},
         )
     except DirtyWorkingTreeError as exc:

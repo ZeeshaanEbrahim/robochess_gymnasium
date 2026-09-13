@@ -20,6 +20,13 @@ device: cpu
 # (BLAS reduction order -- the D8 class of effect). Unpinned, torch infers the
 # count from the host's core count, so this config would not reproduce on a
 # machine with a different core count.
+# SAC thread count: 1, decided 13 Sep 2026 from a real 6-core saturation test
+# (T2 sparse SAC+HER, 3 simultaneous processes): 1 thread 25.33 steps/s, 2 threads
+# 29.30 steps/s (+15.7%). Kept at 1 for consistency with the PPO cells and because
+# 2 threads x 3 processes saturates all 6 physical cores on a thermally limited
+# laptop over a ~15 h run, which a 2-minute probe cannot rule out. SAC+HER verified
+# bit-identical across processes at 1 thread; a 2-thread run diverges from the
+# first gradient update. This run's reproducibility is scoped to num_threads=1.
 num_threads: 1
 
 max_episode_steps: 100
