@@ -205,6 +205,50 @@ def _reward_from_distances(piece_to_goal: float, gripper_to_piece: float, weight
     return -float(piece_to_goal) - weight * float(gripper_to_piece)
 
 
+# --- terminal failure penalty (early-termination exploit fix) --------------
+# The per-step shaped reward is strictly negative, and before this penalty a
+# failure termination cost nothing extra. So the return-maximising policy was
+# to END the episode as fast as possible: a 500k-step T1/PPO dry run converged
+# to 0% success with mean episode length 8.9, 85% bad_contact and 13%
+# piece_off_board. Ending early simply stopped the negative reward accruing.
+#
+# Only these two reasons are penalised -- they are the exploit. Time-limit
+# truncation is an honest "ran out of time" and is left alone, as is D14's
+# solver_instability, which is a physics artefact truncation, not a choice.
+PENALISED_TERMINATIONS = frozenset({"bad_contact", "piece_off_board"})
+
+# Upper bounds on the two distance terms over every NON-terminal state, so the
+# penalty can be sized against the worst case rather than a typical episode.
+# Derived from scene geometry (board centre (0, 0.52), half-extent 0.312 m,
+# SQUARE_PITCH 0.078 m; arm base at (0, 0, 0.85); pinch-site reach 1.2616 m
+# and max height 2.0959 m from 20k random FK samples), then rounded UP:
+#   piece_to_goal:    a non-terminal piece is inside the off-board XY box, so
+#                     at most that box's diagonal combined with the highest
+#                     height it can be carried to              -> 1.6628 m
+#   gripper_to_piece: triangle inequality, reach + base-to-piece -> 2.8217 m
+# Measured against it: worst single non-terminal step seen was -1.1378 (random
+# actions, 11,411 steps) against this bound's -2.57 -- the bound is loose, as
+# a worst-case bound should be. T2 shares the arm and board, so it holds there.
+PIECE_TO_GOAL_BOUND = 1.70
+GRIPPER_TO_PIECE_BOUND = 2.90
+
+
+def failure_penalty_magnitude(max_episode_steps: int, weight: float) -> float:
+    """Smallest whole-number penalty that makes failing strictly worse than
+    enduring a full episode of worst-case per-step reward.
+
+    ``max_episode_steps * (worst-case |per-step reward|)``, rounded up. Tied to
+    the episode length rather than hardcoded: a fixed number sized for 100-step
+    episodes would silently stop being sufficient at 200.
+
+    Undiscounted, deliberately. Under discounting the remaining per-step cost
+    only shrinks while the penalty is paid immediately, so a penalty that beats
+    the undiscounted sum beats every discounted one too.
+    """
+    per_step_bound = PIECE_TO_GOAL_BOUND + weight * GRIPPER_TO_PIECE_BOUND
+    return float(np.ceil(max_episode_steps * per_step_bound))
+
+
 def _shaped_reward(base: RoboChessEnv, pinch_sid: int, info: dict[str, Any], weight: float) -> float:
     """Reads the two live distances out of the sim and scores them."""
     gripper_to_piece = float(
@@ -214,10 +258,16 @@ def _shaped_reward(base: RoboChessEnv, pinch_sid: int, info: dict[str, Any], wei
 
 
 class ShapedPickAndPlaceReward(gym.Wrapper):
-    """Dense reward: ``-(piece_to_goal_dist) - weight * (gripper_to_piece_dist)``.
+    """Dense reward with a terminal failure penalty::
 
-    Continuous and monotonically decreasing in both distances, so descent
-    gives a gradient the whole episode rather than only at the goal.
+        r = -(piece_to_goal_dist) - weight * (gripper_to_piece_dist)
+            - failure_penalty * [terminated_reason in PENALISED_TERMINATIONS]
+
+    The distance term is continuous and monotonically decreasing in both
+    distances, so descent gives a gradient the whole episode rather than only
+    at the goal. The penalty is paid once, on the terminating step only; see
+    PENALISED_TERMINATIONS for why it exists and failure_penalty_magnitude for
+    how it is sized.
 
     Not HER-safe: the gripper-to-piece term needs the pinch site's live
     position, which is not recoverable from ``(achieved_goal, desired_goal)``
@@ -227,7 +277,12 @@ class ShapedPickAndPlaceReward(gym.Wrapper):
     the shaped one -- shaped reward is not intended to run under HER.
     """
 
-    def __init__(self, env: gym.Env, gripper_approach_weight: float = 0.3):
+    def __init__(
+        self,
+        env: gym.Env,
+        gripper_approach_weight: float = 0.3,
+        failure_penalty: float | None = None,
+    ):
         super().__init__(env)
         base = self.unwrapped
         if not isinstance(base, RoboChessEnv):
@@ -235,10 +290,22 @@ class ShapedPickAndPlaceReward(gym.Wrapper):
         self._base: RoboChessEnv = base
         self._pinch_sid = _pinch_site_id(base.model)
         self.gripper_approach_weight = float(gripper_approach_weight)
+        # None -> derived from THIS env's episode length and weight, so the
+        # "failing is strictly worse" guarantee holds for whatever episode
+        # length the env was actually built with.
+        self.failure_penalty = (
+            failure_penalty_magnitude(base.max_episode_steps, self.gripper_approach_weight)
+            if failure_penalty is None
+            else float(failure_penalty)
+        )
 
     def step(self, action: np.ndarray):
         obs, _base_reward, terminated, truncated, info = self.env.step(action)
         reward = _shaped_reward(self._base, self._pinch_sid, info, self.gripper_approach_weight)
+        # `terminated` is checked as well as the reason: the penalty is for a
+        # failure that ENDED the episode, never for a flag seen mid-episode.
+        if terminated and info.get("terminated_reason") in PENALISED_TERMINATIONS:
+            reward -= self.failure_penalty
         return obs, reward, terminated, truncated, info
 
 
