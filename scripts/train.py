@@ -109,6 +109,23 @@ VECNORMALIZE_ALGORITHMS = frozenset({"ppo"})
 # section-2 report -- this is a judgement call, flagged for confirmation.
 VECNORMALIZE_OBS_KEYS = ["observation"]
 
+# --- HER policy -----------------------------------------------------------
+# HerReplayBuffer is used for exactly one (algorithm, reward_type) pair:
+# SAC with the SPARSE reward. The factorial design pairs HER with the sparse
+# arm, not the shaped one (see ShapedPickAndPlaceReward's docstring): the
+# shaped reward's gripper-to-piece term needs the live pinch-site position,
+# which cannot be recovered from (achieved_goal, desired_goal), so relabelled
+# shaped rewards would be computed by the base env's goal-only placeholder and
+# be silently wrong. PPO is on-policy and cannot use a replay buffer at all.
+#
+# Same discipline as VECNORMALIZE_ALGORITHMS: one declared source of truth,
+# an exhaustive branch in `build_model` that raises on anything unrecognised,
+# and a runtime assertion that the two agree. Not a config key.
+HER_CELLS = frozenset({("sac", "sparse")})
+
+# Matches scripts/her_smoke_test_t1.py and her_smoke_test_t2.py.
+HER_REPLAY_BUFFER_KWARGS = dict(n_sampled_goal=4, goal_selection_strategy="future")
+
 # Checkpoint filenames are <prefix>_<steps>_steps.zip, which is SB3's own
 # naming; keeping the prefix a constant means analysis code can glob for it.
 CHECKPOINT_PREFIX = "rc"
@@ -190,14 +207,40 @@ def build_model(cfg: dict, env):
     inputs. MlpPolicy cannot accept a Dict space; there is no CNN here.
     """
     from stable_baselines3 import PPO, SAC
+    from stable_baselines3.her import HerReplayBuffer
 
     common = dict(policy="MultiInputPolicy", env=env, seed=cfg["seed"],
                   device=cfg["device"], verbose=1)
-    if cfg["algorithm"] == "ppo":
-        return PPO(**common)
-    if cfg["algorithm"] == "sac":
-        return SAC(**common)
-    raise ValueError(f"unknown algorithm {cfg['algorithm']!r}")
+
+    algorithm, reward_type = cfg["algorithm"], cfg["reward_type"]
+    if algorithm == "ppo":
+        # On-policy: no replay buffer exists to swap, so HER cannot apply.
+        model = PPO(**common)
+    elif algorithm == "sac":
+        if reward_type == "sparse":
+            model = SAC(
+                **common,
+                replay_buffer_class=HerReplayBuffer,
+                replay_buffer_kwargs=dict(HER_REPLAY_BUFFER_KWARGS),
+            )
+        elif reward_type == "shaped":
+            # Intentionally the plain replay buffer; see HER_CELLS for why.
+            model = SAC(**common)
+        else:
+            raise ValueError(
+                f"reward_type {reward_type!r} has no HER decision recorded for SAC; "
+                f"add it to HER_CELLS (or to the shaped branch) explicitly."
+            )
+    else:
+        raise ValueError(f"unknown algorithm {algorithm!r}")
+
+    uses_her = isinstance(getattr(model, "replay_buffer", None), HerReplayBuffer)
+    expected = (algorithm, reward_type) in HER_CELLS
+    assert uses_her == expected, (
+        f"HerReplayBuffer used={uses_her} but policy says {expected} "
+        f"for ({algorithm!r}, {reward_type!r})"
+    )
+    return model
 
 
 def main() -> int:
@@ -250,6 +293,7 @@ def main() -> int:
                 "device_requested": cfg["device"],
                 "device_actual": resolved_device,
                 "vecnormalize": cfg["algorithm"] in VECNORMALIZE_ALGORITHMS,
+                "her": (cfg["algorithm"], cfg["reward_type"]) in HER_CELLS,
                 "threads": threads,
             }},
         )
