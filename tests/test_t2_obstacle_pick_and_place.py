@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import re
 import sys
+import warnings
 from pathlib import Path
 
 import mujoco
@@ -237,8 +238,26 @@ def test_base_env_observation_is_left_at_21_dim(t2_base_env):
 
 
 def test_check_env_accepts_the_wrapped_t2_env(t2_base_env):
+    """Same pattern as T1's
+    test_check_env_passes_on_the_wrapped_t1_env_modulo_known_wrapper_warnings:
+    check_env must raise nothing, and the ONLY warning allowed is the known
+    wrapper meta-warning, content-verified.
+
+    check_env always warns that a wrapped env "is different from the
+    unwrapped version" -- true by construction, since the wrapper is what is
+    under test. Left uncaught, CI's `pytest -W error::UserWarning` turns that
+    into a failure. T1 expects two warnings; this expects one, because
+    skip_render_check=True suppresses the second ("Not able to test
+    alternative render modes").
+    """
     task = T2ObstacleTask(t2_base_env, start_square="a1", target_square="h8")
-    check_env(task, skip_render_check=True)
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        check_env(task, skip_render_check=True)  # raises on an actual space/contract violation
+
+    messages = [str(w.message) for w in caught]
+    assert len(caught) == 1, f"expected exactly the 1 known wrapper warning, got:\n{messages}"
+    assert "is different from the unwrapped version" in messages[0]
 
 
 # ------------------------------------------- (c) the fifth success term
