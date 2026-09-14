@@ -1,0 +1,544 @@
+{
+ "run": "t1_sac_shaped_state_seed0_seed0",
+ "checkpoint": 500000,
+ "algorithm": "sac",
+ "actuators": [
+  {
+   "name": "ur_shoulder_pan",
+   "gaintype": 0,
+   "biastype": 1,
+   "kp": 2000.0,
+   "biasprm": [
+    0.0,
+    -2000.0,
+    -400.0
+   ]
+  },
+  {
+   "name": "ur_shoulder_lift",
+   "gaintype": 0,
+   "biastype": 1,
+   "kp": 2000.0,
+   "biasprm": [
+    0.0,
+    -2000.0,
+    -400.0
+   ]
+  },
+  {
+   "name": "ur_elbow",
+   "gaintype": 0,
+   "biastype": 1,
+   "kp": 2000.0,
+   "biasprm": [
+    0.0,
+    -2000.0,
+    -400.0
+   ]
+  },
+  {
+   "name": "ur_wrist_1",
+   "gaintype": 0,
+   "biastype": 1,
+   "kp": 500.0,
+   "biasprm": [
+    0.0,
+    -500.0,
+    -100.0
+   ]
+  },
+  {
+   "name": "ur_wrist_2",
+   "gaintype": 0,
+   "biastype": 1,
+   "kp": 500.0,
+   "biasprm": [
+    0.0,
+    -500.0,
+    -100.0
+   ]
+  },
+  {
+   "name": "ur_wrist_3",
+   "gaintype": 0,
+   "biastype": 1,
+   "kp": 500.0,
+   "biasprm": [
+    0.0,
+    -500.0,
+    -100.0
+   ]
+  }
+ ],
+ "body_gravcomp_max": 0.0,
+ "squares": {
+  "a1": {
+   "group": "near",
+   "piece_xyz": [
+    -0.27300000190734863,
+    0.24699999392032623,
+    0.7620000243186951
+   ],
+   "piece_y_from_board_centre": 0.24699999392032623,
+   "episode_ended_before_hold": false,
+   "experienced_all": {
+    "n": 50,
+    "joint_err_deg_median": {
+     "shoulder_pan": 253.98816205482365,
+     "shoulder_lift": -301.26419005565515,
+     "elbow": 44.627013559574976,
+     "wrist_1": 172.4238105322088,
+     "wrist_2": 163.11672500080954,
+     "wrist_3": -6.83044916766106
+    },
+    "joint_abs_err_deg_p90": {
+     "shoulder_pan": 313.43501919403894,
+     "shoulder_lift": 324.3842922654299,
+     "elbow": 104.78507044876031,
+     "wrist_1": 194.27152769060837,
+     "wrist_2": 289.50132115175745,
+     "wrist_3": 333.493027508534
+    },
+    "pinch_err_mm_median_xyz": [
+     -279.2872471584685,
+     38.666594992670795,
+     -171.84957885085217
+    ],
+    "pinch_err_mm_norm_median": 384.04720489466206,
+    "pinch_err_mm_norm_p90": 631.2461451911415,
+    "pinch_actual_xyz_median": [
+     -0.14261173953859474,
+     -0.07715593239391283,
+     0.9943875568055768
+    ]
+   },
+   "experienced_quasi_static": null,
+   "settled_hold": {
+    "summary": {
+     "n": 10,
+     "joint_err_deg_median": {
+      "shoulder_pan": 259.24544230035957,
+      "shoulder_lift": -310.6223742830384,
+      "elbow": 42.3514384547533,
+      "wrist_1": 198.3721143340981,
+      "wrist_2": 286.7291362006844,
+      "wrist_3": 0.3208150619367954
+     },
+     "joint_abs_err_deg_p90": {
+      "shoulder_pan": 259.2651087742812,
+      "shoulder_lift": 310.62238567049974,
+      "elbow": 42.35299394097075,
+      "wrist_1": 198.37436212503056,
+      "wrist_2": 286.73404304771947,
+      "wrist_3": 0.32144545295534566
+     },
+     "pinch_err_mm_median_xyz": [
+      -5.162527328116139,
+      -108.9684554355064,
+      -172.78476526800114
+     ],
+     "pinch_err_mm_norm_median": 204.34126143394337,
+     "pinch_err_mm_norm_p90": 204.37506270881312,
+     "pinch_actual_xyz_median": [
+      -0.1203023984919854,
+      -0.07828701964397733,
+      1.0025657879238614
+     ]
+    },
+    "settled_samples": 10,
+    "final_max_abs_qvel": 0.002384651143745973,
+    "ended_early": true
+   }
+  },
+  "d1": {
+   "group": "near",
+   "piece_xyz": [
+    -0.039000000804662704,
+    0.24699999392032623,
+    0.7620000243186951
+   ],
+   "piece_y_from_board_centre": 0.24699999392032623,
+   "episode_ended_before_hold": false,
+   "experienced_all": {
+    "n": 50,
+    "joint_err_deg_median": {
+     "shoulder_pan": 25.638102686750248,
+     "shoulder_lift": -281.20890065424646,
+     "elbow": 23.73712513495436,
+     "wrist_1": 34.507601189434595,
+     "wrist_2": 145.1627286752118,
+     "wrist_3": 3.3240547355362686
+    },
+    "joint_abs_err_deg_p90": {
+     "shoulder_pan": 322.39190850163726,
+     "shoulder_lift": 311.136423057898,
+     "elbow": 117.88110183393754,
+     "wrist_1": 160.5176188183724,
+     "wrist_2": 259.70290011670767,
+     "wrist_3": 340.7317196511989
+    },
+    "pinch_err_mm_median_xyz": [
+     -218.41879617869944,
+     -240.74383645416077,
+     -272.5222787501301
+    ],
+    "pinch_err_mm_norm_median": 552.3207528115256,
+    "pinch_err_mm_norm_p90": 897.8331335385913,
+    "pinch_actual_xyz_median": [
+     -0.15610095231634025,
+     -0.24392736619721667,
+     0.969516436999893
+    ]
+   },
+   "experienced_quasi_static": null,
+   "settled_hold": {
+    "summary": {
+     "n": 10,
+     "joint_err_deg_median": {
+      "shoulder_pan": -17.074806663633673,
+      "shoulder_lift": -293.8208268278245,
+      "elbow": -0.2569968231364457,
+      "wrist_1": 13.762798018191276,
+      "wrist_2": 215.7436481100629,
+      "wrist_3": -0.472046957339346
+     },
+     "joint_abs_err_deg_p90": {
+      "shoulder_pan": 17.09650627498383,
+      "shoulder_lift": 293.82117137989377,
+      "elbow": 0.2663519798235827,
+      "wrist_1": 13.781514106803463,
+      "wrist_2": 215.75443513390854,
+      "wrist_3": 0.4744057942861997
+     },
+     "pinch_err_mm_median_xyz": [
+      -549.1378558062906,
+      103.09526965143843,
+      -576.3434705706848
+     ],
+     "pinch_err_mm_norm_median": 802.7158999030966,
+     "pinch_err_mm_norm_p90": 802.7185180453486,
+     "pinch_actual_xyz_median": [
+      -0.2640159557659715,
+      -0.12408655470694868,
+      0.9273724857199895
+     ]
+    },
+    "settled_samples": 10,
+    "final_max_abs_qvel": 0.0026295740215638865,
+    "ended_early": true
+   }
+  },
+  "h1": {
+   "group": "near",
+   "piece_xyz": [
+    0.27300000190734863,
+    0.24699999392032623,
+    0.7620000243186951
+   ],
+   "piece_y_from_board_centre": 0.24699999392032623,
+   "episode_ended_before_hold": false,
+   "experienced_all": {
+    "n": 50,
+    "joint_err_deg_median": {
+     "shoulder_pan": -180.69803083005985,
+     "shoulder_lift": -296.20939800873066,
+     "elbow": 25.22552433288542,
+     "wrist_1": 72.39218055898787,
+     "wrist_2": 41.07215154608257,
+     "wrist_3": -24.95322461852514
+    },
+    "joint_abs_err_deg_p90": {
+     "shoulder_pan": 343.66856487953027,
+     "shoulder_lift": 327.43482421359795,
+     "elbow": 127.20047061963689,
+     "wrist_1": 449.47326665923936,
+     "wrist_2": 370.3388888414151,
+     "wrist_3": 280.01107416427436
+    },
+    "pinch_err_mm_median_xyz": [
+     149.79300248378942,
+     -319.41081848240117,
+     -105.09655619686504
+    ],
+    "pinch_err_mm_norm_median": 603.3802223287682,
+    "pinch_err_mm_norm_p90": 804.1206746159576,
+    "pinch_actual_xyz_median": [
+     0.12869874726026087,
+     -0.3471406062756334,
+     1.0196427817819975
+    ]
+   },
+   "experienced_quasi_static": null,
+   "settled_hold": {
+    "summary": {
+     "n": 10,
+     "joint_err_deg_median": {
+      "shoulder_pan": 80.86520281390432,
+      "shoulder_lift": -292.20745612662625,
+      "elbow": 16.35232149775443,
+      "wrist_1": 109.36707231875408,
+      "wrist_2": 45.250063435068896,
+      "wrist_3": 0.2704166713101346
+     },
+     "joint_abs_err_deg_p90": {
+      "shoulder_pan": 80.88510436360725,
+      "shoulder_lift": 292.2075000032907,
+      "elbow": 16.356458149428484,
+      "wrist_1": 109.40171681019116,
+      "wrist_2": 45.27660154030724,
+      "wrist_3": 0.28163254703782625
+     },
+     "pinch_err_mm_median_xyz": [
+      468.78336758778073,
+      300.060388102419,
+      -156.7030200386643
+     ],
+     "pinch_err_mm_norm_median": 578.2299879569948,
+     "pinch_err_mm_norm_p90": 578.3074702493168,
+     "pinch_actual_xyz_median": [
+      0.30366260984602467,
+      0.0929232436977355,
+      1.067866312847019
+     ]
+    },
+    "settled_samples": 10,
+    "final_max_abs_qvel": 0.004155823896838442,
+    "ended_early": true
+   }
+  },
+  "a8": {
+   "group": "far",
+   "piece_xyz": [
+    -0.27300000190734863,
+    0.7929999828338623,
+    0.7620000243186951
+   ],
+   "piece_y_from_board_centre": 0.7929999828338623,
+   "episode_ended_before_hold": false,
+   "experienced_all": {
+    "n": 50,
+    "joint_err_deg_median": {
+     "shoulder_pan": 298.33327148297894,
+     "shoulder_lift": -315.19504728560537,
+     "elbow": 21.32155935260795,
+     "wrist_1": 62.32580955367339,
+     "wrist_2": 41.28047177513724,
+     "wrist_3": -16.55956887295754
+    },
+    "joint_abs_err_deg_p90": {
+     "shoulder_pan": 318.9124337579637,
+     "shoulder_lift": 324.33680904364843,
+     "elbow": 105.7174071365485,
+     "wrist_1": 139.31927562894984,
+     "wrist_2": 285.37519811247336,
+     "wrist_3": 280.2934800171862
+    },
+    "pinch_err_mm_median_xyz": [
+     53.05518330589173,
+     249.65893266687004,
+     185.8602819846886
+    ],
+    "pinch_err_mm_norm_median": 347.1530329328218,
+    "pinch_err_mm_norm_p90": 568.2179278560121,
+    "pinch_actual_xyz_median": [
+     0.040209433527959686,
+     0.06388146971255419,
+     1.1689356199813883
+    ]
+   },
+   "experienced_quasi_static": null,
+   "settled_hold": {
+    "summary": {
+     "n": 10,
+     "joint_err_deg_median": {
+      "shoulder_pan": 316.4779230315263,
+      "shoulder_lift": -317.59055598777275,
+      "elbow": 21.744822760445416,
+      "wrist_1": 77.67992623806946,
+      "wrist_2": 280.716697761103,
+      "wrist_3": -0.5676007180261514
+     },
+     "joint_abs_err_deg_p90": {
+      "shoulder_pan": 316.4982485246042,
+      "shoulder_lift": 317.5906907634472,
+      "elbow": 21.74511999586149,
+      "wrist_1": 77.69839784856921,
+      "wrist_2": 280.7567774139899,
+      "wrist_3": 0.5778599707049803
+     },
+     "pinch_err_mm_median_xyz": [
+      97.65822708943074,
+      343.9362197305373,
+      318.71068109821954
+     ],
+     "pinch_err_mm_norm_median": 478.96320437565805,
+     "pinch_err_mm_norm_p90": 479.01491059537346,
+     "pinch_actual_xyz_median": [
+      0.04003347801518968,
+      0.06508394705237658,
+      1.167869911627704
+     ]
+    },
+    "settled_samples": 10,
+    "final_max_abs_qvel": 0.004943491675908832,
+    "ended_early": true
+   }
+  },
+  "d8": {
+   "group": "far",
+   "piece_xyz": [
+    -0.039000000804662704,
+    0.7929999828338623,
+    0.7620000243186951
+   ],
+   "piece_y_from_board_centre": 0.7929999828338623,
+   "episode_ended_before_hold": false,
+   "experienced_all": {
+    "n": 50,
+    "joint_err_deg_median": {
+     "shoulder_pan": 185.86303123958177,
+     "shoulder_lift": -291.4789421409389,
+     "elbow": 7.4489364628832195,
+     "wrist_1": 7.8764376852385745,
+     "wrist_2": 207.35563760348046,
+     "wrist_3": -11.684281852504547
+    },
+    "joint_abs_err_deg_p90": {
+     "shoulder_pan": 269.5303273811163,
+     "shoulder_lift": 328.2158490458985,
+     "elbow": 109.13502520356253,
+     "wrist_1": 103.5923478146392,
+     "wrist_2": 309.2925258521916,
+     "wrist_3": 265.5384331143058
+    },
+    "pinch_err_mm_median_xyz": [
+     -451.2961999301415,
+     -71.02571994245375,
+     -420.399498026528
+    ],
+    "pinch_err_mm_norm_median": 710.3404405079177,
+    "pinch_err_mm_norm_p90": 921.9498195082875,
+    "pinch_actual_xyz_median": [
+     -0.3295298156280523,
+     0.1851215584166258,
+     0.9607032926492167
+    ]
+   },
+   "experienced_quasi_static": null,
+   "settled_hold": {
+    "summary": {
+     "n": 4,
+     "joint_err_deg_median": {
+      "shoulder_pan": 186.20357439583097,
+      "shoulder_lift": -295.6168462310875,
+      "elbow": 0.8537346873740652,
+      "wrist_1": -1.0449394514719503,
+      "wrist_2": 194.97581095128712,
+      "wrist_3": 0.9633298258425995
+     },
+     "joint_abs_err_deg_p90": {
+      "shoulder_pan": 186.20475029230303,
+      "shoulder_lift": 295.61809385557353,
+      "elbow": 0.9651221260579567,
+      "wrist_1": 1.070552303169138,
+      "wrist_2": 195.02235008725148,
+      "wrist_3": 0.9706840069947349
+     },
+     "pinch_err_mm_median_xyz": [
+      -404.5217151357218,
+      -126.47295131867594,
+      -426.19799021203187
+     ],
+     "pinch_err_mm_norm_median": 601.0640248727955,
+     "pinch_err_mm_norm_p90": 601.4598520690234,
+     "pinch_actual_xyz_median": [
+      -0.3001914244611319,
+      0.23820912228906987,
+      1.0093434055845734
+     ]
+    },
+    "settled_samples": 4,
+    "final_max_abs_qvel": 0.015748562869422767,
+    "ended_early": true
+   }
+  },
+  "h8": {
+   "group": "far",
+   "piece_xyz": [
+    0.27300000190734863,
+    0.7929999828338623,
+    0.7620000243186951
+   ],
+   "piece_y_from_board_centre": 0.7929999828338623,
+   "episode_ended_before_hold": false,
+   "experienced_all": {
+    "n": 50,
+    "joint_err_deg_median": {
+     "shoulder_pan": 319.0033471367435,
+     "shoulder_lift": -275.2173326575158,
+     "elbow": 0.9017082289716867,
+     "wrist_1": 52.73759553381224,
+     "wrist_2": 100.04174512838662,
+     "wrist_3": -5.253214776987693
+    },
+    "joint_abs_err_deg_p90": {
+     "shoulder_pan": 357.8158924228577,
+     "shoulder_lift": 318.78370139904604,
+     "elbow": 94.53442304647812,
+     "wrist_1": 175.22828769898223,
+     "wrist_2": 217.6965230013047,
+     "wrist_3": 124.47884240448649
+    },
+    "pinch_err_mm_median_xyz": [
+     -321.70393299316515,
+     -378.58928928235093,
+     -417.321581006222
+    ],
+    "pinch_err_mm_norm_median": 714.1849222880314,
+    "pinch_err_mm_norm_p90": 985.7663563056357,
+    "pinch_actual_xyz_median": [
+     -0.15326699020368004,
+     -0.1337337726071798,
+     1.0832188377769354
+    ]
+   },
+   "experienced_quasi_static": null,
+   "settled_hold": {
+    "summary": {
+     "n": 5,
+     "joint_err_deg_median": {
+      "shoulder_pan": 357.55100171286205,
+      "shoulder_lift": -275.46463742224245,
+      "elbow": 0.1357236269054956,
+      "wrist_1": 51.32796479040148,
+      "wrist_2": 107.6142551816482,
+      "wrist_3": 0.3891941310824595
+     },
+     "joint_abs_err_deg_p90": {
+      "shoulder_pan": 357.5598774248399,
+      "shoulder_lift": 275.46480322585484,
+      "elbow": 0.14177270219452245,
+      "wrist_1": 51.36457432102222,
+      "wrist_2": 107.63998009534528,
+      "wrist_3": 0.3903463479578121
+     },
+     "pinch_err_mm_median_xyz": [
+      -322.20038365956634,
+      -376.4485836914722,
+      -520.565470026706
+     ],
+     "pinch_err_mm_norm_median": 718.6898023332545,
+     "pinch_err_mm_norm_p90": 718.7811514569767,
+     "pinch_actual_xyz_median": [
+      -0.1477009376045689,
+      -0.1329640965243129,
+      1.0454154332787402
+     ]
+    },
+    "settled_samples": 5,
+    "final_max_abs_qvel": 0.009948110237773457,
+    "ended_early": true
+   }
+  }
+ }
+}

@@ -1,0 +1,1125 @@
+{
+ "run": "t1_ppo_sparse_state_seed0_seed0",
+ "eval_seed": 20000,
+ "episodes": 50,
+ "events": [
+  {
+   "eval_episode_index": 15,
+   "macro_step": 19,
+   "start": "b2",
+   "target": "f5",
+   "thresholds": {
+    "lin": 10.0,
+    "ang": 200.0,
+    "ke": 1.0
+   },
+   "pre_step": {
+    "lin_speed": 9.747713036387602e-06,
+    "ang_speed": 0.004990356908547301,
+    "ke_J": 5.406639387668738e-11
+   },
+   "post_step": {
+    "lin_speed": 3.8829094464198994,
+    "ang_speed": 590.1911725551787,
+    "ke_J": 0.8798004129058495,
+    "piece_height_above_board_m": -0.005868077278137207,
+    "gripper_qpos": 0.2812406503516085,
+    "pinch_to_piece_m": 0.19711274567054776,
+    "bad_contact_flag": false,
+    "piece_off_board_flag": false,
+    "contacts": [
+     {
+      "piece_geom": "piece_a_head",
+      "other_geom": "#29",
+      "other_body": "ur_wrist_2_link",
+      "penetration_mm": 3.769260665491802,
+      "normal_force_N": 0.0
+     },
+     {
+      "piece_geom": "piece_a_head",
+      "other_geom": "#31",
+      "other_body": "ur_wrist_3_link",
+      "penetration_mm": 4.055969469610466,
+      "normal_force_N": 268.7951341532567
+     },
+     {
+      "piece_geom": "piece_a_head",
+      "other_geom": "#31",
+      "other_body": "ur_wrist_3_link",
+      "penetration_mm": 4.055969469610466,
+      "normal_force_N": 258.4266221758382
+     },
+     {
+      "piece_geom": "piece_a_head",
+      "other_geom": "#31",
+      "other_body": "ur_wrist_3_link",
+      "penetration_mm": 4.055969469610466,
+      "normal_force_N": 279.16615522329323
+     },
+     {
+      "piece_geom": "piece_a_head",
+      "other_geom": "#31",
+      "other_body": "ur_wrist_3_link",
+      "penetration_mm": 4.055969469610466,
+      "normal_force_N": 277.3824717722418
+     },
+     {
+      "piece_geom": "piece_a_head",
+      "other_geom": "#31",
+      "other_body": "ur_wrist_3_link",
+      "penetration_mm": 4.055969469610466,
+      "normal_force_N": 261.2952107499462
+     },
+     {
+      "piece_geom": "piece_a_base",
+      "other_geom": "board_slab",
+      "other_body": "board",
+      "penetration_mm": 7.409806646145148,
+      "normal_force_N": 306.7479043356717
+     },
+     {
+      "piece_geom": "piece_a_base",
+      "other_geom": "board_slab",
+      "other_body": "board",
+      "penetration_mm": 7.409806646145148,
+      "normal_force_N": 381.56444917452296
+     },
+     {
+      "piece_geom": "piece_a_base",
+      "other_geom": "board_slab",
+      "other_body": "board",
+      "penetration_mm": 7.409806646145148,
+      "normal_force_N": 243.36166274858948
+     },
+     {
+      "piece_geom": "piece_a_base",
+      "other_geom": "board_slab",
+      "other_body": "board",
+      "penetration_mm": 7.409806646145148,
+      "normal_force_N": 437.04931234005636
+     },
+     {
+      "piece_geom": "piece_a_base",
+      "other_geom": "board_slab",
+      "other_body": "board",
+      "penetration_mm": 7.409806646145148,
+      "normal_force_N": 203.14958150482917
+     }
+    ]
+   },
+   "which_exceeded": [
+    "ang_speed"
+   ],
+   "substep_replay_reproduces_env": true,
+   "first_substep_over_threshold": 20,
+   "substeps": [
+    {
+     "substep": 1,
+     "lin_speed": 5.349633380104119e-06,
+     "ang_speed": 0.0023625498790914123,
+     "ke_J": 1.2189269628377336e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007657801952182807,
+       "normal_force_N": 0.027668785716194428
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007657801952182807,
+       "normal_force_N": 0.03147214123068205
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007657801952182807,
+       "normal_force_N": 0.05046473685720979
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007657801952182807,
+       "normal_force_N": 0.050449305059628136
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007657801952182807,
+       "normal_force_N": 0.03141697812416056
+      }
+     ],
+     "pinch_to_piece_m": 0.2674393166062277
+    },
+    {
+     "substep": 2,
+     "lin_speed": 1.010105902207858e-05,
+     "ang_speed": 0.006135741483942045,
+     "ke_J": 8.132741148766194e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007576232461758305,
+       "normal_force_N": 0.02734414938990211
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007576232461758305,
+       "normal_force_N": 0.03128546878093266
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007576232461758305,
+       "normal_force_N": 0.050760279255103076
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007576232461758305,
+       "normal_force_N": 0.05078972969967758
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007576232461758305,
+       "normal_force_N": 0.03119137156059487
+      }
+     ],
+     "pinch_to_piece_m": 0.2559147530807455
+    },
+    {
+     "substep": 3,
+     "lin_speed": 1.0141317393460877e-07,
+     "ang_speed": 9.606155908287325e-05,
+     "ke_J": 1.9790764972385733e-14,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006825761612478997,
+       "normal_force_N": 0.033988512323495645
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006825761612478997,
+       "normal_force_N": 0.04545292859541834
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006825761612478997,
+       "normal_force_N": 0.03316207835806745
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006825761612478997,
+       "normal_force_N": 0.033150153584872895
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006825761612478997,
+       "normal_force_N": 0.045471534170478604
+      }
+     ],
+     "pinch_to_piece_m": 0.24470656877014388
+    },
+    {
+     "substep": 4,
+     "lin_speed": 5.495556683962606e-06,
+     "ang_speed": 0.0033394114966855755,
+     "ke_J": 2.409011382633979e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006824189795814818,
+       "normal_force_N": 0.03378147353081878
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006824189795814818,
+       "normal_force_N": 0.04582750412122775
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006824189795814818,
+       "normal_force_N": 0.03291399502640396
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006824189795814818,
+       "normal_force_N": 0.0329002835108928
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006824189795814818,
+       "normal_force_N": 0.04584850570056615
+      }
+     ],
+     "pinch_to_piece_m": 0.2339398459343231
+    },
+    {
+     "substep": 5,
+     "lin_speed": 9.710086097776271e-06,
+     "ang_speed": 0.004991969502313891,
+     "ke_J": 5.409360340142537e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006774661294852371,
+       "normal_force_N": 0.03370976212830398
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006774661294852371,
+       "normal_force_N": 0.045930526694245265
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006774661294852371,
+       "normal_force_N": 0.03284857045809442
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006774661294852371,
+       "normal_force_N": 0.03281801983366073
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006774661294852371,
+       "normal_force_N": 0.04597652507416476
+      }
+     ],
+     "pinch_to_piece_m": 0.2237557231667163
+    },
+    {
+     "substep": 6,
+     "lin_speed": 5.298703603351539e-06,
+     "ang_speed": 0.002361117450916415,
+     "ke_J": 1.216954315029567e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007655356334875722,
+       "normal_force_N": 0.027669675897119255
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007655356334875722,
+       "normal_force_N": 0.03147262304604043
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007655356334875722,
+       "normal_force_N": 0.05046331027112058
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007655356334875722,
+       "normal_force_N": 0.05044728119461977
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007655356334875722,
+       "normal_force_N": 0.03141819220635081
+      }
+     ],
+     "pinch_to_piece_m": 0.21431134585198597
+    },
+    {
+     "substep": 7,
+     "lin_speed": 1.0010085155454427e-05,
+     "ang_speed": 0.006134425487230053,
+     "ke_J": 8.127511445981874e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0075739315649919455,
+       "normal_force_N": 0.02734507279290304
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0075739315649919455,
+       "normal_force_N": 0.031286015208447614
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0075739315649919455,
+       "normal_force_N": 0.05075900819959879
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0075739315649919455,
+       "normal_force_N": 0.05078787573753266
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0075739315649919455,
+       "normal_force_N": 0.0311926356788908
+      }
+     ],
+     "pinch_to_piece_m": 0.21387244773858222
+    },
+    {
+     "substep": 8,
+     "lin_speed": 1.1154523798220907e-07,
+     "ang_speed": 9.747715201368716e-05,
+     "ke_J": 2.0396411707910555e-14,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006826961499871497,
+       "normal_force_N": 0.03398782511284894
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006826961499871497,
+       "normal_force_N": 0.04545493994664331
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006826961499871497,
+       "normal_force_N": 0.03316086001625231
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006826961499871497,
+       "normal_force_N": 0.03314916736716741
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006826961499871497,
+       "normal_force_N": 0.045473185917449435
+      }
+     ],
+     "pinch_to_piece_m": 0.21384700758151762
+    },
+    {
+     "substep": 9,
+     "lin_speed": 5.4679976333209384e-06,
+     "ang_speed": 0.003340864450762308,
+     "ke_J": 2.410787855881212e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006825387819191226,
+       "normal_force_N": 0.033780735877111785
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006825387819191226,
+       "normal_force_N": 0.045829409342842506
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006825387819191226,
+       "normal_force_N": 0.032912716762791616
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006825387819191226,
+       "normal_force_N": 0.032899252445138354
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006825387819191226,
+       "normal_force_N": 0.045850032838397364
+      }
+     ],
+     "pinch_to_piece_m": 0.21369063175774272
+    },
+    {
+     "substep": 10,
+     "lin_speed": 9.665175027986169e-06,
+     "ang_speed": 0.004993420879285956,
+     "ke_J": 5.411604246180054e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006775777520267122,
+       "normal_force_N": 0.03370899982666319
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006775777520267122,
+       "normal_force_N": 0.04593234919155021
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006775777520267122,
+       "normal_force_N": 0.03284727568153307
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006775777520267122,
+       "normal_force_N": 0.03281697863863876
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006775777520267122,
+       "normal_force_N": 0.04597797032379375
+      }
+     ],
+     "pinch_to_piece_m": 0.21328954468278905
+    },
+    {
+     "substep": 11,
+     "lin_speed": 5.262294081231825e-06,
+     "ang_speed": 0.0023598278048332917,
+     "ke_J": 1.2152802079513328e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0076532854244128505,
+       "normal_force_N": 0.02767047452307454
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0076532854244128505,
+       "normal_force_N": 0.031473046258439254
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0076532854244128505,
+       "normal_force_N": 0.050462030484268235
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0076532854244128505,
+       "normal_force_N": 0.05044544714549045
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0076532854244128505,
+       "normal_force_N": 0.03141929051572432
+      }
+     ],
+     "pinch_to_piece_m": 0.21263705590374798
+    },
+    {
+     "substep": 12,
+     "lin_speed": 9.936262321624586e-06,
+     "ang_speed": 0.006133240449199835,
+     "ke_J": 8.122973474280368e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0075719720567895025,
+       "normal_force_N": 0.027345901731640795
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0075719720567895025,
+       "normal_force_N": 0.03128649761292941
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0075719720567895025,
+       "normal_force_N": 0.05075786825179299
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0075719720567895025,
+       "normal_force_N": 0.05078619589084886
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.0075719720567895025,
+       "normal_force_N": 0.031193778788659476
+      }
+     ],
+     "pinch_to_piece_m": 0.21176821150085684
+    },
+    {
+     "substep": 13,
+     "lin_speed": 1.1486408980133084e-07,
+     "ang_speed": 9.875156131553719e-05,
+     "ke_J": 2.0937354635406428e-14,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006828137522933607,
+       "normal_force_N": 0.03398720440710527
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006828137522933607,
+       "normal_force_N": 0.04545674774593787
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006828137522933607,
+       "normal_force_N": 0.0331597615195179
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006828137522933607,
+       "normal_force_N": 0.03314827702649227
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006828137522933607,
+       "normal_force_N": 0.04547467071786214
+      }
+     ],
+     "pinch_to_piece_m": 0.21066000566685913
+    },
+    {
+     "substep": 14,
+     "lin_speed": 5.437272647536965e-06,
+     "ang_speed": 0.003342172422079092,
+     "ke_J": 2.4123263332403618e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006826548338265168,
+       "normal_force_N": 0.033780070056851685
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006826548338265168,
+       "normal_force_N": 0.04583112220362295
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006826548338265168,
+       "normal_force_N": 0.03291156440093742
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006826548338265168,
+       "normal_force_N": 0.032898322233338044
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006826548338265168,
+       "normal_force_N": 0.045851405603959096
+      }
+     ],
+     "pinch_to_piece_m": 0.20929365141518197
+    },
+    {
+     "substep": 15,
+     "lin_speed": 9.61968163804156e-06,
+     "ang_speed": 0.004994727401369954,
+     "ke_J": 5.4135332873854996e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.00677685257142258,
+       "normal_force_N": 0.0337083120656504
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.00677685257142258,
+       "normal_force_N": 0.04593398803277144
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.00677685257142258,
+       "normal_force_N": 0.03284610858419608
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.00677685257142258,
+       "normal_force_N": 0.0328160396678858
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.00677685257142258,
+       "normal_force_N": 0.045979269575100935
+      }
+     ],
+     "pinch_to_piece_m": 0.20765135865462683
+    },
+    {
+     "substep": 16,
+     "lin_speed": 5.233845250870184e-06,
+     "ang_speed": 0.0023586666767150956,
+     "ke_J": 1.2138199552540175e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007651481027730366,
+       "normal_force_N": 0.027671192399277556
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007651481027730366,
+       "normal_force_N": 0.03147342440185797
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007651481027730366,
+       "normal_force_N": 0.050460878181111744
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007651481027730366,
+       "normal_force_N": 0.05044379250366923
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.007651481027730366,
+       "normal_force_N": 0.03142027979029837
+      }
+     ],
+     "pinch_to_piece_m": 0.20571661487921852
+    },
+    {
+     "substep": 17,
+     "lin_speed": 9.87350657080674e-06,
+     "ang_speed": 0.00613217339877171,
+     "ke_J": 8.118968491259244e-11,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.00757025929422546,
+       "normal_force_N": 0.027346647095154684
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.00757025929422546,
+       "normal_force_N": 0.03128692971796635
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.00757025929422546,
+       "normal_force_N": 0.05075684155141423
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.00757025929422546,
+       "normal_force_N": 0.05078468081469327
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.00757025929422546,
+       "normal_force_N": 0.031194808104553377
+      }
+     ],
+     "pinch_to_piece_m": 0.2034744151132606
+    },
+    {
+     "substep": 18,
+     "lin_speed": 1.5461600607035497,
+     "ang_speed": 34.74708003963177,
+     "ke_J": 0.025888299098389026,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#29",
+       "other_body": "ur_wrist_2_link",
+       "penetration_mm": 2.0708144769878056,
+       "normal_force_N": 187.11064101586425
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 2.1882671434447865,
+       "normal_force_N": 194.22517367764286
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 2.1882671434447865,
+       "normal_force_N": 193.43750395646222
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 2.1882671434447865,
+       "normal_force_N": 195.03394131885318
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 2.1882671434447865,
+       "normal_force_N": 194.53623910780348
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 2.1882671434447865,
+       "normal_force_N": 194.06270948987802
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006829240210277643,
+       "normal_force_N": 236.2764694330607
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006829240210277643,
+       "normal_force_N": 380.27496385798554
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006829240210277643,
+       "normal_force_N": 193.16795998364705
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006829240210277643,
+       "normal_force_N": 263.52764775856286
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 0.006829240210277643,
+       "normal_force_N": 311.2399583164451
+      }
+     ],
+     "pinch_to_piece_m": 0.20081782812446342
+    },
+    {
+     "substep": 19,
+     "lin_speed": 1.4133460282227492,
+     "ang_speed": 29.96732422585447,
+     "ke_J": 0.020806083598355122,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#29",
+       "other_body": "ur_wrist_2_link",
+       "penetration_mm": 3.0305019559431474,
+       "normal_force_N": 463.9897683657367
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 3.2100498879888315,
+       "normal_force_N": 480.50121918603776
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 3.2100498879888315,
+       "normal_force_N": 480.38735486767115
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 3.2100498879888315,
+       "normal_force_N": 480.6264518521837
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 3.2100498879888315,
+       "normal_force_N": 480.8179175776765
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 3.2100498879888315,
+       "normal_force_N": 480.19363797564745
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 4.1408921382350234,
+       "normal_force_N": 628.5964847199624
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 4.1408921382350234,
+       "normal_force_N": 627.1247863464888
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 4.1408921382350234,
+       "normal_force_N": 630.1529149896917
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 4.1408921382350234,
+       "normal_force_N": 622.0470033455323
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 4.1408921382350234,
+       "normal_force_N": 635.1070726966268
+      }
+     ],
+     "pinch_to_piece_m": 0.19853775014481992
+    },
+    {
+     "substep": 20,
+     "lin_speed": 3.8829094464198994,
+     "ang_speed": 590.1911725551787,
+     "ke_J": 0.8798004129058495,
+     "contacts": [
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#29",
+       "other_body": "ur_wrist_2_link",
+       "penetration_mm": 3.769260665491802,
+       "normal_force_N": 0.0
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 4.055969469610466,
+       "normal_force_N": 268.7951341532567
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 4.055969469610466,
+       "normal_force_N": 258.4266221758382
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 4.055969469610466,
+       "normal_force_N": 279.16615522329323
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 4.055969469610466,
+       "normal_force_N": 277.3824717722418
+      },
+      {
+       "piece_geom": "piece_a_head",
+       "other_geom": "#31",
+       "other_body": "ur_wrist_3_link",
+       "penetration_mm": 4.055969469610466,
+       "normal_force_N": 261.2952107499462
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 7.409806646145148,
+       "normal_force_N": 306.7479043356717
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 7.409806646145148,
+       "normal_force_N": 381.56444917452296
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 7.409806646145148,
+       "normal_force_N": 243.36166274858948
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 7.409806646145148,
+       "normal_force_N": 437.04931234005636
+      },
+      {
+       "piece_geom": "piece_a_base",
+       "other_geom": "board_slab",
+       "other_body": "board",
+       "penetration_mm": 7.409806646145148,
+       "normal_force_N": 203.14958150482917
+      }
+     ],
+     "pinch_to_piece_m": 0.197112759660418
+    }
+   ]
+  }
+ ]
+}

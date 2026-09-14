@@ -1,0 +1,158 @@
+{
+ "run": "t1_ppo_shaped_state_seed0_seed0",
+ "model": "final_model.zip",
+ "checkpoint": null,
+ "eval_seed": 10000,
+ "n": 10,
+ "success": 0.0,
+ "grasp_ever_count": 0,
+ "mean_return": -64.736608697474,
+ "mean_len": 90.5,
+ "reasons": {
+  "time_limit": 9,
+  "bad_contact": 1
+ },
+ "min_gripper_to_piece_m": {
+  "median": 0.41541484035532317,
+  "p10": 0.311870765561455,
+  "p90": 0.4517732331812153,
+  "min": 0.18572655193936496
+ },
+ "min_pinch_height_m": {
+  "median": 0.12527525623136065,
+  "min": -0.019709584552495274
+ },
+ "final_distance_to_goal_m_median": 0.29661649465560913,
+ "episodes": [
+  {
+   "success": false,
+   "ret": -35.935265868902206,
+   "length": 100,
+   "reason": "time_limit",
+   "start": "e2",
+   "target": "b3",
+   "min_gripper_to_piece_m": 0.3258867892972428,
+   "min_pinch_height_m": 0.1464962826172056,
+   "min_pinch_height_over_board": false,
+   "final_distance_to_goal_m": 0.24665765464305878,
+   "grasp_ever": false
+  },
+  {
+   "success": false,
+   "ret": -48.062597543001175,
+   "length": 100,
+   "reason": "time_limit",
+   "start": "d3",
+   "target": "e7",
+   "min_gripper_to_piece_m": 0.41014187254587686,
+   "min_pinch_height_m": 0.24082461215355377,
+   "min_pinch_height_over_board": false,
+   "final_distance_to_goal_m": 0.3216022253036499,
+   "grasp_ever": false
+  },
+  {
+   "success": false,
+   "ret": -259.4191629886627,
+   "length": 5,
+   "reason": "bad_contact",
+   "start": "b6",
+   "target": "f6",
+   "min_gripper_to_piece_m": 0.44868107499327453,
+   "min_pinch_height_m": 0.014781777047504274,
+   "min_pinch_height_over_board": false,
+   "final_distance_to_goal_m": 0.31199997663497925,
+   "grasp_ever": false
+  },
+  {
+   "success": false,
+   "ret": -58.46049749851227,
+   "length": 100,
+   "reason": "time_limit",
+   "start": "b3",
+   "target": "g4",
+   "min_gripper_to_piece_m": 0.3729028594830825,
+   "min_pinch_height_m": 0.020194102614804366,
+   "min_pinch_height_over_board": false,
+   "final_distance_to_goal_m": 0.3977234959602356,
+   "grasp_ever": false
+  },
+  {
+   "success": false,
+   "ret": -45.532887518405914,
+   "length": 100,
+   "reason": "time_limit",
+   "start": "a5",
+   "target": "d3",
+   "min_gripper_to_piece_m": 0.4399487772338855,
+   "min_pinch_height_m": -0.019709584552495274,
+   "min_pinch_height_over_board": false,
+   "final_distance_to_goal_m": 0.281233012676239,
+   "grasp_ever": false
+  },
+  {
+   "success": false,
+   "ret": -21.920861586928368,
+   "length": 100,
+   "reason": "time_limit",
+   "start": "d4",
+   "target": "e3",
+   "min_gripper_to_piece_m": 0.18572655193936496,
+   "min_pinch_height_m": 0.10812029083331287,
+   "min_pinch_height_over_board": true,
+   "final_distance_to_goal_m": 0.11030866950750351,
+   "grasp_ever": false
+  },
+  {
+   "success": false,
+   "ret": -28.26325672864914,
+   "length": 100,
+   "reason": "time_limit",
+   "start": "b7",
+   "target": "b6",
+   "min_gripper_to_piece_m": 0.4796026568726822,
+   "min_pinch_height_m": 0.14243022162940844,
+   "min_pinch_height_over_board": false,
+   "final_distance_to_goal_m": 0.07799994945526123,
+   "grasp_ever": false
+  },
+  {
+   "success": false,
+   "ret": -59.31690800189972,
+   "length": 100,
+   "reason": "time_limit",
+   "start": "c4",
+   "target": "g1",
+   "min_gripper_to_piece_m": 0.4206878081647695,
+   "min_pinch_height_m": 0.19563732995874328,
+   "min_pinch_height_over_board": false,
+   "final_distance_to_goal_m": 0.38999998569488525,
+   "grasp_ever": false
+  },
+  {
+   "success": false,
+   "ret": -54.3996696472168,
+   "length": 100,
+   "reason": "time_limit",
+   "start": "c3",
+   "target": "a7",
+   "min_gripper_to_piece_m": 0.42205522165473297,
+   "min_pinch_height_m": 0.2569248106459916,
+   "min_pinch_height_over_board": false,
+   "final_distance_to_goal_m": 0.3488265872001648,
+   "grasp_ever": false
+  },
+  {
+   "success": false,
+   "ret": -36.05497959256172,
+   "length": 100,
+   "reason": "time_limit",
+   "start": "a3",
+   "target": "b5",
+   "min_gripper_to_piece_m": 0.3767463367762741,
+   "min_pinch_height_m": 0.07180890628882075,
+   "min_pinch_height_over_board": false,
+   "final_distance_to_goal_m": 0.17441332340240479,
+   "grasp_ever": false
+  }
+ ]
+}
