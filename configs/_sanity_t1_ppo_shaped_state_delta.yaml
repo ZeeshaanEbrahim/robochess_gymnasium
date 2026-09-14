@@ -1,0 +1,20 @@
+# NOT an experiment cell. Short sanity run for the delta action mode: does the
+# arm start approaching the piece, and does actuator force saturation drop from
+# the 88-99% measured under absolute mode? 100k steps says nothing about
+# success rate. The leading underscore keeps it out of the experiment grid.
+
+task: t1
+algorithm: ppo
+reward_type: shaped
+observation: state
+seed: 0
+total_timesteps: 100000
+device: cpu
+num_threads: 1
+action_mode: delta
+max_episode_steps: 100
+n_obstacles: 0
+# Every 20k steps, so the approach trend can be evaluated at 5 points in training.
+checkpoint_freq: 20000
+output_root: runs
+notes: "delta-mode sanity run, not a result"
