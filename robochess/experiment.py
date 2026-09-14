@@ -44,6 +44,9 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "device": None,            # None -> resolved from `observation` (see below)
     "max_episode_steps": 100,
     "n_obstacles": 0,          # t2 only; must stay 0 for t1
+    # "absolute" keeps every pilot-matrix config byte-for-byte reproducible;
+    # "delta" is RoboChessEnv's per-step joint-target delta mode.
+    "action_mode": "absolute",
     "checkpoint_freq": 100_000,
     # Pinned to 1 by default, and this is a REPRODUCIBILITY setting, not a
     # performance one. Measured: runs are bit-identical across processes at a
@@ -63,6 +66,7 @@ ENUMS = {
     "algorithm": ("ppo", "sac"),
     "reward_type": ("shaped", "sparse"),
     "observation": ("state", "image"),
+    "action_mode": ("absolute", "delta"),
     "device": ("cpu", "cuda", "auto"),
 }
 

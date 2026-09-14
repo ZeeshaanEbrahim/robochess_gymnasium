@@ -56,6 +56,28 @@ DEFAULT_SCENE = Path(__file__).resolve().parents[2] / "assets" / "scene.xml"
 # the two halves are scaled completely differently (see __init__).
 N_ARM_ACTUATORS = 6
 
+# --- action modes ------------------------------------------------------------
+# "absolute" (default): each arm action dimension maps linearly across the
+#   actuator's full ctrlrange (+-2 pi on most joints), so every step commands an
+#   absolute joint target. This is what the 16-cell pilot matrix trained on.
+#   Measured there: trained policies sat at +-1, commanding targets hundreds of
+#   degrees from the actual joints, with the big-joint actuators force-saturated
+#   on 88-99% of steps (results/pilot_diagnosis/s4).
+# "delta": each arm action dimension scales to a per-step CHANGE in the joint
+#   target, capped at max_joint_delta and applied to the previous target, then
+#   clamped to the joint's valid range. The gripper (7th dimension) stays
+#   absolute in both modes, so a policy can open or close in one step.
+ACTION_MODES = ("absolute", "delta")
+
+# Delta cap, rad per env step (40 ms). Calibrated from the scripted expert's
+# ACTUAL joint motion over 23 successful episodes spanning near and far squares
+# (results/delta_calibration/expert_deltas.json): p95 0.04-0.08 on every joint,
+# p99 0.11-0.14 on pan/lift/wrist_1/wrist_3 (elbow 0.19, max 0.31). Its COMMANDED
+# targets could not be used: they are waypoint jumps (zero on 95.6% of steps,
+# up to 1.85 rad otherwise). 0.1 also keeps a maximal step close to the point
+# where the PD servos saturate (forcerange/kp = 0.075 rad big joints, 0.056 wrists).
+DEFAULT_MAX_JOINT_DELTA = 0.1
+
 # D9 (DECISIONS.md): is_success previously had no requirement that the piece
 # itself be at rest, and was found to register success while the piece still
 # had substantial angular velocity (observed up to 17.7 rad/s during D8's
@@ -100,6 +122,8 @@ class RoboChessEnv(gym.Env):
         rest_tolerance: float = 0.01,
         gripper_open_threshold: float = 0.2,
         normalize_action: bool = True,
+        action_mode: str = "absolute",
+        max_joint_delta: float = DEFAULT_MAX_JOINT_DELTA,
         render_mode: str | None = None,
         render_width: int = 640,
         render_height: int = 480,
@@ -123,6 +147,15 @@ class RoboChessEnv(gym.Env):
         self.rest_tolerance = float(rest_tolerance)
         self.gripper_open_threshold = float(gripper_open_threshold)
         self.normalize_action = bool(normalize_action)
+        if action_mode not in ACTION_MODES:
+            raise ValueError(f"action_mode must be one of {ACTION_MODES}, got {action_mode!r}")
+        if action_mode == "delta" and not self.normalize_action:
+            raise ValueError("action_mode='delta' requires normalize_action=True: the delta "
+                             "is defined as a fraction of max_joint_delta per unit action.")
+        if not max_joint_delta > 0:
+            raise ValueError(f"max_joint_delta must be > 0, got {max_joint_delta!r}")
+        self.action_mode = action_mode
+        self.max_joint_delta = float(max_joint_delta)
 
         if render_mode is not None and render_mode not in self.metadata["render_modes"]:
             raise ValueError(f"Unsupported render_mode: {render_mode!r}")
@@ -181,6 +214,14 @@ class RoboChessEnv(gym.Env):
         self._ctrl_high = self.model.actuator_ctrlrange[:, 1].astype(np.float64).copy()
         if not np.all(self.model.actuator_ctrllimited):
             raise ValueError("Every actuator must be ctrllimited for the action space to be finite.")
+
+        # Delta mode clamps each arm target to the valid range of the joint its
+        # actuator drives, intersected with the actuator's own ctrlrange (on this
+        # model the two coincide; the intersection keeps that from being assumed).
+        arm_joints = self.model.actuator_trnid[:N_ARM_ACTUATORS, 0]
+        self._arm_target_low = np.maximum(self.model.jnt_range[arm_joints, 0], self._ctrl_low[:N_ARM_ACTUATORS])
+        self._arm_target_high = np.minimum(self.model.jnt_range[arm_joints, 1], self._ctrl_high[:N_ARM_ACTUATORS])
+        self._arm_target = self.model.key_ctrl[self._home_key][:N_ARM_ACTUATORS].astype(np.float64).copy()
 
         if self.normalize_action:
             # The raw ctrlrange spans +/-6.28 for the arm but 0..255 for the
@@ -256,8 +297,18 @@ class RoboChessEnv(gym.Env):
 
     # --------------------------------------------------------------- action
     def _scale_action(self, action: np.ndarray) -> np.ndarray:
-        """Map an agent action onto the model's actuator ctrlrange."""
+        """Map an agent action onto the model's actuator ctrlrange.
+
+        In delta mode this ADVANCES the stored arm target, so it must be called
+        exactly once per env step (RoboChessEnv.step is its only caller).
+        """
         action = np.clip(np.asarray(action, dtype=np.float64), self.action_space.low, self.action_space.high)
+        if self.action_mode == "delta":
+            n = N_ARM_ACTUATORS
+            delta = action[:n] * self.max_joint_delta
+            self._arm_target = np.clip(self._arm_target + delta, self._arm_target_low, self._arm_target_high)
+            gripper = self._ctrl_low[n:] + (action[n:] + 1.0) * 0.5 * (self._ctrl_high[n:] - self._ctrl_low[n:])
+            return np.concatenate([self._arm_target, gripper])
         if not self.normalize_action:
             return action
         # [-1, 1] -> [ctrl_low, ctrl_high]
@@ -266,9 +317,15 @@ class RoboChessEnv(gym.Env):
     def home_action(self) -> np.ndarray:
         """The action that reproduces the home keyframe's ctrl (i.e. hold still).
 
-        Useful for tests and for P2 baselines that need a no-op action.
+        Useful for tests and for P2 baselines that need a no-op action. In delta
+        mode "hold still" is a zero arm delta; the gripper stays absolute.
         """
         ctrl = self.model.key_ctrl[self._home_key].astype(np.float64)
+        if self.action_mode == "delta":
+            n = N_ARM_ACTUATORS
+            span = self._ctrl_high[n:] - self._ctrl_low[n:]
+            gripper = 2.0 * (ctrl[n:] - self._ctrl_low[n:]) / span - 1.0
+            return np.concatenate([np.zeros(n), gripper]).astype(np.float32)
         if not self.normalize_action:
             return ctrl.astype(np.float32)
         span = np.where(self._ctrl_high > self._ctrl_low, self._ctrl_high - self._ctrl_low, 1.0)
@@ -343,6 +400,10 @@ class RoboChessEnv(gym.Env):
         # piece's spawn pose in one shot, since the keyframe carries full qpos.
         mujoco.mj_resetDataKeyframe(self.model, self.data, self._home_key)
         mujoco.mj_forward(self.model, self.data)
+        # Delta mode's running arm target starts from the keyframe's ctrl. Reset
+        # unconditionally (absolute mode never reads it) so no episode inherits
+        # the previous one's target.
+        self._arm_target = self.data.ctrl[:N_ARM_ACTUATORS].astype(np.float64).copy()
 
         self._desired_goal = self._sample_desired_goal()
         self._elapsed_steps = 0

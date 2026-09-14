@@ -1,0 +1,301 @@
+{
+ "episodes": [
+  {
+   "start": "a1",
+   "target": "a8",
+   "success": true,
+   "outcome": "success",
+   "steps": 142
+  },
+  {
+   "start": "a1",
+   "target": "e8",
+   "success": true,
+   "outcome": "success",
+   "steps": 139
+  },
+  {
+   "start": "d1",
+   "target": "a8",
+   "success": true,
+   "outcome": "success",
+   "steps": 147
+  },
+  {
+   "start": "d1",
+   "target": "e8",
+   "success": true,
+   "outcome": "success",
+   "steps": 147
+  },
+  {
+   "start": "h1",
+   "target": "a8",
+   "success": true,
+   "outcome": "success",
+   "steps": 139
+  },
+  {
+   "start": "h1",
+   "target": "e8",
+   "success": true,
+   "outcome": "success",
+   "steps": 139
+  },
+  {
+   "start": "b2",
+   "target": "a8",
+   "success": true,
+   "outcome": "success",
+   "steps": 145
+  },
+  {
+   "start": "b2",
+   "target": "e8",
+   "success": true,
+   "outcome": "success",
+   "steps": 145
+  },
+  {
+   "start": "g2",
+   "target": "a8",
+   "success": true,
+   "outcome": "success",
+   "steps": 146
+  },
+  {
+   "start": "g2",
+   "target": "e8",
+   "success": true,
+   "outcome": "success",
+   "steps": 143
+  },
+  {
+   "start": "a8",
+   "target": "h1",
+   "success": true,
+   "outcome": "success",
+   "steps": 198
+  },
+  {
+   "start": "a8",
+   "target": "d1",
+   "success": true,
+   "outcome": "success",
+   "steps": 202
+  },
+  {
+   "start": "d8",
+   "target": "h1",
+   "success": true,
+   "outcome": "success",
+   "steps": 194
+  },
+  {
+   "start": "d8",
+   "target": "d1",
+   "success": true,
+   "outcome": "success",
+   "steps": 199
+  },
+  {
+   "start": "h8",
+   "target": "h1",
+   "success": false,
+   "outcome": "piece_off_board",
+   "steps": 143
+  },
+  {
+   "start": "h8",
+   "target": "d1",
+   "success": true,
+   "outcome": "success",
+   "steps": 202
+  },
+  {
+   "start": "b7",
+   "target": "h1",
+   "success": true,
+   "outcome": "success",
+   "steps": 183
+  },
+  {
+   "start": "b7",
+   "target": "d1",
+   "success": true,
+   "outcome": "success",
+   "steps": 180
+  },
+  {
+   "start": "g7",
+   "target": "h1",
+   "success": true,
+   "outcome": "success",
+   "steps": 181
+  },
+  {
+   "start": "g7",
+   "target": "d1",
+   "success": true,
+   "outcome": "success",
+   "steps": 181
+  },
+  {
+   "start": "d4",
+   "target": "e5",
+   "success": true,
+   "outcome": "success",
+   "steps": 127
+  },
+  {
+   "start": "e5",
+   "target": "d4",
+   "success": true,
+   "outcome": "success",
+   "steps": 130
+  },
+  {
+   "start": "c3",
+   "target": "f6",
+   "success": true,
+   "outcome": "success",
+   "steps": 135
+  },
+  {
+   "start": "f6",
+   "target": "c3",
+   "success": true,
+   "outcome": "success",
+   "steps": 144
+  }
+ ],
+ "n_success": 23,
+ "n_steps": 3688,
+ "env_step_seconds": 0.04,
+ "commanded_target_delta_rad": {
+  "shoulder_pan": {
+   "median": 0.0,
+   "p95": 0.0,
+   "p99": 0.12054028320908583,
+   "max": 1.3789069809943442,
+   "frac_zero": 0.9563449023861171
+  },
+  "shoulder_lift": {
+   "median": 0.0,
+   "p95": 0.0,
+   "p99": 0.498547941486537,
+   "max": 1.4238388347439468,
+   "frac_zero": 0.9563449023861171
+  },
+  "elbow": {
+   "median": 0.0,
+   "p95": 0.0,
+   "p99": 0.453302113878727,
+   "max": 1.8529319742918018,
+   "frac_zero": 0.9563449023861171
+  },
+  "wrist_1": {
+   "median": 0.0,
+   "p95": 0.0,
+   "p99": 0.43448946455368864,
+   "max": 0.8722261660546067,
+   "frac_zero": 0.9563449023861171
+  },
+  "wrist_2": {
+   "median": 0.0,
+   "p95": 0.0,
+   "p99": 7.32713052687297e-06,
+   "max": 5.551991313712534e-05,
+   "frac_zero": 0.9566160520607375
+  },
+  "wrist_3": {
+   "median": 0.0,
+   "p95": 0.0,
+   "p99": 0.12054263754468408,
+   "max": 1.3788980865731837,
+   "frac_zero": 0.9563449023861171
+  }
+ },
+ "actual_joint_delta_rad": {
+  "shoulder_pan": {
+   "median": 0.00011060902010640028,
+   "p95": 0.038720329299470266,
+   "p99": 0.11023404028670836,
+   "max": 0.2172964542694209,
+   "frac_zero": 0.0
+  },
+  "shoulder_lift": {
+   "median": 0.0020261605618372425,
+   "p95": 0.06878410538894882,
+   "p99": 0.13827610774769064,
+   "max": 0.22899427264242278,
+   "frac_zero": 0.0
+  },
+  "elbow": {
+   "median": 0.0014319404582820994,
+   "p95": 0.08333633752426084,
+   "p99": 0.1909558927665254,
+   "max": 0.30555576689656316,
+   "frac_zero": 0.0
+  },
+  "wrist_1": {
+   "median": 0.0027348315183026717,
+   "p95": 0.057265290482585614,
+   "p99": 0.10734393667645481,
+   "max": 0.14523682808930793,
+   "frac_zero": 0.0
+  },
+  "wrist_2": {
+   "median": 8.77325798187556e-06,
+   "p95": 0.0005282736942491135,
+   "p99": 0.0013155271707733208,
+   "max": 0.003983221757549282,
+   "frac_zero": 0.0027114967462039045
+  },
+  "wrist_3": {
+   "median": 4.097227221747102e-05,
+   "p95": 0.036788355736178474,
+   "p99": 0.11443134380873414,
+   "max": 0.21798264126460568,
+   "frac_zero": 0.0
+  }
+ },
+ "commanded_nonzero_only": {
+  "shoulder_pan": {
+   "n": 161,
+   "median": 0.0001282669156790206,
+   "p95": 0.9018086363315583,
+   "max": 1.3789069809943442
+  },
+  "shoulder_lift": {
+   "n": 161,
+   "median": 0.1094822726905349,
+   "p95": 0.9997184264585375,
+   "max": 1.4238388347439468
+  },
+  "elbow": {
+   "n": 161,
+   "median": 0.051161113366484656,
+   "p95": 1.5532689956277608,
+   "max": 1.8529319742918018
+  },
+  "wrist_1": {
+   "n": 161,
+   "median": 0.20305832433104554,
+   "p95": 0.8633572110265495,
+   "max": 0.8722261660546067
+  },
+  "wrist_2": {
+   "n": 160,
+   "median": 3.932270407958072e-06,
+   "p95": 2.1067729592649798e-05,
+   "max": 5.551991313712534e-05
+  },
+  "wrist_3": {
+   "n": 161,
+   "median": 0.00012829324784657814,
+   "p95": 0.9018092937052247,
+   "max": 1.3788980865731837
+  }
+ }
+}

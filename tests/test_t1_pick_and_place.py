@@ -202,7 +202,10 @@ def test_info_dict_always_has_the_new_t1_fields(task_env):
         assert key in info
 
 
-def test_grasp_success_true_when_piece_lifted_and_gripper_closed(task_env):
+def test_grasp_success_false_when_piece_lifted_and_gripper_closed_but_not_gripped(task_env):
+    """The old definition's false positive: lifted AND closed, with no pad
+    touching the piece. This used to assert True -- it is exactly the case
+    that flagged 50 non-grasps in the pilot-matrix diagnosis."""
     task_env.reset(seed=0)
     base = task_env.unwrapped
     lifted_pos = [base._desired_goal[0], base._desired_goal[1], base._board_surface_z + 0.03]
@@ -210,7 +213,67 @@ def test_grasp_success_true_when_piece_lifted_and_gripper_closed(task_env):
     action = base.home_action().copy()
     action[6] = 1.0  # command gripper closed so it does not spring open this step
     _, _, _, _, info = task_env.step(action)
-    assert info["grasp_success"] is True
+    assert task_env._pad_piece_contact() == (False, False)
+    assert info["grasp_success"] is False
+
+
+def test_grasp_success_false_for_toppled_piece_beside_closed_gripper(task_env):
+    """A piece knocked onto its side raises its origin ~18 mm -- past
+    rest_tolerance -- which is what fooled the old definition in practice."""
+    task_env.reset(seed=0)
+    base = task_env.unwrapped
+    qadr = base._piece_qadr
+    x, y = base._achieved_goal()[:2]
+    base.data.qpos[qadr:qadr + 3] = [x, y, base._board_surface_z + 0.018]
+    base.data.qpos[qadr + 3:qadr + 7] = [np.cos(np.pi / 4), np.sin(np.pi / 4), 0.0, 0.0]  # 90 deg about x
+    base.data.qvel[base._piece_vadr:base._piece_vadr + 6] = 0.0
+    base.data.qpos[base._grip_qadr] = 0.63   # closed on nothing
+    action = base.home_action().copy()
+    action[6] = 1.0
+    _, _, _, _, info = task_env.step(action)
+    assert info["piece_height_above_board"] > base.rest_tolerance   # would have satisfied "lifted"
+    assert info["grasp_success"] is False
+
+
+def test_pad_piece_contact_is_false_at_reset(task_env):
+    task_env.reset(seed=0)
+    assert task_env._pad_piece_contact() == (False, False)
+
+
+def test_grasp_success_true_during_a_real_scripted_grasp():
+    """End to end on the actual controller: the flag must fire while the
+    expert carries the piece, with both pads on it, and never before the
+    pads reach the piece."""
+    import sys
+    from pathlib import Path
+
+    scripts = str(Path(__file__).resolve().parents[1] / "scripts")
+    if scripts not in sys.path:
+        sys.path.insert(0, scripts)
+    import scripted_expert as se
+
+    class Record(gym.Wrapper):
+        def reset(self, **kw):
+            self.rows = []
+            return self.env.reset(**kw)
+
+        def step(self, a):
+            out = self.env.step(a)
+            self.rows.append((out[4]["grasp_success"], *self.env._pad_piece_contact()))
+            return out
+
+    env = RoboChessEnv(max_episode_steps=350)
+    task = T1PickAndPlaceTask(env, start_square="d1", target_square="a8")
+    rec = Record(task)
+    result = se.ScriptedExpert(rec).run_episode(seed=0)
+    env.close()
+
+    assert result["success"], result
+    flags = [r[0] for r in rec.rows]
+    assert sum(flags) >= 10, "grasp_success should hold for the whole carry"
+    first = flags.index(True)
+    assert not any(flags[:first])
+    assert all(left and right for g, left, right in rec.rows if g), "every grasp step has both pads on the piece"
 
 
 def test_grasp_success_false_when_piece_resting(task_env):

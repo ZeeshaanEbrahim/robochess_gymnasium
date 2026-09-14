@@ -1,0 +1,35 @@
+{
+ "d1->a8": {
+  "outcome": "success",
+  "success": true,
+  "steps": 147,
+  "old_true_steps": 50,
+  "new_true_steps": 50,
+  "first_old": 62,
+  "first_new": 62,
+  "last_new": 111,
+  "old_only_steps": []
+ },
+ "a8->h1": {
+  "outcome": "success",
+  "success": true,
+  "steps": 198,
+  "old_true_steps": 55,
+  "new_true_steps": 55,
+  "first_old": 116,
+  "first_new": 116,
+  "last_new": 170,
+  "old_only_steps": []
+ },
+ "h8->h1": {
+  "outcome": "piece_off_board",
+  "success": false,
+  "steps": 143,
+  "old_true_steps": 28,
+  "new_true_steps": 28,
+  "first_old": 116,
+  "first_new": 116,
+  "last_new": 143,
+  "old_only_steps": []
+ }
+}

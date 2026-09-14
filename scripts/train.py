@@ -136,11 +136,15 @@ def build_env(cfg: dict):
     from robochess.envs import RoboChessEnv
     from robochess.tasks import T1PickAndPlaceTask, T2ObstacleTask, make_t2_env
 
+    # .get: configs and manifests written before action_mode existed resolve to
+    # the only mode they could have trained with.
+    env_kwargs = dict(max_episode_steps=cfg["max_episode_steps"],
+                      action_mode=cfg.get("action_mode", "absolute"))
     if cfg["task"] == "t1":
-        base = RoboChessEnv(max_episode_steps=cfg["max_episode_steps"])
+        base = RoboChessEnv(**env_kwargs)
         task = T1PickAndPlaceTask(base)
     elif cfg["task"] == "t2":
-        base = make_t2_env(max_episode_steps=cfg["max_episode_steps"])
+        base = make_t2_env(**env_kwargs)
         task = T2ObstacleTask(base, n_obstacles=cfg["n_obstacles"])
     else:  # unreachable -- resolve_config validates the enum
         raise ValueError(f"unknown task {cfg['task']!r}")

@@ -103,6 +103,9 @@ class T1PickAndPlaceTask(gym.Wrapper):
         # rather than hardcoded, so a change to piece geometry propagates here.
         self._piece_rest_z = float(base.model.key_qpos[base._home_key][base._piece_qadr + 2])
         self._board_bid = base._body_id("board")
+        # Finger pad bodies for grasp_success's contact term.
+        self._left_pad_bid = base._body_id("ur_gripper_left_pad")
+        self._right_pad_bid = base._body_id("ur_gripper_right_pad")
 
         self.current_start_square: str | None = None
         self.current_target_square: str | None = None
@@ -169,20 +172,54 @@ class T1PickAndPlaceTask(gym.Wrapper):
         return obs, reward, terminated, truncated, self._augment_info(info)
 
     # --------------------------------------------------------------- info
-    def _grasp_success(self) -> bool:
-        """True while the gripper appears to be holding the piece off the board.
+    def _pad_piece_contact(self) -> tuple[bool, bool]:
+        """(left, right): whether each gripper pad body is touching the piece.
 
-        Not part of RoboChessEnv's success criterion (D3) -- this is a
-        diagnostic for partial-progress reporting (roadmap P2 notes), built
-        from the same measured thresholds D3 already validated: lifted past
-        ``rest_tolerance`` above the board, gripper aperture at/above
-        ``gripper_open_threshold`` (i.e. not reported as released).
+        Read from MuJoCo's active contact list (``data.contact`` geom pairs,
+        mapped to bodies via ``model.geom_bodyid``). Pad bodies, not geom
+        names, so both collision geoms on each pad count.
+        """
+        base = self._base
+        m, d = base.model, base.data
+        piece = base._piece_bid
+        left = right = False
+        for k in range(d.ncon):
+            c = d.contact[k]
+            b1, b2 = int(m.geom_bodyid[c.geom1]), int(m.geom_bodyid[c.geom2])
+            if piece == b1:
+                other = b2
+            elif piece == b2:
+                other = b1
+            else:
+                continue
+            left = left or other == self._left_pad_bid
+            right = right or other == self._right_pad_bid
+        return left, right
+
+    def _grasp_success(self) -> bool:
+        """True while the gripper is actually holding the piece up.
+
+        Not part of RoboChessEnv's success criterion (D3) -- a diagnostic for
+        partial-progress reporting (roadmap P2 notes). All three must hold:
+
+          * lifted:  piece origin more than ``rest_tolerance`` above the board
+          * closed:  gripper aperture at/above ``gripper_open_threshold``
+          * gripped: BOTH finger pads in contact with the piece
+
+        The contact term is the fix. Lifted-and-closed alone was satisfied by
+        a piece knocked onto its side (its origin rises ~18 mm) next to a
+        closed but empty gripper: in the pilot-matrix diagnosis all 50 flagged
+        episodes were false positives of exactly that kind, with the pinch
+        site 18-68 cm from the piece (results/pilot_diagnosis/s2).
         """
         base = self._base
         piece_z = float(base._achieved_goal()[2])
         lifted = piece_z > base._board_surface_z + base.rest_tolerance
-        holding = float(base.data.qpos[base._grip_qadr]) >= base.gripper_open_threshold
-        return bool(lifted and holding)
+        closed = float(base.data.qpos[base._grip_qadr]) >= base.gripper_open_threshold
+        if not (lifted and closed):
+            return False
+        left, right = self._pad_piece_contact()
+        return bool(left and right)
 
     def _augment_info(self, info: dict[str, Any]) -> dict[str, Any]:
         info = dict(info)
