@@ -259,7 +259,7 @@ def test_grasp_success_true_during_a_real_scripted_grasp():
 
         def step(self, a):
             out = self.env.step(a)
-            self.rows.append((out[4]["grasp_success"], *self.env._pad_piece_contact()))
+            self.rows.append((out[4]["grasp_success"], *self.env._piece_contacts()))
             return out
 
     env = RoboChessEnv(max_episode_steps=350)
@@ -273,7 +273,64 @@ def test_grasp_success_true_during_a_real_scripted_grasp():
     assert sum(flags) >= 10, "grasp_success should hold for the whole carry"
     first = flags.index(True)
     assert not any(flags[:first])
-    assert all(left and right for g, left, right in rec.rows if g), "every grasp step has both pads on the piece"
+    assert all(left and right for g, left, right, _ in rec.rows if g), "every grasp step has both pads on the piece"
+    assert not any(board for g, _, _, board in rec.rows if g), "a carried piece never touches the board"
+
+
+def test_grasp_success_false_for_toppled_piece_pinched_on_the_board():
+    """The gap the pad term left open: a piece lying on its side on the board,
+    gripper closed across it with BOTH pads touching. Lifted (origin ~15 mm up),
+    closed and gripped all hold; only board contact says it is not held up.
+    Built with the expert's own IK/drive, pinch 14 mm above the base's centre,
+    where the pads press the piece into the board instead of squeezing it out
+    (results/grasp_fix/verify_board_term.py sweeps the heights)."""
+    import sys
+    from pathlib import Path
+
+    import mujoco
+
+    scripts = str(Path(__file__).resolve().parents[1] / "scripts")
+    if scripts not in sys.path:
+        sys.path.insert(0, scripts)
+    import scripted_expert as se
+
+    env = RoboChessEnv(max_episode_steps=400)
+    task = T1PickAndPlaceTask(env, start_square="e4", target_square="e6")
+    ex = se.ScriptedExpert(task)
+    m, d = env.model, env.data
+    task.reset(seed=0)
+    closing = d.xpos[task._left_pad_bid] - d.xpos[task._right_pad_bid]
+    closing[2] = 0.0
+    closing /= np.linalg.norm(closing)
+    axis = np.array([-closing[1], closing[0], 0.0])       # lying across the closing direction
+    v = np.cross([0.0, 0.0, 1.0], axis)
+    qa = env._piece_qadr
+    xy = d.qpos[qa:qa + 2].copy()
+    d.qpos[qa:qa + 3] = np.array([xy[0], xy[1], env._board_surface_z + 0.015]) - axis * 0.009
+    d.qpos[qa + 3:qa + 7] = np.concatenate([[np.cos(np.pi / 4)], np.sin(np.pi / 4) * v / np.linalg.norm(v)])
+    d.qvel[env._piece_vadr:env._piece_vadr + 6] = 0.0
+    mujoco.mj_forward(m, d)
+    for _ in range(10):
+        task.step(env.home_action())
+    centre = d.xpos[env._piece_bid] + d.xmat[env._piece_bid].reshape(3, 3)[:, 2] * 0.009
+
+    pinned = []
+    for z, grip, budget in ((0.882, 0.0, 25), (centre[2] + 0.014, 0.0, 40),
+                            (centre[2] + 0.014, 255.0, 45), (centre[2] + 0.014, 255.0, 30)):
+        q = ex.solve_ik(np.array([centre[0], centre[1], z]))
+        for _, _, term, trunc, info in ex._drive_to(q, grip, budget):
+            left, right, board = task._piece_contacts()
+            if left and right:
+                pinned.append((board, info["grasp_success"], info["piece_height_above_board"]))
+            assert not (term or trunc)
+    env.close()
+
+    tilt = np.degrees(np.arccos(np.clip(d.xmat[env._piece_bid].reshape(3, 3)[2, 2], -1, 1)))
+    assert 80 < tilt < 110, "piece must still be lying on its side"
+    assert len(pinned) >= 10, "gripper must actually close on the piece with both pads"
+    assert all(board for board, _, _ in pinned)
+    assert all(h > env.rest_tolerance for _, _, h in pinned), "would satisfy 'lifted'"
+    assert not any(g for _, g, _ in pinned)
 
 
 def test_grasp_success_false_when_piece_resting(task_env):

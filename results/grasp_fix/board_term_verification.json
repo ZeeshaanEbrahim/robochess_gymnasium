@@ -1,0 +1,176 @@
+{
+ "carry": {
+  "d1->a8": {
+   "outcome": "success",
+   "steps": 147,
+   "pads_only_steps": 50,
+   "new_steps": 50,
+   "disagree": 0,
+   "board_contact_while_both_pads": 33,
+   "board_contact_while_lifted": 0
+  },
+  "a8->h1": {
+   "outcome": "success",
+   "steps": 198,
+   "pads_only_steps": 55,
+   "new_steps": 55,
+   "disagree": 0,
+   "board_contact_while_both_pads": 57,
+   "board_contact_while_lifted": 0
+  },
+  "h8->h1": {
+   "outcome": "piece_off_board",
+   "steps": 143,
+   "pads_only_steps": 28,
+   "new_steps": 28,
+   "disagree": 0,
+   "board_contact_while_both_pads": 42,
+   "board_contact_while_lifted": 0
+  },
+  "e4->e5": {
+   "outcome": "success",
+   "steps": 126,
+   "pads_only_steps": 41,
+   "new_steps": 41,
+   "disagree": 0,
+   "board_contact_while_both_pads": 24,
+   "board_contact_while_lifted": 0
+  }
+ },
+ "toppled_sweep": {
+  "base+0mm": {
+   "final_tilt_deg": 154.8,
+   "final_h_mm": 46.1,
+   "final_grip": 0.796,
+   "close_hold_steps": 24,
+   "both_pads": 11,
+   "both_pads_and_board": 6,
+   "pads_only_def": 11,
+   "new_flag": 5,
+   "h_mm_while_new_flag": [
+    15.8,
+    17.9,
+    19.6,
+    46.0,
+    46.0
+   ]
+  },
+  "base+4mm": {
+   "final_tilt_deg": 101.5,
+   "final_h_mm": 18.3,
+   "final_grip": 0.796,
+   "close_hold_steps": 24,
+   "both_pads": 2,
+   "both_pads_and_board": 0,
+   "pads_only_def": 2,
+   "new_flag": 2,
+   "h_mm_while_new_flag": [
+    17.7,
+    22.3
+   ]
+  },
+  "base+8mm": {
+   "final_tilt_deg": 102.1,
+   "final_h_mm": 18.2,
+   "final_grip": 0.795,
+   "close_hold_steps": 30,
+   "both_pads": 12,
+   "both_pads_and_board": 6,
+   "pads_only_def": 12,
+   "new_flag": 6,
+   "h_mm_while_new_flag": [
+    15.2,
+    15.1,
+    15.5,
+    16.6,
+    19.0,
+    24.1
+   ]
+  },
+  "base+11mm": {
+   "final_tilt_deg": 90.0,
+   "final_h_mm": 14.4,
+   "final_grip": 0.535,
+   "close_hold_steps": 14,
+   "both_pads": 12,
+   "both_pads_and_board": 12,
+   "pads_only_def": 12,
+   "new_flag": 0,
+   "h_mm_while_new_flag": []
+  },
+  "base+14mm": {
+   "final_tilt_deg": 90.0,
+   "final_h_mm": 14.6,
+   "final_grip": 0.544,
+   "close_hold_steps": 21,
+   "both_pads": 19,
+   "both_pads_and_board": 19,
+   "pads_only_def": 19,
+   "new_flag": 0,
+   "h_mm_while_new_flag": []
+  },
+  "stem+0mm": {
+   "final_tilt_deg": 67.5,
+   "final_h_mm": 13.9,
+   "final_grip": 0.796,
+   "close_hold_steps": 20,
+   "both_pads": 7,
+   "both_pads_and_board": 7,
+   "pads_only_def": 7,
+   "new_flag": 0,
+   "h_mm_while_new_flag": []
+  },
+  "stem+4mm": {
+   "final_tilt_deg": 24.5,
+   "final_h_mm": 6.2,
+   "final_grip": 0.796,
+   "close_hold_steps": 23,
+   "both_pads": 2,
+   "both_pads_and_board": 0,
+   "pads_only_def": 2,
+   "new_flag": 2,
+   "h_mm_while_new_flag": [
+    16.3,
+    21.3
+   ]
+  },
+  "stem+8mm": {
+   "final_tilt_deg": 0.2,
+   "final_h_mm": 0.0,
+   "final_grip": 0.795,
+   "close_hold_steps": 25,
+   "both_pads": 9,
+   "both_pads_and_board": 5,
+   "pads_only_def": 9,
+   "new_flag": 4,
+   "h_mm_while_new_flag": [
+    15.0,
+    15.0,
+    15.6,
+    19.3
+   ]
+  },
+  "stem+11mm": {
+   "final_tilt_deg": 99.7,
+   "final_h_mm": 17.7,
+   "final_grip": 0.65,
+   "close_hold_steps": 12,
+   "both_pads": 9,
+   "both_pads_and_board": 9,
+   "pads_only_def": 9,
+   "new_flag": 0,
+   "h_mm_while_new_flag": []
+  },
+  "stem+14mm": {
+   "final_tilt_deg": 99.5,
+   "final_h_mm": 17.7,
+   "final_grip": 0.65,
+   "close_hold_steps": 12,
+   "both_pads": 9,
+   "both_pads_and_board": 9,
+   "pads_only_def": 9,
+   "new_flag": 0,
+   "h_mm_while_new_flag": []
+  }
+ }
+}

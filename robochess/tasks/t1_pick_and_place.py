@@ -103,7 +103,8 @@ class T1PickAndPlaceTask(gym.Wrapper):
         # rather than hardcoded, so a change to piece geometry propagates here.
         self._piece_rest_z = float(base.model.key_qpos[base._home_key][base._piece_qadr + 2])
         self._board_bid = base._body_id("board")
-        # Finger pad bodies for grasp_success's contact term.
+        # Finger pad bodies for grasp_success's contact terms (the board body,
+        # above, is the third).
         self._left_pad_bid = base._body_id("ur_gripper_left_pad")
         self._right_pad_bid = base._body_id("ur_gripper_right_pad")
 
@@ -172,17 +173,18 @@ class T1PickAndPlaceTask(gym.Wrapper):
         return obs, reward, terminated, truncated, self._augment_info(info)
 
     # --------------------------------------------------------------- info
-    def _pad_piece_contact(self) -> tuple[bool, bool]:
-        """(left, right): whether each gripper pad body is touching the piece.
+    def _piece_contacts(self) -> tuple[bool, bool, bool]:
+        """(left pad, right pad, board): what the tracked piece is touching.
 
         Read from MuJoCo's active contact list (``data.contact`` geom pairs,
-        mapped to bodies via ``model.geom_bodyid``). Pad bodies, not geom
-        names, so both collision geoms on each pad count.
+        mapped to bodies via ``model.geom_bodyid``). Bodies, not geom names, so
+        every collision geom on a pad counts; on the board that is only
+        ``board_slab`` (its square geoms are visual).
         """
         base = self._base
         m, d = base.model, base.data
         piece = base._piece_bid
-        left = right = False
+        left = right = board = False
         for k in range(d.ncon):
             c = d.contact[k]
             b1, b2 = int(m.geom_bodyid[c.geom1]), int(m.geom_bodyid[c.geom2])
@@ -194,6 +196,12 @@ class T1PickAndPlaceTask(gym.Wrapper):
                 continue
             left = left or other == self._left_pad_bid
             right = right or other == self._right_pad_bid
+            board = board or other == self._board_bid
+        return left, right, board
+
+    def _pad_piece_contact(self) -> tuple[bool, bool]:
+        """(left, right): whether each gripper pad body is touching the piece."""
+        left, right, _ = self._piece_contacts()
         return left, right
 
     def _grasp_success(self) -> bool:
@@ -205,12 +213,18 @@ class T1PickAndPlaceTask(gym.Wrapper):
           * lifted:  piece origin more than ``rest_tolerance`` above the board
           * closed:  gripper aperture at/above ``gripper_open_threshold``
           * gripped: BOTH finger pads in contact with the piece
+          * clear:   the piece NOT in contact with the board
 
         The contact term is the fix. Lifted-and-closed alone was satisfied by
         a piece knocked onto its side (its origin rises ~18 mm) next to a
         closed but empty gripper: in the pilot-matrix diagnosis all 50 flagged
         episodes were false positives of exactly that kind, with the pinch
         site 18-68 cm from the piece (results/pilot_diagnosis/s2).
+
+        The board term closes the case the pad term leaves open: a toppled
+        piece lying on the board with both pads closed on it still has its
+        origin ~18 mm up (so "lifted" holds) and both pads touching, but it
+        is resting on the board, not held up by the gripper.
         """
         base = self._base
         piece_z = float(base._achieved_goal()[2])
@@ -218,8 +232,8 @@ class T1PickAndPlaceTask(gym.Wrapper):
         closed = float(base.data.qpos[base._grip_qadr]) >= base.gripper_open_threshold
         if not (lifted and closed):
             return False
-        left, right = self._pad_piece_contact()
-        return bool(left and right)
+        left, right, board = self._piece_contacts()
+        return bool(left and right and not board)
 
     def _augment_info(self, info: dict[str, Any]) -> dict[str, Any]:
         info = dict(info)

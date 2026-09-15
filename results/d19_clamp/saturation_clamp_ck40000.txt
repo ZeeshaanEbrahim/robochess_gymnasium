@@ -1,0 +1,7 @@
+_sanity_t1_ppo_shaped_state_delta_clamp_seed0 ck40000: 600 policy steps over 6 start squares
+  |action| (normalised [-1,1]) median per joint: {'pan': 0.409, 'lift': 0.357, 'elbow': 0.401, 'w1': 0.172, 'w2': 0.716, 'w3': 0.283}
+  fraction of steps with |action| > 0.9:         {'pan': 0.09, 'lift': 0.0, 'elbow': 0.0, 'w1': 0.03, 'w2': 0.1, 'w3': 0.0}
+  |command - actual| deg, median:                {'pan': 7.0, 'lift': 7.0, 'elbow': 7.0, 'w1': 4.4, 'w2': 5.3, 'w3': 5.2}
+  fraction of steps actuator force SATURATED:    {'pan': 0.1, 'lift': 0.2, 'elbow': 0.4, 'w1': 0.06, 'w2': 0.12, 'w3': 0.05}
+  fraction of steps joint within 2 deg of limit: {'pan': 0.0, 'lift': 0.0, 'elbow': 0.0, 'w1': 0.0, 'w2': 0.0, 'w3': 0.0}
+  forcerange: [(-150.0, 150.0), (-150.0, 150.0), (-150.0, 150.0), (-28.0, 28.0), (-28.0, 28.0), (-28.0, 28.0)]  ctrlrange lift: (-6.2831, 6.2831)
