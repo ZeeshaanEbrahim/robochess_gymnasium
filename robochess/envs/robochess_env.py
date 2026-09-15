@@ -78,6 +78,10 @@ ACTION_MODES = ("absolute", "delta")
 # where the PD servos saturate (forcerange/kp = 0.075 rad big joints, 0.056 wrists).
 DEFAULT_MAX_JOINT_DELTA = 0.1
 
+# D19: delta-mode target may lead the actual joint by at most this multiple of
+# the actuator's saturation error (forcerange/kp). See RoboChessEnv.__init__.
+WINDUP_MARGIN_FORCE_MULTIPLE = 2.0
+
 # D9 (DECISIONS.md): is_success previously had no requirement that the piece
 # itself be at rest, and was found to register success while the piece still
 # had substantial angular velocity (observed up to 17.7 rad/s during D8's
@@ -222,6 +226,23 @@ class RoboChessEnv(gym.Env):
         self._arm_target_low = np.maximum(self.model.jnt_range[arm_joints, 0], self._ctrl_low[:N_ARM_ACTUATORS])
         self._arm_target_high = np.minimum(self.model.jnt_range[arm_joints, 1], self._ctrl_high[:N_ARM_ACTUATORS])
         self._arm_target = self.model.key_ctrl[self._home_key][:N_ARM_ACTUATORS].astype(np.float64).copy()
+        self._arm_qadr = self.model.jnt_qposadr[arm_joints].copy()
+
+        # D19 anti-windup: in delta mode the target is also held within
+        # WINDUP_MARGIN_FORCE_MULTIPLE * forcerange/kp of the ACTUAL joint
+        # position, so it cannot run away from a joint that cannot follow
+        # (measured before this clamp: shoulder_lift target a median 100 deg
+        # ahead at 100k steps). forcerange/kp is the position error at which
+        # the PD servo saturates; derived per actuator from the live model.
+        # Measured on assets/scene.xml: 0.15 rad pan/lift/elbow, 0.112 wrists.
+        kp = self.model.actuator_gainprm[:N_ARM_ACTUATORS, 0].astype(np.float64)
+        forcerange = self.model.actuator_forcerange[:N_ARM_ACTUATORS].astype(np.float64)
+        if not (np.all(self.model.actuator_forcelimited[:N_ARM_ACTUATORS]) and np.all(kp > 0)):
+            raise ValueError("Arm actuators must be force-limited position servos (kp > 0) "
+                             "to derive the delta-mode windup margin.")
+        self._windup_margin = (
+            WINDUP_MARGIN_FORCE_MULTIPLE * np.minimum(-forcerange[:, 0], forcerange[:, 1]) / kp
+        )
 
         if self.normalize_action:
             # The raw ctrlrange spans +/-6.28 for the arm but 0..255 for the
@@ -306,7 +327,13 @@ class RoboChessEnv(gym.Env):
         if self.action_mode == "delta":
             n = N_ARM_ACTUATORS
             delta = action[:n] * self.max_joint_delta
-            self._arm_target = np.clip(self._arm_target + delta, self._arm_target_low, self._arm_target_high)
+            # D19 anti-windup first, then the joint-range clamp. The range clamp
+            # cannot push the target back outside the margin unless the joint
+            # itself sits more than a margin beyond its own range.
+            actual = self.data.qpos[self._arm_qadr]
+            target = np.clip(self._arm_target + delta,
+                             actual - self._windup_margin, actual + self._windup_margin)
+            self._arm_target = np.clip(target, self._arm_target_low, self._arm_target_high)
             gripper = self._ctrl_low[n:] + (action[n:] + 1.0) * 0.5 * (self._ctrl_high[n:] - self._ctrl_low[n:])
             return np.concatenate([self._arm_target, gripper])
         if not self.normalize_action:

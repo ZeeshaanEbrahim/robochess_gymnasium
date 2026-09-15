@@ -163,8 +163,10 @@ def test_target_is_clamped_at_the_upper_joint_bound(delta_env):
     delta_env.reset(seed=0)
     high = delta_env._arm_target_high
     delta_env._arm_target = high - 0.05          # one step short of the bound
+    delta_env.data.qpos[delta_env._arm_qadr] = high - 0.05   # joint there too, or D19's clamp binds first
     delta_env.step(np.array([1] * 6 + [-1], dtype=np.float32))
     np.testing.assert_array_equal(delta_env.data.ctrl[:N_ARM_ACTUATORS], high)
+    delta_env.data.qpos[delta_env._arm_qadr] = high      # the physics step moved it
     delta_env.step(np.array([1] * 6 + [-1], dtype=np.float32))
     np.testing.assert_array_equal(delta_env.data.ctrl[:N_ARM_ACTUATORS], high)
 
@@ -173,6 +175,7 @@ def test_target_is_clamped_at_the_lower_joint_bound(delta_env):
     delta_env.reset(seed=0)
     low = delta_env._arm_target_low
     delta_env._arm_target = low + 0.05
+    delta_env.data.qpos[delta_env._arm_qadr] = low + 0.05
     delta_env.step(np.array([-1] * 6 + [-1], dtype=np.float32))
     np.testing.assert_array_equal(delta_env.data.ctrl[:N_ARM_ACTUATORS], low)
 
@@ -195,6 +198,106 @@ def test_reset_discards_the_previous_episodes_target(delta_env):
     delta_env.reset(seed=1)
     home = delta_env.model.key_ctrl[delta_env._home_key][:N_ARM_ACTUATORS]
     np.testing.assert_array_equal(delta_env._arm_target, home)
+
+
+# ------------------------------------------------- D19 windup clamp
+def test_windup_margin_is_derived_from_the_model(delta_env):
+    m = delta_env.model
+    n = N_ARM_ACTUATORS
+    expected = 2.0 * m.actuator_forcerange[:n, 1] / m.actuator_gainprm[:n, 0]
+    np.testing.assert_allclose(delta_env._windup_margin, expected, rtol=1e-12)
+    np.testing.assert_allclose(delta_env._windup_margin, [0.15] * 3 + [0.112] * 3, atol=1e-9)
+
+
+def test_windup_margin_follows_a_modified_model():
+    """Not a constant: halving kp on one actuator doubles that joint's margin."""
+    e = RoboChessEnv(action_mode="delta")
+    baseline = e._windup_margin.copy()
+    e.close()
+    import mujoco
+    from robochess.envs.robochess_env import DEFAULT_SCENE
+    original = mujoco.MjModel.from_xml_path
+    def patched(path):
+        model = original(path)
+        model.actuator_gainprm[1, 0] *= 0.5
+        return model
+    mujoco.MjModel.from_xml_path = patched
+    try:
+        e = RoboChessEnv(scene_path=DEFAULT_SCENE, action_mode="delta")
+    finally:
+        mujoco.MjModel.from_xml_path = original
+    assert e._windup_margin[1] == pytest.approx(2 * baseline[1])
+    np.testing.assert_array_equal(np.delete(e._windup_margin, 1), np.delete(baseline, 1))
+    e.close()
+
+
+def _pin_joints_and_command(env, sign):
+    """Hold the arm's qpos where it is and push the target in one direction."""
+    env.reset(seed=0)
+    actual = env.data.qpos[env._arm_qadr].copy()
+    env._arm_target = actual.copy()
+    for _ in range(5):                        # 5 x 0.1 rad would exceed every margin
+        ctrl = env._scale_action(np.array([sign] * 6 + [-1], dtype=np.float32))
+        env.data.qpos[env._arm_qadr] = actual  # joint cannot follow
+    return actual, ctrl[:N_ARM_ACTUATORS]
+
+
+def test_windup_clamp_limits_the_target_ahead_of_the_joint(delta_env):
+    actual, target = _pin_joints_and_command(delta_env, +1)
+    np.testing.assert_allclose(target, actual + delta_env._windup_margin, atol=1e-12)
+
+
+def test_windup_clamp_limits_the_target_behind_the_joint(delta_env):
+    actual, target = _pin_joints_and_command(delta_env, -1)
+    np.testing.assert_allclose(target, actual - delta_env._windup_margin, atol=1e-12)
+
+
+def test_windup_clamp_does_not_bind_within_the_margin(delta_env):
+    delta_env.reset(seed=0)
+    actual = delta_env.data.qpos[delta_env._arm_qadr].copy()
+    delta_env._arm_target = actual.copy()
+    ctrl = delta_env._scale_action(np.array([0.5] * 6 + [-1], dtype=np.float32))
+    np.testing.assert_allclose(ctrl[:N_ARM_ACTUATORS], actual + 0.5 * DEFAULT_MAX_JOINT_DELTA, atol=1e-7)
+
+
+def test_joint_range_clamp_still_applies_inside_the_windup_margin(delta_env):
+    delta_env.reset(seed=0)
+    high = delta_env._arm_target_high
+    delta_env.data.qpos[delta_env._arm_qadr] = high - 0.01   # joint just inside its bound
+    delta_env._arm_target = high - 0.01
+    ctrl = delta_env._scale_action(np.array([1] * 6 + [-1], dtype=np.float32))
+    np.testing.assert_array_equal(ctrl[:N_ARM_ACTUATORS], high)
+
+
+def test_random_policy_target_never_leads_the_joint_by_more_than_the_margin(delta_env):
+    delta_env.reset(seed=0)
+    for i, a in enumerate(_random_actions(500, seed=11)):
+        before = delta_env.data.qpos[delta_env._arm_qadr].copy()
+        _, _, term, trunc, _ = delta_env.step(a)
+        lead = np.abs(delta_env.data.ctrl[:N_ARM_ACTUATORS] - before)
+        assert np.all(lead <= delta_env._windup_margin + 1e-12)
+        if term or trunc:
+            delta_env.reset(seed=i)
+
+
+def test_windup_state_does_not_leak_across_reset(delta_env):
+    delta_env.reset(seed=0)
+    actual, _ = _pin_joints_and_command(delta_env, +1)     # target pinned at the margin
+    delta_env.reset(seed=1)
+    home = delta_env.model.key_ctrl[delta_env._home_key][:N_ARM_ACTUATORS]
+    np.testing.assert_array_equal(delta_env._arm_target, home)
+    delta_env.step(delta_env.home_action())
+    np.testing.assert_array_equal(delta_env.data.ctrl[:N_ARM_ACTUATORS], home)
+
+
+def test_absolute_mode_ignores_the_windup_clamp():
+    """Absolute targets may sit far from the joint; the clamp must not touch them."""
+    e = RoboChessEnv()
+    e.reset(seed=0)
+    ctrl = e._scale_action(np.ones(7, dtype=np.float32))
+    np.testing.assert_array_equal(ctrl, e._ctrl_high)
+    assert np.all(np.abs(ctrl[:N_ARM_ACTUATORS] - e.data.qpos[e._arm_qadr]) > e._windup_margin)
+    e.close()
 
 
 # ------------------------------------------------------ gripper and no-op
