@@ -1,0 +1,146 @@
+{
+ "ur_shoulder_pan": {
+  "per_sign": {
+   "1": {
+    "plateau": 2.2937238523782755,
+    "peak": 2.2944335551899746,
+    "stall_step": 81,
+    "contacts": [
+     "piece_a_base|board_slab"
+    ]
+   },
+   "-1": {
+    "plateau": 2.277543966793135,
+    "peak": 2.2943007776531847,
+    "stall_step": 50,
+    "contacts": [
+     "piece_a_base|board_slab"
+    ]
+   }
+  },
+  "limiting_rad_s": 2.277543966793135,
+  "travel_per_episode_rad": 18.22035173434508,
+  "travel_per_episode_deg": 1043.949255621843
+ },
+ "ur_shoulder_lift": {
+  "per_sign": {
+   "1": {
+    "plateau": 1.922373625256764,
+    "peak": 2.1687457324316077,
+    "stall_step": 12,
+    "contacts": [
+     "piece_a_base|board_slab",
+     "ur_gripper_left_pad1|board_slab",
+     "ur_gripper_right_pad1|board_slab"
+    ]
+   },
+   "-1": {
+    "plateau": 2.2576930848945027,
+    "peak": 2.3455396075438477,
+    "stall_step": 25,
+    "contacts": [
+     "g19|table",
+     "piece_a_base|board_slab"
+    ]
+   }
+  },
+  "limiting_rad_s": 1.922373625256764,
+  "travel_per_episode_rad": 15.378989002054114,
+  "travel_per_episode_deg": 881.1511629958104
+ },
+ "ur_elbow": {
+  "per_sign": {
+   "1": {
+    "plateau": 1.949921280215412,
+    "peak": 2.1609434657774527,
+    "stall_step": 17,
+    "contacts": [
+     "g13|g33",
+     "g13|g35",
+     "piece_a_base|board_slab"
+    ]
+   },
+   "-1": {
+    "plateau": 2.2698144661953026,
+    "peak": 2.306266204969338,
+    "stall_step": 49,
+    "contacts": [
+     "g8|g24",
+     "piece_a_base|board_slab"
+    ]
+   }
+  },
+  "limiting_rad_s": 1.949921280215412,
+  "travel_per_episode_rad": 15.599370241723296,
+  "travel_per_episode_deg": 893.7780779127156
+ },
+ "ur_wrist_1": {
+  "per_sign": {
+   "1": {
+    "plateau": 2.267791154090557,
+    "peak": 2.2890991763825626,
+    "stall_step": 81,
+    "contacts": [
+     "piece_a_base|board_slab"
+    ]
+   },
+   "-1": {
+    "plateau": 2.269059110410853,
+    "peak": 2.2852884982085446,
+    "stall_step": 50,
+    "contacts": [
+     "piece_a_base|board_slab"
+    ]
+   }
+  },
+  "limiting_rad_s": 2.267791154090557,
+  "travel_per_episode_rad": 18.142329232724457,
+  "travel_per_episode_deg": 1039.4788955719284
+ },
+ "ur_wrist_2": {
+  "per_sign": {
+   "1": {
+    "plateau": 2.263322536886103,
+    "peak": 2.2764335814779617,
+    "stall_step": 81,
+    "contacts": [
+     "piece_a_base|board_slab"
+    ]
+   },
+   "-1": {
+    "plateau": 2.253257666062169,
+    "peak": 2.27644796001155,
+    "stall_step": 50,
+    "contacts": [
+     "piece_a_base|board_slab"
+    ]
+   }
+  },
+  "limiting_rad_s": 2.253257666062169,
+  "travel_per_episode_rad": 18.026061328497352,
+  "travel_per_episode_deg": 1032.817235366884
+ },
+ "ur_wrist_3": {
+  "per_sign": {
+   "1": {
+    "plateau": 2.2577845042659237,
+    "peak": 2.262064384586263,
+    "stall_step": 66,
+    "contacts": [
+     "piece_a_base|board_slab"
+    ]
+   },
+   "-1": {
+    "plateau": 2.2577846243423356,
+    "peak": 2.2620642553199457,
+    "stall_step": 66,
+    "contacts": [
+     "piece_a_base|board_slab"
+    ]
+   }
+  },
+  "limiting_rad_s": 2.2577845042659237,
+  "travel_per_episode_rad": 18.06227603412739,
+  "travel_per_episode_deg": 1034.8921851557939
+ }
+}
