@@ -1,0 +1,128 @@
+{
+ "ur_shoulder_pan": {
+  "per_sign": {
+   "1": {
+    "plateau": 0.6298175866839341,
+    "peak": 0.6322318369043031,
+    "stall_step": null,
+    "contacts": null
+   },
+   "-1": {
+    "plateau": 0.6298186837082821,
+    "peak": 0.6325489028727153,
+    "stall_step": null,
+    "contacts": null
+   }
+  },
+  "limiting_rad_s": 0.6298175866839341,
+  "travel_per_episode_rad": 5.0385406934714725,
+  "travel_per_episode_deg": 288.6871166408344
+ },
+ "ur_shoulder_lift": {
+  "per_sign": {
+   "1": {
+    "plateau": 0.7159234241912249,
+    "peak": 0.7324006519624273,
+    "stall_step": 28,
+    "contacts": [
+     "piece_a_base|board_slab",
+     "ur_gripper_left_pad1|board_slab",
+     "ur_gripper_right_pad1|board_slab"
+    ]
+   },
+   "-1": {
+    "plateau": 0.68992093227639,
+    "peak": 0.7369611032072264,
+    "stall_step": 72,
+    "contacts": [
+     "g19|table",
+     "piece_a_base|board_slab"
+    ]
+   }
+  },
+  "limiting_rad_s": 0.68992093227639,
+  "travel_per_episode_rad": 5.51936745821112,
+  "travel_per_episode_deg": 316.2364609373459
+ },
+ "ur_elbow": {
+  "per_sign": {
+   "1": {
+    "plateau": 0.6584260595006768,
+    "peak": 0.6739242969066281,
+    "stall_step": 46,
+    "contacts": [
+     "g13|g31",
+     "g13|g33",
+     "g13|g35",
+     "piece_a_base|board_slab"
+    ]
+   },
+   "-1": {
+    "plateau": 0.6427731819306929,
+    "peak": 0.6717589811993722,
+    "stall_step": null,
+    "contacts": null
+   }
+  },
+  "limiting_rad_s": 0.6427731819306929,
+  "travel_per_episode_rad": 5.142185455445543,
+  "travel_per_episode_deg": 294.62552407058666
+ },
+ "ur_wrist_1": {
+  "per_sign": {
+   "1": {
+    "plateau": 0.45196609885429406,
+    "peak": 0.48641132651442115,
+    "stall_step": null,
+    "contacts": null
+   },
+   "-1": {
+    "plateau": 0.45060306720383636,
+    "peak": 0.48375497725054023,
+    "stall_step": null,
+    "contacts": null
+   }
+  },
+  "limiting_rad_s": 0.45060306720383636,
+  "travel_per_episode_rad": 3.604824537630691,
+  "travel_per_episode_deg": 206.541231891437
+ },
+ "ur_wrist_2": {
+  "per_sign": {
+   "1": {
+    "plateau": 0.4553374578028845,
+    "peak": 0.46536490020037097,
+    "stall_step": null,
+    "contacts": null
+   },
+   "-1": {
+    "plateau": 0.45534790712842316,
+    "peak": 0.46538249836370066,
+    "stall_step": null,
+    "contacts": null
+   }
+  },
+  "limiting_rad_s": 0.4553374578028845,
+  "travel_per_episode_rad": 3.642699662423076,
+  "travel_per_episode_deg": 208.71131669057198
+ },
+ "ur_wrist_3": {
+  "per_sign": {
+   "1": {
+    "plateau": 0.46501526685708716,
+    "peak": 0.46523237689344044,
+    "stall_step": null,
+    "contacts": null
+   },
+   "-1": {
+    "plateau": 0.4650152664080327,
+    "peak": 0.46523219142371797,
+    "stall_step": null,
+    "contacts": null
+   }
+  },
+  "limiting_rad_s": 0.4650152664080327,
+  "travel_per_episode_rad": 3.720122131264262,
+  "travel_per_episode_deg": 213.14729739465506
+ }
+}
