@@ -1,0 +1,29 @@
+# Probe, not an experiment cell. The D21 pick-up stage (pickup_mode) on the
+# e4 start square, joint delta action space, with the pick-up observation
+# features on. Base: _fixed_e4e5_t1_ppo_shaped_staged_delta.yaml, with the
+# staged shaped reward off -- pickup_mode replaces the reward outright and the
+# validator rejects the two together.
+#
+# run_name is pinned rather than derived: the derived name is <file stem>_seed<seed>,
+# which cannot give three distinct files the same _probe_pickup_ppo_seedN form.
+
+task: t1
+algorithm: ppo
+reward_type: shaped
+observation: state
+seed: 1
+total_timesteps: 1000000
+device: cpu
+num_threads: 1
+action_mode: delta
+max_episode_steps: 300
+n_obstacles: 0
+start_square: e4
+target_square: e5
+shaped_staged: false
+pickup_mode: true
+pickup_obs: true
+checkpoint_freq: 100000
+output_root: runs
+run_name: _probe_pickup_ppo_seed1
+notes: "probe of the D21 pick-up reward, joint delta, e4, home pose, 1M steps, 300-step budget"
