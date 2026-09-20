@@ -66,6 +66,26 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "shaped_staged": False,
     "grasp_bonus": 1.0,
     "lift_bonus": 0.5,
+    # Pick-up stage observation features (T1 only). Default OFF: with this
+    # false the observation vector is the 21-entry one every run so far used,
+    # so a config that omits this key is unchanged by its existence.
+    "pickup_obs": False,
+    # Pick-up training stage (T1 only). Default OFF: with this false the reward
+    # stack is exactly the one every run so far used. When true it REPLACES the
+    # reward -- no goal-distance term, no travelling failure penalty -- so the
+    # remaining pickup_* keys only mean anything with pickup_mode true.
+    # Prefixed names throughout: bare `failure_penalty`/`lift_height` would sit
+    # next to the shaped reward's own `grasp_bonus`/`lift_bonus` and read as if
+    # they applied to it.
+    "pickup_mode": False,
+    "pickup_lift_height": 0.03,
+    "pickup_hold_steps": 5,
+    "pickup_failure_penalty": 5.0,
+    "pickup_reach_weight": 1.0,
+    "pickup_close_weight": 1.0,
+    "pickup_lift_weight": 2.0,
+    "pickup_success_weight": 1.0,
+    "pickup_first_grasp_bonus": 5.0,
     "output_root": "runs",
     "run_name": None,          # None -> derived from the config filename + seed
     "notes": "",
@@ -158,6 +178,49 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
 
     if not isinstance(cfg["shaped_staged"], bool):
         raise ConfigError(f"shaped_staged must be a bool, got {cfg['shaped_staged']!r}")
+    if not isinstance(cfg["pickup_obs"], bool):
+        raise ConfigError(f"pickup_obs must be a bool, got {cfg['pickup_obs']!r}")
+    if not isinstance(cfg["pickup_mode"], bool):
+        raise ConfigError(f"pickup_mode must be a bool, got {cfg['pickup_mode']!r}")
+    if not isinstance(cfg["pickup_hold_steps"], int) or isinstance(cfg["pickup_hold_steps"], bool):
+        raise ConfigError(
+            f"pickup_hold_steps must be an int, got {cfg['pickup_hold_steps']!r}")
+    if cfg["pickup_hold_steps"] <= 0:
+        raise ConfigError(
+            f"pickup_hold_steps must be > 0, got {cfg['pickup_hold_steps']}")
+    for key in ("pickup_lift_height", "pickup_failure_penalty", "pickup_reach_weight",
+                "pickup_close_weight", "pickup_lift_weight", "pickup_success_weight",
+                "pickup_first_grasp_bonus"):
+        if isinstance(cfg[key], bool) or not isinstance(cfg[key], (int, float)):
+            raise ConfigError(f"{key} must be a number, got {cfg[key]!r}")
+        if cfg[key] < 0:
+            raise ConfigError(f"{key} must be >= 0, got {cfg[key]}")
+    if cfg["pickup_lift_height"] <= 0:
+        raise ConfigError(
+            f"pickup_lift_height must be > 0, got {cfg['pickup_lift_height']}")
+    if cfg["pickup_mode"] and cfg["task"] != "t1":
+        raise ConfigError(
+            f"pickup_mode=True with task={cfg['task']!r}: the pick-up stage is T1 only."
+        )
+    if cfg["pickup_mode"] and cfg["shaped_staged"]:
+        raise ConfigError(
+            "pickup_mode=True with shaped_staged=True: both replace the reward, "
+            "so one of them would be silently ignored. Choose one."
+        )
+    if cfg["pickup_mode"] and cfg["reward_type"] != "shaped":
+        # pickup_mode replaces the reward outright. Rejecting the combination
+        # rather than ignoring reward_type keeps a config from declaring
+        # "sparse" and silently training on something else.
+        raise ConfigError(
+            f"pickup_mode=True with reward_type={cfg['reward_type']!r}: the pick-up "
+            "reward replaces reward_type entirely; leave it at 'shaped'."
+        )
+    if cfg["pickup_obs"] and cfg["task"] != "t1":
+        raise ConfigError(
+            f"pickup_obs=True with task={cfg['task']!r}: the pick-up observation "
+            "features are T1 only. T2 and later tasks extend the observation "
+            "vector themselves (D12), so the two extensions would collide."
+        )
     for key in ("grasp_bonus", "lift_bonus"):
         if isinstance(cfg[key], bool) or not isinstance(cfg[key], (int, float)):
             raise ConfigError(f"{key} must be a number, got {cfg[key]!r}")

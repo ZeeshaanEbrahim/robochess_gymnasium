@@ -151,6 +151,28 @@ def build_env(cfg: dict):
         task = T2ObstacleTask(base, n_obstacles=cfg["n_obstacles"], **squares)
     else:  # unreachable -- resolve_config validates the enum
         raise ValueError(f"unknown task {cfg['task']!r}")
+    # Pick-up observation features sit between the task and the reward, so the
+    # reward wrapper's `info` passthrough is unaffected and the extension lands
+    # on the observation the agent finally sees (D12's placement).
+    if cfg.get("pickup_obs", False):
+        from robochess.tasks import PickupObservation
+        task = PickupObservation(task)
+    # .get: manifests written before the pick-up stage existed carry no such
+    # key and must resolve to the travelling reward they actually trained on.
+    if cfg.get("pickup_mode", False):
+        from robochess.tasks import PickupReward
+
+        return PickupReward(
+            task,
+            lift_height=cfg.get("pickup_lift_height", 0.03),
+            hold_steps=cfg.get("pickup_hold_steps", 5),
+            failure_penalty=cfg.get("pickup_failure_penalty", 5.0),
+            reach_weight=cfg.get("pickup_reach_weight", 1.0),
+            close_weight=cfg.get("pickup_close_weight", 1.0),
+            lift_weight=cfg.get("pickup_lift_weight", 2.0),
+            success_weight=cfg.get("pickup_success_weight", 1.0),
+            first_grasp_bonus=cfg.get("pickup_first_grasp_bonus", 5.0),
+        )
     wrapper = _reward_wrappers()[cfg["reward_type"]]
     if cfg["reward_type"] == "shaped" and cfg.get("shaped_staged", False):
         # .get: manifests written before the staged terms existed carry no such
@@ -163,6 +185,19 @@ def build_env(cfg: dict):
 
 # Per-episode info keys copied into monitor.monitor.csv alongside r, l, t.
 MONITOR_INFO_KEYWORDS = ("terminated_reason",)
+
+
+def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:
+    """Which info keys reach monitor.monitor.csv for this config.
+
+    `pickup_success` is added ONLY in pick-up mode, because Monitor raises a
+    KeyError for any keyword missing from a finished episode's info, and only
+    PickupReward puts that key there. Adding it unconditionally would break
+    every non-pick-up run.
+    """
+    if cfg.get("pickup_mode", False):
+        return MONITOR_INFO_KEYWORDS + ("pickup_success",)
+    return MONITOR_INFO_KEYWORDS
 
 
 def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
@@ -190,7 +225,7 @@ def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
 
     monitor_path = str(monitor_dir / "monitor") if monitor_dir is not None else None
     venv = DummyVecEnv([lambda: Monitor(build_env(cfg), filename=monitor_path,
-                                        info_keywords=MONITOR_INFO_KEYWORDS)])
+                                        info_keywords=monitor_info_keywords(cfg))])
 
     algorithm = cfg["algorithm"]
     if algorithm == "ppo":

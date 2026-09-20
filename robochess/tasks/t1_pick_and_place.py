@@ -31,7 +31,7 @@ import gymnasium as gym
 import mujoco
 import numpy as np
 
-from robochess.envs.robochess_env import RoboChessEnv
+from robochess.envs.robochess_env import N_ARM_ACTUATORS, RoboChessEnv
 from robochess.tasks.squares import ALL_SQUARES, square_to_local_xy
 
 # D2 (DECISIONS.md) swept top-down IK over all 64 squares and found every one
@@ -316,6 +316,21 @@ def failure_penalty_magnitude(max_episode_steps: int, weight: float) -> float:
     return float(np.ceil(max_episode_steps * per_step_bound))
 
 
+def find_contacts_owner(env: gym.Env, message: str):
+    """The wrapper at or below `env` that owns `_piece_contacts` (T1 or T2).
+
+    One lookup shared by the staged shaped reward and the pick-up reward, so
+    both read the same both-pads-on-the-piece test rather than each growing
+    its own contact scan.
+    """
+    node = env
+    while node is not None:
+        if hasattr(node, "_piece_contacts"):
+            return node
+        node = getattr(node, "env", None)
+    raise TypeError(message)
+
+
 def _shaped_reward(base: RoboChessEnv, pinch_sid: int, info: dict[str, Any], weight: float) -> float:
     """Reads the two live distances out of the sim and scores them."""
     gripper_to_piece = float(
@@ -416,14 +431,10 @@ class ShapedPickAndPlaceReward(gym.Wrapper):
 
     def _find_contacts_owner(self):
         """The wrapper below this one that owns `_piece_contacts` (T1 or T2)."""
-        node = self.env
-        while node is not None:
-            if hasattr(node, "_piece_contacts"):
-                return node
-            node = getattr(node, "env", None)
-        raise TypeError(
+        return find_contacts_owner(
+            self.env,
             "staged=True needs a task wrapper providing _piece_contacts() "
-            "(T1PickAndPlaceTask or a subclass) between this wrapper and the env."
+            "(T1PickAndPlaceTask or a subclass) between this wrapper and the env.",
         )
 
     def step(self, action: np.ndarray):
@@ -474,3 +485,460 @@ class SparsePickAndPlaceReward(gym.Wrapper):
         xy_dist = np.linalg.norm(achieved[..., :2] - desired[..., :2], axis=-1)
         tol = self.unwrapped.goal_tolerance
         return (xy_dist < tol).astype(np.float64)
+
+
+# --- pick-up stage reward (default OFF) -----------------------------------
+# A separate training stage: one piece, grasp it and lift it LIFT_HEIGHT. It
+# replaces the reward entirely rather than adding to it -- there is no
+# goal-distance term and no `failure_penalty_magnitude` penalty here, because
+# the pick-up stage has no target square to travel to and the 771-magnitude
+# penalty sized for a 300-step travelling episode is not what this stage wants.
+#
+# Every term is POSITIVE and bounded, so the per-step reward is in [0, ~6] and
+# a failure termination costs a small fixed PICKUP_FAILURE_PENALTY instead of
+# dwarfing the episode. Shaping widths live here as module constants, not as
+# config keys: they define the shape of the reward, and a run that changes them
+# is a different reward, not a different hyper-parameter setting.
+
+# Height of the pinch site above the piece's origin at the pose the scripted
+# expert actually grasps from. This is the expert's calibrated GRASP_Z
+# (scripts/scripted_expert.GRASP_Z = 0.79925) expressed as an offset; the
+# piece's resting height is read from the model's home keyframe, so the offset
+# adapts if the board or piece geometry changes.
+PINCH_GRASP_Z = 0.79925
+
+# What `pickup_dz` must come out at, with the tolerance the check allows.
+# NOTE: 0.03725, not the 0.0353 the stage specification anticipated -- see
+# `pickup_dz` for the measurement that settles which is right.
+EXPECTED_PICKUP_DZ = 0.03725
+PICKUP_DZ_TOL = 5e-4
+
+# reach(d): a wide linear ramp that pays something from anywhere on the board,
+# plus a narrow exponential that only pays near the grasp offset. The linear
+# span is the order of the arm's board-scale reach; the exponential width is
+# the scale over which "close" becomes "grasping".
+REACH_LINEAR_SPAN = 0.8
+REACH_EXP_WIDTH = 0.03
+
+# posture(tilt): never zero, so a badly-oriented arm still has a reach
+# gradient to follow, but worth 2x as much upright. 0.35 rad ~ 20 deg.
+#
+# Raised from 0.25/0.75 after the Section 3 table: at 0.25/0.75 the multiplier
+# was strong enough that the home pose (420 mm away, perfectly upright) outscored
+# the expert's own pre-descend hover (113 mm away, 21 deg tilted), so the reward
+# FELL along the expert's path. At 0.5/0.5 getting closer always outweighs the
+# tilt incurred on the way.
+POSTURE_FLOOR = 0.5
+POSTURE_SPAN = 0.5
+POSTURE_WIDTH = 0.35
+
+# The pose gate multiplying the closing term: all three must be small before
+# closing the gripper pays anything. Tighter than the posture width on purpose
+# -- closing is only useful from a pose a grasp could actually succeed from.
+GATE_LATERAL_WIDTH = 0.02
+GATE_VERTICAL_WIDTH = 0.015
+GATE_TILT_WIDTH = 0.2
+
+# closure: aperture mapped to [0, 1]. The low end is the env's own
+# `gripper_open_threshold` (below it the gripper counts as released); the high
+# end is the aperture the pads reach when closed on the piece's stem.
+CLOSURE_OPEN = 0.2
+CLOSURE_CLOSED = 0.645
+
+WORLD_DOWN = np.array([0.0, 0.0, -1.0])
+
+
+def pickup_dz(piece_rest_z: float) -> float:
+    """Pinch height above the piece origin at the grasp pose, in metres.
+
+    ``PINCH_GRASP_Z - piece_rest_z``, with the resting height read from the
+    model rather than written down here.
+
+    MEASURED DISCREPANCY, recorded rather than smoothed over: this returns
+    0.03725, while the stage specification expected 0.0353. Both are defensible
+    and they disagree by 1.95 mm:
+
+      * 0.03725 is the offset implied by the height the expert COMMANDS.
+      * ~0.0360 is where the pinch actually ENDS UP at the close command,
+        measured over a replayed e4->e5 expert episode: the descend waypoint
+        exits with a ~1.3 mm residual it reports and gives up on
+        ("descend: pinch residual 1.83 mm still above 1.0 mm").
+
+    Neither is 0.0353. The commanded value is used because it is the one
+    definition that is reproducible from the model plus one calibration
+    constant, rather than from whatever the IK residual happened to be.
+    """
+    dz = float(PINCH_GRASP_Z) - float(piece_rest_z)
+    if abs(dz - EXPECTED_PICKUP_DZ) > PICKUP_DZ_TOL:
+        raise ValueError(
+            f"pickup dz = {dz:.5f} m, expected {EXPECTED_PICKUP_DZ:.5f} "
+            f"+/- {PICKUP_DZ_TOL:.4f}. The piece's resting height or the "
+            "grasp calibration has moved; re-derive the pick-up reward."
+        )
+    return dz
+
+
+def pickup_reach(d: float) -> float:
+    """Wide linear ramp plus a narrow exponential peak at d = 0."""
+    d = float(d)
+    linear = 0.5 * (1.0 - min(d / REACH_LINEAR_SPAN, 1.0))
+    return linear + 0.5 * float(np.exp(-d / REACH_EXP_WIDTH))
+
+
+def pickup_posture(tilt: float) -> float:
+    """Multiplier in [POSTURE_FLOOR, 1] for how top-down the gripper is."""
+    return POSTURE_FLOOR + POSTURE_SPAN * float(np.exp(-float(tilt) / POSTURE_WIDTH))
+
+
+def pickup_pose_gate(lateral: float, vertical_error: float, tilt: float) -> float:
+    """Product of three Gaussians: 1 only from a pose a grasp could work from."""
+    return float(
+        np.exp(-((float(lateral) / GATE_LATERAL_WIDTH) ** 2))
+        * np.exp(-((float(vertical_error) / GATE_VERTICAL_WIDTH) ** 2))
+        * np.exp(-((float(tilt) / GATE_TILT_WIDTH) ** 2))
+    )
+
+
+def pickup_closure(aperture: float) -> float:
+    """Gripper aperture mapped onto [0, 1] between open and closed-on-stem."""
+    return float(
+        np.clip((float(aperture) - CLOSURE_OPEN) / (CLOSURE_CLOSED - CLOSURE_OPEN), 0.0, 1.0)
+    )
+
+
+def pinch_tilt(model_site_xmat: np.ndarray) -> float:
+    """Angle in radians between the pinch site's local +Z and world straight down.
+
+    The site's local +Z is the gripper's approach axis: the site sits 145 mm
+    along the gripper base's +Z (assets/robotiq_2f85/2f85.xml), which is the
+    direction the fingers project, and at the expert's grasp pose that axis
+    reads (-0.009, -0.023, -0.9997) in world with the piece at +36 mm along it.
+    0 is perfectly top-down, pi/2 is horizontal.
+    """
+    approach = np.asarray(model_site_xmat, dtype=np.float64).reshape(3, 3)[:, 2]
+    return float(np.arccos(np.clip(float(approach @ WORLD_DOWN), -1.0, 1.0)))
+
+
+# Number of entries `pickup_features` appends to the observation vector.
+N_PICKUP_OBS = 15
+
+
+def pickup_geometry(base: RoboChessEnv, pinch_sid: int, dz: float) -> dict[str, Any]:
+    """THE shared pick-up geometry. Both the reward and the observation use it.
+
+    One helper on purpose: the reward is defined in terms of the pinch site's
+    pose relative to the grasp point `g`, and the observation exists so the
+    policy can see those same quantities. Computing them twice is how the two
+    drift apart.
+
+    Returns world-frame quantities:
+      pinch      pinch site position
+      piece      piece origin (the env's achieved_goal)
+      g          piece + (0, 0, dz): where the pinch must be to grasp
+      g_to_pinch g -> pinch offset, i.e. `pinch - g`
+      approach   pinch site local +Z as a unit vector (see `pinch_tilt`)
+      tilt       angle of `approach` from world straight down, rad
+      aperture   gripper driver joint position
+      lift       piece height above its resting height
+      target_error  commanded arm target minus measured arm joint position
+
+    `target_error` is ``data.ctrl[:6] - data.qpos[arm]``. That is the command
+    actually sitting on the position actuators, which in delta mode is the
+    stored target AFTER the D19 anti-windup clamp and the joint-range clamp
+    (`_scale_action` writes exactly that into ctrl), and in absolute mode is
+    the scaled action itself. Same definition, same units, both modes -- which
+    is the point: the policy sees how far its command is from being achieved
+    without needing to know which action space it is in.
+    """
+    pinch = np.asarray(base.data.site_xpos[pinch_sid], dtype=np.float64).copy()
+    piece = np.asarray(base._achieved_goal(), dtype=np.float64)
+    g = piece + np.array([0.0, 0.0, float(dz)])
+    approach = np.asarray(
+        base.data.site_xmat[pinch_sid], dtype=np.float64
+    ).reshape(3, 3)[:, 2].copy()
+    n = N_ARM_ACTUATORS
+    target_error = (
+        np.asarray(base.data.ctrl[:n], dtype=np.float64)
+        - np.asarray(base.data.qpos[base._arm_qadr], dtype=np.float64)
+    )
+    return dict(
+        pinch=pinch, piece=piece, g=g, g_to_pinch=pinch - g,
+        approach=approach,
+        tilt=float(np.arccos(np.clip(float(approach @ WORLD_DOWN), -1.0, 1.0))),
+        aperture=float(base.data.qpos[base._grip_qadr]),
+        lift=float(piece[2] - (base.model.key_qpos[base._home_key][base._piece_qadr + 2])),
+        target_error=target_error,
+    )
+
+
+def pickup_features(geom: dict[str, Any]) -> np.ndarray:
+    """The 15 appended observation entries, in their documented order.
+
+    21:24 pinch position | 24:27 g - pinch | 27:30 approach axis
+    30:36 commanded arm target - measured arm joint position
+    """
+    return np.concatenate([
+        geom["pinch"],
+        -geom["g_to_pinch"],       # g - pinch
+        geom["approach"],
+        geom["target_error"],
+    ]).astype(np.float64)
+
+
+class PickupObservation(gym.Wrapper):
+    """Appends `N_PICKUP_OBS` pick-up features to the observation (default off).
+
+    Follows D12's precedent: the extension is declared HERE, on the wrapper,
+    and RoboChessEnv's own `observation_space` and `_get_obs` are untouched.
+    The base 21 entries keep their indices and their values exactly.
+
+    T1 only. T2 already extends the observation with its obstacle slots at the
+    same tail position, so stacking both would produce two different layouts
+    behind one shape; that is rejected rather than ordered.
+    """
+
+    def __init__(self, env: gym.Env):
+        super().__init__(env)
+        base = self.unwrapped
+        if not isinstance(base, RoboChessEnv):
+            raise TypeError(f"Expects a RoboChessEnv underneath; got {type(base).__name__}.")
+        task = self._find_task(env)
+        if type(task) is not T1PickAndPlaceTask:
+            raise TypeError(
+                f"pickup_obs is T1 only; found task wrapper {type(task).__name__}. "
+                "T2 and later tasks extend the observation vector themselves "
+                "(D12), so the two extensions would share one tail."
+            )
+        self._base: RoboChessEnv = base
+        self._pinch_sid = _pinch_site_id(base.model)
+        self.dz = pickup_dz(
+            float(base.model.key_qpos[base._home_key][base._piece_qadr + 2])
+        )
+
+        base_space = self.env.observation_space
+        obs_space = base_space["observation"]
+        # Bounds: positions share the piece's +/-5 m box; the approach axis is a
+        # unit vector; the target error is bounded by the joint ranges it is a
+        # difference of, rounded out to the same +/-2pi the joint entries use.
+        pad_high = np.concatenate([
+            np.full(3, 5.0), np.full(3, 5.0), np.ones(3), np.full(N_ARM_ACTUATORS, 2 * np.pi),
+        ]).astype(obs_space.dtype)
+        self.observation_space = gym.spaces.Dict({
+            "observation": gym.spaces.Box(
+                low=np.concatenate([obs_space.low, -pad_high]),
+                high=np.concatenate([obs_space.high, pad_high]),
+                dtype=obs_space.dtype,
+            ),
+            "achieved_goal": base_space["achieved_goal"],
+            "desired_goal": base_space["desired_goal"],
+        })
+
+    @staticmethod
+    def _find_task(env: gym.Env):
+        node = env
+        while node is not None:
+            if isinstance(node, T1PickAndPlaceTask):
+                return node
+            node = getattr(node, "env", None)
+        raise TypeError("pickup_obs needs a T1PickAndPlaceTask in the stack.")
+
+    def geometry(self) -> dict[str, Any]:
+        """The shared geometry at the current sim state."""
+        return pickup_geometry(self._base, self._pinch_sid, self.dz)
+
+    def _extend(self, obs: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
+        space = self.observation_space["observation"]
+        extended = np.concatenate([obs["observation"], pickup_features(self.geometry())])
+        obs = dict(obs)
+        obs["observation"] = np.clip(extended, space.low, space.high).astype(space.dtype)
+        return obs
+
+    def reset(self, **kwargs):
+        obs, info = self.env.reset(**kwargs)
+        return self._extend(obs), info
+
+    def step(self, action: np.ndarray):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        return self._extend(obs), reward, terminated, truncated, info
+
+class PickupReward(gym.Wrapper):
+    """Pick-up stage reward: grasp the piece and lift it, nothing else.
+
+    Replaces the reward entirely; there is no goal-distance term and no
+    travelling failure penalty. Per step, with all weights at their defaults::
+
+        r = reach_weight  * reach(d) * posture(tilt)          # approach
+          + close_weight  * pose_gate * closure(aperture)     # close, in pose
+          + lift_weight   * clip(lift / lift_height, 0, 1)    # while held
+          + success_weight                                    # while succeeding
+          + first_grasp_bonus                                 # once per episode
+          - failure_penalty                                   # on a failed end
+
+    The penalised failures are the shared PENALISED_TERMINATIONS -- bad_contact
+    and piece_off_board only. D14's solver_instability is deliberately NOT
+    penalised here, for the same reason the travelling reward excludes it: that
+    truncation is a physics artefact the guard raises, not an outcome the
+    policy chose, so charging for it would price in the simulator's behaviour.
+
+    `d` is measured to ``g = piece + (0, 0, dz)``, the pinch position a grasp
+    actually happens from, NOT to the piece origin. This is the correction the
+    e4->e5 diagnosis pointed at: the old term's minimum was the piece origin,
+    which is 37 mm inside the piece and unreachable, so "as close as possible"
+    and "in a position to grasp" were different poses.
+
+    The first-grasp bonus and the lift term are keyed on HELD -- both finger
+    pads touching the piece AND the piece clear of the board. Not on
+    `grasp_success`: D18 requires the piece more than `rest_tolerance` (10 mm)
+    above the board before that can be true at all, so a lift term keyed on it
+    can never pay for the first 10 mm of a lift. And not on PINCHED alone,
+    which two measurements showed pays for non-grasps:
+
+      * an incidental pinch at 87 deg off top-down, with a pose gate of 1e-26,
+        collected the whole 5.0 bonus for a 3.7 mm nudge (1M policy, episode 12
+        step 121 of the 20-episode stochastic sweep);
+      * the D18 toppled piece -- lying on the board, pads closed across it --
+        paid 6.61 on its first step and ~1.60 per step for 19 steps, which is
+        exactly the false positive D18's board-contact term exists to exclude.
+
+    `held` adds that same board-contact test, read from the one
+    `_piece_contacts()` call the pinched test already makes, so there is no
+    second contact scan. The lift term stays dense from 0 mm, because the piece
+    can be clear of the board well below D18's 10 mm threshold.
+
+    The SUCCESS STATE is unchanged and still uses `grasp_success`: paying for a
+    lift is shaping, declaring the stage solved is not.
+
+    Success does NOT terminate the episode -- the stage is about holding a
+    lift, and terminating on first success would pay a policy for a lift it
+    drops immediately. ``info["pickup_success"]`` latches True from the first
+    step the success state fires until the episode ends, so the episode-level
+    flag reaches Monitor.
+    """
+
+    def __init__(
+        self,
+        env: gym.Env,
+        lift_height: float = 0.03,
+        hold_steps: int = 5,
+        failure_penalty: float = 5.0,
+        reach_weight: float = 1.0,
+        close_weight: float = 1.0,
+        lift_weight: float = 2.0,
+        success_weight: float = 1.0,
+        first_grasp_bonus: float = 5.0,
+    ):
+        super().__init__(env)
+        base = self.unwrapped
+        if not isinstance(base, RoboChessEnv):
+            raise TypeError(f"Expects a RoboChessEnv underneath; got {type(base).__name__}.")
+        self._base: RoboChessEnv = base
+        self._pinch_sid = _pinch_site_id(base.model)
+        self.lift_height = float(lift_height)
+        self.hold_steps = int(hold_steps)
+        self.failure_penalty = float(failure_penalty)
+        self.reach_weight = float(reach_weight)
+        self.close_weight = float(close_weight)
+        self.lift_weight = float(lift_weight)
+        self.success_weight = float(success_weight)
+        self.first_grasp_bonus = float(first_grasp_bonus)
+
+        # Resting height from the model's home keyframe, so dz adapts to the
+        # scene instead of being written down twice.
+        self._piece_rest_z = float(
+            base.model.key_qpos[base._home_key][base._piece_qadr + 2]
+        )
+        self.dz = pickup_dz(self._piece_rest_z)
+
+        # The same both-pads-on-the-piece test the staged shaped reward uses.
+        self._contacts_owner = find_contacts_owner(
+            self.env,
+            "pickup_mode needs a task wrapper providing _piece_contacts() "
+            "(T1PickAndPlaceTask) between this wrapper and the env.",
+        )
+
+        self._held_once = False
+        self._hold_streak = 0
+        self._succeeded = False
+
+    # ------------------------------------------------------------ per-episode
+    def reset(self, **kwargs):
+        self._held_once = False
+        self._hold_streak = 0
+        self._succeeded = False
+        return self.env.reset(**kwargs)
+
+    def contact_state(self) -> tuple[bool, bool]:
+        """``(pinched, held)`` from a single contact scan.
+
+        `pinched` is D20's test: both finger pads touching the piece. `held`
+        adds D18's board term -- the piece not also resting on the board -- and
+        is what the bonus and the lift term are paid on.
+        """
+        left, right, board = self._contacts_owner._piece_contacts()
+        pinched = bool(left and right)
+        return pinched, bool(pinched and not board)
+
+    def terms(self, held: bool) -> dict[str, float]:
+        """Every reward term and the geometry behind it, for the current state.
+
+        Split out from `step` so the sanity table and the unit tests can score
+        a pose without stepping the simulation.
+        """
+        geom = pickup_geometry(self._base, self._pinch_sid, self.dz)
+        offset = geom["g_to_pinch"]
+
+        d = float(np.linalg.norm(offset))
+        lateral = float(np.linalg.norm(offset[:2]))
+        vertical_error = float(abs(offset[2]))
+        tilt = geom["tilt"]
+        aperture = geom["aperture"]
+        lift = geom["lift"]
+
+        position = self.reach_weight * pickup_reach(d) * pickup_posture(tilt)
+        gate = pickup_pose_gate(lateral, vertical_error, tilt)
+        closing = self.close_weight * gate * pickup_closure(aperture)
+        lifting = (
+            self.lift_weight * float(np.clip(lift / self.lift_height, 0.0, 1.0))
+            if held else 0.0
+        )
+        return dict(d=d, lateral=lateral, vertical_error=vertical_error, tilt=tilt,
+                    aperture=aperture, lift=lift, pose_gate=gate,
+                    position_term=position, closing_term=closing, lift_term=lifting)
+
+    def step(self, action: np.ndarray):
+        obs, _base_reward, terminated, truncated, info = self.env.step(action)
+        grasped = bool(info.get("grasp_success", False))
+        pinched, held = self.contact_state()
+        t = self.terms(held)
+
+        reward = t["position_term"] + t["closing_term"] + t["lift_term"]
+
+        # Keyed on `held`, not `pinched`: pads-on-the-piece alone also describes
+        # a piece still sitting on the board (3c) and an 87 deg incidental
+        # contact (3b), both of which collected the full bonus.
+        first_grasp = held and not self._held_once
+        if first_grasp:
+            self._held_once = True
+            reward += self.first_grasp_bonus
+
+        # The hold streak counts CONSECUTIVE steps of grasped-and-high-enough;
+        # a single step that breaks either condition restarts it.
+        if grasped and t["lift"] >= self.lift_height:
+            self._hold_streak += 1
+        else:
+            self._hold_streak = 0
+        holding = self._hold_streak >= self.hold_steps
+        if holding:
+            reward += self.success_weight
+            self._succeeded = True
+
+        if terminated and info.get("terminated_reason") in PENALISED_TERMINATIONS:
+            reward -= self.failure_penalty
+
+        info = dict(info)
+        info["pickup_success"] = self._succeeded
+        info["pickup_terms"] = dict(t, first_grasp_bonus=self.first_grasp_bonus if first_grasp else 0.0,
+                                    success_term=self.success_weight if holding else 0.0,
+                                    hold_streak=self._hold_streak,
+                                    pinched=pinched, held=held, grasp_success=grasped)
+        return obs, float(reward), terminated, truncated, info

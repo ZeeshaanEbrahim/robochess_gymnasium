@@ -2,6 +2,8 @@
 
 from robochess.tasks.t1_pick_and_place import (
     REACHABLE_SQUARES,
+    PickupObservation,
+    PickupReward,
     ShapedPickAndPlaceReward,
     SparsePickAndPlaceReward,
     T1PickAndPlaceTask,
@@ -19,6 +21,8 @@ from robochess.tasks.t2_obstacle_pick_and_place import (
 
 __all__ = [
     "REACHABLE_SQUARES",
+    "PickupObservation",
+    "PickupReward",
     "ShapedPickAndPlaceReward",
     "SparsePickAndPlaceReward",
     "T1PickAndPlaceTask",
