@@ -1594,3 +1594,110 @@ and target, or lower `CLEAR_Z` so transit no longer clears a standing piece
 by ~9-13 mm. Each is a deliberate difficulty increase, none is a bug fix, and
 none has been attempted.
 
+
+## D20 — the shaped reward has no grasp term, and its 3D piece-to-goal term charges for lifting; staged terms added behind a default-off flag, and they did not change behaviour at 100k
+
+Note on numbering: D16-D19 are recorded in the roadmap document's decisions
+table, not here (see D7's renumbering note for how that drift started). This
+entry uses the roadmap table's numbering, which is canonical.
+
+### The two defects, stated as the reward arithmetic
+
+`ShapedPickAndPlaceReward` pays
+
+    r = -(piece_to_goal_3D) - 0.3 * (gripper_to_piece) - failure_penalty[terminating failure]
+
+Two consequences follow directly from that formula and neither was deliberate:
+
+1. **No term rewards a grasp.** Closing the gripper changes neither distance,
+   so nothing in the gradient tells a policy to close it. The only thing the
+   reward pays for is moving the pinch site toward the piece and the piece
+   toward the goal -- and the piece does not move unless it is already held.
+2. **Lifting the piece is charged for.** The piece-to-goal term is 3D, so
+   raising the piece off the board increases it. Measured on a scripted-expert
+   d1->e5 episode: while the piece is carried, 3D-minus-XY distance is a median
+   0.027 m and a maximum 0.061 m per step, 1.40 in total over that episode's 46
+   carrying steps. Holding the piece up is strictly worse than leaving it down.
+
+Together these make hovering near the piece a local optimum, and that is
+exactly what the clamped delta 100k run did: approach improved (median closest
+pinch-to-piece 0.427 -> 0.266 m across checkpoints) while real grasps stayed at
+0 and episode return stayed flat (-53.31 +- 41.48 over 1011 episodes, per-step
+-0.5373, quarter means -0.59/-0.51/-0.50/-0.55).
+
+### The staged variant, and why those bonus values
+
+Behind `shaped_staged` (config; default **False**, and flag-off behaviour is
+byte-identical -- verified with fixed-seed 600-step traces of reward, done
+flags and both distances through the real training stack, absolute and delta):
+
+    r = -d_xy(piece, goal) - 0.3 * (gripper_to_piece)
+        + grasp_bonus  if both finger pads contact the piece
+        + lift_bonus   if, additionally, the piece is clear of the board
+        - failure_penalty[terminating failure]     (unchanged)
+
+The contact tests are `_piece_contacts()`, already written for the
+grasp_success board-contact work; no new contact logic exists for this.
+
+`grasp_bonus = 1.0`: sized against the distance terms' measured scale. The
+worst non-terminal step on record is -1.1378 and the worst seen in a 3000-step
+random-policy delta run is -0.8354 (median -0.4842). At 1.0 a grasped step
+scores above every ungrasped step ever observed, so "grasping beats hovering"
+holds regardless of where on the board the two happen -- which is the ordering
+the unstaged reward lacks entirely. Below ~0.84 that ordering breaks somewhere
+in the workspace.
+
+`lift_bonus = 0.5`: sized against step-to-step noise rather than the distance
+range. Consecutive-step reward changes in that same run are 0.0017 median and
+0.0073 at p99, so 0.5 is ~70x the p99 fluctuation and cannot be lost in it. It
+is also ~8x the largest per-step lifting cost the old 3D term charged (0.061).
+
+**Known risk of the per-step form, not yet triggered:** success TERMINATES the
+episode, so a grasped, lifted piece held over the goal pays roughly +1.5/step
+for doing nothing, up to ~+450 over a 300-step episode, which beats placing it
+and ending. A one-time bonus on first grasp and first lift would not have this
+property. The per-step form is what was specified; this is recorded so the
+first run that actually grasps is checked for it.
+
+### Measured effect at 100k: none
+
+100k steps, T1/PPO/state/seed 0, delta, `max_episode_steps` 300, against the
+unstaged clamped run. 50 deterministic episodes per checkpoint, eval seed
+10000, same script for both (`results/staged_reward/eval_staged.py`, which
+separates "both pads on the piece" from "pads AND clear of the board", a
+distinction `grasp_success` cannot make since it already requires both).
+
+| ckpt | run | median closest (m) | closest | eps <10cm | pads | lift | grasp | success |
+|---|---|---|---|---|---|---|---|---|
+| 20k | unstaged | 0.427 | 0.189 | 0/50 | 0/50 | 0/50 | 0/50 | 0.00 |
+| 20k | staged | 0.451 | 0.296 | 0/50 | 0/50 | 0/50 | 0/50 | 0.00 |
+| 40k | unstaged | 0.421 | 0.204 | 0/50 | 0/50 | 0/50 | 0/50 | 0.00 |
+| 40k | staged | 0.410 | 0.292 | 0/50 | 0/50 | 0/50 | 0/50 | 0.00 |
+| 60k | unstaged | 0.318 | 0.132 | 0/50 | 0/50 | 0/50 | 0/50 | 0.00 |
+| 60k | staged | 0.334 | 0.211 | 0/50 | 0/50 | 0/50 | 0/50 | 0.00 |
+| 80k | unstaged | 0.258 | 0.041 | 4/50 | 0/50 | 0/50 | 0/50 | 0.00 |
+| 80k | staged | 0.310 | 0.160 | 0/50 | 0/50 | 0/50 | 0/50 | 0.00 |
+| 100k | unstaged | 0.266 | 0.042 | 3/50 | 0/50 | 0/50 | 0/50 | 0.00 |
+| 100k | staged | 0.262 | 0.101 | 0/50 | 0/50 | 0/50 | 0/50 | 0.00 |
+
+Across all 250 staged eval episodes the gripper never touched the piece once.
+The mechanism is not subtle: both bonuses are step functions that pay only
+once both pads are already on the piece, so a policy sitting 26-45 cm away
+collects neither and sees no gradient from them at all. A sparse term added to
+a dense one is still sparse. The XY switch is equally inert until something is
+held.
+
+This does NOT refute the diagnosis above -- the two defects are properties of
+the formula and remain real. What it establishes is narrower and worth stating
+plainly: **adding the missing terms does not by itself produce grasping at
+100k, because the policy cannot discover a bonus it never reaches.** Anything
+that closes this gap has to make contact reachable (a denser approach signal
+that continues to the closing axis, a curriculum or demonstrations that put the
+gripper on the piece, or longer training that happens to stumble into it), not
+merely make contact valuable once achieved. Left default-off; no re-pilot
+should adopt it on the strength of this run.
+
+Two caveats on the comparison: episode length differs (300 staged vs 100
+unstaged), so the staged policy had 3x more steps per episode to approach and
+still did not do better; and the hold-at-goal risk above could not appear in a
+run that never grasped.
