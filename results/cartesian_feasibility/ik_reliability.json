@@ -1,0 +1,94 @@
+{
+ "4a": {
+  "points": 30,
+  "attempts": 180,
+  "converged": 180,
+  "failed": 0,
+  "converged_fraction": 1.0,
+  "per_region": {
+   "a-b/rank 1-2": [
+    12,
+    0
+   ],
+   "a-b/rank 7-8": [
+    12,
+    0
+   ],
+   "g-h/rank 1-2": [
+    24,
+    0
+   ],
+   "g-h/rank 7-8": [
+    24,
+    0
+   ],
+   "a-b/rank 3-6": [
+    12,
+    0
+   ],
+   "c-f/rank 1-2": [
+    24,
+    0
+   ],
+   "c-f/rank 3-6": [
+    24,
+    0
+   ],
+   "c-f/rank 7-8": [
+    24,
+    0
+   ],
+   "g-h/rank 3-6": [
+    24,
+    0
+   ]
+  },
+  "failures": [],
+  "step_m": 0.005
+ },
+ "4b": {
+  "from_square": "a4",
+  "to_square": "h4",
+  "increment_m": 0.02,
+  "solves": 28,
+  "failed_indices": [],
+  "max_step_rad": 0.04287930143105462,
+  "max_step_joint": "w3",
+  "max_step_at_index": 10,
+  "per_joint_max": {
+   "pan": 0.04287929091497933,
+   "lift": 0.014630625774566752,
+   "elbow": 0.028770410491379295,
+   "w1": 0.014131649944002067,
+   "w2": 3.5190838896470567e-05,
+   "w3": 0.04287930143105462
+  },
+  "discontinuities_over_0_2_rad": []
+ },
+ "4c": {
+  "+2 m in x (far outside reach)": {
+   "raised": true,
+   "exception": "IK did not converge for pinch target [1.866  0.492  1.1822]: pos err 1040.0 mm, ori err 0.106 rad",
+   "internal_config_moved_rad": 1.5708000000000002,
+   "env_qpos_changed": false
+  },
+  "-1 m in z (through the table)": {
+   "raised": false,
+   "returned_q": [
+    -1.5708352315277925,
+    0.4451212276657798,
+    1.1043992045398119,
+    -3.120325345057207,
+    -1.5707982763785746,
+    -3.564476084005593e-05
+   ],
+   "max_joint_change_rad": 2.0159212276657796
+  },
+  "0.5 m in y": {
+   "raised": true,
+   "exception": "IK did not converge for pinch target [-0.134   0.992   1.1822]: pos err 166.7 mm, ori err 0.022 rad",
+   "internal_config_moved_rad": 1.5707999999999982,
+   "env_qpos_changed": false
+  }
+ }
+}
