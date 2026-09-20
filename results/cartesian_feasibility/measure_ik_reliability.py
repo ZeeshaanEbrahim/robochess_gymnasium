@@ -1,8 +1,16 @@
 """Section 4: does solve_ik() converge, and stay continuous, across the board?
 
 4a: small-displacement solves in each of +-x, +-y, +-z at a grid of board points.
-4b: a straight sweep in 20 mm increments, each solve warm-started from the last.
+4b: a straight sweep in 20 mm increments, the arm seated at each solution before
+    the next solve, so the chain is genuinely warm-started.
 4c: what solve_ik() does with an unreachable request.
+
+CORRECTION (20 Sep 2026): 4b previously described itself as "warm-started from the
+previous solution", which it was not. solve_ik() reseeds from the ENV's qpos every
+call (`self.configuration.update(self.base.data.qpos.copy())`), and the env was
+never advanced, so every solve started from the same reset pose. The env state is
+now set to each solution before the next solve. 4a was unaffected: it already set
+qpos directly at each grid point.
 """
 from __future__ import annotations
 import argparse, json, sys
@@ -82,12 +90,16 @@ def main() -> int:
     end = square_to_local_xy("h4") + board_xy
     n_steps = int(np.linalg.norm(end - start) / 0.020)
     qs, xs, failed = [], [], []
-    ex.solve_ik(np.array([start[0], start[1], se.GRASP_Z]))
+    # seat the arm AT the first solution, so the next solve is genuinely warm-started
+    q0 = ex.solve_ik(np.array([start[0], start[1], se.GRASP_Z]))
+    ex.base.data.qpos[:6] = q0; mujoco.mj_forward(ex.model, ex.base.data)
     for i in range(n_steps + 1):
         t = start + (end - start) * (i / n_steps)
         target = np.array([t[0], t[1], se.GRASP_Z])
         try:
-            q = ex.solve_ik(target)          # warm-started: configuration carries over
+            q = ex.solve_ik(target)
+            ex.base.data.qpos[:6] = q       # advance the seed for the next solve
+            mujoco.mj_forward(ex.model, ex.base.data)
             qs.append(q.copy()); xs.append(i * 0.020)
         except se.IKFailure:
             failed.append(i)

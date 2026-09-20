@@ -180,3 +180,60 @@ targets x 63 starts = 315 episodes, 6 failures (98.1%), reproducible via
 3 targets to 5 also killed the "reach extremity" hypothesis the original
 combined entry carried: `a8`, the far corner at ~99% of rated reach, is clean
 at 0/63, while the two *near* corners account for 5 of the 6 failures.
+
+## Gate M3 (end of P3) — NOT met
+
+> Exact-replay reproducibility demonstrated (same seed -> same trajectory);
+> pilot matrix complete; final P4 run list frozen and signed off by
+> supervisors.
+>
+> — recorded in-repo 2026-09-20, matching the upstream roadmap document.
+
+**Status: not met.** The pilot is complete but returned a blocking finding, so
+the P4 run list cannot be frozen.
+
+| criterion | status |
+| --- | --- |
+| exact-replay reproducibility | partly: runs are bit-identical across processes at a fixed thread count (`num_threads: 1`, recorded in every manifest); no formal demonstration written up |
+| pilot matrix complete | yes -- all 16 cells, 500k steps each, exit 0 |
+| P4 run list frozen | **no** -- the pilot returned 0.00 success in every cell |
+
+### P3 status (2026-09-20)
+
+**Pilot matrix: 16/16 cells complete, 0.00 success in every one**, in training
+and in a 100-episode deterministic eval of each final model (1,600 eval
+episodes, 0 successes). Root-caused to **D16** (absolute joint targets as the
+action space). Two infrastructure bugs were found and fixed first: a
+shaped-reward early-termination exploit (fixed with the terminal penalty; mean
+episode length 10.6 -> ~99) and a T2 CI test that had never caught a warning.
+
+**What has been done since, all recorded in `DECISIONS.md`:**
+
+| decision | state |
+| --- | --- |
+| D16 — absolute joint targets | delta mode built and flagged; absolute still the default, byte-identical |
+| D17 — SAC critic divergence | **OPEN**, hypothesis untested; `t2_sac_shaped_seed1`'s results are invalid past 100k |
+| D18 — `grasp_success` false positives | fixed in two parts (pad contact, then board contact); one transient gap remains |
+| D19 — delta-target windup | clamped; windup gone, saturation capped at 20-42% rather than low |
+| D20 — shaped reward has no grasp term | staged terms added behind a default-off flag; **no measurable effect at 100k** |
+
+**Where the policies actually are.** Delta mode plus the D19 clamp made the arm
+approach: median closest pinch-to-piece went 0.480 m (absolute, 100k) -> 0.266 m
+(clamped delta, 100k) -> **0.042 m** on a fixed e4->e5 pair at 1M steps. But
+across 550 deterministic eval episodes of that 1M run the gripper **never once
+touched the piece**: 0 pad contacts, 0 lifts, 0 grasps, 0 successes at every
+checkpoint. At its closest approach the pinch sits 40 mm away in XY and 19 mm
+BELOW the grasp band, and forcing the gripper shut from that exact state closes
+on nothing (aperture 0.752, no pad contact). The policy has learned to hover
+beside the piece, not to pre-position for a grasp.
+
+**Episode budget, measured.** All 16 pilot cells and both delta sanity runs ran
+with `max_episode_steps: 100`. The scripted expert's FASTEST episode across 10
+representative squares is 127 steps and its slowest is 198. Every zero-success
+result before 2026-09-20 was therefore produced in episodes too short for the
+expert's own best case to finish.
+
+**Still open for P3:** resume support in `scripts/train.py` (checkpoints are
+written but nothing loads them), SLURM job scripts and cluster benchmarking,
+D17's decision, re-validating the CPU-vs-GPU device choice on the real env, and
+a formal exact-replay demonstration for this gate.

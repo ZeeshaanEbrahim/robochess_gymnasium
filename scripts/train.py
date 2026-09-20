@@ -161,6 +161,10 @@ def build_env(cfg: dict):
     return wrapper(task)
 
 
+# Per-episode info keys copied into monitor.monitor.csv alongside r, l, t.
+MONITOR_INFO_KEYWORDS = ("terminated_reason",)
+
+
 def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
     """Vectorise the env, applying VecNormalize to the PPO branch only.
 
@@ -172,12 +176,21 @@ def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
     returns would be logged in normalised units and silently incomparable.
     Without Monitor at all, SB3 has no episode statistics to log and
     rollout/ep_rew_mean and ep_len_mean never appear in the CSV.
+
+    `info_keywords` carries the env's own termination label into
+    monitor.monitor.csv. Without it the per-episode log is (r, l, t) only, and
+    the bad_contact / piece_off_board / solver_instability split of a finished
+    run cannot be recovered at all -- it has to be re-derived by re-running
+    every checkpoint. RoboChessEnv always puts `terminated_reason` in info (it
+    is None on a time-limit truncation), so the key is never missing, which is
+    what Monitor requires.
     """
     from stable_baselines3.common.monitor import Monitor
     from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
     monitor_path = str(monitor_dir / "monitor") if monitor_dir is not None else None
-    venv = DummyVecEnv([lambda: Monitor(build_env(cfg), filename=monitor_path)])
+    venv = DummyVecEnv([lambda: Monitor(build_env(cfg), filename=monitor_path,
+                                        info_keywords=MONITOR_INFO_KEYWORDS)])
 
     algorithm = cfg["algorithm"]
     if algorithm == "ppo":

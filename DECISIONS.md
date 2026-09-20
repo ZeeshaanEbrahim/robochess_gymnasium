@@ -1595,6 +1595,162 @@ by ~9-13 mm. Each is a deliberate difficulty increase, none is a bug fix, and
 none has been attempted.
 
 
+## D16 — action space: absolute joint targets are the root cause of the pilot's 0% success; delta mode added behind a flag, absolute kept as the default
+
+`_scale_action` mapped each arm action linearly across the actuator's full
+ctrlrange as an ABSOLUTE joint target: +-1 became +-2 pi rad on five joints and
++-pi on the elbow, with no reference to the previous target or to where the
+joint actually was. Action 0 is therefore not "hold still" -- it commands every
+arm joint to 0 rad, far from the home pose. This was the action space all 16
+pilot cells trained on.
+
+Measured consequences under absolute mode (results/pilot_diagnosis):
+
+* both trained policies sat near +-1 on most steps;
+* median command-vs-actual joint error up to 295 deg;
+* the big-joint actuators were at their force limit on 88-99% of steps, with the
+  joints nowhere near their own limits -- purely the force cap;
+* the gripper was never brought over a board square, and the arm was never
+  quasi-static (0 of 600 steps).
+
+Everything the pilot reported is downstream of this: no approach, never
+quasi-static, "hold still" as the only learnable way to avoid the terminal
+penalty, and D14-guard triggers from force-saturated links striking a resting
+piece. It also does not match the proposal's section 4.2.2, which specifies the
+joint mode as per-joint position DELTAS.
+
+**Fix, shipped behind a flag (commit `93b4ee6`).** `RoboChessEnv(action_mode=)`
+takes "absolute" (default) or "delta". In delta mode each arm action scales to a
+per-step CHANGE in the joint target, capped at `max_joint_delta`, applied to the
+previous target and clamped to the joint's range; the gripper stays absolute in
+both modes so a policy can open or close in one step.
+
+**Why the cap is 0.1 rad/step.** Calibrated from the scripted expert's ACTUAL
+joint motion over 23 successful episodes (p95 0.04-0.08 rad/step on every joint;
+p99 0.11-0.14 on pan/lift/wrist_1/wrist_3, elbow 0.19, max 0.31). The expert's
+COMMANDED targets could not be used: it is a waypoint-jump controller whose
+target is unchanged on 95.6% of steps and then jumps up to 1.85 rad, which would
+have reproduced the original problem. 0.1 also sits just past the actuator
+saturation threshold (forcerange/kp = 0.075 rad on the big joints, 0.056 on the
+wrists).
+
+**Absolute stays the default** so every pilot run remains byte-for-byte
+reproducible; the flag-off path was verified byte-identical on fixed-seed T1 and
+T2 traces. Same pattern as D13.
+
+**The D7 follow-on question is answered by the same diagnosis.** The RL action
+does reach the same uncompensated PD servos the scripted expert needed D7's
+compensation for (kp 2000/500, `body_gravcomp` 0 everywhere, action passing
+through the wrappers unmodified -- confirmed at runtime, not by reading code).
+But D7's ~0.6-1.5 deg droop is two to three orders of magnitude smaller than the
+error these policies operate at, so gravity droop is not the operative effect
+for trained policies; saturated extreme-range commands are.
+
+
+## D17 — SAC critic divergence under the raw reward scale — OPEN
+
+One pilot cell, `t2_sac_shaped_seed1`, diverged: critic loss rose from 7.5 to a
+peak of 1.0 x 10^8, the entropy coefficient reached 3.03, and behaviour degraded
+in lockstep. Every other SAC cell peaked below 660. **That cell's results are
+invalid** -- its later checkpoints come from a diverged critic, and the 100k
+checkpoint is the last clean one.
+
+Leading hypothesis, UNTESTED: PPO is wrapped in `VecNormalize` and SAC
+deliberately is not, so SAC's critic fits raw targets where most transitions sit
+near -0.5 and rare ones at the terminal penalty (-257 at the 100-step episode
+length those cells used). Heavy-tailed bootstrap targets are a known route to
+critic blow-up.
+
+**Note for the writeup, to avoid a wrong argument:** do NOT claim that a positive
+Q proves divergence "because all rewards are negative". Maximum-entropy SAC
+bootstraps the entropy bonus, so a positive Q is possible in principle. The
+critic-loss gap (1.0 x 10^8 against every other cell's <= 660) is the evidence,
+and it stands on its own.
+
+Still to decide after the re-pilot: normalise SAC's rewards, or reduce the
+penalty magnitude. Neither has been done.
+
+
+## D18 — `grasp_success` counted grasps that never happened
+
+The original definition was "piece lifted more than `rest_tolerance` above the
+board AND gripper aperture at/above `gripper_open_threshold`" -- lifted AND
+closed. A piece knocked onto its side satisfies "lifted" all by itself, because
+its origin rises ~18 mm when it topples, and a gripper closed on nothing
+satisfies "closed". In the pilot diagnosis **all 50 flagged episodes were false
+positives of exactly that kind, with 0 real grasps; in 49 of them the pinch site
+never came within 5 cm of the piece** (18-68 cm in the traced cases).
+
+**Fix, in two parts.**
+
+1. (`93b4ee6`) Require BOTH finger pad bodies to be in contact with the piece,
+   read from MuJoCo's contact list via `model.geom_bodyid`. Validated in both
+   directions: the scripted expert's grasps still count exactly as before
+   (50/50, 55/55, 28/28 steps, including D10's h8->h1 genuine-grasp-then-carry-
+   off-board case), and all 19 previously flagged policy episodes now count 0.
+2. (`97ba93e`) Require the piece NOT to be in contact with the board. The pad
+   term alone left a gap: a toppled piece lying on the board with both pads
+   closed on it is lifted (origin ~18 mm up), closed, and gripped. Verified by
+   building that state with the expert's own IK and drive at a sweep of pinch
+   heights: at +11/+14 mm the piece lies at 90-100 deg with both pads and the
+   board touching it every step, and the old definition fires on 9-19 steps
+   while the new one fires on 0. Real carries are unaffected (50/55/28/41
+   flagged steps, identical to the pad-only definition, 0 disagreements).
+
+**Any grasp count in this project's history measured before `93b4ee6` is
+unreliable.** Remaining known gap: when the closing pads squeeze a lying piece
+UP off the board, it can flag for 2-6 transient steps while genuinely held clear
+of the board by the pads. Not closed.
+
+
+## D19 — delta-target windup, and the clamp that removed it (saturation only partly)
+
+With delta mode on, the commanded target accumulates deltas without bound
+relative to the actual joint, so it can run far ahead of a joint that cannot
+follow. Measured in D16's 100k sanity run: at 100k steps the shoulder_lift
+target sat a median **100 deg** ahead of the actual joint, and force-limit
+saturation ROSE over training (20k: 17/17/1/0/0/0% -> 100k: 53/66/36/36/28/0%)
+rather than staying low. Classic integrator windup. Absolute mode at the same
+budget was worse (79/87/89/65/58/3%), so delta mode was already an improvement;
+windup is why it was not the full improvement.
+
+**Fix (commit `cd39ec2`).** Each step the target is clamped to within
+`2 x forcerange/kp` of the ACTUAL joint position, per joint, before the existing
+joint-range clamp. The margin is derived from the live model, not hardcoded:
+0.150 rad on shoulder_pan/lift/elbow, 0.112 rad on the wrists. The gripper stays
+absolute and unclamped, and absolute mode is byte-identical (fixed-seed T1/T2
+traces of obs, reward, done flags, ctrl and qpos compared before and after).
+`forcerange/kp` is the position error at which the PD servo saturates; the
+multiple of 2 was chosen, not derived.
+
+**Result: windup removed, saturation only partly.** Re-running the same 100k
+cell with the clamp on (`results/d19_clamp/`):
+
+| | unclamped @100k | clamped @100k |
+|---|---|---|
+| median \|target - actual\| | up to 100 deg (lift) | 5-7 deg, every joint, every checkpoint |
+| saturation, pan/lift/elbow/w1/w2/w3 | 53/66/36/36/28/0% | 17/23/29/20/8/0% |
+| trend over training | rising | flat |
+| median closest pinch-to-piece | 0.360 m | 0.266 m |
+
+Saturation no longer rises, but 20-42% on pan/lift/elbow/w1 remains at some
+checkpoints, and at 20k the clamped run was HIGHER than the unclamped one on
+elbow (0.42 vs 0.01) and wrist_1 (0.38 vs 0.00). That follows from the margin
+itself: the actuator saturates at 1x forcerange/kp, and a 2x margin still admits
+errors between the two. A tighter margin has not been tried.
+
+**Separately measured (`results/cartesian_feasibility/`): the clamp limits
+achievable joint speed by 2.8-5.0x** -- 0.45-0.72 rad/s clamped against 1.9-2.3
+rad/s pre-clamp, the latter close to the 2.5 rad/s the 0.1 rad cap allows per
+40 ms step. This corrects an earlier claim in that file that the servo, not the
+action space, set the plateau. Removing the clamp does not improve the
+expert-replay success count (6/10 against the clamped 7/10), so it is not
+obviously the thing holding the task back.
+
+**D19 is therefore partly resolved:** the runaway target is gone, saturation is
+capped but not low.
+
+
 ## D20 — the shaped reward has no grasp term, and its 3D piece-to-goal term charges for lifting; staged terms added behind a default-off flag, and they did not change behaviour at 100k
 
 Note on numbering: D16-D19 are recorded in the roadmap document's decisions

@@ -1,0 +1,20 @@
+{
+ "run": "_fixed_e4e5_t1_ppo_shaped_staged_delta_seed0",
+ "checkpoint": 500000,
+ "episodes": 100,
+ "stochastic": true,
+ "max_episode_steps": 300,
+ "reasons": {
+  "time_limit": 100
+ },
+ "mean_return": -32.064812854155896,
+ "worst_return": -37.07390385866165,
+ "best_return": -30.438923723995686,
+ "penalised_episodes": 0,
+ "mean_return_unpenalised": -32.064812854155896,
+ "mean_return_penalised": null,
+ "mean_length": 300.0,
+ "successes": 0,
+ "failure_penalty": 771.0,
+ "penalty_events": []
+}

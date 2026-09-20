@@ -1,0 +1,53 @@
+{
+ "run": "_fixed_e4e5_t1_ppo_shaped_staged_delta_seed0",
+ "checkpoint": 1000000,
+ "episodes": 100,
+ "stochastic": true,
+ "max_episode_steps": 300,
+ "reasons": {
+  "bad_contact": 1,
+  "time_limit": 98,
+  "piece_off_board": 1
+ },
+ "mean_return": -53.07074634943157,
+ "worst_return": -802.0555244460702,
+ "best_return": -28.001229487359524,
+ "penalised_episodes": 2,
+ "mean_return_unpenalised": -38.01025977073123,
+ "mean_return_penalised": -791.0345887057483,
+ "mean_length": 296.86,
+ "successes": 0,
+ "failure_penalty": 771.0,
+ "penalty_events": [
+  {
+   "episode": 0,
+   "step": 65,
+   "reason": "bad_contact",
+   "pinch_xyz": [
+    0.4139,
+    0.2768,
+    0.7607
+   ],
+   "pinch_height_above_board": -0.0013,
+   "pinch_to_piece_m": 0.4291,
+   "piece_moved_mm": 49.0,
+   "gripper_qpos": 0.0,
+   "episode_return": -780.01
+  },
+  {
+   "episode": 74,
+   "step": 221,
+   "reason": "piece_off_board",
+   "pinch_xyz": [
+    -0.003,
+    0.4162,
+    0.9163
+   ],
+   "pinch_height_above_board": 0.1543,
+   "pinch_to_piece_m": 0.2828,
+   "piece_moved_mm": 383.3,
+   "gripper_qpos": 0.0,
+   "episode_return": -802.06
+  }
+ ]
+}

@@ -1,0 +1,32 @@
+{
+ "run": "_fixed_e4e5_t1_ppo_shaped_staged_delta_seed0",
+ "checkpoint": 1000000,
+ "closest_step": 26,
+ "pinch_xyz": [
+  0.06089657595122261,
+  0.4475110251303708,
+  0.7798596408337627
+ ],
+ "piece_xyz": [
+  0.038414448499679565,
+  0.4807388484477997,
+  0.763916552066803
+ ],
+ "pinch_to_piece_3d_m": 0.04317078151473348,
+ "pinch_to_piece_xy_m": 0.04011900169697269,
+ "pinch_z_m": 0.7798596408337627,
+ "grasp_band_z_m": 0.79925,
+ "pinch_above_grasp_band_m": -0.019390359166237325,
+ "pinch_above_piece_origin_m": 0.015943088766959712,
+ "gripper_aperture_rad": 0.18520165108404424,
+ "forced_close": {
+  "both_pads_final": false,
+  "left_final": false,
+  "right_final": false,
+  "board_contact_final": true,
+  "final_aperture_rad": 0.7522063421439035,
+  "both_pads_at_any_point": false,
+  "first_both_pads_step": null,
+  "piece_moved_mm": 1.8918167352676392
+ }
+}
