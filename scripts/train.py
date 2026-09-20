@@ -140,12 +140,15 @@ def build_env(cfg: dict):
     # the only mode they could have trained with.
     env_kwargs = dict(max_episode_steps=cfg["max_episode_steps"],
                       action_mode=cfg.get("action_mode", "absolute"))
+    # .get: pre-existing configs and manifests carry no square keys and keep
+    # the task wrapper's own random sampling (square=None means "sample it").
+    squares = dict(start_square=cfg.get("start_square"), target_square=cfg.get("target_square"))
     if cfg["task"] == "t1":
         base = RoboChessEnv(**env_kwargs)
-        task = T1PickAndPlaceTask(base)
+        task = T1PickAndPlaceTask(base, **squares)
     elif cfg["task"] == "t2":
         base = make_t2_env(**env_kwargs)
-        task = T2ObstacleTask(base, n_obstacles=cfg["n_obstacles"])
+        task = T2ObstacleTask(base, n_obstacles=cfg["n_obstacles"], **squares)
     else:  # unreachable -- resolve_config validates the enum
         raise ValueError(f"unknown task {cfg['task']!r}")
     wrapper = _reward_wrappers()[cfg["reward_type"]]

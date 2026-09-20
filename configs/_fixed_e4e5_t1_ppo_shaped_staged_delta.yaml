@@ -1,0 +1,24 @@
+# NOT an experiment cell. One fixed start/target pair (e4 -> e5, the pair the
+# P1 scripted-expert regression used), so the policy faces the same geometry
+# every episode instead of a new square pair per reset. Everything else matches
+# the staged-reward sanity run, with a 10x budget.
+
+task: t1
+algorithm: ppo
+reward_type: shaped
+observation: state
+seed: 0
+total_timesteps: 1000000
+device: cpu
+num_threads: 1
+action_mode: delta
+max_episode_steps: 300
+n_obstacles: 0
+start_square: e4
+target_square: e5
+shaped_staged: true
+grasp_bonus: 1.0
+lift_bonus: 0.5
+checkpoint_freq: 100000
+output_root: runs
+notes: "fixed e4->e5, staged shaped reward, 1M steps"

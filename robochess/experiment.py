@@ -56,6 +56,11 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     # count, so the same config on a different machine silently produces
     # different numbers. 1 is the only value that is portable by default.
     "num_threads": 1,
+    # Fixed start/target squares. None -> the task wrapper's own random
+    # sampling over REACHABLE_SQUARES, which is what every run so far used, so
+    # a config that omits these is unchanged by their existence.
+    "start_square": None,
+    "target_square": None,
     # Staged shaped reward (DECISIONS.md D20). Default OFF: with this false the
     # shaped reward is exactly the one every pilot and sanity run used so far.
     "shaped_staged": False,
@@ -138,6 +143,18 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
     for key in ("total_timesteps", "max_episode_steps", "checkpoint_freq", "num_threads"):
         if cfg[key] <= 0:
             raise ConfigError(f"{key} must be > 0, got {cfg[key]}")
+
+    from robochess.tasks.squares import ALL_SQUARES
+
+    for key in ("start_square", "target_square"):
+        value = cfg[key]
+        if value is not None and value not in ALL_SQUARES:
+            raise ConfigError(f"{key}={value!r} is not a board square")
+    if (cfg["start_square"] is not None
+            and cfg["start_square"] == cfg["target_square"]):
+        raise ConfigError(
+            f"start_square and target_square are both {cfg['start_square']!r}; they must differ"
+        )
 
     if not isinstance(cfg["shaped_staged"], bool):
         raise ConfigError(f"shaped_staged must be a bool, got {cfg['shaped_staged']!r}")
