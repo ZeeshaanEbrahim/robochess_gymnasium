@@ -327,6 +327,33 @@ def test_config_defaults_to_absolute():
     assert resolve_config(dict(_BASE_CFG))["action_mode"] == "absolute"
 
 
+def test_config_defaults_to_unstaged_shaped_reward():
+    cfg = resolve_config(dict(_BASE_CFG))
+    assert cfg["shaped_staged"] is False
+    assert (cfg["grasp_bonus"], cfg["lift_bonus"]) == (1.0, 0.5)
+
+
+def test_config_rejects_staged_with_the_sparse_reward():
+    with pytest.raises(ConfigError, match="shaped_staged"):
+        resolve_config(dict(_BASE_CFG, reward_type="sparse", shaped_staged=True))
+
+
+def test_config_rejects_negative_bonus():
+    with pytest.raises(ConfigError, match="grasp_bonus"):
+        resolve_config(dict(_BASE_CFG, grasp_bonus=-1.0))
+
+
+def test_train_build_env_passes_staged_flag_through():
+    train = _load_train()
+    off = train.build_env(resolve_config(dict(_BASE_CFG)))
+    assert off.staged is False
+    off.close()
+    on = train.build_env(resolve_config(dict(_BASE_CFG, shaped_staged=True,
+                                             grasp_bonus=2.0, lift_bonus=0.75)))
+    assert (on.staged, on.grasp_bonus, on.lift_bonus) == (True, 2.0, 0.75)
+    on.close()
+
+
 def test_config_rejects_unknown_action_mode():
     with pytest.raises(ConfigError, match="action_mode"):
         resolve_config(dict(_BASE_CFG, action_mode="torque"))

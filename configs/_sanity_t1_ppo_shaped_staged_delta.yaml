@@ -1,0 +1,25 @@
+# NOT an experiment cell. Sanity run for the STAGED shaped reward (DECISIONS.md
+# D20): does adding a grasp bonus, a lift bonus, and an XY-only piece-to-goal
+# term get the policy past the hover local optimum the unstaged reward has?
+# 100k steps says nothing about success rate.
+#
+# Differs from _sanity_t1_ppo_shaped_state_delta_clamp.yaml in exactly two
+# ways: shaped_staged: true, and max_episode_steps 300 rather than 100.
+
+task: t1
+algorithm: ppo
+reward_type: shaped
+observation: state
+seed: 0
+total_timesteps: 100000
+device: cpu
+num_threads: 1
+action_mode: delta
+max_episode_steps: 300
+n_obstacles: 0
+shaped_staged: true
+grasp_bonus: 1.0
+lift_bonus: 0.5
+checkpoint_freq: 20000
+output_root: runs
+notes: "staged shaped reward sanity run, not a result"

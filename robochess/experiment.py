@@ -56,6 +56,11 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     # count, so the same config on a different machine silently produces
     # different numbers. 1 is the only value that is portable by default.
     "num_threads": 1,
+    # Staged shaped reward (DECISIONS.md D20). Default OFF: with this false the
+    # shaped reward is exactly the one every pilot and sanity run used so far.
+    "shaped_staged": False,
+    "grasp_bonus": 1.0,
+    "lift_bonus": 0.5,
     "output_root": "runs",
     "run_name": None,          # None -> derived from the config filename + seed
     "notes": "",
@@ -133,6 +138,19 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
     for key in ("total_timesteps", "max_episode_steps", "checkpoint_freq", "num_threads"):
         if cfg[key] <= 0:
             raise ConfigError(f"{key} must be > 0, got {cfg[key]}")
+
+    if not isinstance(cfg["shaped_staged"], bool):
+        raise ConfigError(f"shaped_staged must be a bool, got {cfg['shaped_staged']!r}")
+    for key in ("grasp_bonus", "lift_bonus"):
+        if isinstance(cfg[key], bool) or not isinstance(cfg[key], (int, float)):
+            raise ConfigError(f"{key} must be a number, got {cfg[key]!r}")
+        if cfg[key] < 0:
+            raise ConfigError(f"{key} must be >= 0, got {cfg[key]}")
+    if cfg["shaped_staged"] and cfg["reward_type"] != "shaped":
+        raise ConfigError(
+            f"shaped_staged=True with reward_type={cfg['reward_type']!r}: the staged "
+            "terms belong to the shaped reward only."
+        )
 
     if cfg["task"] == "t1" and cfg["n_obstacles"] != 0:
         raise ConfigError(

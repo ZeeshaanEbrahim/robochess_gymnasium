@@ -25,7 +25,12 @@ from robochess.tasks import (
     T1PickAndPlaceTask,
 )
 from robochess.tasks.squares import ALL_SQUARES, square_to_local_xy
-from robochess.tasks.t1_pick_and_place import _reward_from_distances
+from robochess.tasks.t1_pick_and_place import (
+    DEFAULT_GRASP_BONUS,
+    DEFAULT_LIFT_BONUS,
+    _pinch_site_id,
+    _reward_from_distances,
+)
 
 
 # --------------------------------------------------------------------- fixtures
@@ -541,3 +546,126 @@ def test_wrapped_env_step_obs_is_contained_in_observation_space(task_env):
     task_env.reset(seed=0)
     obs, _, _, _, _ = task_env.step(task_env.unwrapped.home_action())
     assert task_env.observation_space.contains(obs)
+
+
+# ------------------------------------------------- staged shaped reward (D20)
+def _staged(base_env, **kw):
+    return ShapedPickAndPlaceReward(
+        T1PickAndPlaceTask(base_env, start_square="a1", target_square="h8"),
+        staged=True, **kw)
+
+
+def _force_contacts(env, left, right, board):
+    """Pin the task wrapper's contact test, so the reward terms can be exercised
+    without staging a physical grasp (that is covered by the grasp_success tests)."""
+    env._contacts_owner._piece_contacts = lambda: (left, right, board)
+
+
+def _distance_part(env, info, weight=0.3, xy=True):
+    base = env.unwrapped
+    grip = float(np.linalg.norm(base.data.site_xpos[_pinch_site_id(base.model)]
+                                - base._achieved_goal()))
+    key = "xy_distance_to_goal" if xy else "distance_to_goal"
+    return _reward_from_distances(info[key], grip, weight)
+
+
+def test_staged_defaults_to_off(shaped_env):
+    assert shaped_env.staged is False
+
+
+def test_flag_off_reward_is_todays_formula_exactly(shaped_env):
+    """Unstaged: 3D distance, no bonuses, whatever the contacts say."""
+    shaped_env.reset(seed=0)
+    rng = np.random.default_rng(0)
+    for _ in range(25):
+        _, reward, term, trunc, info = shaped_env.step(rng.uniform(-1, 1, 7).astype(np.float32))
+        if term or trunc:
+            break
+        assert reward == pytest.approx(_distance_part(shaped_env, info, xy=False), abs=1e-12)
+
+
+def test_staged_adds_grasp_bonus_only_when_both_pads_contact(base_env):
+    env = _staged(base_env)
+    env.reset(seed=0)
+    for left, right, expect_bonus in ((False, False, False), (True, False, False),
+                                      (False, True, False), (True, True, True)):
+        _force_contacts(env, left, right, board=True)   # on the board: no lift bonus
+        _, reward, _, _, info = env.step(env.unwrapped.home_action())
+        expected = _distance_part(env, info) + (DEFAULT_GRASP_BONUS if expect_bonus else 0.0)
+        assert reward == pytest.approx(expected, abs=1e-12), (left, right)
+
+
+def test_staged_adds_lift_bonus_only_when_also_clear_of_the_board(base_env):
+    env = _staged(base_env)
+    env.reset(seed=0)
+    _force_contacts(env, True, True, board=False)
+    _, lifted_reward, _, _, info = env.step(env.unwrapped.home_action())
+    assert lifted_reward == pytest.approx(
+        _distance_part(env, info) + DEFAULT_GRASP_BONUS + DEFAULT_LIFT_BONUS, abs=1e-12)
+
+    _force_contacts(env, True, True, board=True)
+    _, on_board_reward, _, _, info = env.step(env.unwrapped.home_action())
+    assert on_board_reward == pytest.approx(_distance_part(env, info) + DEFAULT_GRASP_BONUS, abs=1e-12)
+
+
+def test_staged_pays_no_lift_bonus_without_a_grasp(base_env):
+    """A piece clear of the board but not held -- knocked into the air -- is not progress."""
+    env = _staged(base_env)
+    env.reset(seed=0)
+    _force_contacts(env, False, False, board=False)
+    _, reward, _, _, info = env.step(env.unwrapped.home_action())
+    assert reward == pytest.approx(_distance_part(env, info), abs=1e-12)
+
+
+def test_staged_uses_xy_distance_not_3d(base_env):
+    """Lifting the piece straight up must not change the staged distance term."""
+    env = _staged(base_env)
+    env.reset(seed=0)
+    _force_contacts(env, False, False, board=True)
+    base = env.unwrapped
+    goal = base._desired_goal
+    piece_to_goal_part, three_d = [], []
+    for height in (0.0, 0.10):
+        _place_piece(env, [goal[0], goal[1], base._board_surface_z + height])
+        _, reward, _, _, info = env.step(base.home_action())
+        grip = float(np.linalg.norm(base.data.site_xpos[_pinch_site_id(base.model)]
+                                    - base._achieved_goal()))
+        # strip the gripper term, which legitimately changes when the piece moves
+        piece_to_goal_part.append(reward + 0.3 * grip)
+        three_d.append(info["distance_to_goal"])
+        assert info["xy_distance_to_goal"] == pytest.approx(0.0, abs=2e-3)
+    assert three_d[1] > three_d[0] + 0.05, "the 3D distance really did grow with height"
+    # ... and yet the piece-to-goal part of the reward did not: that is the XY switch
+    assert piece_to_goal_part[0] == pytest.approx(piece_to_goal_part[1], abs=3e-3)
+    assert piece_to_goal_part[1] == pytest.approx(-three_d[0], abs=3e-3)
+
+
+def test_staged_keeps_the_failure_penalty_unchanged(base_env):
+    env = _staged(base_env)
+    env.reset(seed=0)
+    _force_contacts(env, True, True, board=False)
+    base = env.unwrapped
+    # Off the board in XY, not below it: dropping the piece through the board
+    # trips D14's solver guard (a truncation) instead of piece_off_board.
+    _place_piece(env, [base._desired_goal[0] + 1.2, base._desired_goal[1], base._board_surface_z])
+    _, reward, terminated, _, info = env.step(base.home_action())
+    assert terminated and info["terminated_reason"] == "piece_off_board"
+    expected = (_distance_part(env, info) + DEFAULT_GRASP_BONUS + DEFAULT_LIFT_BONUS
+                - env.failure_penalty)
+    assert reward == pytest.approx(expected, abs=1e-12)
+    # and the penalty itself is the same number the unstaged wrapper uses
+    unstaged = ShapedPickAndPlaceReward(T1PickAndPlaceTask(base_env))
+    assert env.failure_penalty == unstaged.failure_penalty
+
+
+def test_bonuses_are_configurable(base_env):
+    env = _staged(base_env, grasp_bonus=2.5, lift_bonus=0.25)
+    env.reset(seed=0)
+    _force_contacts(env, True, True, board=False)
+    _, reward, _, _, info = env.step(env.unwrapped.home_action())
+    assert reward == pytest.approx(_distance_part(env, info) + 2.75, abs=1e-12)
+
+
+def test_staged_requires_a_task_wrapper_underneath(base_env):
+    with pytest.raises(TypeError, match="_piece_contacts"):
+        ShapedPickAndPlaceReward(base_env, staged=True)

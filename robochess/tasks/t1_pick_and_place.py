@@ -283,6 +283,22 @@ PENALISED_TERMINATIONS = frozenset({"bad_contact", "piece_off_board"})
 PIECE_TO_GOAL_BOUND = 1.70
 GRIPPER_TO_PIECE_BOUND = 2.90
 
+# --- staged shaped reward (default OFF) -----------------------------------
+# The default shaped reward pays only for two distances, so it has no term for
+# closing the gripper, and its piece-to-goal term is 3D -- which means LIFTING
+# the piece increases that distance and costs reward. Hovering near the piece
+# is therefore a local optimum, which is what the clamped delta 100k run did:
+# approach improved (median closest pinch-to-piece 0.427 -> 0.266 m) while real
+# grasps stayed at 0 and episode return stayed flat (-53.3 +- 41.5).
+#
+# The staged variant swaps the 3D piece-to-goal term for its XY component (so
+# lifting is free) and adds two bonuses for reaching the intermediate states
+# the task requires. Both bonuses are PER-STEP while the condition holds, and
+# both are OFF by default; see DECISIONS.md D20 for the sizing argument and for
+# the hold-at-goal risk the per-step form carries.
+DEFAULT_GRASP_BONUS = 1.0
+DEFAULT_LIFT_BONUS = 0.5
+
 
 def failure_penalty_magnitude(max_episode_steps: int, weight: float) -> float:
     """Smallest whole-number penalty that makes failing strictly worse than
@@ -308,6 +324,25 @@ def _shaped_reward(base: RoboChessEnv, pinch_sid: int, info: dict[str, Any], wei
     return _reward_from_distances(info["distance_to_goal"], gripper_to_piece, weight)
 
 
+def _staged_reward(base: RoboChessEnv, pinch_sid: int, contacts_owner, info: dict[str, Any],
+                   weight: float, grasp_bonus: float, lift_bonus: float) -> float:
+    """XY distance to goal, gripper approach, plus the grasp and lift bonuses.
+
+    `lift_bonus` is paid only on top of a grasp: "clear of the board" alone is
+    also true of a piece knocked into the air, which is not progress.
+    """
+    gripper_to_piece = float(
+        np.linalg.norm(base.data.site_xpos[pinch_sid] - base._achieved_goal())
+    )
+    reward = _reward_from_distances(info["xy_distance_to_goal"], gripper_to_piece, weight)
+    left, right, board = contacts_owner._piece_contacts()
+    if left and right:
+        reward += grasp_bonus
+        if not board:
+            reward += lift_bonus
+    return reward
+
+
 class ShapedPickAndPlaceReward(gym.Wrapper):
     """Dense reward with a terminal failure penalty::
 
@@ -319,6 +354,22 @@ class ShapedPickAndPlaceReward(gym.Wrapper):
     at the goal. The penalty is paid once, on the terminating step only; see
     PENALISED_TERMINATIONS for why it exists and failure_penalty_magnitude for
     how it is sized.
+
+    With ``staged=True`` (default False) the reward becomes::
+
+        r = -d_xy(piece, goal) - weight * (gripper_to_piece_dist)
+            + grasp_bonus  if both finger pads contact the piece
+            + lift_bonus   if, additionally, the piece is clear of the board
+            - failure_penalty * [terminated_reason in PENALISED_TERMINATIONS]
+
+    i.e. the piece-to-goal term drops to its XY component so that lifting no
+    longer costs reward, and the two intermediate states the task requires are
+    paid for directly. The contact tests are the ones `_grasp_success` already
+    uses (`_piece_contacts` on the task wrapper below this one) -- no new
+    contact logic. The failure penalty is unchanged in both modes.
+
+    With ``staged=False`` this class is exactly what it was before the staged
+    terms existed, arithmetic included.
 
     Not HER-safe: the gripper-to-piece term needs the pinch site's live
     position, which is not recoverable from ``(achieved_goal, desired_goal)``
@@ -333,6 +384,9 @@ class ShapedPickAndPlaceReward(gym.Wrapper):
         env: gym.Env,
         gripper_approach_weight: float = 0.3,
         failure_penalty: float | None = None,
+        staged: bool = False,
+        grasp_bonus: float = DEFAULT_GRASP_BONUS,
+        lift_bonus: float = DEFAULT_LIFT_BONUS,
     ):
         super().__init__(env)
         base = self.unwrapped
@@ -341,6 +395,16 @@ class ShapedPickAndPlaceReward(gym.Wrapper):
         self._base: RoboChessEnv = base
         self._pinch_sid = _pinch_site_id(base.model)
         self.gripper_approach_weight = float(gripper_approach_weight)
+        self.staged = bool(staged)
+        self.grasp_bonus = float(grasp_bonus)
+        self.lift_bonus = float(lift_bonus)
+        if self.staged:
+            # Resolved once, and loudly: the staged terms are defined by the
+            # task wrapper's contact test, so a stack without one would
+            # silently score every step as "not grasped" rather than fail.
+            self._contacts_owner = self._find_contacts_owner()
+        else:
+            self._contacts_owner = None
         # None -> derived from THIS env's episode length and weight, so the
         # "failing is strictly worse" guarantee holds for whatever episode
         # length the env was actually built with.
@@ -350,9 +414,27 @@ class ShapedPickAndPlaceReward(gym.Wrapper):
             else float(failure_penalty)
         )
 
+    def _find_contacts_owner(self):
+        """The wrapper below this one that owns `_piece_contacts` (T1 or T2)."""
+        node = self.env
+        while node is not None:
+            if hasattr(node, "_piece_contacts"):
+                return node
+            node = getattr(node, "env", None)
+        raise TypeError(
+            "staged=True needs a task wrapper providing _piece_contacts() "
+            "(T1PickAndPlaceTask or a subclass) between this wrapper and the env."
+        )
+
     def step(self, action: np.ndarray):
         obs, _base_reward, terminated, truncated, info = self.env.step(action)
-        reward = _shaped_reward(self._base, self._pinch_sid, info, self.gripper_approach_weight)
+        if self.staged:
+            reward = _staged_reward(
+                self._base, self._pinch_sid, self._contacts_owner, info,
+                self.gripper_approach_weight, self.grasp_bonus, self.lift_bonus,
+            )
+        else:
+            reward = _shaped_reward(self._base, self._pinch_sid, info, self.gripper_approach_weight)
         # `terminated` is checked as well as the reason: the penalty is for a
         # failure that ENDED the episode, never for a flag seen mid-episode.
         if terminated and info.get("terminated_reason") in PENALISED_TERMINATIONS:

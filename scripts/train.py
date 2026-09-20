@@ -148,7 +148,14 @@ def build_env(cfg: dict):
         task = T2ObstacleTask(base, n_obstacles=cfg["n_obstacles"])
     else:  # unreachable -- resolve_config validates the enum
         raise ValueError(f"unknown task {cfg['task']!r}")
-    return _reward_wrappers()[cfg["reward_type"]](task)
+    wrapper = _reward_wrappers()[cfg["reward_type"]]
+    if cfg["reward_type"] == "shaped" and cfg.get("shaped_staged", False):
+        # .get: manifests written before the staged terms existed carry no such
+        # key and must resolve to the unstaged reward they actually trained on.
+        return wrapper(task, staged=True,
+                       grasp_bonus=cfg.get("grasp_bonus", 1.0),
+                       lift_bonus=cfg.get("lift_bonus", 0.5))
+    return wrapper(task)
 
 
 def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
