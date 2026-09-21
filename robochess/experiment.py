@@ -96,7 +96,7 @@ ENUMS = {
     "algorithm": ("ppo", "sac"),
     "reward_type": ("shaped", "sparse"),
     "observation": ("state", "image"),
-    "action_mode": ("absolute", "delta"),
+    "action_mode": ("absolute", "delta", "cartesian"),
     "device": ("cpu", "cuda", "auto"),
 }
 
