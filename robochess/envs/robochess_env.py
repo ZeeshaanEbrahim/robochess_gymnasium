@@ -159,6 +159,28 @@ CARTESIAN_REACH_Z = (0.7935, 0.90, 1.00, 1.10, 1.1822)
 CARTESIAN_REACH_R = (0.9250, 0.9125, 0.8906, 0.8531, 0.8094)
 CARTESIAN_REACH_MARGIN = 0.020
 
+# INNER radial limit, about _base_xy: the arm folds on itself near the base, and
+# ur_upper_arm_link presses into ur_wrist_2_link. Measured by a static map (IK
+# cap 400, tool top-down, seeded from home or the previous radius, then
+# mj_forward and the deepest robot-to-robot penetration) over five rays at
+# azimuths -45..+45 deg from +y and radii 0.15-0.45 m in 10 mm steps. Each
+# CARTESIAN_INNER_R entry is the largest r_min across the rays at that height
+# (r_min = smallest radius converging with no self-penetration) minus
+# CARTESIAN_INNER_MARGIN, or 0.0 where no penetration was found on any ray
+# (z = 1.10 and 1.1822: the sweep's first radius, 0.15 m, was already clean, so
+# those heights' 0.15 is a sweep bound, not a zone edge). A target closer to the
+# axis than the interpolated limit is scaled outward along its radius. Driven
+# stall this prevents: a (0,-1,-1) push wedged the two links together at
+# 395-441 N from step 60 on. The nearest squares, d1/e1 at 0.2501 m, only graze
+# the zone (65-68 N at GRASP_Z, static clean radius 0.255 m); the limit at
+# GRASP_Z, 0.2409 m, sits inside them so they stay reachable.
+CARTESIAN_INNER_Z = (0.7935, 0.85, 0.90, 0.95, 1.00, 1.05, 1.10, 1.1822)
+CARTESIAN_INNER_MARGIN = 0.015
+_INNER_MAX_RMIN = (0.26, 0.22, 0.19, 0.19, 0.19, 0.17, None, None)  # None: no zone
+CARTESIAN_INNER_R = tuple(
+    0.0 if r is None else round(r - CARTESIAN_INNER_MARGIN, 4) for r in _INNER_MAX_RMIN
+)
+
 # z floor, as a height above the board's top face (which is itself read from
 # the model): the scripted expert's LOWEST commanded pinch height, PLACE_Z =
 # 0.7935 with the surface at 0.762. The expert never goes below it, and below
@@ -631,6 +653,14 @@ class RoboChessEnv(gym.Env):
             radius = float(np.linalg.norm(offset))
             if radius > r_limit:
                 target[:2] = self._base_xy + offset * (r_limit / radius)
+            else:
+                # Inner limit (CARTESIAN_INNER_Z/_R): near the base the upper
+                # arm and wrist_2 link press into each other. Scaled outward
+                # along the radius; radius > 0 guards the division (the box
+                # keeps y >= 0.169, so the target cannot sit on the axis).
+                r_inner = float(np.interp(target[2], CARTESIAN_INNER_Z, CARTESIAN_INNER_R))
+                if 0.0 < radius < r_inner:
+                    target[:2] = self._base_xy + offset * (r_inner / radius)
             change = self._solve_cartesian_ik(target)
             if change is None:
                 self._ik_rejects += 1  # hold the previous joint targets

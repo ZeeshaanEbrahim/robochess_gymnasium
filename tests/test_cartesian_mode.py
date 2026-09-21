@@ -20,6 +20,8 @@ import pytest
 from robochess.envs import RoboChessEnv
 from robochess.envs.robochess_env import (
     CARTESIAN_ACTION_DIM,
+    CARTESIAN_INNER_R,
+    CARTESIAN_INNER_Z,
     CARTESIAN_JOINT_REJECT_ABOVE,
     CARTESIAN_JOINT_SCALE_TO,
     CARTESIAN_MAX_RADIUS,
@@ -462,6 +464,73 @@ def test_beyond_r_limit_target_is_scaled_to_exactly_r_limit_preserving_direction
     e.close()
 
 
+# ---- inner radial limit (self-collision zone near the base) ----------
+
+GRASP_Z = 0.79925  # the scripted expert's grasp height (scripts/scripted_expert.py)
+
+
+def _inner_limit(z):
+    return float(np.interp(z, CARTESIAN_INNER_Z, CARTESIAN_INNER_R))
+
+
+def _target_passed_to_ik(env, pinch_xyz):
+    """The post-clip target _scale_action hands to the solver for a zero
+    xyz action with the pinch site at `pinch_xyz`. The solve is stubbed to
+    return None, so nothing but the clip logic runs."""
+    captured = []
+    original = RoboChessEnv._solve_cartesian_ik
+
+    def spy(self, target):
+        captured.append(np.asarray(target, dtype=np.float64).copy())
+        return None
+
+    RoboChessEnv._solve_cartesian_ik = spy
+    try:
+        env.data.site_xpos[env._pinch_sid][:] = pinch_xyz
+        env._scale_action(np.array([0.0, 0.0, 0.0, OPEN], dtype=np.float32))
+    finally:
+        RoboChessEnv._solve_cartesian_ik = original
+    return captured[0]
+
+
+def test_inner_limit_at_grasp_z_leaves_d1_and_e1_reachable():
+    # d1/e1 are the nearest squares, 0.2501 m from the base axis. The limit
+    # must sit inside them or the clip would cut them off.
+    assert _inner_limit(GRASP_Z) < 0.2501
+    assert _inner_limit(GRASP_Z) < 0.249
+
+
+def test_target_below_the_inner_limit_is_moved_to_it(cart_env):
+    cart_env.reset(seed=0)
+    limit = _inner_limit(GRASP_Z)
+    pinch = np.array([cart_env._base_xy[0], cart_env._base_xy[1] + 0.20, GRASP_Z])
+    assert 0.20 < limit
+    target = _target_passed_to_ik(cart_env, pinch)
+    radius = float(np.linalg.norm(target[:2] - cart_env._base_xy))
+    assert radius == pytest.approx(limit, abs=1e-9)
+    # scaled along the radius: direction unchanged, z untouched
+    np.testing.assert_allclose(target[:2] - cart_env._base_xy,
+                               np.array([0.0, limit]), atol=1e-9)
+    assert target[2] == pytest.approx(GRASP_Z)
+
+
+def test_target_above_the_inner_limit_is_unchanged(cart_env):
+    cart_env.reset(seed=0)
+    pinch = np.array([cart_env._base_xy[0], cart_env._base_xy[1] + 0.30, GRASP_Z])
+    assert 0.30 > _inner_limit(GRASP_Z)
+    target = _target_passed_to_ik(cart_env, pinch)
+    np.testing.assert_allclose(target, pinch, atol=1e-12)
+
+
+def test_all_zero_inner_table_changes_nothing(cart_env, monkeypatch):
+    import robochess.envs.robochess_env as M
+    monkeypatch.setattr(M, "CARTESIAN_INNER_R", (0.0,) * len(CARTESIAN_INNER_Z))
+    cart_env.reset(seed=0)
+    pinch = np.array([cart_env._base_xy[0], cart_env._base_xy[1] + 0.20, GRASP_Z])
+    target = _target_passed_to_ik(cart_env, pinch)
+    np.testing.assert_allclose(target, pinch, atol=1e-12)
+
+
 # =====================================================================
 # e. Push integration test, with a patched-table negative control.
 # =====================================================================
@@ -512,6 +581,66 @@ def test_150_step_push_FAILS_zero_cap_hits_under_the_patched_reach_table(monkeyp
     with pytest.raises(AssertionError):
         assert cap_hits == 0
     e.close()
+
+
+# KNOWN, ACCEPTED LIMITATION -- a characterization test, NOT a target to
+# reduce. A sustained (0,-1,-1) push into the near-base corner still wedges
+# ur_upper_arm_link against ur_wrist_2_link (measured peak 465.36 N, 432.85 N at
+# the final step; 473.57 N / 435.68 N with the inner limit zeroed), because the
+# inner limit only protects ordinary operation and keeps d1/e1 reachable. It
+# records what happens today so a regression shows up; do not tighten it.
+# Deferred to the referee's self-contact policy question.
+_KNOWN_SELF_CONTACT_PAIRS = {
+    frozenset({"ur_upper_arm_link", "ur_wrist_2_link"}),
+    frozenset({"ur_shoulder_link", "ur_wrist_1_link"}),
+}
+_SELF_CONTACT_FORCE_CEILING_N = 600.0  # loose regression ceiling, not a target
+
+
+def _robot_self_contacts(env):
+    """(frozenset of the two body names, normal force in N) for every active
+    contact whose two geoms both belong to robot bodies, identified by body
+    ancestry (descends from arm_base), not by name prefix."""
+    import mujoco
+    model = env.model
+    root = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "arm_base")
+
+    def is_robot(bid):
+        while bid != 0:
+            if bid == root:
+                return True
+            bid = model.body_parentid[bid]
+        return False
+
+    def body_name(bid):
+        return mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, bid)
+
+    out = []
+    for i in range(env.data.ncon):
+        c = env.data.contact[i]
+        b1, b2 = model.geom_bodyid[c.geom1], model.geom_bodyid[c.geom2]
+        if is_robot(b1) and is_robot(b2):
+            force = np.zeros(6)
+            mujoco.mj_contactForce(model, env.data, i, force)
+            out.append((frozenset({body_name(b1), body_name(b2)}), float(abs(force[0]))))
+    return out
+
+
+def test_sustained_corner_push_self_contact_is_the_known_bounded_pair_set(cart_env):
+    cart_env.reset(seed=0)
+    a_push = np.array([0.0, -1.0, -1.0, OPEN], dtype=np.float32)
+    a_zero = np.array([0.0, 0.0, 0.0, OPEN], dtype=np.float32)
+    seen_pairs = set()
+    peak_force = 0.0
+    for a, n in ((a_push, 250), (a_zero, 20)):
+        for _ in range(n):
+            cart_env.step(a)
+            for pair, force in _robot_self_contacts(cart_env):
+                seen_pairs.add(pair)
+                peak_force = max(peak_force, force)
+    assert cart_env._ik_rejects == 0
+    assert seen_pairs <= _KNOWN_SELF_CONTACT_PAIRS, seen_pairs - _KNOWN_SELF_CONTACT_PAIRS
+    assert peak_force < _SELF_CONTACT_FORCE_CEILING_N
 
 
 # =====================================================================
