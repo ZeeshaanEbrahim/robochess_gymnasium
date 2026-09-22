@@ -159,6 +159,9 @@ class T1PickAndPlaceTask(gym.Wrapper):
         self._teleport_piece(start)
         self._set_goal(target)
         mujoco.mj_forward(self._base.model, self._base.data)
+        # F7: the base env snapshotted its own default e4->e5 episode inside
+        # env.reset(); the D14 fallback must hand back THIS episode's state.
+        self._base._snapshot_last_good_obs()
 
         self.current_start_square, self.current_target_square = start, target
 
@@ -450,6 +453,11 @@ class ShapedPickAndPlaceReward(gym.Wrapper):
         # failure that ENDED the episode, never for a flag seen mid-episode.
         if terminated and info.get("terminated_reason") in PENALISED_TERMINATIONS:
             reward -= self.failure_penalty
+        if info.get("invalid_transition") and not np.isfinite(reward):
+            # F7: computed from a corrupted live state (see _build_info). The
+            # flag already marks the transition; this only keeps the value
+            # finite so it cannot poison VecNormalize.
+            reward = 0.0
         return obs, reward, terminated, truncated, info
 
 
@@ -755,11 +763,22 @@ class PickupObservation(gym.Wrapper):
 
     def reset(self, **kwargs):
         obs, info = self.env.reset(**kwargs)
-        return self._extend(obs), info
+        obs = self._extend(obs)
+        self._last_good_obs = {k: v.copy() for k, v in obs.items()}
+        return obs, info
 
     def step(self, action: np.ndarray):
         obs, reward, terminated, truncated, info = self.env.step(action)
-        return self._extend(obs), reward, terminated, truncated, info
+        if info.get("invalid_transition"):
+            # F7: the base env hands back its last good observation on an invalid
+            # step, but these features are read from the LIVE state, so appending
+            # them would splice a corrupted (possibly non-finite) instant onto an
+            # old one. Return this wrapper's own last good observation instead.
+            obs = {k: v.copy() for k, v in self._last_good_obs.items()}
+        else:
+            obs = self._extend(obs)
+            self._last_good_obs = {k: v.copy() for k, v in obs.items()}
+        return obs, reward, terminated, truncated, info
 
 class PickupReward(gym.Wrapper):
     """Pick-up stage reward: grasp the piece and lift it, nothing else.
@@ -865,7 +884,13 @@ class PickupReward(gym.Wrapper):
         self._held_once = False
         self._hold_streak = 0
         self._succeeded = False
-        return self.env.reset(**kwargs)
+        out = self.env.reset(**kwargs)
+        # F7: what pickup_terms reports if the very first step is invalid.
+        self._last_terms = dict(
+            self.terms(held=False), first_grasp_bonus=0.0, success_term=0.0,
+            hold_streak=0, pinched=False, held=False, grasp_success=False,
+        )
+        return out
 
     def contact_state(self) -> tuple[bool, bool]:
         """``(pinched, held)`` from a single contact scan.
@@ -907,6 +932,22 @@ class PickupReward(gym.Wrapper):
 
     def step(self, action: np.ndarray):
         obs, _base_reward, terminated, truncated, info = self.env.step(action)
+        if info.get("invalid_transition"):
+            # F7: the state is one the solver guard declared corrupt, so nothing
+            # may be read from it -- no reward term, no first-grasp bonus, and no
+            # advance of the episode-latched first-grasp / hold-streak /
+            # pickup_success state. (Measured before this guard: a spike step
+            # with both pads "on" the piece paid 7.0 and latched _held_once.)
+            # pickup_terms keeps its shape: the last valid geometry, which is
+            # also the state the returned observation describes, with nothing
+            # paid this step.
+            info = dict(info)
+            info["pickup_success"] = self._succeeded
+            info["pickup_terms"] = dict(
+                self._last_terms, first_grasp_bonus=0.0, success_term=0.0,
+                hold_streak=self._hold_streak,
+            )
+            return obs, 0.0, terminated, truncated, info
         grasped = bool(info.get("grasp_success", False))
         pinched, held = self.contact_state()
         t = self.terms(held)
@@ -941,4 +982,5 @@ class PickupReward(gym.Wrapper):
                                     success_term=self.success_weight if holding else 0.0,
                                     hold_streak=self._hold_streak,
                                     pinched=pinched, held=held, grasp_success=grasped)
+        self._last_terms = dict(info["pickup_terms"])
         return obs, float(reward), terminated, truncated, info

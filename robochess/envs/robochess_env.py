@@ -50,6 +50,19 @@ PIECE_LIN_SPEED_SANITY = 10.0    # m/s
 PIECE_ANG_SPEED_SANITY = 200.0   # rad/s
 PIECE_KINETIC_ENERGY_SANITY = 1.0  # joules
 
+# F7. The bounds above cannot see a non-finite value: every comparison against
+# NaN is False. And a NaN that reaches mj_step is not left in the state for a
+# post-step check to find -- MuJoCo does not raise, it resets its own MjData
+# and only increments one of these warning counters. Measured: after one
+# env.step() with a NaN piece velocity, sim time went 0.12 -> 0.04, the state
+# was back at the home pose, every value was finite, and the step looked
+# ordinary. So the guard checks both the state (a non-finite value present now)
+# and these counters (one that was already consumed). reset() clears them.
+_NUMERIC_FAILURE_WARNINGS = tuple(
+    int(getattr(mujoco.mjtWarning, name))
+    for name in ("mjWARN_BADQPOS", "mjWARN_BADQVEL", "mjWARN_BADQACC", "mjWARN_BADCTRL")
+)
+
 DEFAULT_SCENE = Path(__file__).resolve().parents[2] / "assets" / "scene.xml"
 
 # Number of arm actuators; the 7th actuator is the gripper. Split out because
@@ -437,12 +450,23 @@ class RoboChessEnv(gym.Env):
         self._piece_ang_settled_streak = 0  # D9: must not leak across episodes
 
         obs = self._get_obs()
-        # D14: the observation handed back if the solver guard fires. Seeded
-        # here so an instability on the very first step still has something
-        # uncorrupted to return.
-        self._last_good_obs = {k: v.copy() for k, v in obs.items()}
+        self._snapshot_last_good_obs(obs)
         info = self._build_info(terminated_reason=None)
         return obs, info
+
+    def _snapshot_last_good_obs(self, obs: dict[str, np.ndarray] | None = None) -> None:
+        """Record the observation the D14 guard hands back if a step is invalid.
+
+        reset() seeds it so an instability on the very first step still has
+        something uncorrupted to return, and step() refreshes it after every
+        valid step. F7: anything that changes the episode's start state AFTER
+        reset() returns -- the T1 task teleports the piece and rewrites the goal
+        -- must call this again, or the fallback is the base env's default
+        e4->e5 episode instead of the one actually being played.
+        """
+        if obs is None:
+            obs = self._get_obs()
+        self._last_good_obs = {k: v.copy() for k, v in obs.items()}
 
     # ----------------------------------------------------------------- step
     def _piece_off_board(self) -> bool:
@@ -528,7 +552,19 @@ class RoboChessEnv(gym.Env):
         produced rather than on anything the controller commanded, and it is
         deliberately set far above every legitimate figure this project has
         measured (see the constants' sizing note).
+
+        F7: also fires on any non-finite simulator state, and on a MuJoCo
+        numeric-failure warning since the last reset (see
+        ``_NUMERIC_FAILURE_WARNINGS`` for why both are needed). The
+        finite check comes first because the bounds below are all False for NaN.
         """
+        d = self.data
+        if not (
+            np.isfinite(d.qpos).all() and np.isfinite(d.qvel).all() and np.isfinite(d.qacc).all()
+        ):
+            return True
+        if any(d.warning[i].number for i in _NUMERIC_FAILURE_WARNINGS):
+            return True
         v = self.data.qvel[self._piece_vadr : self._piece_vadr + 6]
         return bool(
             float(np.linalg.norm(v[:3])) > PIECE_LIN_SPEED_SANITY
@@ -537,10 +573,21 @@ class RoboChessEnv(gym.Env):
         )
 
     def _build_info(self, terminated_reason: str | None) -> dict[str, Any]:
+        """The info dict for the current state.
+
+        ``invalid_transition`` (F7) is the downstream contract: True means the
+        transition this info belongs to must not be used as a learning sample.
+        It is always present, like ``solver_instability`` (D14), which is the
+        specific cause behind it today. When it is True the measurements below
+        describe the CORRUPTED live state, not the observation that was returned
+        (the last good one), and ``is_success`` is forced False so a corrupted
+        step can never read as a success -- matching ``step()``'s own precedence.
+        """
         dist = float(np.linalg.norm(self._achieved_goal() - self._desired_goal))
         on_square, resting, released, settled, xy_dist = self._success_terms()
+        unstable = self._solver_instability()
         return {
-            "is_success": bool(on_square and resting and released and settled),
+            "is_success": bool(on_square and resting and released and settled and not unstable),
             "distance_to_goal": dist,
             # The success terms are reported separately so a failure says
             # which condition was missing rather than just "not close enough".
@@ -554,7 +601,8 @@ class RoboChessEnv(gym.Env):
             "bad_contact": bool(self._bad_contact()),
             # D14. Always present so the info schema does not change shape
             # depending on whether the guard fired.
-            "solver_instability": bool(self._solver_instability()),
+            "solver_instability": bool(unstable),
+            "invalid_transition": bool(unstable),
             "piece_kinetic_energy_j": self._piece_kinetic_energy(),
             "terminated_reason": terminated_reason,
             "elapsed_steps": int(self._elapsed_steps),
@@ -591,6 +639,12 @@ class RoboChessEnv(gym.Env):
         # success, off-board and bad-contact alike -- otherwise the episode
         # would be recorded under whichever of those it happened to trip.
         unstable = self._solver_instability()
+        if unstable and not np.isfinite(reward):
+            # A NaN reward would poison VecNormalize's running statistics for the
+            # rest of the run. The transition is flagged invalid regardless; this
+            # only keeps the value finite. (Finite corrupted rewards are left as
+            # they were -- see invalid_transition in _build_info.)
+            reward = 0.0
 
         success = (not unstable) and self._is_success()
         off_board = self._piece_off_board()
@@ -618,7 +672,6 @@ class RoboChessEnv(gym.Env):
 
         info = self._build_info(reason)
 
-        obs = self._get_obs()
         if unstable:
             # D14: hand back the last uncorrupted observation, not this step's.
             # SB3 bootstraps the value function off the FINAL observation when
@@ -627,10 +680,12 @@ class RoboChessEnv(gym.Env):
             # straight into the value estimate -- the one place the corrupted
             # state would still reach the learner despite the episode ending.
             # truncated/info are unchanged: the episode still ends here and is
-            # still labelled solver_instability.
+            # still labelled solver_instability. The live state is not read for
+            # the observation at all: it may be non-finite.
             obs = {k: v.copy() for k, v in self._last_good_obs.items()}
         else:
-            self._last_good_obs = {k: v.copy() for k, v in obs.items()}
+            obs = self._get_obs()
+            self._snapshot_last_good_obs(obs)
         return obs, reward, terminated, truncated, info
 
     # --------------------------------------------------------------- render
