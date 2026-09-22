@@ -328,6 +328,18 @@ def test_grasp_success_false_for_toppled_piece_pinched_on_the_board():
             if left and right:
                 pinned.append((board, info["grasp_success"], info["piece_height_above_board"]))
             assert not (term or trunc)
+    # Hold the final pose. `_drive_to` returns as soon as its settle check passes,
+    # so how many pinned steps the loop above yields depends on when that happens
+    # -- and F10 (derived state refreshed after each step) made the piece position
+    # this scenario aims at current, moving that exit ~10 steps earlier with the
+    # same physical outcome. A sustained pinch is what the test needs, so count a
+    # fixed hold instead of leaving it to the settle timing.
+    for _ in range(12):
+        _, _, term, trunc, info = task.step(ex._to_action(q, 255.0))
+        left, right, board = task._piece_contacts()
+        if left and right:
+            pinned.append((board, info["grasp_success"], info["piece_height_above_board"]))
+        assert not (term or trunc)
     env.close()
 
     tilt = np.degrees(np.arccos(np.clip(d.xmat[env._piece_bid].reshape(3, 3)[2, 2], -1, 1)))

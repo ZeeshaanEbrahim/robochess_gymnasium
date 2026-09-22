@@ -613,8 +613,16 @@ class RoboChessEnv(gym.Env):
     ) -> tuple[dict[str, np.ndarray], float, bool, bool, dict[str, Any]]:
         self.data.ctrl[:] = self._scale_action(action)
         mujoco.mj_step(self.model, self.data, nstep=self.frame_skip)
-        # mj_step leaves derived quantities (xpos, contacts) current for the
-        # final substep, so no extra mj_forward is needed here.
+        # F10: mj_step does NOT leave derived quantities current. It computes
+        # xpos / site_xpos / geom_xpos and the contact list from the state at the
+        # START of its last substep and then integrates qpos/qvel, so after it
+        # returns they describe the instant one substep before qpos does. Measured
+        # by calling mj_forward on the returned state: up to ~1.0 mm after five
+        # delta steps, 13 mm in absolute mode, and 0.785 mm on a falling piece's
+        # height -- against 5-10 mm referee tolerances. Everything below (success
+        # terms, contacts, the observation) must read the state being returned,
+        # so refresh once here. mj_forward does not advance time.
+        mujoco.mj_forward(self.model, self.data)
 
         self._elapsed_steps += 1
 
