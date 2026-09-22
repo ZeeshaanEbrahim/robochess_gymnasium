@@ -267,8 +267,13 @@ def test_grasp_success_true_during_a_real_scripted_grasp():
             self.rows.append((out[4]["grasp_success"], *self.env._piece_contacts()))
             return out
 
+    # a1->h8, not d1->a8: F1's new self-contact check (round 2) found a real,
+    # isolated ur_upper_arm_link/ur_wrist_2_link graze specific to d1->a8's
+    # descend trajectory (D21, DECISIONS.md) -- unrelated to what this test
+    # checks. a1->h8 is one of ten pairs confirmed self-contact-free by the
+    # same survey.
     env = RoboChessEnv(max_episode_steps=350)
-    task = T1PickAndPlaceTask(env, start_square="d1", target_square="a8")
+    task = T1PickAndPlaceTask(env, start_square="a1", target_square="h8")
     rec = Record(task)
     result = se.ScriptedExpert(rec).run_episode(seed=0)
     env.close()
@@ -379,8 +384,15 @@ def test_not_success_while_gripper_still_closed(sparse_env):
     goal = base._desired_goal
     _place_piece(sparse_env, [goal[0], goal[1], base._board_surface_z], gripper_qpos=0.54)
 
+    # Not a full close (1.0): with nothing between the fingers (the piece was
+    # teleported to the goal, not to the gripper), a full-close command drives
+    # the pads into each other -- genuine self-contact under F1's
+    # zero-tolerance check. 0.0 keeps gripper_qpos well past
+    # gripper_open_threshold (so gripper_released stays False, as intended)
+    # without the pads touching -- see the matching comment in
+    # test_env_basic.py::test_success_requires_the_gripper_to_be_open.
     action = base.home_action().copy()
-    action[6] = 1.0
+    action[6] = 0.0
     _, reward, terminated, _, info = sparse_env.step(action)
     assert info["piece_resting"] is True
     assert info["gripper_released"] is False

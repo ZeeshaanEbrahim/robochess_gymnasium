@@ -50,6 +50,31 @@ PIECE_LIN_SPEED_SANITY = 10.0    # m/s
 PIECE_ANG_SPEED_SANITY = 200.0   # rad/s
 PIECE_KINETIC_ENERGY_SANITY = 1.0  # joules
 
+# F1 (referee round 2): the ceiling on ROBOT-TO-BOARD contact force -- tolerated
+# below this, flagged as bad contact at or above it. Calibrated against what
+# real operation has actually produced: the review's own accepted a1->h8
+# release case peaked at 166.4N on a single pad (round-1 section-4
+# measurement); the scripted expert's clean placements never exceeded ~93N of
+# piece-board force. 250N gives headroom above the single largest real-world
+# reading this project has measured, without being so high it stops meaning
+# anything.
+#
+# COMBINED TOTAL across every simultaneous robot-geom-to-board contact at the
+# read, not per-pad, and not restricted to the two named pad geoms -- this is
+# a DELIBERATE divergence from scripts/scripted_expert.py's
+# _pad_piece_contacts(), which sums per SIDE (left total, right total) so a
+# left/right grasp imbalance is visible to a human reading a diagnostic dump.
+# That is a reporting convention for a different purpose. This ceiling is a
+# SAFETY gate: the question is how hard the robot presses on the board as a
+# whole, not which geom is doing it. A per-pad split would let two pads each
+# sit just under 250N while jointly applying far more -- exactly the failure
+# mode a safety ceiling exists to catch. Measured directly (referee round 2):
+# a real fixture (40mm pinch-target penetration, moderate gripper close)
+# settles at 200.62N on the right pad and 147.06N on the left, NEITHER of
+# which alone crosses 250N, but which combine to 347.68N -- a per-pad gate
+# would never fire on this case; a combined-total gate correctly does.
+BOARD_CONTACT_FORCE_CEILING_N = 250.0  # newtons
+
 # F7. The bounds above cannot see a non-finite value: every comparison against
 # NaN is False. And a NaN that reaches mj_step is not left in the state for a
 # post-step check to find -- MuJoCo does not raise, it resets its own MjData
@@ -209,15 +234,40 @@ class RoboChessEnv(gym.Env):
             + self.model.geom_size[self._geom_id("board_slab")][2]
         )
 
-        # Geoms whose contact with the arm/gripper means the episode has gone
-        # wrong (the arm has driven into the furniture).
+        # Geoms whose contact with the robot means the episode has gone wrong
+        # (the arm has driven into the furniture). Zero tolerance, unchanged
+        # by F1 -- presence alone is bad, no force is read.
         self._forbidden_geoms = {
             self._geom_id(n) for n in ("table", "pedestal", "floor")
         }
-        self._arm_geoms = {
-            g
-            for g in range(self.model.ngeom)
-            if (mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_GEOM, g) or "").startswith("ur_")
+
+        # F1: every collidable geom belonging to the robot, by body ANCESTRY
+        # from the robot's base body -- not by a `ur_` geom-name prefix. Only
+        # 4 of the 23 collidable robot geoms are named at all (the finger
+        # pads); every other collision geom on every link is unnamed, so the
+        # prefix filter missed 19 of them. Measured directly: upper-arm and
+        # forearm penetrating the table by 25-45mm with the old filter reading
+        # no contact at all (round-1 finding, reproduced in round 2's
+        # test_f1_contact_classification.py).
+        root_body = int(self.model.jnt_bodyid[0])
+        while int(self.model.body_parentid[root_body]) != 0:
+            root_body = int(self.model.body_parentid[root_body])
+
+        def _under_root(body_id: int) -> bool:
+            while body_id != 0:
+                if body_id == root_body:
+                    return True
+                body_id = int(self.model.body_parentid[body_id])
+            return False
+
+        self._robot_geoms = {
+            g for g in range(self.model.ngeom) if _under_root(int(self.model.geom_bodyid[g]))
+        }
+        # Every geom on the board body (the slab; its square markings are
+        # visual-only, non-colliding), for the tolerant ceiling check below.
+        self._board_geoms = {
+            g for g in range(self.model.ngeom)
+            if int(self.model.geom_bodyid[g]) == self._body_id("board")
         }
 
         # --- action space --------------------------------------------------
@@ -481,15 +531,68 @@ class RoboChessEnv(gym.Env):
         return outside_xy or below
 
     def _bad_contact(self) -> bool:
-        """True if any arm/gripper geom is touching the table, pedestal or floor."""
+        """True if the robot is in a physically unsafe contact state.
+
+        Three independent categories, checked over the SAME single pass of
+        `data.contact` (F1):
+
+          * furniture -- a robot geom touching the table, pedestal or floor.
+            Zero tolerance, unchanged.
+          * self-contact -- a robot geom touching a DIFFERENT robot geom.
+            Zero tolerance: there is no legitimate reason for the robot to
+            touch itself during T1. No adjacency exclusion is added here on
+            top of MuJoCo's own: `filterparent` (enabled, the default) already
+            drops every parent-child pair, and the gripper's 6 explicit
+            `<exclude>` pairs cover its parallel-linkage siblings that aren't
+            parent-child but overlap by design. Confirmed empirically (section
+            1.3, round 2): zero robot self-contact of any kind, adjacent or
+            not, across 10 regression episodes checked at full sub-step
+            fidelity. Any robot-robot contact that reaches `data.contact` at
+            all is therefore a genuine candidate, safe to flag outright.
+          * board -- robot geoms touching the board slab are tolerated up to
+            `BOARD_CONTACT_FORCE_CEILING_N` (see that constant for the
+            combined-total-not-per-pad reasoning), logged via the accumulated
+            force but not, on their own, below the ceiling, grounds for
+            failure.
+
+        Read once per macro-step, at the boundary, after `step()`'s
+        `mj_forward()` (F10) has refreshed derived state to match the
+        just-integrated qpos. KNOWN, ACCEPTED LIMITATION: a contact that
+        begins and fully resolves within the macro-step's interior substeps --
+        never present at the final substep -- is invisible to this read.
+        Measured directly (round 2 cadence work): of three real flagged-
+        contact events in one regression episode, only the one still active at
+        the final substep was caught this way; the other two, each 3-4
+        substeps long out of 20, were missed. Full sub-step checking would
+        catch them but costs roughly 2x per env.step() (measured) and was not
+        adopted. This is not a TODO -- it is the accepted cost of checking
+        once per macro-step rather than 20 times.
+        """
+        board_force = 0.0
+        wrench = np.zeros(6)
         for k in range(self.data.ncon):
             c = self.data.contact[k]
             g1, g2 = int(c.geom1), int(c.geom2)
-            if (g1 in self._arm_geoms and g2 in self._forbidden_geoms) or (
-                g2 in self._arm_geoms and g1 in self._forbidden_geoms
+
+            if (g1 in self._robot_geoms and g2 in self._forbidden_geoms) or (
+                g2 in self._robot_geoms and g1 in self._forbidden_geoms
             ):
                 return True
-        return False
+
+            if (
+                g1 in self._robot_geoms
+                and g2 in self._robot_geoms
+                and int(self.model.geom_bodyid[g1]) != int(self.model.geom_bodyid[g2])
+            ):
+                return True
+
+            if (g1 in self._robot_geoms and g2 in self._board_geoms) or (
+                g2 in self._robot_geoms and g1 in self._board_geoms
+            ):
+                mujoco.mj_contactForce(self.model, self.data, k, wrench)
+                board_force += abs(float(wrench[0]))
+
+        return board_force > BOARD_CONTACT_FORCE_CEILING_N
 
     # -------------------------------------------------------------- success
     def _success_terms(self) -> tuple[bool, bool, bool, bool, float]:

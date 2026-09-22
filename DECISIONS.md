@@ -1857,3 +1857,43 @@ Two caveats on the comparison: episode length differs (300 staged vs 100
 unstaged), so the staged policy had 3x more steps per episode to approach and
 still did not do better; and the hold-at-goal risk above could not appear in a
 run that never grasped.
+
+## D21 — self-contact on `d1->a8`: a hairline arm/wrist graze during `descend`, isolated to this one pair
+
+**Date:** 2026-09-22 (referee track, F1 round 2)
+**Status:** open, not root-caused. No fix attempted; out of scope for F1
+(`_bad_contact()`'s classification/ceiling work), which is what surfaced it.
+
+**Finding.** F1 added zero-tolerance self-contact detection (no prior code
+path could see robot self-contact at all). Running the scripted expert on
+`d1->a8` now ends the episode via `bad_contact` at step 37, `descend`:
+`ur_upper_arm_link` touching `ur_wrist_2_link`. With `_bad_contact()`'s
+termination neutralized for measurement only (so the full trajectory is
+visible), the contact persists for **11 consecutive macro-steps** and reaches
+**0.1377 mm** of penetration at its deepest — a real, MuJoCo-confirmed overlap
+(the model's global contact margin is 0.0, so this isn't a detection-tolerance
+artifact), but a shallow graze, not a violent collision. The episode still
+completes successfully once the gate is disabled: the arm brushes itself and
+continues on to a normal placement.
+
+**Isolated, not systemic.** The same measurement (real scripted expert, real
+`_robot_geoms` ancestry classification, contact gate disabled) was run across
+all 10 of the referee track's confirmed-clean regression pairs (`e4->e5`,
+`a8->e5`, `h1->h8`, `a1->h8`, `d4->d5`, `c7->c6`, `b2->g7`, `f3->f6`,
+`a4->h4`, `g1->b8`) plus `d1->a8`. Zero self-contact on all 10; `d1->a8` is
+the only one of 11 showing any. This reads as an isolated scripted-expert
+motion-planning defect for this specific pair's kinematic path — likely a
+joint-space `descend` interpolation passing closer to the arm's own elbow/
+wrist than intended, in the spirit of D10's joint-space-interpolation
+mechanism, though that is not established here — not evidence that
+zero-tolerance self-contact needs a general penetration-depth deadband
+(the board-force ceiling's kind of decision). Left for a future session:
+root-cause the `d1->a8` trajectory specifically, the same way D10 root-caused
+`h1->h8`.
+
+**Worth checking once training logs `terminated_reason`.** The scripted
+expert is one fixed, open-loop trajectory per pair; an exploring RL policy is
+not constrained to it and could plausibly produce brushing self-contact more
+often than this single-pair, single-instance finding suggests. No training
+data exists yet to check this against — flagged here so it's checked once
+some does, not assumed either way.

@@ -163,9 +163,16 @@ def test_success_requires_the_gripper_to_be_open(env):
     goal = env._desired_goal
     _place_piece(env, [goal[0], goal[1], env._board_surface_z], gripper_qpos=0.54)
 
-    # Command the gripper closed so it stays shut for this step.
+    # Command the gripper closed so it stays shut for this step. Not a full
+    # close (1.0): with nothing between the fingers (the piece was teleported
+    # to the goal, not to the gripper), a full-close command drives the pads
+    # into each other -- genuine self-contact under F1's zero-tolerance check,
+    # which would end the episode via bad_contact before this test's actual
+    # target (the success/termination criteria) is ever exercised. 0.0 settles
+    # at grip_qpos ~0.757, still well past gripper_open_threshold (0.2, so
+    # gripper_released stays False as intended) without the pads touching.
     action = env.home_action().copy()
-    action[6] = 1.0
+    action[6] = 0.0
     _, _, terminated, _, info = env.step(action)
 
     assert info["piece_on_square"] is True
