@@ -569,6 +569,7 @@ class RoboChessEnv(gym.Env):
         once per macro-step rather than 20 times.
         """
         board_force = 0.0
+        board_contact_present = False
         wrench = np.zeros(6)
         for k in range(self.data.ncon):
             c = self.data.contact[k]
@@ -577,6 +578,7 @@ class RoboChessEnv(gym.Env):
             if (g1 in self._robot_geoms and g2 in self._forbidden_geoms) or (
                 g2 in self._robot_geoms and g1 in self._forbidden_geoms
             ):
+                self._last_board_contact_force_n = board_force if board_contact_present else None
                 return True
 
             if (
@@ -584,6 +586,7 @@ class RoboChessEnv(gym.Env):
                 and g2 in self._robot_geoms
                 and int(self.model.geom_bodyid[g1]) != int(self.model.geom_bodyid[g2])
             ):
+                self._last_board_contact_force_n = board_force if board_contact_present else None
                 return True
 
             if (g1 in self._robot_geoms and g2 in self._board_geoms) or (
@@ -591,7 +594,17 @@ class RoboChessEnv(gym.Env):
             ):
                 mujoco.mj_contactForce(self.model, self.data, k, wrench)
                 board_force += abs(float(wrench[0]))
+                board_contact_present = True
 
+        # Diagnostic aid (info["board_contact_force_n"], via _build_info): the
+        # combined total measured here, or None when no robot-board contact
+        # was present at all -- not the same as 0.0, which is a real contact
+        # that happened to read no force. Set even when this call returns
+        # early above (furniture/self-contact took precedence): the value
+        # then reflects whatever board contact had already been scanned by
+        # that point in the loop, which may undercount. Acceptable for a
+        # diagnostic field on an already-bad, episode-ending step.
+        self._last_board_contact_force_n = board_force if board_contact_present else None
         return board_force > BOARD_CONTACT_FORCE_CEILING_N
 
     # -------------------------------------------------------------- success
@@ -702,6 +715,13 @@ class RoboChessEnv(gym.Env):
             "piece_height_above_board": float(self._achieved_goal()[2] - self._board_surface_z),
             "piece_off_board": bool(self._piece_off_board()),
             "bad_contact": bool(self._bad_contact()),
+            # F1 diagnostic aid: the combined robot-to-board contact force
+            # _bad_contact() just measured (see its docstring/the
+            # BOARD_CONTACT_FORCE_CEILING_N comment for the combined-total
+            # convention), or None when no such contact was present at all.
+            # Always present, like the keys below, so the info schema does
+            # not change shape depending on whether contact occurred.
+            "board_contact_force_n": self._last_board_contact_force_n,
             # D14. Always present so the info schema does not change shape
             # depending on whether the guard fired.
             "solver_instability": bool(unstable),
