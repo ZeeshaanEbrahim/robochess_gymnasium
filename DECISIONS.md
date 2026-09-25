@@ -1962,36 +1962,9 @@ policy.
 iteration, about 10% throughput (an earlier figure of 5 ms / 11 iterations was
 an artefact of driving a delta-mode env with absolute targets).
 
-## D23 — referee before training: repair what the environment counts as success, contact and termination before any training on an interface is trusted
+## D23 — Referee before training
 
-**Date:** 2026-09-22 to 2026-09-25 (referee round 2 commits, `4a39715` through `5dbc2db`).
-**Provenance.** The roadmap table's wording for D23 is not in the repo. This
-entry is reconstructed from the commit history and should be reconciled to the
-table (the table wins).
-
-**Decision.** Training results are only as good as the referee that scores
-them. The success test, the contact classification, the termination rules and
-the validity of the simulator state are audited and repaired first; only then
-is an interface (delta, Cartesian) gated with the scripted expert and trained
-on.
-
-**What round 2 repaired** (all linear commits on `master`, ancestors of `5dbc2db`):
-- F7 (`4a39715`): a consistent fallback transition, NaN detection, and an
-  `invalid_transition` flag.
-- F10 (`2fe28c1`): derived simulator state refreshed after every env step.
-- F1 (`aa188e0`, `ff8b23f`): robot geometry by body ancestry instead of a
-  `ur_` name prefix (which matched 4 of 23 collidable robot geoms), a
-  self-contact category, and a board force ceiling; the measured board contact
-  force is exposed in info.
-- F2 (`977b11a`): placement success tightened (5 mm height, linear-speed and
-  tilt terms).
-- F6 and F11 (`f75919c`, docs `aef7eb9`, `5bd2227`): T2 obstacle disturbance
-  latched; obstacle config validated once.
-- `5dbc2db`: absolute/delta trace hashes re-frozen to the post-repair baseline.
-
-**Consequence to remember.** The T1 full-board baseline is 303/315, not 313:
-F1 made self-contact visible for the first time, and it fires on the d1/e1
-starts (D24). The earlier 313 figures predate the repairs.
+Agreed 21 Sep. No training until the Stage 1 referee repairs (F1, F2, F7, F10 for T1, then F6 and F11 for T2) meet their exit evidence. Reason: the expert-replay gate uses the placement judge, F2 could pass it falsely, F1 hid table contact, and compute is scarce. HER stays off until F3 and F4 are repaired. Exit evidence met 25 Sep.
 
 ## D24 — self-contact on the d1/e1 starts: a hairline arm/wrist graze during `descend` (first recorded as `d1->a8`)
 
