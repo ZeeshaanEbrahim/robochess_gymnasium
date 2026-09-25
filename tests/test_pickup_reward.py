@@ -136,9 +136,9 @@ def test_defaults_leave_the_reward_stack_untouched():
     try:
         assert not isinstance(env, PickupReward)
         assert env.observation_space["observation"].shape == (21,)
-        assert train.monitor_info_keywords(c) == ("terminated_reason",)
+        assert train.monitor_info_keywords(c) == ("terminated_reason", "gripper_self_contact")
         assert train.monitor_info_keywords(cfg(pickup_mode=True)) == (
-            "terminated_reason", "pickup_success")
+            "terminated_reason", "gripper_self_contact", "pickup_success")
     finally:
         env.close()
 

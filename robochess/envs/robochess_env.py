@@ -421,6 +421,30 @@ class RoboChessEnv(gym.Env):
             if int(self.model.geom_bodyid[g]) == self._body_id("board")
         }
 
+        # D25: the gripper's two finger subtrees, for the gripper-internal
+        # exemption in _bad_contact(). LEFT is everything under the left driver
+        # and the left spring link (which carries follower and pad); RIGHT is
+        # the mirror. A robot-to-robot contact with one geom in each is
+        # gripper-internal: it is what closing on nothing produces (pad1 on
+        # pad1). Same-side pairs, the gripper base/mount and every arm link are
+        # in neither set, so those contacts still terminate.
+        def _subtree_geoms(*root_names: str) -> frozenset[int]:
+            roots = {self._body_id(n) for n in root_names}
+
+            def under(body_id: int) -> bool:
+                while body_id != 0:
+                    if body_id in roots:
+                        return True
+                    body_id = int(self.model.body_parentid[body_id])
+                return False
+
+            return frozenset(
+                g for g in self._robot_geoms if under(int(self.model.geom_bodyid[g]))
+            )
+
+        self._gripper_left_geoms = _subtree_geoms("ur_gripper_left_driver", "ur_gripper_left_spring_link")
+        self._gripper_right_geoms = _subtree_geoms("ur_gripper_right_driver", "ur_gripper_right_spring_link")
+
         # --- action space --------------------------------------------------
         # Bounds come from the model's actuator ctrlrange, never hardcoded.
         # Measured from assets/scene.xml:
@@ -900,6 +924,24 @@ class RoboChessEnv(gym.Env):
         below = bool(pos[2] < centre[2] - 0.05)
         return outside_xy or below
 
+    def _is_gripper_internal(self, g1: int, g2: int) -> bool:
+        """D25: True for a contact between the gripper's left and right finger
+        subtrees (either order). Not a referee violation."""
+        return (g1 in self._gripper_left_geoms and g2 in self._gripper_right_geoms) or (
+            g2 in self._gripper_left_geoms and g1 in self._gripper_right_geoms
+        )
+
+    def _gripper_self_contact(self) -> bool:
+        """D25: whether any left-finger/right-finger contact is present now.
+        Reported in info so closing on nothing stays visible even though it no
+        longer terminates. Its own pass over data.contact, so it is not cut
+        short by _bad_contact()'s early return."""
+        for k in range(self.data.ncon):
+            c = self.data.contact[k]
+            if self._is_gripper_internal(int(c.geom1), int(c.geom2)):
+                return True
+        return False
+
     def _bad_contact(self) -> bool:
         """True if the robot is in a physically unsafe contact state.
 
@@ -908,7 +950,11 @@ class RoboChessEnv(gym.Env):
 
           * furniture -- a robot geom touching the table, pedestal or floor.
             Zero tolerance, unchanged.
-          * self-contact -- a robot geom touching a DIFFERENT robot geom.
+          * self-contact -- a robot geom touching a DIFFERENT robot geom,
+            EXCEPT gripper-internal contact (D25: left finger subtree against
+            right finger subtree), which is reported as
+            info["gripper_self_contact"] and never terminates. Everything
+            else, arm-to-arm and arm-to-gripper included, is unchanged.
             Zero tolerance: there is no legitimate reason for the robot to
             touch itself during T1. No adjacency exclusion is added here on
             top of MuJoCo's own: `filterparent` (enabled, the default) already
@@ -955,6 +1001,7 @@ class RoboChessEnv(gym.Env):
                 g1 in self._robot_geoms
                 and g2 in self._robot_geoms
                 and int(self.model.geom_bodyid[g1]) != int(self.model.geom_bodyid[g2])
+                and not self._is_gripper_internal(g1, g2)
             ):
                 self._last_board_contact_force_n = board_force if board_contact_present else None
                 return True
@@ -1110,6 +1157,9 @@ class RoboChessEnv(gym.Env):
             "piece_height_above_board": float(self._achieved_goal()[2] - self._board_surface_z),
             "piece_off_board": bool(self._piece_off_board()),
             "bad_contact": bool(self._bad_contact()),
+            # D25: the gripper's fingers touching each other (closing on air).
+            # Not a termination; always present so the schema is fixed.
+            "gripper_self_contact": bool(self._gripper_self_contact()),
             # F1 diagnostic aid: the combined robot-to-board contact force
             # _bad_contact() just measured (see its docstring/the
             # BOARD_CONTACT_FORCE_CEILING_N comment for the combined-total

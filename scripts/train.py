@@ -184,7 +184,7 @@ def build_env(cfg: dict):
 
 
 # Per-episode info keys copied into monitor.monitor.csv alongside r, l, t.
-MONITOR_INFO_KEYWORDS = ("terminated_reason",)
+MONITOR_INFO_KEYWORDS = ("terminated_reason", "gripper_self_contact")
 
 
 def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:
