@@ -105,7 +105,15 @@ N_ARM_ACTUATORS = 6
 #   target, capped at max_joint_delta and applied to the previous target, then
 #   clamped to the joint's valid range. The gripper (7th dimension) stays
 #   absolute in both modes, so a policy can open or close in one step.
-ACTION_MODES = ("absolute", "delta")
+# "cartesian": a 4-dimensional action -- (dx, dy, dz, gripper). The first three
+#   scale to a per-step displacement of the PINCH POINT in world axes, added to
+#   the pinch's MEASURED position, clamped to a workspace box, and turned into
+#   arm joint targets by a top-down-locked mink IK solve. The tool orientation
+#   is never commanded: it is pinned to the home keyframe's straight-down pose
+#   (D2), which is the only orientation the reach envelope and the scripted
+#   expert were ever validated under. The gripper (4th dimension) stays
+#   absolute, exactly as in the other two modes.
+ACTION_MODES = ("absolute", "delta", "cartesian")
 
 # Delta cap, rad per env step (40 ms). Calibrated from the scripted expert's
 # ACTUAL joint motion over 23 successful episodes spanning near and far squares
@@ -119,6 +127,131 @@ DEFAULT_MAX_JOINT_DELTA = 0.1
 # D19: delta-mode target may lead the actual joint by at most this multiple of
 # the actuator's saturation error (forcerange/kp). See RoboChessEnv.__init__.
 WINDUP_MARGIN_FORCE_MULTIPLE = 2.0
+
+# --- cartesian mode ----------------------------------------------------------
+# (dx, dy, dz, gripper).
+CARTESIAN_ACTION_DIM = 4
+
+# Metres of pinch displacement per unit action per axis, per env step (40 ms).
+# 0.020 is the step size the Cartesian feasibility sweep actually measured
+# (results/cartesian_feasibility/): warm-started 20 mm solves moved no joint
+# more than 0.0429 rad and produced zero configuration flips over a 30-point
+# grid x 6 directions. At the 40 ms macro step it commands at most 0.5 m/s.
+DEFAULT_CARTESIAN_STEP = 0.020
+
+# How a solve's joint motion is limited, rad. A solve asking for more than
+# CARTESIAN_JOINT_SCALE_TO on some joint is SCALED -- the whole change vector
+# multiplied by one factor so its largest component is exactly that -- and only
+# a solve above CARTESIAN_JOINT_REJECT_ABOVE is thrown away.
+#
+# Scaling rather than clipping, and scaling the whole vector rather than each
+# joint, is the entire point. Clipping joints independently executes a
+# DIFFERENT DIRECTION from the one IK solved for, which rotates the tool out of
+# top-down; the next solve then spends its whole budget undoing that rotation,
+# a per-joint reject threshold throws that correction away, and the condition
+# never clears. Measured on the first implementation, which clipped per joint
+# and rejected above 0.15 rad: driving to e4 latched at step 13 with 10.68 deg
+# of tilt and 48 of 60 steps rejected, and never recovered. With uniform
+# scaling on both, the same drive arrives in 56 steps to 1.34 mm with zero
+# rejects and a peak tilt of 0.57 deg.
+#
+# 0.5 still sits an order of magnitude below the two documented IK hazards it
+# exists for: after an IKFailure mink's Configuration is left 1.571 rad from
+# the robot, and a target driven down through the table returns a pose
+# 2.016 rad away WITHOUT raising anything at all.
+CARTESIAN_JOINT_SCALE_TO = 0.1
+CARTESIAN_JOINT_REJECT_ABOVE = 0.5
+
+# Workspace box. x/y: the outermost square CENTRE plus one square of margin.
+# That margin is not arbitrary -- 3.5*pitch + pitch is identically
+# (slab half-extent + half a pitch), i.e. exactly the bound _piece_off_board
+# uses, so the box the arm may command coincides with the region where a piece
+# still counts as being on the board.
+CARTESIAN_XY_MARGIN = SQUARE_PITCH
+
+# The box is axis-aligned but the arm reaches in a disc, so its far corners sit
+# outside the workspace: measured from the home configuration, the corners at
+# radial 0.9391 m do not converge in 400 iterations (residual 13-34 mm, and a
+# retry seeded from a converged neighbour returns a bit-identical residual, so
+# it is geometry and not a seeding accident), while radial 0.8710 m converges
+# in 6. The target's xy is therefore also clipped radially about the arm base
+# axis, whose xy is read from the model in _setup_cartesian. 0.86 is kept as an
+# outer backstop, but see CARTESIAN_REACH_R below: reach also shrinks with
+# height, and 0.86 alone is not tight enough near the top of the box (measured:
+# a sustained push toward high z/large radius hit the 20-iteration cap on
+# 102/150 steps, 0 of which converged even at 400 iterations -- a real
+# workspace boundary, not a slow-convergence artifact).
+CARTESIAN_MAX_RADIUS = 0.86
+
+# Reach as a function of pinch height z, about _base_xy, tool locked top-down.
+# From a static-solve bisection (5 mm tolerance): seeded from the home
+# configuration, cap 400, along +y and along the direction to a stress-test
+# push target -- both directions gave the same radius at every height tested,
+# so one table serves both. CARTESIAN_REACH_MARGIN (20 mm) is the smallest of
+# {20, 30, 40, 50} mm for which every one of the 5 heights, driven from a seed
+# 20 mm further out, converges the SHIPPED cap-20 solve in at most 10
+# iterations (measured: 2 iterations at every height, at every margin tried --
+# 20 mm was not a close call). Interpolated linearly between the table's
+# heights in _scale_action.
+CARTESIAN_REACH_Z = (0.7935, 0.90, 1.00, 1.10, 1.1822)
+CARTESIAN_REACH_R = (0.9250, 0.9125, 0.8906, 0.8531, 0.8094)
+CARTESIAN_REACH_MARGIN = 0.020
+
+# INNER radial limit, about _base_xy: the arm folds on itself near the base, and
+# ur_upper_arm_link presses into ur_wrist_2_link. Measured by a static map (IK
+# cap 400, tool top-down, seeded from home or the previous radius, then
+# mj_forward and the deepest robot-to-robot penetration) over five rays at
+# azimuths -45..+45 deg from +y and radii 0.15-0.45 m in 10 mm steps. Each
+# CARTESIAN_INNER_R entry is the largest r_min across the rays at that height
+# (r_min = smallest radius converging with no self-penetration) minus
+# CARTESIAN_INNER_MARGIN, or 0.0 where no penetration was found on any ray
+# (z = 1.10 and 1.1822: the sweep's first radius, 0.15 m, was already clean, so
+# those heights' 0.15 is a sweep bound, not a zone edge). A target closer to the
+# axis than the interpolated limit is scaled outward along its radius. Driven
+# stall this prevents: a (0,-1,-1) push wedged the two links together at
+# 395-441 N from step 60 on. The nearest squares, d1/e1 at 0.2501 m, only graze
+# the zone (65-68 N at GRASP_Z, static clean radius 0.255 m); the limit at
+# GRASP_Z, 0.2409 m, sits inside them so they stay reachable.
+CARTESIAN_INNER_Z = (0.7935, 0.85, 0.90, 0.95, 1.00, 1.05, 1.10, 1.1822)
+CARTESIAN_INNER_MARGIN = 0.015
+_INNER_MAX_RMIN = (0.26, 0.22, 0.19, 0.19, 0.19, 0.17, None, None)  # None: no zone
+CARTESIAN_INNER_R = tuple(
+    0.0 if r is None else round(r - CARTESIAN_INNER_MARGIN, 4) for r in _INNER_MAX_RMIN
+)
+
+# z floor, as a height above the board's top face (which is itself read from
+# the model): the scripted expert's LOWEST commanded pinch height, PLACE_Z =
+# 0.7935 with the surface at 0.762. The expert never goes below it, and below
+# it is where a target starts passing through the table -- the hazard that
+# returns a 2.016 rad joint jump without raising anything.
+CARTESIAN_Z_FLOOR_ABOVE_BOARD = 0.0315
+
+# z ceiling: the home keyframe's own pinch height, read from the model in
+# _setup_cartesian. It has to be at least that high or the arm would start
+# OUTSIDE its own workspace box, with every step clamped to a quarter-metre
+# jump down and rejected (measured: 100/100 steps rejected at a 0.932 ceiling).
+# Nothing in the task wants to go higher: the expert's transit height CLEAR_Z
+# is 0.882, well below the home pose's 1.182.
+
+# IK settings. The frame, solver, timestep, damping and both tolerances are
+# the scripted expert's (scripts/scripted_expert.py) deliberately: the expert
+# is the only IK configuration this project has validated, and a policy solving
+# against different tolerances would not be driving the same interface the
+# expert replays through. Only the iteration cap differs; see below.
+CARTESIAN_IK_SITE = "ur_attachment_site"
+CARTESIAN_PINCH_SITE = "ur_gripper_pinch"
+CARTESIAN_IK_SOLVER = "daqp"
+CARTESIAN_IK_DT = 0.02
+# 20, NOT the expert's 400. The expert solves a handful of waypoints per
+# episode and can afford to grind; this solver runs once per env step, and an
+# unreachable target costs the full cap every time. Measured: every reachable
+# target in the box converges in 4-17 iterations from home, while unreachable
+# ones burn all 400 at 180-218 ms each -- 70x the 2.6 ms median step. Capping
+# at 20 turns that into a cheap rejection. The expert's own IK is untouched.
+CARTESIAN_IK_MAX_ITERS = 20
+CARTESIAN_IK_POS_TOL = 1e-3   # metres
+CARTESIAN_IK_ORI_TOL = 1e-2   # radians
+CARTESIAN_IK_DAMPING = 1e-3
 
 # D9 (DECISIONS.md): is_success previously had no requirement that the piece
 # itself be at rest, and was found to register success while the piece still
@@ -176,6 +309,7 @@ class RoboChessEnv(gym.Env):
         normalize_action: bool = True,
         action_mode: str = "absolute",
         max_joint_delta: float = DEFAULT_MAX_JOINT_DELTA,
+        cartesian_step: float = DEFAULT_CARTESIAN_STEP,
         render_mode: str | None = None,
         render_width: int = 640,
         render_height: int = 480,
@@ -204,10 +338,17 @@ class RoboChessEnv(gym.Env):
         if action_mode == "delta" and not self.normalize_action:
             raise ValueError("action_mode='delta' requires normalize_action=True: the delta "
                              "is defined as a fraction of max_joint_delta per unit action.")
+        if action_mode == "cartesian" and not self.normalize_action:
+            raise ValueError("action_mode='cartesian' requires normalize_action=True: the "
+                             "displacement is defined as a fraction of cartesian_step per "
+                             "unit action, and the raw ctrlrange has no Cartesian meaning.")
         if not max_joint_delta > 0:
             raise ValueError(f"max_joint_delta must be > 0, got {max_joint_delta!r}")
+        if not cartesian_step > 0:
+            raise ValueError(f"cartesian_step must be > 0, got {cartesian_step!r}")
         self.action_mode = action_mode
         self.max_joint_delta = float(max_joint_delta)
+        self.cartesian_step = float(cartesian_step)
 
         if render_mode is not None and render_mode not in self.metadata["render_modes"]:
             raise ValueError(f"Unsupported render_mode: {render_mode!r}")
@@ -317,7 +458,19 @@ class RoboChessEnv(gym.Env):
             WINDUP_MARGIN_FORCE_MULTIPLE * np.minimum(-forcerange[:, 0], forcerange[:, 1]) / kp
         )
 
-        if self.normalize_action:
+        # Counts solves rejected this episode (see _solve_cartesian_ik). Set
+        # unconditionally so info's schema does not depend on the action mode.
+        self._ik_rejects = 0
+        if self.action_mode == "cartesian":
+            self._setup_cartesian()
+
+        if self.action_mode == "cartesian":
+            # 4 dimensions, not the model's 7 actuators: the arm's six joints
+            # are produced by IK from three Cartesian numbers.
+            self.action_space = spaces.Box(
+                low=-1.0, high=1.0, shape=(CARTESIAN_ACTION_DIM,), dtype=np.float32
+            )
+        elif self.normalize_action:
             # The raw ctrlrange spans +/-6.28 for the arm but 0..255 for the
             # gripper -- a 40x scale mismatch across one Box. Exposing that
             # directly makes the action space neither symmetric nor normalized,
@@ -392,6 +545,158 @@ class RoboChessEnv(gym.Env):
             raise ValueError(f"No joint named {name!r} in {self.scene_path}")
         return int(self.model.jnt_qposadr[j]), int(self.model.jnt_dofadr[j])
 
+    # ------------------------------------------------------------ cartesian
+    def _setup_cartesian(self) -> None:
+        """Build the IK solver and the workspace box for "cartesian" mode.
+
+        Called from __init__ only when the mode is selected, so absolute and
+        delta pay neither the import nor the extra MjData.
+        """
+        import mink  # local: only this mode needs it
+
+        sid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, CARTESIAN_IK_SITE)
+        pid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, CARTESIAN_PINCH_SITE)
+        if sid < 0 or pid < 0:
+            raise ValueError(
+                f"Scene {self.scene_path} needs both the {CARTESIAN_IK_SITE!r} and "
+                f"{CARTESIAN_PINCH_SITE!r} sites for action_mode='cartesian'."
+            )
+        self._ik_sid, self._pinch_sid = int(sid), int(pid)
+
+        self._mink = mink
+        self._ik_configuration = mink.Configuration(self.model)
+        self._ik_task = mink.FrameTask(
+            frame_name=CARTESIAN_IK_SITE,
+            frame_type="site",
+            position_cost=1.0,
+            orientation_cost=1.0,
+            lm_damping=1.0,
+        )
+
+        # Tool offset and the locked top-down rotation, both read from the home
+        # keyframe on a scratch MjData so construction does not disturb
+        # self.data. Same derivation as the scripted expert's, and measured
+        # from the model rather than hardcoded so it tracks the gripper mount.
+        scratch = mujoco.MjData(self.model)
+        mujoco.mj_resetDataKeyframe(self.model, scratch, self._home_key)
+        mujoco.mj_forward(self.model, scratch)
+        self._tool_length = float(scratch.site_xpos[sid][2] - scratch.site_xpos[pid][2])
+        self._tool_rotation = mink.SO3.from_matrix(scratch.site_xmat[sid].reshape(3, 3).copy())
+
+        # Arm base axis, read from the model (not hardcoded): the centre the
+        # radial reach limit is measured about.
+        self._base_xy = scratch.xpos[self._body_id("arm_base")][:2].copy()
+
+        # Workspace box, derived from the board's own geometry.
+        board = self.model.body_pos[self._body_id("board")]
+        half = 3.5 * SQUARE_PITCH + CARTESIAN_XY_MARGIN
+        self._cartesian_low = np.array(
+            [board[0] - half, board[1] - half,
+             self._board_surface_z + CARTESIAN_Z_FLOOR_ABOVE_BOARD],
+            dtype=np.float64,
+        )
+        self._cartesian_high = np.array(
+            [board[0] + half, board[1] + half,
+             float(scratch.site_xpos[pid][2])],
+            dtype=np.float64,
+        )
+
+    def _solve_cartesian_ik(self, pinch_target: np.ndarray) -> np.ndarray | None:
+        """Joint motion putting the pinch point at `pinch_target`, top-down.
+
+        Returns the per-joint CHANGE from the arm's current qpos, or None if
+        the solve is rejected -- either it did not converge (the scripted
+        expert's IKFailure condition, plus anything mink itself raises) or it
+        asks for more than CARTESIAN_JOINT_REJECT_ABOVE on some joint. A change
+        between CARTESIAN_JOINT_SCALE_TO and that bound is not rejected: the
+        whole vector is scaled down by one factor, which slows the motion
+        without altering the direction IK chose.
+
+        A change rather than an absolute pose: the solve is seeded from the
+        live qpos, so its answer carries the arm's standing servo error (the
+        D7 gravity droop) baked in. Committing that pose as the new target
+        would hand the servo a zero-error command and let the arm free-fall a
+        droop's worth every step. The DISPLACEMENT is what the solve actually
+        determined; it is applied to the previous joint target, which keeps
+        whatever offset is holding the arm up.
+        """
+        site_target = np.asarray(pinch_target, dtype=np.float64).copy()
+        site_target[2] += self._tool_length  # site sits tool_length above the pinch
+        self._ik_task.set_target(
+            self._mink.SE3.from_rotation_and_translation(self._tool_rotation, site_target)
+        )
+
+        # Re-sync from the live robot BEFORE the solve, every time, never from
+        # whatever mink retained. After an IKFailure its Configuration is left
+        # 1.571 rad away from the robot, and warm-starting from that is how a
+        # single unreachable target poisons every later step.
+        seed = self.data.qpos.copy()
+        n = N_ARM_ACTUATORS
+        try:
+            self._ik_configuration.update(seed)
+            solved = None
+            for _ in range(CARTESIAN_IK_MAX_ITERS):
+                err = self._ik_task.compute_error(self._ik_configuration)
+                if (np.linalg.norm(err[:3]) < CARTESIAN_IK_POS_TOL
+                        and np.linalg.norm(err[3:]) < CARTESIAN_IK_ORI_TOL):
+                    solved = self._ik_configuration.q[:n].copy()
+                    break
+                vel = self._mink.solve_ik(
+                    self._ik_configuration, [self._ik_task], CARTESIAN_IK_DT,
+                    CARTESIAN_IK_SOLVER, damping=CARTESIAN_IK_DAMPING,
+                )
+                # Only the arm may move: the gripper's closed-loop linkage and
+                # the piece's free joint are masked out of the integration.
+                masked = np.zeros_like(vel)
+                masked[:n] = vel[:n]
+                self._ik_configuration.integrate_inplace(masked, CARTESIAN_IK_DT)
+        except self._mink.exceptions.MinkError:
+            return None
+        if solved is None:
+            return None  # ran out of iterations: the expert's IKFailure
+
+        change = solved - seed[self._arm_qadr]
+        largest = float(np.max(np.abs(change)))
+        if largest > CARTESIAN_JOINT_REJECT_ABOVE:
+            return None
+        if largest > CARTESIAN_JOINT_SCALE_TO:
+            change = change * (CARTESIAN_JOINT_SCALE_TO / largest)
+        return change
+
+    @staticmethod
+    def _windup_scale(gap: np.ndarray, change: np.ndarray, margin: np.ndarray) -> float:
+        """Largest f in [0, 1] with |gap + f*change| <= max(margin, |gap|) on every joint.
+
+        The uniform replacement for delta mode's per-joint np.clip. Same D19
+        margins, same guarantee -- the target still cannot lead a joint that
+        cannot follow -- but enforced by slowing the whole motion rather than
+        by truncating some of its components and not others, which is what bent
+        the tool out of top-down.
+
+        A joint already outside its own margin gets its OWN |gap| as the bound
+        instead of margin: moving it further inward is unrestricted, and moving
+        it further outward forces f = 0 for the whole vector. A joint inside its
+        margin is unchanged (max(margin, |gap|) is just margin there). Without
+        this, a joint that starts beyond its margin can never be corrected in
+        one step short of a full return to margin, and the function fell back
+        to f = 0 -- discarding a solve that was moving the joint the right way,
+        the same class of defect as the per-joint clamp this replaced.
+        """
+        lo, hi = 0.0, 1.0
+        for g, c, m in zip(gap, change, margin):
+            bound = max(m, abs(g))
+            if abs(c) < 1e-15:
+                if abs(g) > bound:
+                    return 0.0
+                continue
+            a, b = (-bound - g) / c, (bound - g) / c
+            if a > b:
+                a, b = b, a
+            lo, hi = max(lo, a), min(hi, b)
+        if hi < lo or hi < 0.0:
+            return 0.0
+        return max(0.0, hi)
+
     # --------------------------------------------------------------- action
     def _scale_action(self, action: np.ndarray) -> np.ndarray:
         """Map an agent action onto the model's actuator ctrlrange.
@@ -400,6 +705,50 @@ class RoboChessEnv(gym.Env):
         exactly once per env step (RoboChessEnv.step is its only caller).
         """
         action = np.clip(np.asarray(action, dtype=np.float64), self.action_space.low, self.action_space.high)
+        if self.action_mode == "cartesian":
+            n = N_ARM_ACTUATORS
+            # D19's lesson: the Cartesian target is rebuilt from the MEASURED
+            # pinch position every step and never accumulated, so a clamped or
+            # rejected command cannot leave a standing error for the next one
+            # to add to. Where the arm actually is IS the state.
+            target = self.data.site_xpos[self._pinch_sid] + action[:3] * self.cartesian_step
+            target = np.clip(target, self._cartesian_low, self._cartesian_high)
+            # Then radially, about the arm base axis: the box's far corners are
+            # outside the arm's reach and cost a full iteration cap to discover.
+            # The limit itself shrinks with height (CARTESIAN_REACH_Z/_R):
+            # reach at the top of the box is 115.6 mm less than at the floor
+            # (CARTESIAN_REACH_R[0] - CARTESIAN_REACH_R[-1]), and a fixed radius
+            # alone let a sustained push toward high z/large radius stall on
+            # unreachable targets (measured: 102/150 steps capped, 0 converging
+            # even at 400 iterations). It recovers on the first reverse step
+            # once the command reverses (measured on 4 of 4 pushes).
+            r_limit = min(CARTESIAN_MAX_RADIUS,
+                          float(np.interp(target[2], CARTESIAN_REACH_Z, CARTESIAN_REACH_R))
+                          - CARTESIAN_REACH_MARGIN)
+            offset = target[:2] - self._base_xy
+            radius = float(np.linalg.norm(offset))
+            if radius > r_limit:
+                target[:2] = self._base_xy + offset * (r_limit / radius)
+            else:
+                # Inner limit (CARTESIAN_INNER_Z/_R): near the base the upper
+                # arm and wrist_2 link press into each other. Scaled outward
+                # along the radius; radius > 0 guards the division (the box
+                # keeps y >= 0.169, so the target cannot sit on the axis).
+                r_inner = float(np.interp(target[2], CARTESIAN_INNER_Z, CARTESIAN_INNER_R))
+                if 0.0 < radius < r_inner:
+                    target[:2] = self._base_xy + offset * (r_inner / radius)
+            change = self._solve_cartesian_ik(target)
+            if change is None:
+                self._ik_rejects += 1  # hold the previous joint targets
+            else:
+                # D19 anti-windup, same margins as delta mode but applied as
+                # ONE factor on the whole change vector rather than per joint.
+                actual = self.data.qpos[self._arm_qadr]
+                f = self._windup_scale(self._arm_target - actual, change, self._windup_margin)
+                self._arm_target = np.clip(self._arm_target + f * change,
+                                           self._arm_target_low, self._arm_target_high)
+            gripper = self._ctrl_low[n:] + (action[3:] + 1.0) * 0.5 * (self._ctrl_high[n:] - self._ctrl_low[n:])
+            return np.concatenate([self._arm_target, gripper])
         if self.action_mode == "delta":
             n = N_ARM_ACTUATORS
             delta = action[:n] * self.max_joint_delta
@@ -424,6 +773,11 @@ class RoboChessEnv(gym.Env):
         mode "hold still" is a zero arm delta; the gripper stays absolute.
         """
         ctrl = self.model.key_ctrl[self._home_key].astype(np.float64)
+        if self.action_mode == "cartesian":
+            n = N_ARM_ACTUATORS
+            span = self._ctrl_high[n:] - self._ctrl_low[n:]
+            gripper = 2.0 * (ctrl[n:] - self._ctrl_low[n:]) / span - 1.0
+            return np.concatenate([np.zeros(3), gripper]).astype(np.float32)
         if self.action_mode == "delta":
             n = N_ARM_ACTUATORS
             span = self._ctrl_high[n:] - self._ctrl_low[n:]
@@ -507,6 +861,7 @@ class RoboChessEnv(gym.Env):
         # unconditionally (absolute mode never reads it) so no episode inherits
         # the previous one's target.
         self._arm_target = self.data.ctrl[:N_ARM_ACTUATORS].astype(np.float64).copy()
+        self._ik_rejects = 0  # cartesian mode; must not leak across episodes
 
         self._desired_goal = self._sample_desired_goal()
         self._elapsed_steps = 0
@@ -767,6 +1122,10 @@ class RoboChessEnv(gym.Env):
             "solver_instability": bool(unstable),
             "invalid_transition": bool(unstable),
             "piece_kinetic_energy_j": self._piece_kinetic_energy(),
+            # Cartesian mode's rejected-solve count for the episode so far.
+            # Always present, and always 0 in the other modes, so the info
+            # schema does not change shape with the action mode.
+            "ik_rejects": int(self._ik_rejects),
             "terminated_reason": terminated_reason,
             "elapsed_steps": int(self._elapsed_steps),
         }
