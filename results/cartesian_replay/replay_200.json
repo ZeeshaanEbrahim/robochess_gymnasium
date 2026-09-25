@@ -1,0 +1,7063 @@
+[
+ {
+  "start": "a1",
+  "target": "e5",
+  "reference": {
+   "outcome": "success",
+   "success": true,
+   "steps": 131
+  },
+  "is_success": false,
+  "grasp_success_ever": false,
+  "final_distance_m": 0.44123464822769165,
+  "closest_pinch_to_piece_m": 0.07486445833476661,
+  "steps": 56,
+  "commands_available": 131,
+  "terminated": true,
+  "truncated": false,
+  "terminated_reason": "bad_contact",
+  "phase_at_end": "lift",
+  "ik_rejects": 0,
+  "board_contact_force_n": null,
+  "terminal_contacts": [
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ]
+  ],
+  "rows": [
+   {
+    "step": 0,
+    "phase": "approach",
+    "reward": -0.5907681301169789,
+    "pinch_to_piece_m": 0.498444840289883,
+    "pinch_to_command_m": 0.4041333541067734,
+    "grasp": false
+   },
+   {
+    "step": 1,
+    "phase": "approach",
+    "reward": -0.5872990954841029,
+    "pinch_to_piece_m": 0.4868813915136294,
+    "pinch_to_command_m": 0.3922602190559684,
+    "grasp": false
+   },
+   {
+    "step": 2,
+    "phase": "approach",
+    "reward": -0.5837369117312458,
+    "pinch_to_piece_m": 0.4750074456707723,
+    "pinch_to_command_m": 0.3799534631453822,
+    "grasp": false
+   },
+   {
+    "step": 3,
+    "phase": "approach",
+    "reward": -0.5802238388665305,
+    "pinch_to_piece_m": 0.4632972027883882,
+    "pinch_to_command_m": 0.36775941471477347,
+    "grasp": false
+   },
+   {
+    "step": 4,
+    "phase": "approach",
+    "reward": -0.576747274408959,
+    "pinch_to_piece_m": 0.4517086545964833,
+    "pinch_to_command_m": 0.35563939756194934,
+    "grasp": false
+   },
+   {
+    "step": 5,
+    "phase": "approach",
+    "reward": -0.5732920827537411,
+    "pinch_to_piece_m": 0.44019134907909035,
+    "pinch_to_command_m": 0.3435437255089294,
+    "grasp": false
+   },
+   {
+    "step": 6,
+    "phase": "approach",
+    "reward": -0.5699304314351613,
+    "pinch_to_piece_m": 0.42898584468382434,
+    "pinch_to_command_m": 0.33172791660063605,
+    "grasp": false
+   },
+   {
+    "step": 7,
+    "phase": "approach",
+    "reward": -0.5666484338627785,
+    "pinch_to_piece_m": 0.41804585277588163,
+    "pinch_to_command_m": 0.3201483495764672,
+    "grasp": false
+   },
+   {
+    "step": 8,
+    "phase": "approach",
+    "reward": -0.5634229438533989,
+    "pinch_to_piece_m": 0.40729421941128274,
+    "pinch_to_command_m": 0.30872595840166434,
+    "grasp": false
+   },
+   {
+    "step": 9,
+    "phase": "approach",
+    "reward": -0.5602325112982268,
+    "pinch_to_piece_m": 0.3966594442273759,
+    "pinch_to_command_m": 0.29738583456306356,
+    "grasp": false
+   },
+   {
+    "step": 10,
+    "phase": "approach",
+    "reward": -0.5570585913514292,
+    "pinch_to_piece_m": 0.3860797110713837,
+    "pinch_to_command_m": 0.28606227492764025,
+    "grasp": false
+   },
+   {
+    "step": 11,
+    "phase": "approach",
+    "reward": -0.5538866552302599,
+    "pinch_to_piece_m": 0.37550659066748626,
+    "pinch_to_command_m": 0.2747029470567563,
+    "grasp": false
+   },
+   {
+    "step": 12,
+    "phase": "approach",
+    "reward": -0.5507073777464796,
+    "pinch_to_piece_m": 0.3649089990548853,
+    "pinch_to_command_m": 0.2632729160126318,
+    "grasp": false
+   },
+   {
+    "step": 13,
+    "phase": "approach",
+    "reward": -0.5475173182322665,
+    "pinch_to_piece_m": 0.35427546734084125,
+    "pinch_to_command_m": 0.25175806723857935,
+    "grasp": false
+   },
+   {
+    "step": 14,
+    "phase": "approach",
+    "reward": -0.5443194154868218,
+    "pinch_to_piece_m": 0.34361579152269256,
+    "pinch_to_command_m": 0.24016717837847804,
+    "grasp": false
+   },
+   {
+    "step": 15,
+    "phase": "approach",
+    "reward": -0.5411227758090664,
+    "pinch_to_piece_m": 0.33296032593017444,
+    "pinch_to_command_m": 0.22853189511633365,
+    "grasp": false
+   },
+   {
+    "step": 16,
+    "phase": "approach",
+    "reward": -0.5379416635006465,
+    "pinch_to_piece_m": 0.3223566182354418,
+    "pinch_to_command_m": 0.2169042604016992,
+    "grasp": false
+   },
+   {
+    "step": 17,
+    "phase": "approach",
+    "reward": -0.5348456070828245,
+    "pinch_to_piece_m": 0.3120364301760346,
+    "pinch_to_command_m": 0.20553898716944408,
+    "grasp": false
+   },
+   {
+    "step": 18,
+    "phase": "approach",
+    "reward": -0.5318592675988904,
+    "pinch_to_piece_m": 0.3020819652295877,
+    "pinch_to_command_m": 0.19453431546754804,
+    "grasp": false
+   },
+   {
+    "step": 19,
+    "phase": "approach",
+    "reward": -0.5289768562807685,
+    "pinch_to_piece_m": 0.2924739275025149,
+    "pinch_to_command_m": 0.1838810122938194,
+    "grasp": false
+   },
+   {
+    "step": 20,
+    "phase": "approach",
+    "reward": -0.5260721641223999,
+    "pinch_to_piece_m": 0.2827916203079528,
+    "pinch_to_command_m": 0.17313756831408836,
+    "grasp": false
+   },
+   {
+    "step": 21,
+    "phase": "approach",
+    "reward": -0.5231904787760588,
+    "pinch_to_piece_m": 0.27318600248681607,
+    "pinch_to_command_m": 0.1624702564569524,
+    "grasp": false
+   },
+   {
+    "step": 22,
+    "phase": "approach",
+    "reward": -0.5203609550079205,
+    "pinch_to_piece_m": 0.2637542565930212,
+    "pinch_to_command_m": 0.15197182775998824,
+    "grasp": false
+   },
+   {
+    "step": 23,
+    "phase": "descend",
+    "reward": -0.517587663171591,
+    "pinch_to_piece_m": 0.25450995047192304,
+    "pinch_to_command_m": 0.2186511822091453,
+    "grasp": false
+   },
+   {
+    "step": 24,
+    "phase": "descend",
+    "reward": -0.5148720017733559,
+    "pinch_to_piece_m": 0.24545774581113955,
+    "pinch_to_command_m": 0.2093491928793412,
+    "grasp": false
+   },
+   {
+    "step": 25,
+    "phase": "descend",
+    "reward": -0.5122180486063164,
+    "pinch_to_piece_m": 0.23661123525434108,
+    "pinch_to_command_m": 0.20025984138560834,
+    "grasp": false
+   },
+   {
+    "step": 26,
+    "phase": "descend",
+    "reward": -0.5096331333232409,
+    "pinch_to_piece_m": 0.22799485097742267,
+    "pinch_to_command_m": 0.19141147428598038,
+    "grasp": false
+   },
+   {
+    "step": 27,
+    "phase": "descend",
+    "reward": -0.5071274991234132,
+    "pinch_to_piece_m": 0.2196427369779972,
+    "pinch_to_command_m": 0.18284501334030942,
+    "grasp": false
+   },
+   {
+    "step": 28,
+    "phase": "descend",
+    "reward": -0.5047134417741661,
+    "pinch_to_piece_m": 0.21159587914717354,
+    "pinch_to_command_m": 0.1746105981892445,
+    "grasp": false
+   },
+   {
+    "step": 29,
+    "phase": "descend",
+    "reward": -0.5024039507664672,
+    "pinch_to_piece_m": 0.20389757578817697,
+    "pinch_to_command_m": 0.16676313984086624,
+    "grasp": false
+   },
+   {
+    "step": 30,
+    "phase": "descend",
+    "reward": -0.5002309323639322,
+    "pinch_to_piece_m": 0.19665418111306066,
+    "pinch_to_command_m": 0.15942481875972142,
+    "grasp": false
+   },
+   {
+    "step": 31,
+    "phase": "descend",
+    "reward": -0.4982151817017583,
+    "pinch_to_piece_m": 0.18993501223914763,
+    "pinch_to_command_m": 0.15266983926233194,
+    "grasp": false
+   },
+   {
+    "step": 32,
+    "phase": "descend",
+    "reward": -0.4963460281808218,
+    "pinch_to_piece_m": 0.18370450050269257,
+    "pinch_to_command_m": 0.14645278295097397,
+    "grasp": false
+   },
+   {
+    "step": 33,
+    "phase": "descend",
+    "reward": -0.49460110847731215,
+    "pinch_to_piece_m": 0.17788810149099363,
+    "pinch_to_command_m": 0.14068231944648038,
+    "grasp": false
+   },
+   {
+    "step": 34,
+    "phase": "descend",
+    "reward": -0.4929543345605235,
+    "pinch_to_piece_m": 0.17239885510169828,
+    "pinch_to_command_m": 0.13525340410819575,
+    "grasp": false
+   },
+   {
+    "step": 35,
+    "phase": "descend",
+    "reward": -0.4913805002566778,
+    "pinch_to_piece_m": 0.16715274075554587,
+    "pinch_to_command_m": 0.13006683710888894,
+    "grasp": false
+   },
+   {
+    "step": 36,
+    "phase": "descend",
+    "reward": -0.48985802223174346,
+    "pinch_to_piece_m": 0.16207781400576474,
+    "pinch_to_command_m": 0.12503930160005292,
+    "grasp": false
+   },
+   {
+    "step": 37,
+    "phase": "descend",
+    "reward": -0.4883695815890047,
+    "pinch_to_piece_m": 0.15711634519663537,
+    "pinch_to_command_m": 0.1201068910501102,
+    "grasp": false
+   },
+   {
+    "step": 38,
+    "phase": "descend",
+    "reward": -0.4869023862355765,
+    "pinch_to_piece_m": 0.15222569401854155,
+    "pinch_to_command_m": 0.11522467950211931,
+    "grasp": false
+   },
+   {
+    "step": 39,
+    "phase": "descend",
+    "reward": -0.48544749249545166,
+    "pinch_to_piece_m": 0.14737604821812536,
+    "pinch_to_command_m": 0.11036419044690107,
+    "grasp": false
+   },
+   {
+    "step": 40,
+    "phase": "descend",
+    "reward": -0.48399909198404045,
+    "pinch_to_piece_m": 0.14254804651342132,
+    "pinch_to_command_m": 0.10550997831861866,
+    "grasp": false
+   },
+   {
+    "step": 41,
+    "phase": "descend",
+    "reward": -0.4825551938306819,
+    "pinch_to_piece_m": 0.137735052668893,
+    "pinch_to_command_m": 0.09881785165876986,
+    "grasp": false
+   },
+   {
+    "step": 42,
+    "phase": "descend",
+    "reward": -0.4811123814609175,
+    "pinch_to_piece_m": 0.13292567810301154,
+    "pinch_to_command_m": 0.09386205251362298,
+    "grasp": false
+   },
+   {
+    "step": 43,
+    "phase": "descend",
+    "reward": -0.4796695505734996,
+    "pinch_to_piece_m": 0.12811624181161857,
+    "pinch_to_command_m": 0.08888240179414596,
+    "grasp": false
+   },
+   {
+    "step": 44,
+    "phase": "descend",
+    "reward": -0.4782272435759526,
+    "pinch_to_piece_m": 0.12330855181979512,
+    "pinch_to_command_m": 0.08190120805998756,
+    "grasp": false
+   },
+   {
+    "step": 45,
+    "phase": "descend",
+    "reward": -0.4767857667638296,
+    "pinch_to_piece_m": 0.1185036291127185,
+    "pinch_to_command_m": 0.07680863986074403,
+    "grasp": false
+   },
+   {
+    "step": 46,
+    "phase": "descend",
+    "reward": -0.4753460651954056,
+    "pinch_to_piece_m": 0.11370462388463867,
+    "pinch_to_command_m": 0.07172380369106021,
+    "grasp": false
+   },
+   {
+    "step": 47,
+    "phase": "close",
+    "reward": -0.4739117162114546,
+    "pinch_to_piece_m": 0.10892346060480194,
+    "pinch_to_command_m": 0.06667252367602232,
+    "grasp": false
+   },
+   {
+    "step": 48,
+    "phase": "close",
+    "reward": -0.4724755875312461,
+    "pinch_to_piece_m": 0.10413636500410683,
+    "pinch_to_command_m": 0.0616450441100927,
+    "grasp": false
+   },
+   {
+    "step": 49,
+    "phase": "close",
+    "reward": -0.4710435264787236,
+    "pinch_to_piece_m": 0.09936282816236527,
+    "pinch_to_command_m": 0.05666402628783846,
+    "grasp": false
+   },
+   {
+    "step": 50,
+    "phase": "close",
+    "reward": -0.4696154575290619,
+    "pinch_to_piece_m": 0.09460259833015969,
+    "pinch_to_command_m": 0.051731467428971105,
+    "grasp": false
+   },
+   {
+    "step": 51,
+    "phase": "close",
+    "reward": -0.46819154289634524,
+    "pinch_to_piece_m": 0.08985621622110398,
+    "pinch_to_command_m": 0.04684653897846456,
+    "grasp": false
+   },
+   {
+    "step": 52,
+    "phase": "close",
+    "reward": -0.4667725993263615,
+    "pinch_to_piece_m": 0.08512640432115831,
+    "pinch_to_command_m": 0.04200848667934142,
+    "grasp": false
+   },
+   {
+    "step": 53,
+    "phase": "close",
+    "reward": -0.4653582114767894,
+    "pinch_to_piece_m": 0.08041187749699245,
+    "pinch_to_command_m": 0.03721190003480094,
+    "grasp": false
+   },
+   {
+    "step": 54,
+    "phase": "close",
+    "reward": -0.4639492864486488,
+    "pinch_to_piece_m": 0.07571536139544924,
+    "pinch_to_command_m": 0.03245454186117557,
+    "grasp": false
+   },
+   {
+    "step": 55,
+    "phase": "lift",
+    "reward": -514.4636939857281,
+    "pinch_to_piece_m": 0.07486445833476661,
+    "pinch_to_command_m": 0.04693973232510276,
+    "grasp": false
+   }
+  ]
+ },
+ {
+  "start": "a8",
+  "target": "e5",
+  "reference": {
+   "outcome": "success",
+   "success": true,
+   "steps": 198
+  },
+  "is_success": false,
+  "grasp_success_ever": false,
+  "final_distance_m": 0.3900427222251892,
+  "closest_pinch_to_piece_m": 0.025315628953295068,
+  "steps": 78,
+  "commands_available": 198,
+  "terminated": true,
+  "truncated": false,
+  "terminated_reason": "bad_contact",
+  "phase_at_end": "close",
+  "ik_rejects": 0,
+  "board_contact_force_n": null,
+  "terminal_contacts": [
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ]
+  ],
+  "rows": [
+   {
+    "step": 0,
+    "phase": "approach",
+    "reward": -0.5486896710426145,
+    "pinch_to_piece_m": 0.5289656178257639,
+    "pinch_to_command_m": 0.4407941969367445,
+    "grasp": false
+   },
+   {
+    "step": 1,
+    "phase": "approach",
+    "reward": -0.5452738088764155,
+    "pinch_to_piece_m": 0.5175794106051009,
+    "pinch_to_command_m": 0.4292453432774114,
+    "grasp": false
+   },
+   {
+    "step": 2,
+    "phase": "approach",
+    "reward": -0.541213191440341,
+    "pinch_to_piece_m": 0.504044019151519,
+    "pinch_to_command_m": 0.41553565389597963,
+    "grasp": false
+   },
+   {
+    "step": 3,
+    "phase": "approach",
+    "reward": -0.5371823444043349,
+    "pinch_to_piece_m": 0.4906078623648319,
+    "pinch_to_command_m": 0.40196447655758344,
+    "grasp": false
+   },
+   {
+    "step": 4,
+    "phase": "approach",
+    "reward": -0.5332670453663249,
+    "pinch_to_piece_m": 0.4775568655714654,
+    "pinch_to_command_m": 0.38878765437517426,
+    "grasp": false
+   },
+   {
+    "step": 5,
+    "phase": "approach",
+    "reward": -0.5294554559025437,
+    "pinch_to_piece_m": 0.4648515673588617,
+    "pinch_to_command_m": 0.37596348054111045,
+    "grasp": false
+   },
+   {
+    "step": 6,
+    "phase": "approach",
+    "reward": -0.5257245357839591,
+    "pinch_to_piece_m": 0.4524151669635792,
+    "pinch_to_command_m": 0.3634131107582438,
+    "grasp": false
+   },
+   {
+    "step": 7,
+    "phase": "approach",
+    "reward": -0.5220427445428274,
+    "pinch_to_piece_m": 0.4401425294931404,
+    "pinch_to_command_m": 0.3510289194427767,
+    "grasp": false
+   },
+   {
+    "step": 8,
+    "phase": "approach",
+    "reward": -0.5183703927650101,
+    "pinch_to_piece_m": 0.42790135690041614,
+    "pinch_to_command_m": 0.3386767746027776,
+    "grasp": false
+   },
+   {
+    "step": 9,
+    "phase": "approach",
+    "reward": -0.5146590439210459,
+    "pinch_to_piece_m": 0.41553019408720193,
+    "pinch_to_command_m": 0.32619371100609945,
+    "grasp": false
+   },
+   {
+    "step": 10,
+    "phase": "approach",
+    "reward": -0.5108488978392167,
+    "pinch_to_piece_m": 0.40282970714777155,
+    "pinch_to_command_m": 0.3133802709528146,
+    "grasp": false
+   },
+   {
+    "step": 11,
+    "phase": "approach",
+    "reward": -0.5068639109339199,
+    "pinch_to_piece_m": 0.3895464174634488,
+    "pinch_to_command_m": 0.29998535713964275,
+    "grasp": false
+   },
+   {
+    "step": 12,
+    "phase": "approach",
+    "reward": -0.5027117639121501,
+    "pinch_to_piece_m": 0.375705927390883,
+    "pinch_to_command_m": 0.28606597586337,
+    "grasp": false
+   },
+   {
+    "step": 13,
+    "phase": "approach",
+    "reward": -0.4986269309780961,
+    "pinch_to_piece_m": 0.36208981761070264,
+    "pinch_to_command_m": 0.27248209998208983,
+    "grasp": false
+   },
+   {
+    "step": 14,
+    "phase": "approach",
+    "reward": -0.4946501966569347,
+    "pinch_to_piece_m": 0.3488340365401648,
+    "pinch_to_command_m": 0.2593561464576604,
+    "grasp": false
+   },
+   {
+    "step": 15,
+    "phase": "approach",
+    "reward": -0.4907801159952392,
+    "pinch_to_piece_m": 0.33593376766784644,
+    "pinch_to_command_m": 0.24669901968349522,
+    "grasp": false
+   },
+   {
+    "step": 16,
+    "phase": "approach",
+    "reward": -0.4869490013093108,
+    "pinch_to_piece_m": 0.3231633853814185,
+    "pinch_to_command_m": 0.23430236624589207,
+    "grasp": false
+   },
+   {
+    "step": 17,
+    "phase": "approach",
+    "reward": -0.4830416135539418,
+    "pinch_to_piece_m": 0.3101387595301885,
+    "pinch_to_command_m": 0.2218041156607862,
+    "grasp": false
+   },
+   {
+    "step": 18,
+    "phase": "approach",
+    "reward": -0.47894809442192876,
+    "pinch_to_piece_m": 0.29649369575681167,
+    "pinch_to_command_m": 0.20881942265137074,
+    "grasp": false
+   },
+   {
+    "step": 19,
+    "phase": "approach",
+    "reward": -0.4745747218916758,
+    "pinch_to_piece_m": 0.28191578732263517,
+    "pinch_to_command_m": 0.19500553637167573,
+    "grasp": false
+   },
+   {
+    "step": 20,
+    "phase": "approach",
+    "reward": -0.4698789736164801,
+    "pinch_to_piece_m": 0.266263293071983,
+    "pinch_to_command_m": 0.18020765901033978,
+    "grasp": false
+   },
+   {
+    "step": 21,
+    "phase": "approach",
+    "reward": -0.46489630614077126,
+    "pinch_to_piece_m": 0.24965440148628668,
+    "pinch_to_command_m": 0.1645734347911475,
+    "grasp": false
+   },
+   {
+    "step": 22,
+    "phase": "approach",
+    "reward": -0.4597284417351971,
+    "pinch_to_piece_m": 0.23242818680103947,
+    "pinch_to_command_m": 0.14852439175910914,
+    "grasp": false
+   },
+   {
+    "step": 23,
+    "phase": "approach",
+    "reward": -0.4545000426432287,
+    "pinch_to_piece_m": 0.2150001898278114,
+    "pinch_to_command_m": 0.13260692137064695,
+    "grasp": false
+   },
+   {
+    "step": 24,
+    "phase": "descend",
+    "reward": -0.44933822673033247,
+    "pinch_to_piece_m": 0.197794136784824,
+    "pinch_to_command_m": 0.16785486278164535,
+    "grasp": false
+   },
+   {
+    "step": 25,
+    "phase": "descend",
+    "reward": -0.4443093908414964,
+    "pinch_to_piece_m": 0.18103135048870378,
+    "pinch_to_command_m": 0.15108444185383982,
+    "grasp": false
+   },
+   {
+    "step": 26,
+    "phase": "descend",
+    "reward": -0.43944032826855894,
+    "pinch_to_piece_m": 0.1648011419122456,
+    "pinch_to_command_m": 0.1348651762797858,
+    "grasp": false
+   },
+   {
+    "step": 27,
+    "phase": "descend",
+    "reward": -0.4347337005501311,
+    "pinch_to_piece_m": 0.14911238285081957,
+    "pinch_to_command_m": 0.11920580121909169,
+    "grasp": false
+   },
+   {
+    "step": 28,
+    "phase": "descend",
+    "reward": -0.4301784076170723,
+    "pinch_to_piece_m": 0.13392807307395685,
+    "pinch_to_command_m": 0.10406618730452172,
+    "grasp": false
+   },
+   {
+    "step": 29,
+    "phase": "descend",
+    "reward": -0.4258282592345776,
+    "pinch_to_piece_m": 0.11942757846564125,
+    "pinch_to_command_m": 0.08964281135097188,
+    "grasp": false
+   },
+   {
+    "step": 30,
+    "phase": "descend",
+    "reward": -0.4217709633868245,
+    "pinch_to_piece_m": 0.10590325897313094,
+    "pinch_to_command_m": 0.0762516262379544,
+    "grasp": false
+   },
+   {
+    "step": 31,
+    "phase": "descend",
+    "reward": -0.4179921663461845,
+    "pinch_to_piece_m": 0.09330726883766426,
+    "pinch_to_command_m": 0.06383433429913096,
+    "grasp": false
+   },
+   {
+    "step": 32,
+    "phase": "descend",
+    "reward": -0.4144591854834652,
+    "pinch_to_piece_m": 0.08153066596193323,
+    "pinch_to_command_m": 0.05229701389267907,
+    "grasp": false
+   },
+   {
+    "step": 33,
+    "phase": "descend",
+    "reward": -0.41114335847823746,
+    "pinch_to_piece_m": 0.07047790927784064,
+    "pinch_to_command_m": 0.04158234851187399,
+    "grasp": false
+   },
+   {
+    "step": 34,
+    "phase": "descend",
+    "reward": -0.40802115370309233,
+    "pinch_to_piece_m": 0.06007056002735701,
+    "pinch_to_command_m": 0.031702870874142426,
+    "grasp": false
+   },
+   {
+    "step": 35,
+    "phase": "descend",
+    "reward": -0.4051163722770303,
+    "pinch_to_piece_m": 0.050387955273816704,
+    "pinch_to_command_m": 0.022914981756013076,
+    "grasp": false
+   },
+   {
+    "step": 36,
+    "phase": "descend",
+    "reward": -0.4025067059980741,
+    "pinch_to_piece_m": 0.041689067677296125,
+    "pinch_to_command_m": 0.015817625746814425,
+    "grasp": false
+   },
+   {
+    "step": 37,
+    "phase": "descend",
+    "reward": -0.40026524130113367,
+    "pinch_to_piece_m": 0.0342175186874947,
+    "pinch_to_command_m": 0.011459729078984609,
+    "grasp": false
+   },
+   {
+    "step": 38,
+    "phase": "descend",
+    "reward": -0.39852352422397824,
+    "pinch_to_piece_m": 0.028411795096976614,
+    "pinch_to_command_m": 0.010816457887668735,
+    "grasp": false
+   },
+   {
+    "step": 39,
+    "phase": "descend",
+    "reward": -0.39759467438087376,
+    "pinch_to_piece_m": 0.025315628953295068,
+    "pinch_to_command_m": 0.011972524559874576,
+    "grasp": false
+   },
+   {
+    "step": 40,
+    "phase": "descend",
+    "reward": -0.3976236496836644,
+    "pinch_to_piece_m": 0.02541221329593049,
+    "pinch_to_command_m": 0.012487255394923657,
+    "grasp": false
+   },
+   {
+    "step": 41,
+    "phase": "descend",
+    "reward": -0.3983927471842481,
+    "pinch_to_piece_m": 0.02797587163120955,
+    "pinch_to_command_m": 0.011489917644877213,
+    "grasp": false
+   },
+   {
+    "step": 42,
+    "phase": "descend",
+    "reward": -0.39956545617740746,
+    "pinch_to_piece_m": 0.031884901608407276,
+    "pinch_to_command_m": 0.009304168515206575,
+    "grasp": false
+   },
+   {
+    "step": 43,
+    "phase": "descend",
+    "reward": -0.4008577959015484,
+    "pinch_to_piece_m": 0.036192700688877096,
+    "pinch_to_command_m": 0.006997854485155059,
+    "grasp": false
+   },
+   {
+    "step": 44,
+    "phase": "descend",
+    "reward": -0.4020397180319032,
+    "pinch_to_piece_m": 0.04013244112339312,
+    "pinch_to_command_m": 0.006050349406082707,
+    "grasp": false
+   },
+   {
+    "step": 45,
+    "phase": "descend",
+    "reward": -0.40292812957972546,
+    "pinch_to_piece_m": 0.04309381294946744,
+    "pinch_to_command_m": 0.006705900469821281,
+    "grasp": false
+   },
+   {
+    "step": 46,
+    "phase": "descend",
+    "reward": -0.4034045163185455,
+    "pinch_to_piece_m": 0.04468176874553422,
+    "pinch_to_command_m": 0.007520719160883035,
+    "grasp": false
+   },
+   {
+    "step": 47,
+    "phase": "descend",
+    "reward": -0.40343148208434376,
+    "pinch_to_piece_m": 0.04477165463152843,
+    "pinch_to_command_m": 0.00753687168278705,
+    "grasp": false
+   },
+   {
+    "step": 48,
+    "phase": "descend",
+    "reward": -0.4030540277513296,
+    "pinch_to_piece_m": 0.0435134735214811,
+    "pinch_to_command_m": 0.006607683099268901,
+    "grasp": false
+   },
+   {
+    "step": 49,
+    "phase": "descend",
+    "reward": -0.40355743569981806,
+    "pinch_to_piece_m": 0.045191500016442766,
+    "pinch_to_command_m": 0.023359118901186346,
+    "grasp": false
+   },
+   {
+    "step": 50,
+    "phase": "descend",
+    "reward": -0.40507676128919234,
+    "pinch_to_piece_m": 0.05025591864769021,
+    "pinch_to_command_m": 0.01733335189347458,
+    "grasp": false
+   },
+   {
+    "step": 51,
+    "phase": "descend",
+    "reward": -0.4069561955311217,
+    "pinch_to_piece_m": 0.05652069945412155,
+    "pinch_to_command_m": 0.010255062376260076,
+    "grasp": false
+   },
+   {
+    "step": 52,
+    "phase": "descend",
+    "reward": -0.40902086704942486,
+    "pinch_to_piece_m": 0.06340293784846528,
+    "pinch_to_command_m": 0.0028065724159029018,
+    "grasp": false
+   },
+   {
+    "step": 53,
+    "phase": "descend",
+    "reward": -0.410935495469024,
+    "pinch_to_piece_m": 0.06978503258046252,
+    "pinch_to_command_m": 0.004179353921105473,
+    "grasp": false
+   },
+   {
+    "step": 54,
+    "phase": "descend",
+    "reward": -0.41235626447869,
+    "pinch_to_piece_m": 0.0745209292793492,
+    "pinch_to_command_m": 0.009159180903082938,
+    "grasp": false
+   },
+   {
+    "step": 55,
+    "phase": "descend",
+    "reward": -0.41307452466693095,
+    "pinch_to_piece_m": 0.07691512990681909,
+    "pinch_to_command_m": 0.011704505908427467,
+    "grasp": false
+   },
+   {
+    "step": 56,
+    "phase": "descend",
+    "reward": -0.41305089058405625,
+    "pinch_to_piece_m": 0.07683634963056991,
+    "pinch_to_command_m": 0.011690096801814725,
+    "grasp": false
+   },
+   {
+    "step": 57,
+    "phase": "descend",
+    "reward": -0.41239687969624483,
+    "pinch_to_piece_m": 0.07465631333786533,
+    "pinch_to_command_m": 0.009497651506910643,
+    "grasp": false
+   },
+   {
+    "step": 58,
+    "phase": "descend",
+    "reward": -0.4113304738651226,
+    "pinch_to_piece_m": 0.07110162723412457,
+    "pinch_to_command_m": 0.005861394855478955,
+    "grasp": false
+   },
+   {
+    "step": 59,
+    "phase": "descend",
+    "reward": -0.41029384286676,
+    "pinch_to_piece_m": 0.06764619057291582,
+    "pinch_to_command_m": 0.002700432685711831,
+    "grasp": false
+   },
+   {
+    "step": 60,
+    "phase": "descend",
+    "reward": -0.4095553245947345,
+    "pinch_to_piece_m": 0.06518446299949743,
+    "pinch_to_command_m": 0.0048554017156076275,
+    "grasp": false
+   },
+   {
+    "step": 61,
+    "phase": "descend",
+    "reward": -0.4092149795517151,
+    "pinch_to_piece_m": 0.06404997952276609,
+    "pinch_to_command_m": 0.006147537829218095,
+    "grasp": false
+   },
+   {
+    "step": 62,
+    "phase": "descend",
+    "reward": -0.4092743924918393,
+    "pinch_to_piece_m": 0.06424802265651344,
+    "pinch_to_command_m": 0.006174764364440949,
+    "grasp": false
+   },
+   {
+    "step": 63,
+    "phase": "descend",
+    "reward": -0.4096584604340052,
+    "pinch_to_piece_m": 0.06552824913039988,
+    "pinch_to_command_m": 0.0050892227821571,
+    "grasp": false
+   },
+   {
+    "step": 64,
+    "phase": "descend",
+    "reward": -0.4102440502017385,
+    "pinch_to_piece_m": 0.06748021502284407,
+    "pinch_to_command_m": 0.003306626941795026,
+    "grasp": false
+   },
+   {
+    "step": 65,
+    "phase": "descend",
+    "reward": -0.4108901674363958,
+    "pinch_to_piece_m": 0.06963393913836835,
+    "pinch_to_command_m": 0.0015670428251161285,
+    "grasp": false
+   },
+   {
+    "step": 66,
+    "phase": "descend",
+    "reward": -0.41146502407804136,
+    "pinch_to_piece_m": 0.07155012794385367,
+    "pinch_to_command_m": 0.0017141844898795864,
+    "grasp": false
+   },
+   {
+    "step": 67,
+    "phase": "descend",
+    "reward": -0.4118687872333673,
+    "pinch_to_piece_m": 0.07289600512827339,
+    "pinch_to_command_m": 0.0028754329551092567,
+    "grasp": false
+   },
+   {
+    "step": 68,
+    "phase": "descend",
+    "reward": -0.4120479739470419,
+    "pinch_to_piece_m": 0.07349329417385553,
+    "pinch_to_command_m": 0.0035166137862744505,
+    "grasp": false
+   },
+   {
+    "step": 69,
+    "phase": "close",
+    "reward": -0.41201034222232435,
+    "pinch_to_piece_m": 0.07336785509146371,
+    "pinch_to_command_m": 0.003481114120197965,
+    "grasp": false
+   },
+   {
+    "step": 70,
+    "phase": "close",
+    "reward": -0.4117698374943961,
+    "pinch_to_piece_m": 0.07256617266503615,
+    "pinch_to_command_m": 0.0027756426125213987,
+    "grasp": false
+   },
+   {
+    "step": 71,
+    "phase": "close",
+    "reward": -0.4114163224296109,
+    "pinch_to_piece_m": 0.07138778911575222,
+    "pinch_to_command_m": 0.0017129148122963648,
+    "grasp": false
+   },
+   {
+    "step": 72,
+    "phase": "close",
+    "reward": -0.4110358867354543,
+    "pinch_to_piece_m": 0.07011967013523031,
+    "pinch_to_command_m": 0.0007898861488662946,
+    "grasp": false
+   },
+   {
+    "step": 73,
+    "phase": "close",
+    "reward": -0.4107155980561901,
+    "pinch_to_piece_m": 0.06905204120434963,
+    "pinch_to_command_m": 0.0011282331868389195,
+    "grasp": false
+   },
+   {
+    "step": 74,
+    "phase": "close",
+    "reward": -0.4105050877105436,
+    "pinch_to_piece_m": 0.06833891582861257,
+    "pinch_to_command_m": 0.0016686780048399343,
+    "grasp": false
+   },
+   {
+    "step": 75,
+    "phase": "close",
+    "reward": -0.4105184944334077,
+    "pinch_to_piece_m": 0.06831058921497637,
+    "pinch_to_command_m": 0.001432413702533615,
+    "grasp": false
+   },
+   {
+    "step": 76,
+    "phase": "close",
+    "reward": -0.41058271269281105,
+    "pinch_to_piece_m": 0.06845272714162522,
+    "pinch_to_command_m": 0.0010460313220065915,
+    "grasp": false
+   },
+   {
+    "step": 77,
+    "phase": "close",
+    "reward": -514.410814262051,
+    "pinch_to_piece_m": 0.0692384660857598,
+    "pinch_to_command_m": 0.0008842799916618642,
+    "grasp": false
+   }
+  ]
+ },
+ {
+  "start": "h1",
+  "target": "e5",
+  "reference": {
+   "outcome": "success",
+   "success": true,
+   "steps": 133
+  },
+  "is_success": false,
+  "grasp_success_ever": false,
+  "final_distance_m": 0.39000004529953003,
+  "closest_pinch_to_piece_m": 0.21191111561666315,
+  "steps": 56,
+  "commands_available": 133,
+  "terminated": true,
+  "truncated": false,
+  "terminated_reason": "bad_contact",
+  "phase_at_end": "lift",
+  "ik_rejects": 0,
+  "board_contact_force_n": null,
+  "terminal_contacts": [
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ]
+  ],
+  "rows": [
+   {
+    "step": 0,
+    "phase": "approach",
+    "reward": -0.5781501131792298,
+    "pinch_to_piece_m": 0.6271668929323327,
+    "pinch_to_command_m": 0.5551003589736998,
+    "grasp": false
+   },
+   {
+    "step": 1,
+    "phase": "approach",
+    "reward": -0.5752380429673064,
+    "pinch_to_piece_m": 0.6174599922259213,
+    "pinch_to_command_m": 0.5455577865467065,
+    "grasp": false
+   },
+   {
+    "step": 2,
+    "phase": "approach",
+    "reward": -0.5723530342834738,
+    "pinch_to_piece_m": 0.607843296613146,
+    "pinch_to_command_m": 0.5360709590830872,
+    "grasp": false
+   },
+   {
+    "step": 3,
+    "phase": "approach",
+    "reward": -0.5695158475881992,
+    "pinch_to_piece_m": 0.598386007628897,
+    "pinch_to_command_m": 0.5267248944544521,
+    "grasp": false
+   },
+   {
+    "step": 4,
+    "phase": "approach",
+    "reward": -0.5667162114283514,
+    "pinch_to_piece_m": 0.5890538870960711,
+    "pinch_to_command_m": 0.5174903484885798,
+    "grasp": false
+   },
+   {
+    "step": 5,
+    "phase": "approach",
+    "reward": -0.5639430664099636,
+    "pinch_to_piece_m": 0.5798100703681119,
+    "pinch_to_command_m": 0.5083343019439028,
+    "grasp": false
+   },
+   {
+    "step": 6,
+    "phase": "approach",
+    "reward": -0.5611848368965616,
+    "pinch_to_piece_m": 0.5706159719901053,
+    "pinch_to_command_m": 0.4992216418340445,
+    "grasp": false
+   },
+   {
+    "step": 7,
+    "phase": "approach",
+    "reward": -0.5584300986096719,
+    "pinch_to_piece_m": 0.5614335110338062,
+    "pinch_to_command_m": 0.4901169583290987,
+    "grasp": false
+   },
+   {
+    "step": 8,
+    "phase": "approach",
+    "reward": -0.5556677740054936,
+    "pinch_to_piece_m": 0.5522257623532121,
+    "pinch_to_command_m": 0.48098596514114716,
+    "grasp": false
+   },
+   {
+    "step": 9,
+    "phase": "approach",
+    "reward": -0.5528876304728765,
+    "pinch_to_piece_m": 0.5429586172444882,
+    "pinch_to_command_m": 0.4717966813227594,
+    "grasp": false
+   },
+   {
+    "step": 10,
+    "phase": "approach",
+    "reward": -0.5500804425516774,
+    "pinch_to_piece_m": 0.5336013241738247,
+    "pinch_to_command_m": 0.4625204610916751,
+    "grasp": false
+   },
+   {
+    "step": 11,
+    "phase": "approach",
+    "reward": -0.5472382443223307,
+    "pinch_to_piece_m": 0.5241273300760022,
+    "pinch_to_command_m": 0.45313291290645213,
+    "grasp": false
+   },
+   {
+    "step": 12,
+    "phase": "approach",
+    "reward": -0.5443546597393387,
+    "pinch_to_piece_m": 0.5145153814660289,
+    "pinch_to_command_m": 0.44361470748557796,
+    "grasp": false
+   },
+   {
+    "step": 13,
+    "phase": "approach",
+    "reward": -0.5414249660123696,
+    "pinch_to_piece_m": 0.504749735709465,
+    "pinch_to_command_m": 0.4339522394348529,
+    "grasp": false
+   },
+   {
+    "step": 14,
+    "phase": "approach",
+    "reward": -0.5384462758566116,
+    "pinch_to_piece_m": 0.49482076852360546,
+    "pinch_to_command_m": 0.4241380833554802,
+    "grasp": false
+   },
+   {
+    "step": 15,
+    "phase": "approach",
+    "reward": -0.5354175800355127,
+    "pinch_to_piece_m": 0.48472511578660865,
+    "pinch_to_command_m": 0.41417117830136607,
+    "grasp": false
+   },
+   {
+    "step": 16,
+    "phase": "approach",
+    "reward": -0.5323396331579644,
+    "pinch_to_piece_m": 0.4744652928614478,
+    "pinch_to_command_m": 0.4040566880798282,
+    "grasp": false
+   },
+   {
+    "step": 17,
+    "phase": "approach",
+    "reward": -0.5292149275162585,
+    "pinch_to_piece_m": 0.46404960738909484,
+    "pinch_to_command_m": 0.39380551843937883,
+    "grasp": false
+   },
+   {
+    "step": 18,
+    "phase": "approach",
+    "reward": -0.5260472720267774,
+    "pinch_to_piece_m": 0.45349075575749115,
+    "pinch_to_command_m": 0.3834335188822922,
+    "grasp": false
+   },
+   {
+    "step": 19,
+    "phase": "approach",
+    "reward": -0.5229759534406848,
+    "pinch_to_piece_m": 0.44325302713718284,
+    "pinch_to_command_m": 0.37340692836602674,
+    "grasp": false
+   },
+   {
+    "step": 20,
+    "phase": "approach",
+    "reward": -0.5200095055739109,
+    "pinch_to_piece_m": 0.43336486758126974,
+    "pinch_to_command_m": 0.36375085145811376,
+    "grasp": false
+   },
+   {
+    "step": 21,
+    "phase": "approach",
+    "reward": -0.5171462588395727,
+    "pinch_to_piece_m": 0.423820711800142,
+    "pinch_to_command_m": 0.35445821010527956,
+    "grasp": false
+   },
+   {
+    "step": 22,
+    "phase": "approach",
+    "reward": -0.5143836375018569,
+    "pinch_to_piece_m": 0.4146119740077563,
+    "pinch_to_command_m": 0.34551883970097563,
+    "grasp": false
+   },
+   {
+    "step": 23,
+    "phase": "descend",
+    "reward": -0.5117183606504141,
+    "pinch_to_piece_m": 0.4057277178362801,
+    "pinch_to_command_m": 0.3816569189464454,
+    "grasp": false
+   },
+   {
+    "step": 24,
+    "phase": "descend",
+    "reward": -0.5091466708961903,
+    "pinch_to_piece_m": 0.39715541865553416,
+    "pinch_to_command_m": 0.3731049473316272,
+    "grasp": false
+   },
+   {
+    "step": 25,
+    "phase": "descend",
+    "reward": -0.5066645680874758,
+    "pinch_to_piece_m": 0.388881742626486,
+    "pinch_to_command_m": 0.36485458194676007,
+    "grasp": false
+   },
+   {
+    "step": 26,
+    "phase": "descend",
+    "reward": -0.504267897667733,
+    "pinch_to_piece_m": 0.38089284122734296,
+    "pinch_to_command_m": 0.35689176538455136,
+    "grasp": false
+   },
+   {
+    "step": 27,
+    "phase": "descend",
+    "reward": -0.5019524558733495,
+    "pinch_to_piece_m": 0.3731747019127313,
+    "pinch_to_command_m": 0.3492023574548961,
+    "grasp": false
+   },
+   {
+    "step": 28,
+    "phase": "descend",
+    "reward": -0.4997141291376239,
+    "pinch_to_piece_m": 0.3657136127936464,
+    "pinch_to_command_m": 0.34177239670726245,
+    "grasp": false
+   },
+   {
+    "step": 29,
+    "phase": "descend",
+    "reward": -0.49754883197685973,
+    "pinch_to_piece_m": 0.35849595559109904,
+    "pinch_to_command_m": 0.3345882914898094,
+    "grasp": false
+   },
+   {
+    "step": 30,
+    "phase": "descend",
+    "reward": -0.49545265633026536,
+    "pinch_to_piece_m": 0.3515087034357844,
+    "pinch_to_command_m": 0.3276369544534204,
+    "grasp": false
+   },
+   {
+    "step": 31,
+    "phase": "descend",
+    "reward": -0.49342189912667805,
+    "pinch_to_piece_m": 0.34473951275716014,
+    "pinch_to_command_m": 0.32090589235026645,
+    "grasp": false
+   },
+   {
+    "step": 32,
+    "phase": "descend",
+    "reward": -0.49145297131928933,
+    "pinch_to_piece_m": 0.33817642006586435,
+    "pinch_to_command_m": 0.314383261061119,
+    "grasp": false
+   },
+   {
+    "step": 33,
+    "phase": "descend",
+    "reward": -0.4895425150822011,
+    "pinch_to_piece_m": 0.3318082326089035,
+    "pinch_to_command_m": 0.3080578940605195,
+    "grasp": false
+   },
+   {
+    "step": 34,
+    "phase": "descend",
+    "reward": -0.4876874067404446,
+    "pinch_to_piece_m": 0.3256245381363818,
+    "pinch_to_command_m": 0.3019193110143858,
+    "grasp": false
+   },
+   {
+    "step": 35,
+    "phase": "descend",
+    "reward": -0.48588463552289696,
+    "pinch_to_piece_m": 0.31961530074455646,
+    "pinch_to_command_m": 0.29595771190198034,
+    "grasp": false
+   },
+   {
+    "step": 36,
+    "phase": "descend",
+    "reward": -0.4841314788091532,
+    "pinch_to_piece_m": 0.3137714450320772,
+    "pinch_to_command_m": 0.2901639609542899,
+    "grasp": false
+   },
+   {
+    "step": 37,
+    "phase": "descend",
+    "reward": -0.4824253038856177,
+    "pinch_to_piece_m": 0.308084195286959,
+    "pinch_to_command_m": 0.28452956378428845,
+    "grasp": false
+   },
+   {
+    "step": 38,
+    "phase": "descend",
+    "reward": -0.48076373951174434,
+    "pinch_to_piece_m": 0.30254564737404765,
+    "pinch_to_command_m": 0.27904664033217347,
+    "grasp": false
+   },
+   {
+    "step": 39,
+    "phase": "descend",
+    "reward": -0.47914454758312786,
+    "pinch_to_piece_m": 0.29714834094532616,
+    "pinch_to_command_m": 0.27370789563702363,
+    "grasp": false
+   },
+   {
+    "step": 40,
+    "phase": "descend",
+    "reward": -0.477565614395004,
+    "pinch_to_piece_m": 0.2918852303182466,
+    "pinch_to_command_m": 0.2685065899553976,
+    "grasp": false
+   },
+   {
+    "step": 41,
+    "phase": "descend",
+    "reward": -0.47602504905942716,
+    "pinch_to_piece_m": 0.28675001253299043,
+    "pinch_to_command_m": 0.2661878027226209,
+    "grasp": false
+   },
+   {
+    "step": 42,
+    "phase": "descend",
+    "reward": -0.47450217779785064,
+    "pinch_to_piece_m": 0.28167377499440216,
+    "pinch_to_command_m": 0.2612311575779964,
+    "grasp": false
+   },
+   {
+    "step": 43,
+    "phase": "descend",
+    "reward": -0.4729682090941582,
+    "pinch_to_piece_m": 0.27656054598209395,
+    "pinch_to_command_m": 0.25624464783754086,
+    "grasp": false
+   },
+   {
+    "step": 44,
+    "phase": "descend",
+    "reward": -0.47137889895098634,
+    "pinch_to_piece_m": 0.27126284550485436,
+    "pinch_to_command_m": 0.2522746891136416,
+    "grasp": false
+   },
+   {
+    "step": 45,
+    "phase": "descend",
+    "reward": -0.46969870238962297,
+    "pinch_to_piece_m": 0.2656621903003099,
+    "pinch_to_command_m": 0.24685488589046073,
+    "grasp": false
+   },
+   {
+    "step": 46,
+    "phase": "descend",
+    "reward": -0.4678882701374133,
+    "pinch_to_piece_m": 0.2596274161262775,
+    "pinch_to_command_m": 0.241014090888638,
+    "grasp": false
+   },
+   {
+    "step": 47,
+    "phase": "close",
+    "reward": -0.4659020928809513,
+    "pinch_to_piece_m": 0.2530068252714043,
+    "pinch_to_command_m": 0.23460157700797182,
+    "grasp": false
+   },
+   {
+    "step": 48,
+    "phase": "close",
+    "reward": -0.4640308171725078,
+    "pinch_to_piece_m": 0.24676923957659277,
+    "pinch_to_command_m": 0.2285765694055275,
+    "grasp": false
+   },
+   {
+    "step": 49,
+    "phase": "close",
+    "reward": -0.46228532731937244,
+    "pinch_to_piece_m": 0.24095094006614137,
+    "pinch_to_command_m": 0.22296334525861888,
+    "grasp": false
+   },
+   {
+    "step": 50,
+    "phase": "close",
+    "reward": -0.46064943467231007,
+    "pinch_to_piece_m": 0.23549796457593353,
+    "pinch_to_command_m": 0.21770689323654424,
+    "grasp": false
+   },
+   {
+    "step": 51,
+    "phase": "close",
+    "reward": -0.45910680653837327,
+    "pinch_to_piece_m": 0.2303558707961441,
+    "pinch_to_command_m": 0.21275249241694422,
+    "grasp": false
+   },
+   {
+    "step": 52,
+    "phase": "close",
+    "reward": -0.45764210841416064,
+    "pinch_to_piece_m": 0.22547354371543532,
+    "pinch_to_command_m": 0.2080491886234227,
+    "grasp": false
+   },
+   {
+    "step": 53,
+    "phase": "close",
+    "reward": -0.45624153840225107,
+    "pinch_to_piece_m": 0.22080497700907015,
+    "pinch_to_command_m": 0.20355278355710224,
+    "grasp": false
+   },
+   {
+    "step": 54,
+    "phase": "close",
+    "reward": -0.4548928711654454,
+    "pinch_to_piece_m": 0.21630941955305122,
+    "pinch_to_command_m": 0.19922386003775625,
+    "grasp": false
+   },
+   {
+    "step": 55,
+    "phase": "lift",
+    "reward": -514.4535733799845,
+    "pinch_to_piece_m": 0.21191111561666315,
+    "pinch_to_command_m": 0.16258934437576422,
+    "grasp": false
+   }
+  ]
+ },
+ {
+  "start": "h8",
+  "target": "e5",
+  "reference": {
+   "outcome": "success",
+   "success": true,
+   "steps": 199
+  },
+  "is_success": false,
+  "grasp_success_ever": false,
+  "final_distance_m": 0.3728454113006592,
+  "closest_pinch_to_piece_m": 0.026530260898822003,
+  "steps": 61,
+  "commands_available": 199,
+  "terminated": true,
+  "truncated": false,
+  "terminated_reason": "piece_off_board",
+  "phase_at_end": "descend",
+  "ik_rejects": 0,
+  "board_contact_force_n": null,
+  "terminal_contacts": [
+   [
+    "piece_a_base",
+    "table"
+   ],
+   [
+    "piece_a_base",
+    "table"
+   ],
+   [
+    "piece_a_base",
+    "table"
+   ]
+  ],
+  "rows": [
+   {
+    "step": 0,
+    "phase": "approach",
+    "reward": -0.5263807956926566,
+    "pinch_to_piece_m": 0.6515161807512382,
+    "pinch_to_command_m": 0.582302102493057,
+    "grasp": false
+   },
+   {
+    "step": 1,
+    "phase": "approach",
+    "reward": -0.5228257639479278,
+    "pinch_to_piece_m": 0.6396660749354754,
+    "pinch_to_command_m": 0.5706640155033968,
+    "grasp": false
+   },
+   {
+    "step": 2,
+    "phase": "approach",
+    "reward": -0.5186739738470874,
+    "pinch_to_piece_m": 0.6258267745993407,
+    "pinch_to_command_m": 0.5570731334387716,
+    "grasp": false
+   },
+   {
+    "step": 3,
+    "phase": "approach",
+    "reward": -0.514574389214412,
+    "pinch_to_piece_m": 0.612161492490423,
+    "pinch_to_command_m": 0.5436611775156249,
+    "grasp": false
+   },
+   {
+    "step": 4,
+    "phase": "approach",
+    "reward": -0.5106094837648616,
+    "pinch_to_piece_m": 0.5989451409919213,
+    "pinch_to_command_m": 0.5306831893597991,
+    "grasp": false
+   },
+   {
+    "step": 5,
+    "phase": "approach",
+    "reward": -0.5067672738646486,
+    "pinch_to_piece_m": 0.5861377746578781,
+    "pinch_to_command_m": 0.5181005427187025,
+    "grasp": false
+   },
+   {
+    "step": 6,
+    "phase": "approach",
+    "reward": -0.503025963814767,
+    "pinch_to_piece_m": 0.573666741158273,
+    "pinch_to_command_m": 0.5058426652919192,
+    "grasp": false
+   },
+   {
+    "step": 7,
+    "phase": "approach",
+    "reward": -0.4993576330262366,
+    "pinch_to_piece_m": 0.5614389718631716,
+    "pinch_to_command_m": 0.4938184904396874,
+    "grasp": false
+   },
+   {
+    "step": 8,
+    "phase": "approach",
+    "reward": -0.49572982490099665,
+    "pinch_to_piece_m": 0.5493462781123717,
+    "pinch_to_command_m": 0.48192240984980345,
+    "grasp": false
+   },
+   {
+    "step": 9,
+    "phase": "approach",
+    "reward": -0.49210661711160975,
+    "pinch_to_piece_m": 0.5372689188144154,
+    "pinch_to_command_m": 0.4700373494260908,
+    "grasp": false
+   },
+   {
+    "step": 10,
+    "phase": "approach",
+    "reward": -0.4884488364356404,
+    "pinch_to_piece_m": 0.5250763165611841,
+    "pinch_to_command_m": 0.4580359825979685,
+    "grasp": false
+   },
+   {
+    "step": 11,
+    "phase": "approach",
+    "reward": -0.48471404232649884,
+    "pinch_to_piece_m": 0.5126270028640457,
+    "pinch_to_command_m": 0.44578085642757587,
+    "grasp": false
+   },
+   {
+    "step": 12,
+    "phase": "approach",
+    "reward": -0.4808564805539095,
+    "pinch_to_piece_m": 0.49976846362208127,
+    "pinch_to_command_m": 0.43312416694547484,
+    "grasp": false
+   },
+   {
+    "step": 13,
+    "phase": "approach",
+    "reward": -0.4768269289142526,
+    "pinch_to_piece_m": 0.48633662482322493,
+    "pinch_to_command_m": 0.4199080259519558,
+    "grasp": false
+   },
+   {
+    "step": 14,
+    "phase": "approach",
+    "reward": -0.47257311581531247,
+    "pinch_to_piece_m": 0.4721572478267578,
+    "pinch_to_command_m": 0.4059662498750065,
+    "grasp": false
+   },
+   {
+    "step": 15,
+    "phase": "approach",
+    "reward": -0.46804080163534145,
+    "pinch_to_piece_m": 0.45704953389352104,
+    "pinch_to_command_m": 0.3911287962585756,
+    "grasp": false
+   },
+   {
+    "step": 16,
+    "phase": "approach",
+    "reward": -0.4631757223769004,
+    "pinch_to_piece_m": 0.44083260303205096,
+    "pinch_to_command_m": 0.3752295970716237,
+    "grasp": false
+   },
+   {
+    "step": 17,
+    "phase": "approach",
+    "reward": -0.4579264125964958,
+    "pinch_to_piece_m": 0.4233349037640354,
+    "pinch_to_command_m": 0.35811715327771865,
+    "grasp": false
+   },
+   {
+    "step": 18,
+    "phase": "approach",
+    "reward": -0.45252203252215495,
+    "pinch_to_piece_m": 0.40532030351623277,
+    "pinch_to_command_m": 0.34059097278252953,
+    "grasp": false
+   },
+   {
+    "step": 19,
+    "phase": "approach",
+    "reward": -0.4471656315170278,
+    "pinch_to_piece_m": 0.3874656334991423,
+    "pinch_to_command_m": 0.3233262323189736,
+    "grasp": false
+   },
+   {
+    "step": 20,
+    "phase": "approach",
+    "reward": -0.4418776122270496,
+    "pinch_to_piece_m": 0.36983890253254814,
+    "pinch_to_command_m": 0.3063818639025881,
+    "grasp": false
+   },
+   {
+    "step": 21,
+    "phase": "approach",
+    "reward": -0.43665173153597964,
+    "pinch_to_piece_m": 0.35241930022898155,
+    "pinch_to_command_m": 0.289748197196174,
+    "grasp": false
+   },
+   {
+    "step": 22,
+    "phase": "approach",
+    "reward": -0.4314827111112154,
+    "pinch_to_piece_m": 0.33518923214643415,
+    "pinch_to_command_m": 0.27342158744989814,
+    "grasp": false
+   },
+   {
+    "step": 23,
+    "phase": "approach",
+    "reward": -0.42636623488796516,
+    "pinch_to_piece_m": 0.31813431140226667,
+    "pinch_to_command_m": 0.25740550618008584,
+    "grasp": false
+   },
+   {
+    "step": 24,
+    "phase": "descend",
+    "reward": -0.4212991958712343,
+    "pinch_to_piece_m": 0.3012441813464972,
+    "pinch_to_command_m": 0.27860586573953544,
+    "grasp": false
+   },
+   {
+    "step": 25,
+    "phase": "descend",
+    "reward": -0.4162797899660507,
+    "pinch_to_piece_m": 0.2845128283292185,
+    "pinch_to_command_m": 0.26198010345011824,
+    "grasp": false
+   },
+   {
+    "step": 26,
+    "phase": "descend",
+    "reward": -0.4113073829006606,
+    "pinch_to_piece_m": 0.2679381381112514,
+    "pinch_to_command_m": 0.24553160128499607,
+    "grasp": false
+   },
+   {
+    "step": 27,
+    "phase": "descend",
+    "reward": -0.40638236166581515,
+    "pinch_to_piece_m": 0.2515214006617667,
+    "pinch_to_command_m": 0.22926544496299245,
+    "grasp": false
+   },
+   {
+    "step": 28,
+    "phase": "descend",
+    "reward": -0.4015060317470094,
+    "pinch_to_piece_m": 0.2352669675990807,
+    "pinch_to_command_m": 0.21319078522231258,
+    "grasp": false
+   },
+   {
+    "step": 29,
+    "phase": "descend",
+    "reward": -0.3966803676320999,
+    "pinch_to_piece_m": 0.21918142054938258,
+    "pinch_to_command_m": 0.19732080087895987,
+    "grasp": false
+   },
+   {
+    "step": 30,
+    "phase": "descend",
+    "reward": -0.3919080351684718,
+    "pinch_to_piece_m": 0.20327364567062203,
+    "pinch_to_command_m": 0.1816730339370981,
+    "grasp": false
+   },
+   {
+    "step": 31,
+    "phase": "descend",
+    "reward": -0.3873207847012768,
+    "pinch_to_piece_m": 0.1879828107799721,
+    "pinch_to_command_m": 0.16670523219298428,
+    "grasp": false
+   },
+   {
+    "step": 32,
+    "phase": "descend",
+    "reward": -0.382958306720216,
+    "pinch_to_piece_m": 0.1734412175097695,
+    "pinch_to_command_m": 0.15254962139272205,
+    "grasp": false
+   },
+   {
+    "step": 33,
+    "phase": "descend",
+    "reward": -0.378816463933947,
+    "pinch_to_piece_m": 0.15963507488887288,
+    "pinch_to_command_m": 0.13919911327421783,
+    "grasp": false
+   },
+   {
+    "step": 34,
+    "phase": "descend",
+    "reward": -0.37488575430937504,
+    "pinch_to_piece_m": 0.14653270947363292,
+    "pinch_to_command_m": 0.1266336666111574,
+    "grasp": false
+   },
+   {
+    "step": 35,
+    "phase": "descend",
+    "reward": -0.3711562599084921,
+    "pinch_to_piece_m": 0.13410106147068993,
+    "pinch_to_command_m": 0.11483638031156257,
+    "grasp": false
+   },
+   {
+    "step": 36,
+    "phase": "descend",
+    "reward": -0.3676185446498678,
+    "pinch_to_piece_m": 0.12230867727527554,
+    "pinch_to_command_m": 0.10379723677483425,
+    "grasp": false
+   },
+   {
+    "step": 37,
+    "phase": "descend",
+    "reward": -0.3642640061853362,
+    "pinch_to_piece_m": 0.11112688239350349,
+    "pinch_to_command_m": 0.09351672736946125,
+    "grasp": false
+   },
+   {
+    "step": 38,
+    "phase": "descend",
+    "reward": -0.36108551818395473,
+    "pinch_to_piece_m": 0.1005319223888986,
+    "pinch_to_command_m": 0.08400988414552085,
+    "grasp": false
+   },
+   {
+    "step": 39,
+    "phase": "descend",
+    "reward": -0.3580778188851638,
+    "pinch_to_piece_m": 0.09050625805959563,
+    "pinch_to_command_m": 0.07531092994366603,
+    "grasp": false
+   },
+   {
+    "step": 40,
+    "phase": "descend",
+    "reward": -0.35527129752550657,
+    "pinch_to_piece_m": 0.08115118686073797,
+    "pinch_to_command_m": 0.06752271721617692,
+    "grasp": false
+   },
+   {
+    "step": 41,
+    "phase": "descend",
+    "reward": -0.35253920550443385,
+    "pinch_to_piece_m": 0.07196424389208876,
+    "pinch_to_command_m": 0.06061999274082256,
+    "grasp": false
+   },
+   {
+    "step": 42,
+    "phase": "descend",
+    "reward": -0.3513597193234425,
+    "pinch_to_piece_m": 0.062026561257991886,
+    "pinch_to_command_m": 0.05440147566797276,
+    "grasp": false
+   },
+   {
+    "step": 43,
+    "phase": "descend",
+    "reward": -0.35057996478552195,
+    "pinch_to_piece_m": 0.054926930761157525,
+    "pinch_to_command_m": 0.048468281035701284,
+    "grasp": false
+   },
+   {
+    "step": 44,
+    "phase": "descend",
+    "reward": -0.3494502986100495,
+    "pinch_to_piece_m": 0.047018257984578704,
+    "pinch_to_command_m": 0.04218774496312087,
+    "grasp": false
+   },
+   {
+    "step": 45,
+    "phase": "descend",
+    "reward": -0.34902934745437136,
+    "pinch_to_piece_m": 0.03891045899809175,
+    "pinch_to_command_m": 0.03466237764004791,
+    "grasp": false
+   },
+   {
+    "step": 46,
+    "phase": "descend",
+    "reward": -0.3509403889160442,
+    "pinch_to_piece_m": 0.031291784439182076,
+    "pinch_to_command_m": 0.025079115777819648,
+    "grasp": false
+   },
+   {
+    "step": 47,
+    "phase": "descend",
+    "reward": -0.35831962080542845,
+    "pinch_to_piece_m": 0.026530260898822003,
+    "pinch_to_command_m": 0.01370331637413225,
+    "grasp": false
+   },
+   {
+    "step": 48,
+    "phase": "descend",
+    "reward": -0.36948474176995166,
+    "pinch_to_piece_m": 0.02830303140058153,
+    "pinch_to_command_m": 0.005503154920996032,
+    "grasp": false
+   },
+   {
+    "step": 49,
+    "phase": "descend",
+    "reward": -0.37250286716257586,
+    "pinch_to_piece_m": 0.030403547089466004,
+    "pinch_to_command_m": 0.027548092026439906,
+    "grasp": false
+   },
+   {
+    "step": 50,
+    "phase": "descend",
+    "reward": -0.3736307420944401,
+    "pinch_to_piece_m": 0.0360806116181044,
+    "pinch_to_command_m": 0.024607179717043987,
+    "grasp": false
+   },
+   {
+    "step": 51,
+    "phase": "descend",
+    "reward": -0.3759833197704035,
+    "pinch_to_piece_m": 0.04439738754135974,
+    "pinch_to_command_m": 0.02283003789161611,
+    "grasp": false
+   },
+   {
+    "step": 52,
+    "phase": "descend",
+    "reward": -0.3783876179316536,
+    "pinch_to_piece_m": 0.05224194084899139,
+    "pinch_to_command_m": 0.020877871565502627,
+    "grasp": false
+   },
+   {
+    "step": 53,
+    "phase": "descend",
+    "reward": -0.38037346920484805,
+    "pinch_to_piece_m": 0.05832271844527805,
+    "pinch_to_command_m": 0.0188930341133377,
+    "grasp": false
+   },
+   {
+    "step": 54,
+    "phase": "descend",
+    "reward": -0.3817296926522626,
+    "pinch_to_piece_m": 0.06244868183943077,
+    "pinch_to_command_m": 0.01725894287252807,
+    "grasp": false
+   },
+   {
+    "step": 55,
+    "phase": "descend",
+    "reward": -0.3820781455172043,
+    "pinch_to_piece_m": 0.06571701689989727,
+    "pinch_to_command_m": 0.01614252198085291,
+    "grasp": false
+   },
+   {
+    "step": 56,
+    "phase": "descend",
+    "reward": -0.38094215926788766,
+    "pinch_to_piece_m": 0.07057098339870634,
+    "pinch_to_command_m": 0.015323895603545261,
+    "grasp": false
+   },
+   {
+    "step": 57,
+    "phase": "descend",
+    "reward": -0.38254711283491605,
+    "pinch_to_piece_m": 0.07791649147028899,
+    "pinch_to_command_m": 0.014440191709195702,
+    "grasp": false
+   },
+   {
+    "step": 58,
+    "phase": "descend",
+    "reward": -0.3851883773697038,
+    "pinch_to_piece_m": 0.0837683891894484,
+    "pinch_to_command_m": 0.013324308293098922,
+    "grasp": false
+   },
+   {
+    "step": 59,
+    "phase": "descend",
+    "reward": -0.39169745574015224,
+    "pinch_to_piece_m": 0.08770819934268284,
+    "pinch_to_command_m": 0.012735931637718587,
+    "grasp": false
+   },
+   {
+    "step": 60,
+    "phase": "descend",
+    "reward": -514.4010406716995,
+    "pinch_to_piece_m": 0.09398420132977256,
+    "pinch_to_command_m": 0.012392028531832208,
+    "grasp": false
+   }
+  ]
+ },
+ {
+  "start": "d1",
+  "target": "e5",
+  "reference": {
+   "outcome": "bad_contact",
+   "success": false,
+   "steps": 37
+  },
+  "is_success": false,
+  "grasp_success_ever": false,
+  "final_distance_m": 0.3216022849082947,
+  "closest_pinch_to_piece_m": 0.16678122072157844,
+  "steps": 37,
+  "commands_available": 37,
+  "terminated": false,
+  "truncated": false,
+  "terminated_reason": null,
+  "phase_at_end": "descend",
+  "ik_rejects": 0,
+  "board_contact_force_n": null,
+  "terminal_contacts": [],
+  "rows": [
+   {
+    "step": 0,
+    "phase": "approach",
+    "reward": -0.46820899619362255,
+    "pinch_to_piece_m": 0.48868903761775956,
+    "pinch_to_command_m": 0.3918318059421188,
+    "grasp": false
+   },
+   {
+    "step": 1,
+    "phase": "approach",
+    "reward": -0.46547106330374133,
+    "pinch_to_piece_m": 0.47956259465148876,
+    "pinch_to_command_m": 0.38246232699687727,
+    "grasp": false
+   },
+   {
+    "step": 2,
+    "phase": "approach",
+    "reward": -0.4627733442692869,
+    "pinch_to_piece_m": 0.4705701978699741,
+    "pinch_to_command_m": 0.37317439158350457,
+    "grasp": false
+   },
+   {
+    "step": 3,
+    "phase": "approach",
+    "reward": -0.4601310726823991,
+    "pinch_to_piece_m": 0.46176262591368145,
+    "pinch_to_command_m": 0.36404064540344605,
+    "grasp": false
+   },
+   {
+    "step": 4,
+    "phase": "approach",
+    "reward": -0.4575343285148421,
+    "pinch_to_piece_m": 0.4531068120218248,
+    "pinch_to_command_m": 0.3550328768392314,
+    "grasp": false
+   },
+   {
+    "step": 5,
+    "phase": "approach",
+    "reward": -0.4549727713259373,
+    "pinch_to_piece_m": 0.44456828805880866,
+    "pinch_to_command_m": 0.34611996085404384,
+    "grasp": false
+   },
+   {
+    "step": 6,
+    "phase": "approach",
+    "reward": -0.45243593464028764,
+    "pinch_to_piece_m": 0.43611216577330997,
+    "pinch_to_command_m": 0.33726933256530595,
+    "grasp": false
+   },
+   {
+    "step": 7,
+    "phase": "approach",
+    "reward": -0.44991364531526595,
+    "pinch_to_piece_m": 0.42770453468990427,
+    "pinch_to_command_m": 0.32844863201557806,
+    "grasp": false
+   },
+   {
+    "step": 8,
+    "phase": "approach",
+    "reward": -0.4473963563523764,
+    "pinch_to_piece_m": 0.41931357148027254,
+    "pinch_to_command_m": 0.3196270338080775,
+    "grasp": false
+   },
+   {
+    "step": 9,
+    "phase": "approach",
+    "reward": -0.4448754277221394,
+    "pinch_to_piece_m": 0.41091047604614905,
+    "pinch_to_command_m": 0.3107763845024081,
+    "grasp": false
+   },
+   {
+    "step": 10,
+    "phase": "approach",
+    "reward": -0.4423433758615226,
+    "pinch_to_piece_m": 0.40247030317742644,
+    "pinch_to_command_m": 0.30187222441869915,
+    "grasp": false
+   },
+   {
+    "step": 11,
+    "phase": "approach",
+    "reward": -0.4397941002640252,
+    "pinch_to_piece_m": 0.3939727178524351,
+    "pinch_to_command_m": 0.2928947296770375,
+    "grasp": false
+   },
+   {
+    "step": 12,
+    "phase": "approach",
+    "reward": -0.4372230846513233,
+    "pinch_to_piece_m": 0.3854026658100955,
+    "pinch_to_command_m": 0.2838295733942475,
+    "grasp": false
+   },
+   {
+    "step": 13,
+    "phase": "approach",
+    "reward": -0.4346275613334955,
+    "pinch_to_piece_m": 0.37675092141733607,
+    "pinch_to_command_m": 0.2746686746430877,
+    "grasp": false
+   },
+   {
+    "step": 14,
+    "phase": "approach",
+    "reward": -0.4320066217973722,
+    "pinch_to_piece_m": 0.36801445629692514,
+    "pinch_to_command_m": 0.2654107845756308,
+    "grasp": false
+   },
+   {
+    "step": 15,
+    "phase": "approach",
+    "reward": -0.429360513414032,
+    "pinch_to_piece_m": 0.3591940950191243,
+    "pinch_to_command_m": 0.25605983197883664,
+    "grasp": false
+   },
+   {
+    "step": 16,
+    "phase": "approach",
+    "reward": -0.4266864425654296,
+    "pinch_to_piece_m": 0.350280525523783,
+    "pinch_to_command_m": 0.2466107037906606,
+    "grasp": false
+   },
+   {
+    "step": 17,
+    "phase": "approach",
+    "reward": -0.42398152659405874,
+    "pinch_to_piece_m": 0.3412641389525468,
+    "pinch_to_command_m": 0.23705221875994317,
+    "grasp": false
+   },
+   {
+    "step": 18,
+    "phase": "approach",
+    "reward": -0.4212407482991604,
+    "pinch_to_piece_m": 0.3321282113028858,
+    "pinch_to_command_m": 0.22736337553712954,
+    "grasp": false
+   },
+   {
+    "step": 19,
+    "phase": "approach",
+    "reward": -0.4184632892294917,
+    "pinch_to_piece_m": 0.32287001440399005,
+    "pinch_to_command_m": 0.21753157589034003,
+    "grasp": false
+   },
+   {
+    "step": 20,
+    "phase": "approach",
+    "reward": -0.41565119263384903,
+    "pinch_to_piece_m": 0.3134963590851812,
+    "pinch_to_command_m": 0.20755305012462633,
+    "grasp": false
+   },
+   {
+    "step": 21,
+    "phase": "approach",
+    "reward": -0.4128091466762872,
+    "pinch_to_piece_m": 0.3040228725599752,
+    "pinch_to_command_m": 0.19743391338274466,
+    "grasp": false
+   },
+   {
+    "step": 22,
+    "phase": "descend",
+    "reward": -0.40994454457128987,
+    "pinch_to_piece_m": 0.29447419887665066,
+    "pinch_to_command_m": 0.2598781427818801,
+    "grasp": false
+   },
+   {
+    "step": 23,
+    "phase": "descend",
+    "reward": -0.4070657791024674,
+    "pinch_to_piece_m": 0.28487831398057567,
+    "pinch_to_command_m": 0.25007186169957696,
+    "grasp": false
+   },
+   {
+    "step": 24,
+    "phase": "descend",
+    "reward": -0.4041819563756357,
+    "pinch_to_piece_m": 0.2752655715578034,
+    "pinch_to_command_m": 0.24023940127601492,
+    "grasp": false
+   },
+   {
+    "step": 25,
+    "phase": "descend",
+    "reward": -0.4013021241357002,
+    "pinch_to_piece_m": 0.2656661307580184,
+    "pinch_to_command_m": 0.23041209704376303,
+    "grasp": false
+   },
+   {
+    "step": 26,
+    "phase": "descend",
+    "reward": -0.39843469570453377,
+    "pinch_to_piece_m": 0.2561080359874636,
+    "pinch_to_command_m": 0.22061964692952785,
+    "grasp": false
+   },
+   {
+    "step": 27,
+    "phase": "descend",
+    "reward": -0.39558711581625655,
+    "pinch_to_piece_m": 0.2466161030265396,
+    "pinch_to_command_m": 0.21088889496487825,
+    "grasp": false
+   },
+   {
+    "step": 28,
+    "phase": "descend",
+    "reward": -0.3927657725096835,
+    "pinch_to_piece_m": 0.23721162533796278,
+    "pinch_to_command_m": 0.201243521365491,
+    "grasp": false
+   },
+   {
+    "step": 29,
+    "phase": "descend",
+    "reward": -0.38997611751316347,
+    "pinch_to_piece_m": 0.2279127753495627,
+    "pinch_to_command_m": 0.19170453664609402,
+    "grasp": false
+   },
+   {
+    "step": 30,
+    "phase": "descend",
+    "reward": -0.38722812624894903,
+    "pinch_to_piece_m": 0.21875280446884784,
+    "pinch_to_command_m": 0.18230771298497997,
+    "grasp": false
+   },
+   {
+    "step": 31,
+    "phase": "descend",
+    "reward": -0.38452658494484954,
+    "pinch_to_piece_m": 0.20974766678851622,
+    "pinch_to_command_m": 0.17307371719998965,
+    "grasp": false
+   },
+   {
+    "step": 32,
+    "phase": "descend",
+    "reward": -0.38187576071256935,
+    "pinch_to_piece_m": 0.20091158601424886,
+    "pinch_to_command_m": 0.1640230030695219,
+    "grasp": false
+   },
+   {
+    "step": 33,
+    "phase": "descend",
+    "reward": -0.3792805114002714,
+    "pinch_to_piece_m": 0.1922607549732557,
+    "pinch_to_command_m": 0.15518014222347162,
+    "grasp": false
+   },
+   {
+    "step": 34,
+    "phase": "descend",
+    "reward": -0.3767466292062726,
+    "pinch_to_piece_m": 0.18381448099325984,
+    "pinch_to_command_m": 0.14657572932004562,
+    "grasp": false
+   },
+   {
+    "step": 35,
+    "phase": "descend",
+    "reward": -0.3742279315311889,
+    "pinch_to_piece_m": 0.1754188220763141,
+    "pinch_to_command_m": 0.13807392483101857,
+    "grasp": false
+   },
+   {
+    "step": 36,
+    "phase": "descend",
+    "reward": -0.3716366511247682,
+    "pinch_to_piece_m": 0.16678122072157844,
+    "pinch_to_command_m": 0.12939354612827478,
+    "grasp": false
+   }
+  ]
+ },
+ {
+  "start": "d8",
+  "target": "e5",
+  "reference": {
+   "outcome": "success",
+   "success": true,
+   "steps": 194
+  },
+  "is_success": false,
+  "grasp_success_ever": false,
+  "final_distance_m": 0.24667054414749146,
+  "closest_pinch_to_piece_m": 0.022278082796069576,
+  "steps": 78,
+  "commands_available": 194,
+  "terminated": true,
+  "truncated": false,
+  "terminated_reason": "bad_contact",
+  "phase_at_end": "close",
+  "ik_rejects": 0,
+  "board_contact_force_n": null,
+  "terminal_contacts": [
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "piece_a_head",
+    "ur_gripper_right_pad1"
+   ],
+   [
+    "piece_a_head",
+    "ur_gripper_right_pad1"
+   ],
+   [
+    "piece_a_head",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "piece_a_head",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ]
+  ],
+  "rows": [
+   {
+    "step": 0,
+    "phase": "approach",
+    "reward": -0.40249610772562194,
+    "pinch_to_piece_m": 0.5194616096162853,
+    "pinch_to_command_m": 0.42897971130255735,
+    "grasp": false
+   },
+   {
+    "step": 1,
+    "phase": "approach",
+    "reward": -0.39917751685092795,
+    "pinch_to_piece_m": 0.5083996400339718,
+    "pinch_to_command_m": 0.4177858049331303,
+    "grasp": false
+   },
+   {
+    "step": 2,
+    "phase": "approach",
+    "reward": -0.39536144201710777,
+    "pinch_to_piece_m": 0.4956793905879045,
+    "pinch_to_command_m": 0.4049318753462741,
+    "grasp": false
+   },
+   {
+    "step": 3,
+    "phase": "approach",
+    "reward": -0.3916418064846082,
+    "pinch_to_piece_m": 0.4832806054795729,
+    "pinch_to_command_m": 0.39242360669016785,
+    "grasp": false
+   },
+   {
+    "step": 4,
+    "phase": "approach",
+    "reward": -0.388093033248728,
+    "pinch_to_piece_m": 0.471451361359972,
+    "pinch_to_command_m": 0.3804938272127494,
+    "grasp": false
+   },
+   {
+    "step": 5,
+    "phase": "approach",
+    "reward": -0.38469891587209726,
+    "pinch_to_piece_m": 0.4601376367712029,
+    "pinch_to_command_m": 0.3690884763633966,
+    "grasp": false
+   },
+   {
+    "step": 6,
+    "phase": "approach",
+    "reward": -0.3814356867100287,
+    "pinch_to_piece_m": 0.4492602062309743,
+    "pinch_to_command_m": 0.3581281979097194,
+    "grasp": false
+   },
+   {
+    "step": 7,
+    "phase": "approach",
+    "reward": -0.378275522137291,
+    "pinch_to_piece_m": 0.43872632432184877,
+    "pinch_to_command_m": 0.3475202402313945,
+    "grasp": false
+   },
+   {
+    "step": 8,
+    "phase": "approach",
+    "reward": -0.37518829151700617,
+    "pinch_to_piece_m": 0.42843555558756596,
+    "pinch_to_command_m": 0.3371647175941108,
+    "grasp": false
+   },
+   {
+    "step": 9,
+    "phase": "approach",
+    "reward": -0.372142530080271,
+    "pinch_to_piece_m": 0.41828301746511537,
+    "pinch_to_command_m": 0.3269582994721354,
+    "grasp": false
+   },
+   {
+    "step": 10,
+    "phase": "approach",
+    "reward": -0.3691059619575382,
+    "pinch_to_piece_m": 0.40816112372267266,
+    "pinch_to_command_m": 0.31679650431104567,
+    "grasp": false
+   },
+   {
+    "step": 11,
+    "phase": "approach",
+    "reward": -0.366045995270533,
+    "pinch_to_piece_m": 0.39796123476598866,
+    "pinch_to_command_m": 0.3065769631083902,
+    "grasp": false
+   },
+   {
+    "step": 12,
+    "phase": "approach",
+    "reward": -0.36294324916660564,
+    "pinch_to_piece_m": 0.38761874775289756,
+    "pinch_to_command_m": 0.29626116083628,
+    "grasp": false
+   },
+   {
+    "step": 13,
+    "phase": "approach",
+    "reward": -0.3597528663306639,
+    "pinch_to_piece_m": 0.3769841382997583,
+    "pinch_to_command_m": 0.28569816051280245,
+    "grasp": false
+   },
+   {
+    "step": 14,
+    "phase": "approach",
+    "reward": -0.3564176194804324,
+    "pinch_to_piece_m": 0.36586664879898667,
+    "pinch_to_command_m": 0.27468841587504456,
+    "grasp": false
+   },
+   {
+    "step": 15,
+    "phase": "approach",
+    "reward": -0.3528421430298857,
+    "pinch_to_piece_m": 0.35394839396383115,
+    "pinch_to_command_m": 0.2628727294777729,
+    "grasp": false
+   },
+   {
+    "step": 16,
+    "phase": "approach",
+    "reward": -0.3489590532107374,
+    "pinch_to_piece_m": 0.3410047612333367,
+    "pinch_to_command_m": 0.25001612423845654,
+    "grasp": false
+   },
+   {
+    "step": 17,
+    "phase": "approach",
+    "reward": -0.3447193037207837,
+    "pinch_to_piece_m": 0.32687226293349103,
+    "pinch_to_command_m": 0.23595224769853368,
+    "grasp": false
+   },
+   {
+    "step": 18,
+    "phase": "approach",
+    "reward": -0.34038359025566367,
+    "pinch_to_piece_m": 0.3124198847164242,
+    "pinch_to_command_m": 0.22162576503273426,
+    "grasp": false
+   },
+   {
+    "step": 19,
+    "phase": "approach",
+    "reward": -0.33606383342558255,
+    "pinch_to_piece_m": 0.29802069528282044,
+    "pinch_to_command_m": 0.20740439258499052,
+    "grasp": false
+   },
+   {
+    "step": 20,
+    "phase": "approach",
+    "reward": -0.33176784764717027,
+    "pinch_to_piece_m": 0.28370074268811285,
+    "pinch_to_command_m": 0.19331845902746042,
+    "grasp": false
+   },
+   {
+    "step": 21,
+    "phase": "descend",
+    "reward": -0.32749212055407795,
+    "pinch_to_piece_m": 0.2694483190444719,
+    "pinch_to_command_m": 0.23878536093178268,
+    "grasp": false
+   },
+   {
+    "step": 22,
+    "phase": "descend",
+    "reward": -0.323231752770123,
+    "pinch_to_piece_m": 0.25524709309795546,
+    "pinch_to_command_m": 0.22449982296536228,
+    "grasp": false
+   },
+   {
+    "step": 23,
+    "phase": "descend",
+    "reward": -0.31898023309758183,
+    "pinch_to_piece_m": 0.24107536085615142,
+    "pinch_to_command_m": 0.21024266734902256,
+    "grasp": false
+   },
+   {
+    "step": 24,
+    "phase": "descend",
+    "reward": -0.31473077012524897,
+    "pinch_to_piece_m": 0.22691048428170857,
+    "pinch_to_command_m": 0.19598860441055108,
+    "grasp": false
+   },
+   {
+    "step": 25,
+    "phase": "descend",
+    "reward": -0.3104777819293339,
+    "pinch_to_piece_m": 0.21273385696199165,
+    "pinch_to_command_m": 0.18171533822683006,
+    "grasp": false
+   },
+   {
+    "step": 26,
+    "phase": "descend",
+    "reward": -0.30621844546024024,
+    "pinch_to_piece_m": 0.19853606873167956,
+    "pinch_to_command_m": 0.16740912823607912,
+    "grasp": false
+   },
+   {
+    "step": 27,
+    "phase": "descend",
+    "reward": -0.30195368892593955,
+    "pinch_to_piece_m": 0.1843202136173439,
+    "pinch_to_command_m": 0.1530682801190317,
+    "grasp": false
+   },
+   {
+    "step": 28,
+    "phase": "descend",
+    "reward": -0.2976881995461698,
+    "pinch_to_piece_m": 0.17010191568477814,
+    "pinch_to_command_m": 0.1387035997480319,
+    "grasp": false
+   },
+   {
+    "step": 29,
+    "phase": "descend",
+    "reward": -0.29342976304800816,
+    "pinch_to_piece_m": 0.15590712735757264,
+    "pinch_to_command_m": 0.1243359936403307,
+    "grasp": false
+   },
+   {
+    "step": 30,
+    "phase": "descend",
+    "reward": -0.28918819252797057,
+    "pinch_to_piece_m": 0.1417685589574473,
+    "pinch_to_command_m": 0.10999228017493053,
+    "grasp": false
+   },
+   {
+    "step": 31,
+    "phase": "descend",
+    "reward": -0.2849743126293987,
+    "pinch_to_piece_m": 0.1277222926288744,
+    "pinch_to_command_m": 0.09570062551315954,
+    "grasp": false
+   },
+   {
+    "step": 32,
+    "phase": "descend",
+    "reward": -0.2807994243631199,
+    "pinch_to_piece_m": 0.11380599840794507,
+    "pinch_to_command_m": 0.08148685043779695,
+    "grasp": false
+   },
+   {
+    "step": 33,
+    "phase": "descend",
+    "reward": -0.27677591467904306,
+    "pinch_to_piece_m": 0.10039429946102217,
+    "pinch_to_command_m": 0.06774429525843816,
+    "grasp": false
+   },
+   {
+    "step": 34,
+    "phase": "descend",
+    "reward": -0.2729481080980931,
+    "pinch_to_piece_m": 0.08763494419118907,
+    "pinch_to_command_m": 0.054596339847952605,
+    "grasp": false
+   },
+   {
+    "step": 35,
+    "phase": "descend",
+    "reward": -0.26932400570546566,
+    "pinch_to_piece_m": 0.07555460288243082,
+    "pinch_to_command_m": 0.042037082214850675,
+    "grasp": false
+   },
+   {
+    "step": 36,
+    "phase": "descend",
+    "reward": -0.2659105292156238,
+    "pinch_to_piece_m": 0.06417634791629136,
+    "pinch_to_command_m": 0.030043645587799456,
+    "grasp": false
+   },
+   {
+    "step": 37,
+    "phase": "descend",
+    "reward": -0.2626730696008192,
+    "pinch_to_piece_m": 0.053384815866942686,
+    "pinch_to_command_m": 0.018442697093851077,
+    "grasp": false
+   },
+   {
+    "step": 38,
+    "phase": "descend",
+    "reward": -0.2595139703549456,
+    "pinch_to_piece_m": 0.04285448504736399,
+    "pinch_to_command_m": 0.006893053868965755,
+    "grasp": false
+   },
+   {
+    "step": 39,
+    "phase": "descend",
+    "reward": -0.2566791916554046,
+    "pinch_to_piece_m": 0.033405222715560644,
+    "pinch_to_command_m": 0.004597996789560015,
+    "grasp": false
+   },
+   {
+    "step": 40,
+    "phase": "descend",
+    "reward": -0.25461745036044475,
+    "pinch_to_piece_m": 0.026532751732361273,
+    "pinch_to_command_m": 0.012888443956456254,
+    "grasp": false
+   },
+   {
+    "step": 41,
+    "phase": "descend",
+    "reward": -0.2535331054199942,
+    "pinch_to_piece_m": 0.022918268597526045,
+    "pinch_to_command_m": 0.017709699167192436,
+    "grasp": false
+   },
+   {
+    "step": 42,
+    "phase": "descend",
+    "reward": -0.2533410496795573,
+    "pinch_to_piece_m": 0.022278082796069576,
+    "pinch_to_command_m": 0.01854119827287386,
+    "grasp": false
+   },
+   {
+    "step": 43,
+    "phase": "descend",
+    "reward": -0.2539341224349602,
+    "pinch_to_piece_m": 0.024254991980746106,
+    "pinch_to_command_m": 0.01580184279569789,
+    "grasp": false
+   },
+   {
+    "step": 44,
+    "phase": "descend",
+    "reward": -0.25520833006627397,
+    "pinch_to_piece_m": 0.028502350751791857,
+    "pinch_to_command_m": 0.010539875877988958,
+    "grasp": false
+   },
+   {
+    "step": 45,
+    "phase": "descend",
+    "reward": -0.2568929292427906,
+    "pinch_to_piece_m": 0.034117681340180665,
+    "pinch_to_command_m": 0.004220179064633305,
+    "grasp": false
+   },
+   {
+    "step": 46,
+    "phase": "descend",
+    "reward": -0.2593345577140089,
+    "pinch_to_piece_m": 0.04225644291090836,
+    "pinch_to_command_m": 0.021830038800751652,
+    "grasp": false
+   },
+   {
+    "step": 47,
+    "phase": "descend",
+    "reward": -0.26244789088353115,
+    "pinch_to_piece_m": 0.052634220142649166,
+    "pinch_to_command_m": 0.012576080996405682,
+    "grasp": false
+   },
+   {
+    "step": 48,
+    "phase": "descend",
+    "reward": -0.2656433691405617,
+    "pinch_to_piece_m": 0.06328581433275109,
+    "pinch_to_command_m": 0.006405392071150382,
+    "grasp": false
+   },
+   {
+    "step": 49,
+    "phase": "descend",
+    "reward": -0.2683540998195627,
+    "pinch_to_piece_m": 0.07232158326275438,
+    "pinch_to_command_m": 0.01069739000839621,
+    "grasp": false
+   },
+   {
+    "step": 50,
+    "phase": "descend",
+    "reward": -0.27014318897238765,
+    "pinch_to_piece_m": 0.07828521377217085,
+    "pinch_to_command_m": 0.015842774969387345,
+    "grasp": false
+   },
+   {
+    "step": 51,
+    "phase": "descend",
+    "reward": -0.2707930220187923,
+    "pinch_to_piece_m": 0.0804513239268531,
+    "pinch_to_command_m": 0.01780529655535685,
+    "grasp": false
+   },
+   {
+    "step": 52,
+    "phase": "descend",
+    "reward": -0.2703322535703466,
+    "pinch_to_piece_m": 0.0789154290987007,
+    "pinch_to_command_m": 0.01628454147943286,
+    "grasp": false
+   },
+   {
+    "step": 53,
+    "phase": "descend",
+    "reward": -0.2689997987359641,
+    "pinch_to_piece_m": 0.0744739129840923,
+    "pinch_to_command_m": 0.012016233904713491,
+    "grasp": false
+   },
+   {
+    "step": 54,
+    "phase": "descend",
+    "reward": -0.26717140536335965,
+    "pinch_to_piece_m": 0.0683792684087442,
+    "pinch_to_command_m": 0.00638581548222713,
+    "grasp": false
+   },
+   {
+    "step": 55,
+    "phase": "descend",
+    "reward": -0.265269620006224,
+    "pinch_to_piece_m": 0.06203998388495865,
+    "pinch_to_command_m": 0.0029073086383592196,
+    "grasp": false
+   },
+   {
+    "step": 56,
+    "phase": "descend",
+    "reward": -0.263843980790878,
+    "pinch_to_piece_m": 0.05728785316713878,
+    "pinch_to_command_m": 0.009734600082005818,
+    "grasp": false
+   },
+   {
+    "step": 57,
+    "phase": "descend",
+    "reward": -0.2631703722305879,
+    "pinch_to_piece_m": 0.055042491299505204,
+    "pinch_to_command_m": 0.011770883885801008,
+    "grasp": false
+   },
+   {
+    "step": 58,
+    "phase": "descend",
+    "reward": -0.2632776948066277,
+    "pinch_to_piece_m": 0.05540023321963781,
+    "pinch_to_command_m": 0.01136408795847746,
+    "grasp": false
+   },
+   {
+    "step": 59,
+    "phase": "descend",
+    "reward": -0.26403268622060205,
+    "pinch_to_piece_m": 0.05791687126621884,
+    "pinch_to_command_m": 0.008900680514877288,
+    "grasp": false
+   },
+   {
+    "step": 60,
+    "phase": "descend",
+    "reward": -0.26519455866704084,
+    "pinch_to_piece_m": 0.06178977942101487,
+    "pinch_to_command_m": 0.005184418117867497,
+    "grasp": false
+   },
+   {
+    "step": 61,
+    "phase": "descend",
+    "reward": -0.2664799782533453,
+    "pinch_to_piece_m": 0.06607451137536308,
+    "pinch_to_command_m": 0.0017119975994877815,
+    "grasp": false
+   },
+   {
+    "step": 62,
+    "phase": "descend",
+    "reward": -0.26762374041591547,
+    "pinch_to_piece_m": 0.06988705191726359,
+    "pinch_to_command_m": 0.0034203398083344,
+    "grasp": false
+   },
+   {
+    "step": 63,
+    "phase": "descend",
+    "reward": -0.26842564354891385,
+    "pinch_to_piece_m": 0.07256006236059151,
+    "pinch_to_command_m": 0.005895364410588089,
+    "grasp": false
+   },
+   {
+    "step": 64,
+    "phase": "descend",
+    "reward": -0.26877893123979096,
+    "pinch_to_piece_m": 0.0737376879968486,
+    "pinch_to_command_m": 0.007016298091361983,
+    "grasp": false
+   },
+   {
+    "step": 65,
+    "phase": "descend",
+    "reward": -0.2686776686025379,
+    "pinch_to_piece_m": 0.07340014587267164,
+    "pinch_to_command_m": 0.006667939332306729,
+    "grasp": false
+   },
+   {
+    "step": 66,
+    "phase": "close",
+    "reward": -0.2682139619044898,
+    "pinch_to_piece_m": 0.07185445687917805,
+    "pinch_to_command_m": 0.005140860917154975,
+    "grasp": false
+   },
+   {
+    "step": 67,
+    "phase": "close",
+    "reward": -0.2675048296467011,
+    "pinch_to_piece_m": 0.06949068268654902,
+    "pinch_to_command_m": 0.0028326018223750076,
+    "grasp": false
+   },
+   {
+    "step": 68,
+    "phase": "close",
+    "reward": -0.2667348236828577,
+    "pinch_to_piece_m": 0.06692399614040441,
+    "pinch_to_command_m": 0.0007091543014670519,
+    "grasp": false
+   },
+   {
+    "step": 69,
+    "phase": "close",
+    "reward": -0.26607333615461515,
+    "pinch_to_piece_m": 0.06471903771292914,
+    "pinch_to_command_m": 0.0021301566120594238,
+    "grasp": false
+   },
+   {
+    "step": 70,
+    "phase": "close",
+    "reward": -0.26626812119176024,
+    "pinch_to_piece_m": 0.06569818320837391,
+    "pinch_to_command_m": 0.0018646030763293465,
+    "grasp": false
+   },
+   {
+    "step": 71,
+    "phase": "close",
+    "reward": -0.2669507374978186,
+    "pinch_to_piece_m": 0.06684868223671167,
+    "pinch_to_command_m": 0.001685549102569674,
+    "grasp": false
+   },
+   {
+    "step": 72,
+    "phase": "close",
+    "reward": -0.2671858834652505,
+    "pinch_to_piece_m": 0.0677433170968963,
+    "pinch_to_command_m": 0.0018300670914412269,
+    "grasp": false
+   },
+   {
+    "step": 73,
+    "phase": "close",
+    "reward": -0.267255610762366,
+    "pinch_to_piece_m": 0.06808367549819525,
+    "pinch_to_command_m": 0.0017925891898522422,
+    "grasp": false
+   },
+   {
+    "step": 74,
+    "phase": "close",
+    "reward": -0.26722458121041387,
+    "pinch_to_piece_m": 0.06809677073889071,
+    "pinch_to_command_m": 0.0015102733496792833,
+    "grasp": false
+   },
+   {
+    "step": 75,
+    "phase": "close",
+    "reward": -0.26714974945194675,
+    "pinch_to_piece_m": 0.06799236951295373,
+    "pinch_to_command_m": 0.0012871076994517717,
+    "grasp": false
+   },
+   {
+    "step": 76,
+    "phase": "close",
+    "reward": -0.26707389520083497,
+    "pinch_to_piece_m": 0.06789240792309678,
+    "pinch_to_command_m": 0.0012981128898509552,
+    "grasp": false
+   },
+   {
+    "step": 77,
+    "phase": "close",
+    "reward": -514.2670221193247,
+    "pinch_to_piece_m": 0.06783858392383256,
+    "pinch_to_command_m": 0.0014140993138019445,
+    "grasp": false
+   }
+  ]
+ },
+ {
+  "start": "b4",
+  "target": "e5",
+  "reference": {
+   "outcome": "success",
+   "success": true,
+   "steps": 127
+  },
+  "is_success": false,
+  "grasp_success_ever": true,
+  "final_distance_m": 0.2567691206932068,
+  "closest_pinch_to_piece_m": 0.04006064017190356,
+  "steps": 75,
+  "commands_available": 127,
+  "terminated": true,
+  "truncated": false,
+  "terminated_reason": "bad_contact",
+  "phase_at_end": "lift",
+  "ik_rejects": 0,
+  "board_contact_force_n": null,
+  "terminal_contacts": [
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_head",
+    "board_slab"
+   ]
+  ],
+  "rows": [
+   {
+    "step": 0,
+    "phase": "approach",
+    "reward": -0.37243712334733503,
+    "pinch_to_piece_m": 0.4192648956809208,
+    "pinch_to_command_m": 0.30087674327625374,
+    "grasp": false
+   },
+   {
+    "step": 1,
+    "phase": "approach",
+    "reward": -0.3698190114475921,
+    "pinch_to_piece_m": 0.410537856015111,
+    "pinch_to_command_m": 0.29186713420588983,
+    "grasp": false
+   },
+   {
+    "step": 2,
+    "phase": "approach",
+    "reward": -0.3669368397966686,
+    "pinch_to_piece_m": 0.4009306171786994,
+    "pinch_to_command_m": 0.28194775463596905,
+    "grasp": false
+   },
+   {
+    "step": 3,
+    "phase": "approach",
+    "reward": -0.3642131807675679,
+    "pinch_to_piece_m": 0.39185175374836373,
+    "pinch_to_command_m": 0.2725996451136184,
+    "grasp": false
+   },
+   {
+    "step": 4,
+    "phase": "approach",
+    "reward": -0.3616660257423125,
+    "pinch_to_piece_m": 0.3833612369975124,
+    "pinch_to_command_m": 0.263887501292497,
+    "grasp": false
+   },
+   {
+    "step": 5,
+    "phase": "approach",
+    "reward": -0.3592695897147936,
+    "pinch_to_piece_m": 0.37537311690578273,
+    "pinch_to_command_m": 0.2557227715260068,
+    "grasp": false
+   },
+   {
+    "step": 6,
+    "phase": "approach",
+    "reward": -0.3569967645631491,
+    "pinch_to_piece_m": 0.3677970330669678,
+    "pinch_to_command_m": 0.24801221920426858,
+    "grasp": false
+   },
+   {
+    "step": 7,
+    "phase": "approach",
+    "reward": -0.35482140642897,
+    "pinch_to_piece_m": 0.36054583928637074,
+    "pinch_to_command_m": 0.24067072599956557,
+    "grasp": false
+   },
+   {
+    "step": 8,
+    "phase": "approach",
+    "reward": -0.3527202121625873,
+    "pinch_to_piece_m": 0.3535418583984285,
+    "pinch_to_command_m": 0.23362019067116052,
+    "grasp": false
+   },
+   {
+    "step": 9,
+    "phase": "approach",
+    "reward": -0.3506663359946721,
+    "pinch_to_piece_m": 0.3466956045053779,
+    "pinch_to_command_m": 0.22676319600092748,
+    "grasp": false
+   },
+   {
+    "step": 10,
+    "phase": "approach",
+    "reward": -0.34863328619314093,
+    "pinch_to_piece_m": 0.3399187718336072,
+    "pinch_to_command_m": 0.21999880656599968,
+    "grasp": false
+   },
+   {
+    "step": 11,
+    "phase": "approach",
+    "reward": -0.34659756014657933,
+    "pinch_to_piece_m": 0.33313301834506853,
+    "pinch_to_command_m": 0.21323476284669074,
+    "grasp": false
+   },
+   {
+    "step": 12,
+    "phase": "approach",
+    "reward": -0.344540698101127,
+    "pinch_to_piece_m": 0.3262768115268941,
+    "pinch_to_command_m": 0.2063973593032572,
+    "grasp": false
+   },
+   {
+    "step": 13,
+    "phase": "approach",
+    "reward": -0.3424505611501144,
+    "pinch_to_piece_m": 0.3193096883568522,
+    "pinch_to_command_m": 0.19943789938516096,
+    "grasp": false
+   },
+   {
+    "step": 14,
+    "phase": "approach",
+    "reward": -0.3403216698955914,
+    "pinch_to_piece_m": 0.3122133841751088,
+    "pinch_to_command_m": 0.19233484947961793,
+    "grasp": false
+   },
+   {
+    "step": 15,
+    "phase": "approach",
+    "reward": -0.3381545789059285,
+    "pinch_to_piece_m": 0.30498974754289904,
+    "pinch_to_command_m": 0.1850915001428405,
+    "grasp": false
+   },
+   {
+    "step": 16,
+    "phase": "approach",
+    "reward": -0.3359544688806578,
+    "pinch_to_piece_m": 0.29765604745866336,
+    "pinch_to_command_m": 0.17772993470275456,
+    "grasp": false
+   },
+   {
+    "step": 17,
+    "phase": "approach",
+    "reward": -0.3337293266977578,
+    "pinch_to_piece_m": 0.2902389068489966,
+    "pinch_to_command_m": 0.17028301868299756,
+    "grasp": false
+   },
+   {
+    "step": 18,
+    "phase": "approach",
+    "reward": -0.33148815395605574,
+    "pinch_to_piece_m": 0.2827683310433233,
+    "pinch_to_command_m": 0.16278649713101132,
+    "grasp": false
+   },
+   {
+    "step": 19,
+    "phase": "approach",
+    "reward": -0.32923955836883406,
+    "pinch_to_piece_m": 0.2752730124192509,
+    "pinch_to_command_m": 0.1552729160788208,
+    "grasp": false
+   },
+   {
+    "step": 20,
+    "phase": "approach",
+    "reward": -0.32699089122161556,
+    "pinch_to_piece_m": 0.2677774552618559,
+    "pinch_to_command_m": 0.14776818378572149,
+    "grasp": false
+   },
+   {
+    "step": 21,
+    "phase": "approach",
+    "reward": -0.32474789883158106,
+    "pinch_to_piece_m": 0.26030081396174093,
+    "pinch_to_command_m": 0.14029062579009105,
+    "grasp": false
+   },
+   {
+    "step": 22,
+    "phase": "descend",
+    "reward": -0.32251490703857816,
+    "pinch_to_piece_m": 0.2528575079850647,
+    "pinch_to_command_m": 0.2156041163597714,
+    "grasp": false
+   },
+   {
+    "step": 23,
+    "phase": "descend",
+    "reward": -0.3202949603135712,
+    "pinch_to_piece_m": 0.24545768556837463,
+    "pinch_to_command_m": 0.2082053520575174,
+    "grasp": false
+   },
+   {
+    "step": 24,
+    "phase": "descend",
+    "reward": -0.3180896254529375,
+    "pinch_to_piece_m": 0.23810656936626245,
+    "pinch_to_command_m": 0.20085523462135707,
+    "grasp": false
+   },
+   {
+    "step": 25,
+    "phase": "descend",
+    "reward": -0.31589950129007216,
+    "pinch_to_piece_m": 0.2308061554900447,
+    "pinch_to_command_m": 0.19355544730211596,
+    "grasp": false
+   },
+   {
+    "step": 26,
+    "phase": "descend",
+    "reward": -0.31372439540087943,
+    "pinch_to_piece_m": 0.2235558025260688,
+    "pinch_to_command_m": 0.18630523405826868,
+    "grasp": false
+   },
+   {
+    "step": 27,
+    "phase": "descend",
+    "reward": -0.31156346573217303,
+    "pinch_to_piece_m": 0.21635270363038078,
+    "pinch_to_command_m": 0.17910184092234713,
+    "grasp": false
+   },
+   {
+    "step": 28,
+    "phase": "descend",
+    "reward": -0.3094153495447593,
+    "pinch_to_piece_m": 0.20919231633900173,
+    "pinch_to_command_m": 0.17194088504783445,
+    "grasp": false
+   },
+   {
+    "step": 29,
+    "phase": "descend",
+    "reward": -0.30727829718940414,
+    "pinch_to_piece_m": 0.20206880848781786,
+    "pinch_to_command_m": 0.1648167321887074,
+    "grasp": false
+   },
+   {
+    "step": 30,
+    "phase": "descend",
+    "reward": -0.3051503177164962,
+    "pinch_to_piece_m": 0.19497554357812474,
+    "pinch_to_command_m": 0.15772292316485007,
+    "grasp": false
+   },
+   {
+    "step": 31,
+    "phase": "descend",
+    "reward": -0.3030293323747175,
+    "pinch_to_piece_m": 0.18790559243886254,
+    "pinch_to_command_m": 0.15065264639633313,
+    "grasp": false
+   },
+   {
+    "step": 32,
+    "phase": "descend",
+    "reward": -0.3009133241207109,
+    "pinch_to_piece_m": 0.18085223159217387,
+    "pinch_to_command_m": 0.1435992202635205,
+    "grasp": false
+   },
+   {
+    "step": 33,
+    "phase": "descend",
+    "reward": -0.2988004677800598,
+    "pinch_to_piece_m": 0.1738093771233368,
+    "pinch_to_command_m": 0.13655653185846184,
+    "grasp": false
+   },
+   {
+    "step": 34,
+    "phase": "descend",
+    "reward": -0.2966892264837152,
+    "pinch_to_piece_m": 0.16677190613552137,
+    "pinch_to_command_m": 0.12951937829036755,
+    "grasp": false
+   },
+   {
+    "step": 35,
+    "phase": "descend",
+    "reward": -0.2945784045391233,
+    "pinch_to_piece_m": 0.1597358329868817,
+    "pinch_to_command_m": 0.12248367021123595,
+    "grasp": false
+   },
+   {
+    "step": 36,
+    "phase": "descend",
+    "reward": -0.292467153478121,
+    "pinch_to_piece_m": 0.15269832945020753,
+    "pinch_to_command_m": 0.11544647943052681,
+    "grasp": false
+   },
+   {
+    "step": 37,
+    "phase": "descend",
+    "reward": -0.2903549349905038,
+    "pinch_to_piece_m": 0.14565760115815005,
+    "pinch_to_command_m": 0.10840593737934938,
+    "grasp": false
+   },
+   {
+    "step": 38,
+    "phase": "descend",
+    "reward": -0.2881990282168845,
+    "pinch_to_piece_m": 0.13847124524608562,
+    "pinch_to_command_m": 0.09474572942757627,
+    "grasp": false
+   },
+   {
+    "step": 39,
+    "phase": "descend",
+    "reward": -0.285992325420291,
+    "pinch_to_piece_m": 0.13111556925744075,
+    "pinch_to_command_m": 0.08731529205498462,
+    "grasp": false
+   },
+   {
+    "step": 40,
+    "phase": "descend",
+    "reward": -0.28374605453598273,
+    "pinch_to_piece_m": 0.12362799964307986,
+    "pinch_to_command_m": 0.0797198875469584,
+    "grasp": false
+   },
+   {
+    "step": 41,
+    "phase": "descend",
+    "reward": -0.2814736680698906,
+    "pinch_to_piece_m": 0.1160533780894394,
+    "pinch_to_command_m": 0.07201718405408937,
+    "grasp": false
+   },
+   {
+    "step": 42,
+    "phase": "descend",
+    "reward": -0.2791886199109952,
+    "pinch_to_piece_m": 0.10843655089312135,
+    "pinch_to_command_m": 0.06426426618739348,
+    "grasp": false
+   },
+   {
+    "step": 43,
+    "phase": "descend",
+    "reward": -0.2768842129565304,
+    "pinch_to_piece_m": 0.1007551943782386,
+    "pinch_to_command_m": 0.05190233547762379,
+    "grasp": false
+   },
+   {
+    "step": 44,
+    "phase": "descend",
+    "reward": -0.2745699766114432,
+    "pinch_to_piece_m": 0.09304107322794819,
+    "pinch_to_command_m": 0.043949116367823005,
+    "grasp": false
+   },
+   {
+    "step": 45,
+    "phase": "descend",
+    "reward": -0.27225908816640987,
+    "pinch_to_piece_m": 0.08533811174450365,
+    "pinch_to_command_m": 0.036002108723116995,
+    "grasp": false
+   },
+   {
+    "step": 46,
+    "phase": "descend",
+    "reward": -0.26996142431351805,
+    "pinch_to_piece_m": 0.07767923223486425,
+    "pinch_to_command_m": 0.028105631906507243,
+    "grasp": false
+   },
+   {
+    "step": 47,
+    "phase": "close",
+    "reward": -0.2676882960427516,
+    "pinch_to_piece_m": 0.070102137998976,
+    "pinch_to_command_m": 0.020302855706917554,
+    "grasp": false
+   },
+   {
+    "step": 48,
+    "phase": "close",
+    "reward": -0.26543018941677216,
+    "pinch_to_piece_m": 0.06257511591237801,
+    "pinch_to_command_m": 0.012573743735885518,
+    "grasp": false
+   },
+   {
+    "step": 49,
+    "phase": "close",
+    "reward": -0.26320126989776566,
+    "pinch_to_piece_m": 0.05514538418235619,
+    "pinch_to_command_m": 0.005000219610183244,
+    "grasp": false
+   },
+   {
+    "step": 50,
+    "phase": "close",
+    "reward": -0.2617217063258635,
+    "pinch_to_piece_m": 0.04878562667321733,
+    "pinch_to_command_m": 0.0023893318886316624,
+    "grasp": false
+   },
+   {
+    "step": 51,
+    "phase": "close",
+    "reward": -0.2608335231309545,
+    "pinch_to_piece_m": 0.045648586274985366,
+    "pinch_to_command_m": 0.006568995721299294,
+    "grasp": false
+   },
+   {
+    "step": 52,
+    "phase": "close",
+    "reward": -0.26045692874613063,
+    "pinch_to_piece_m": 0.04430058643628012,
+    "pinch_to_command_m": 0.00852728700653099,
+    "grasp": false
+   },
+   {
+    "step": 53,
+    "phase": "close",
+    "reward": -0.260427494682647,
+    "pinch_to_piece_m": 0.044060762848381195,
+    "pinch_to_command_m": 0.008809252212721821,
+    "grasp": false
+   },
+   {
+    "step": 54,
+    "phase": "close",
+    "reward": -0.26043621656867694,
+    "pinch_to_piece_m": 0.04390794229417486,
+    "pinch_to_command_m": 0.0077355565928140385,
+    "grasp": false
+   },
+   {
+    "step": 55,
+    "phase": "close",
+    "reward": -0.26128302480732013,
+    "pinch_to_piece_m": 0.04368255423024654,
+    "pinch_to_command_m": 0.006110905141065725,
+    "grasp": false
+   },
+   {
+    "step": 56,
+    "phase": "lift",
+    "reward": -0.26332714313104877,
+    "pinch_to_piece_m": 0.04375613907427019,
+    "pinch_to_command_m": 0.07374551328554624,
+    "grasp": false
+   },
+   {
+    "step": 57,
+    "phase": "lift",
+    "reward": -0.2653911210892444,
+    "pinch_to_piece_m": 0.04372272153624075,
+    "pinch_to_command_m": 0.06693146354688255,
+    "grasp": true
+   },
+   {
+    "step": 58,
+    "phase": "lift",
+    "reward": -0.26733493018788196,
+    "pinch_to_piece_m": 0.043683423222505256,
+    "pinch_to_command_m": 0.0590312922954338,
+    "grasp": true
+   },
+   {
+    "step": 59,
+    "phase": "lift",
+    "reward": -0.26912622831281097,
+    "pinch_to_piece_m": 0.04364338788774515,
+    "pinch_to_command_m": 0.05079138481695972,
+    "grasp": true
+   },
+   {
+    "step": 60,
+    "phase": "lift",
+    "reward": -0.2707556017619496,
+    "pinch_to_piece_m": 0.04359835663839369,
+    "pinch_to_command_m": 0.041932019064995676,
+    "grasp": true
+   },
+   {
+    "step": 61,
+    "phase": "lift",
+    "reward": -0.2723167125558428,
+    "pinch_to_piece_m": 0.04356976488417108,
+    "pinch_to_command_m": 0.033064817777632566,
+    "grasp": true
+   },
+   {
+    "step": 62,
+    "phase": "lift",
+    "reward": -0.27388504143022313,
+    "pinch_to_piece_m": 0.04354755068695602,
+    "pinch_to_command_m": 0.024475680336457143,
+    "grasp": true
+   },
+   {
+    "step": 63,
+    "phase": "lift",
+    "reward": -0.27057384276263063,
+    "pinch_to_piece_m": 0.04006064017190356,
+    "pinch_to_command_m": 0.01651717422762583,
+    "grasp": true
+   },
+   {
+    "step": 64,
+    "phase": "lift",
+    "reward": -0.2737383754057983,
+    "pinch_to_piece_m": 0.041776568029754636,
+    "pinch_to_command_m": 0.01002927211627727,
+    "grasp": true
+   },
+   {
+    "step": 65,
+    "phase": "lift",
+    "reward": -0.2768707477435302,
+    "pinch_to_piece_m": 0.04324542263641332,
+    "pinch_to_command_m": 0.00785872365509461,
+    "grasp": true
+   },
+   {
+    "step": 66,
+    "phase": "lift",
+    "reward": -0.27816128684297703,
+    "pinch_to_piece_m": 0.04358430548560294,
+    "pinch_to_command_m": 0.010749735584798744,
+    "grasp": true
+   },
+   {
+    "step": 67,
+    "phase": "lift",
+    "reward": -0.2772608571683338,
+    "pinch_to_piece_m": 0.04280572912261576,
+    "pinch_to_command_m": 0.01342526958127319,
+    "grasp": true
+   },
+   {
+    "step": 68,
+    "phase": "lift",
+    "reward": -0.27528731681323154,
+    "pinch_to_piece_m": 0.04127746348301911,
+    "pinch_to_command_m": 0.013894404877492333,
+    "grasp": true
+   },
+   {
+    "step": 69,
+    "phase": "lift",
+    "reward": -0.27374907593401676,
+    "pinch_to_piece_m": 0.04056649938134368,
+    "pinch_to_command_m": 0.012091636047904995,
+    "grasp": true
+   },
+   {
+    "step": 70,
+    "phase": "lift",
+    "reward": -0.27268606230012193,
+    "pinch_to_piece_m": 0.042630427558939164,
+    "pinch_to_command_m": 0.008723176710576942,
+    "grasp": false
+   },
+   {
+    "step": 71,
+    "phase": "lift",
+    "reward": -0.27403634195834364,
+    "pinch_to_piece_m": 0.057817578491567496,
+    "pinch_to_command_m": 0.005035513214436072,
+    "grasp": false
+   },
+   {
+    "step": 72,
+    "phase": "lift",
+    "reward": -0.28143923793208236,
+    "pinch_to_piece_m": 0.08842108362156934,
+    "pinch_to_command_m": 0.0036738040947943825,
+    "grasp": false
+   },
+   {
+    "step": 73,
+    "phase": "lift",
+    "reward": -0.28526516272110297,
+    "pinch_to_piece_m": 0.09866441334229549,
+    "pinch_to_command_m": 0.005488465270162261,
+    "grasp": false
+   },
+   {
+    "step": 74,
+    "phase": "lift",
+    "reward": -514.285617914161,
+    "pinch_to_piece_m": 0.09616264489243638,
+    "pinch_to_command_m": 0.007098530219241599,
+    "grasp": false
+   }
+  ]
+ },
+ {
+  "start": "g6",
+  "target": "e5",
+  "reference": {
+   "outcome": "success",
+   "success": true,
+   "steps": 181
+  },
+  "is_success": false,
+  "grasp_success_ever": true,
+  "final_distance_m": 0.15580256283283234,
+  "closest_pinch_to_piece_m": 0.03474623347225017,
+  "steps": 168,
+  "commands_available": 181,
+  "terminated": true,
+  "truncated": false,
+  "terminated_reason": "bad_contact",
+  "phase_at_end": "release",
+  "ik_rejects": 0,
+  "board_contact_force_n": null,
+  "terminal_contacts": [
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ]
+  ],
+  "rows": [
+   {
+    "step": 0,
+    "phase": "approach",
+    "reward": -0.3384517512048044,
+    "pinch_to_piece_m": 0.5467948090118695,
+    "pinch_to_command_m": 0.46210439737748965,
+    "grasp": false
+   },
+   {
+    "step": 1,
+    "phase": "approach",
+    "reward": -0.33504206518793733,
+    "pinch_to_piece_m": 0.5354291889556458,
+    "pinch_to_command_m": 0.45069392932785357,
+    "grasp": false
+   },
+   {
+    "step": 2,
+    "phase": "approach",
+    "reward": -0.3310542947677464,
+    "pinch_to_piece_m": 0.5221366208883427,
+    "pinch_to_command_m": 0.43732888708010514,
+    "grasp": false
+   },
+   {
+    "step": 3,
+    "phase": "approach",
+    "reward": -0.327115665724487,
+    "pinch_to_piece_m": 0.5090078574108113,
+    "pinch_to_command_m": 0.42411791290195544,
+    "grasp": false
+   },
+   {
+    "step": 4,
+    "phase": "approach",
+    "reward": -0.3233142643608551,
+    "pinch_to_piece_m": 0.49633651953203833,
+    "pinch_to_command_m": 0.41134303898984864,
+    "grasp": false
+   },
+   {
+    "step": 5,
+    "phase": "approach",
+    "reward": -0.31963979556514555,
+    "pinch_to_piece_m": 0.48408829021300664,
+    "pinch_to_command_m": 0.3989717386379173,
+    "grasp": false
+   },
+   {
+    "step": 6,
+    "phase": "approach",
+    "reward": -0.3160725300762258,
+    "pinch_to_piece_m": 0.4721974052499409,
+    "pinch_to_command_m": 0.3869398067011307,
+    "grasp": false
+   },
+   {
+    "step": 7,
+    "phase": "approach",
+    "reward": -0.31258704168518503,
+    "pinch_to_piece_m": 0.46057911061313805,
+    "pinch_to_command_m": 0.3751630108156663,
+    "grasp": false
+   },
+   {
+    "step": 8,
+    "phase": "approach",
+    "reward": -0.30915377510486725,
+    "pinch_to_piece_m": 0.4491348886787455,
+    "pinch_to_command_m": 0.3635431170726778,
+    "grasp": false
+   },
+   {
+    "step": 9,
+    "phase": "approach",
+    "reward": -0.3057401675563359,
+    "pinch_to_piece_m": 0.43775619685030764,
+    "pinch_to_command_m": 0.35197121250975194,
+    "grasp": false
+   },
+   {
+    "step": 10,
+    "phase": "approach",
+    "reward": -0.30231102108188806,
+    "pinch_to_piece_m": 0.42632570860214825,
+    "pinch_to_command_m": 0.34032931677551287,
+    "grasp": false
+   },
+   {
+    "step": 11,
+    "phase": "approach",
+    "reward": -0.2988287358777616,
+    "pinch_to_piece_m": 0.41471809125506004,
+    "pinch_to_command_m": 0.3284910569735097,
+    "grasp": false
+   },
+   {
+    "step": 12,
+    "phase": "approach",
+    "reward": -0.29525332390785186,
+    "pinch_to_piece_m": 0.40280005135536096,
+    "pinch_to_command_m": 0.3163221618571208,
+    "grasp": false
+   },
+   {
+    "step": 13,
+    "phase": "approach",
+    "reward": -0.29154265267766144,
+    "pinch_to_piece_m": 0.3904311472547263,
+    "pinch_to_command_m": 0.30368165860731305,
+    "grasp": false
+   },
+   {
+    "step": 14,
+    "phase": "approach",
+    "reward": -0.28765321353581585,
+    "pinch_to_piece_m": 0.37746635011524093,
+    "pinch_to_command_m": 0.2904248753799305,
+    "grasp": false
+   },
+   {
+    "step": 15,
+    "phase": "approach",
+    "reward": -0.28354152101059743,
+    "pinch_to_piece_m": 0.36376070836451285,
+    "pinch_to_command_m": 0.2764095177679119,
+    "grasp": false
+   },
+   {
+    "step": 16,
+    "phase": "approach",
+    "reward": -0.2791666686410869,
+    "pinch_to_piece_m": 0.34917786713281107,
+    "pinch_to_command_m": 0.2615058884274233,
+    "grasp": false
+   },
+   {
+    "step": 17,
+    "phase": "approach",
+    "reward": -0.27449352657717035,
+    "pinch_to_piece_m": 0.3336007269197559,
+    "pinch_to_command_m": 0.2456113649723157,
+    "grasp": false
+   },
+   {
+    "step": 18,
+    "phase": "approach",
+    "reward": -0.26971533527334113,
+    "pinch_to_piece_m": 0.31767342257365844,
+    "pinch_to_command_m": 0.2294292592117962,
+    "grasp": false
+   },
+   {
+    "step": 19,
+    "phase": "approach",
+    "reward": -0.26485637718054955,
+    "pinch_to_piece_m": 0.3014768955976865,
+    "pinch_to_command_m": 0.21307096826580652,
+    "grasp": false
+   },
+   {
+    "step": 20,
+    "phase": "approach",
+    "reward": -0.2598931467507696,
+    "pinch_to_piece_m": 0.28493279416508654,
+    "pinch_to_command_m": 0.19647304357598802,
+    "grasp": false
+   },
+   {
+    "step": 21,
+    "phase": "descend",
+    "reward": -0.2550925481952988,
+    "pinch_to_piece_m": 0.2689307989801841,
+    "pinch_to_command_m": 0.23854100624133426,
+    "grasp": false
+   },
+   {
+    "step": 22,
+    "phase": "descend",
+    "reward": -0.2505630333147292,
+    "pinch_to_piece_m": 0.25383241604495205,
+    "pinch_to_command_m": 0.22327050212291524,
+    "grasp": false
+   },
+   {
+    "step": 23,
+    "phase": "descend",
+    "reward": -0.24632508074236947,
+    "pinch_to_piece_m": 0.23970590747041962,
+    "pinch_to_command_m": 0.20896131940136878,
+    "grasp": false
+   },
+   {
+    "step": 24,
+    "phase": "descend",
+    "reward": -0.24236421525748222,
+    "pinch_to_piece_m": 0.22650302252079543,
+    "pinch_to_command_m": 0.1955584881556258,
+    "grasp": false
+   },
+   {
+    "step": 25,
+    "phase": "descend",
+    "reward": -0.2386515848903497,
+    "pinch_to_piece_m": 0.21412758796368708,
+    "pinch_to_command_m": 0.1829614937088768,
+    "grasp": false
+   },
+   {
+    "step": 26,
+    "phase": "descend",
+    "reward": -0.23515150421204215,
+    "pinch_to_piece_m": 0.2024606523693285,
+    "pinch_to_command_m": 0.17104931305460003,
+    "grasp": false
+   },
+   {
+    "step": 27,
+    "phase": "descend",
+    "reward": -0.2318235871996449,
+    "pinch_to_piece_m": 0.19136759566133776,
+    "pinch_to_command_m": 0.15968600733998867,
+    "grasp": false
+   },
+   {
+    "step": 28,
+    "phase": "descend",
+    "reward": -0.22862811537750438,
+    "pinch_to_piece_m": 0.18071602292086933,
+    "pinch_to_command_m": 0.14873855765333205,
+    "grasp": false
+   },
+   {
+    "step": 29,
+    "phase": "descend",
+    "reward": -0.2255189284413866,
+    "pinch_to_piece_m": 0.17035206646714335,
+    "pinch_to_command_m": 0.13805079978121104,
+    "grasp": false
+   },
+   {
+    "step": 30,
+    "phase": "descend",
+    "reward": -0.22244358739952064,
+    "pinch_to_piece_m": 0.1601009296609235,
+    "pinch_to_command_m": 0.12744360000738436,
+    "grasp": false
+   },
+   {
+    "step": 31,
+    "phase": "descend",
+    "reward": -0.2193447717002606,
+    "pinch_to_piece_m": 0.14977154399672335,
+    "pinch_to_command_m": 0.11671693203206453,
+    "grasp": false
+   },
+   {
+    "step": 32,
+    "phase": "descend",
+    "reward": -0.21616033025991366,
+    "pinch_to_piece_m": 0.1391567391955669,
+    "pinch_to_command_m": 0.10564819845736434,
+    "grasp": false
+   },
+   {
+    "step": 33,
+    "phase": "descend",
+    "reward": -0.21282597016731794,
+    "pinch_to_piece_m": 0.1280422055535812,
+    "pinch_to_command_m": 0.09399925484397827,
+    "grasp": false
+   },
+   {
+    "step": 34,
+    "phase": "descend",
+    "reward": -0.20928372189164146,
+    "pinch_to_piece_m": 0.11623471130132619,
+    "pinch_to_command_m": 0.0815445522391931,
+    "grasp": false
+   },
+   {
+    "step": 35,
+    "phase": "descend",
+    "reward": -0.20550056910000783,
+    "pinch_to_piece_m": 0.10362420199588081,
+    "pinch_to_command_m": 0.06814419291879874,
+    "grasp": false
+   },
+   {
+    "step": 36,
+    "phase": "descend",
+    "reward": -0.20129340885420416,
+    "pinch_to_piece_m": 0.08960033450986851,
+    "pinch_to_command_m": 0.04376598824591401,
+    "grasp": false
+   },
+   {
+    "step": 37,
+    "phase": "descend",
+    "reward": -0.1971498415997883,
+    "pinch_to_piece_m": 0.0757884436618157,
+    "pinch_to_command_m": 0.027579977658220848,
+    "grasp": false
+   },
+   {
+    "step": 38,
+    "phase": "descend",
+    "reward": -0.19345584679045857,
+    "pinch_to_piece_m": 0.06347512763071661,
+    "pinch_to_command_m": 0.014767092444002983,
+    "grasp": false
+   },
+   {
+    "step": 39,
+    "phase": "descend",
+    "reward": -0.1902492966166078,
+    "pinch_to_piece_m": 0.05278662705121404,
+    "pinch_to_command_m": 0.013455269392816414,
+    "grasp": false
+   },
+   {
+    "step": 40,
+    "phase": "descend",
+    "reward": -0.1877988315704919,
+    "pinch_to_piece_m": 0.04461841023082767,
+    "pinch_to_command_m": 0.020973531863539032,
+    "grasp": false
+   },
+   {
+    "step": 41,
+    "phase": "descend",
+    "reward": -0.1861054307342167,
+    "pinch_to_piece_m": 0.03897374077657705,
+    "pinch_to_command_m": 0.026094286663250487,
+    "grasp": false
+   },
+   {
+    "step": 42,
+    "phase": "descend",
+    "reward": -0.18507972440365447,
+    "pinch_to_piece_m": 0.0355547196747029,
+    "pinch_to_command_m": 0.026456606118591918,
+    "grasp": false
+   },
+   {
+    "step": 43,
+    "phase": "descend",
+    "reward": -0.18483717854291865,
+    "pinch_to_piece_m": 0.03474623347225017,
+    "pinch_to_command_m": 0.022743858447185114,
+    "grasp": false
+   },
+   {
+    "step": 44,
+    "phase": "descend",
+    "reward": -0.18568798640244655,
+    "pinch_to_piece_m": 0.0375822596706765,
+    "pinch_to_command_m": 0.01627073555523893,
+    "grasp": false
+   },
+   {
+    "step": 45,
+    "phase": "descend",
+    "reward": -0.18750695696008418,
+    "pinch_to_piece_m": 0.04364549486280192,
+    "pinch_to_command_m": 0.009384656776415276,
+    "grasp": false
+   },
+   {
+    "step": 46,
+    "phase": "descend",
+    "reward": -0.1899489241077405,
+    "pinch_to_piece_m": 0.05178538535498972,
+    "pinch_to_command_m": 0.009264276927023784,
+    "grasp": false
+   },
+   {
+    "step": 47,
+    "phase": "descend",
+    "reward": -0.19237191253841376,
+    "pinch_to_piece_m": 0.05986201345723391,
+    "pinch_to_command_m": 0.009901342580572165,
+    "grasp": false
+   },
+   {
+    "step": 48,
+    "phase": "descend",
+    "reward": -0.19425682761768306,
+    "pinch_to_piece_m": 0.0661450637214649,
+    "pinch_to_command_m": 0.013207741183941236,
+    "grasp": false
+   },
+   {
+    "step": 49,
+    "phase": "descend",
+    "reward": -0.19532800962034086,
+    "pinch_to_piece_m": 0.0697156703969909,
+    "pinch_to_command_m": 0.015063655507205927,
+    "grasp": false
+   },
+   {
+    "step": 50,
+    "phase": "descend",
+    "reward": -0.19552772520904693,
+    "pinch_to_piece_m": 0.0703813890260111,
+    "pinch_to_command_m": 0.014507840584044533,
+    "grasp": false
+   },
+   {
+    "step": 51,
+    "phase": "descend",
+    "reward": -0.1949703194218228,
+    "pinch_to_piece_m": 0.06852336973526403,
+    "pinch_to_command_m": 0.011842507978055512,
+    "grasp": false
+   },
+   {
+    "step": 52,
+    "phase": "descend",
+    "reward": -0.1938838023776014,
+    "pinch_to_piece_m": 0.064901646254526,
+    "pinch_to_command_m": 0.008044307763389453,
+    "grasp": false
+   },
+   {
+    "step": 53,
+    "phase": "descend",
+    "reward": -0.19254652625646054,
+    "pinch_to_piece_m": 0.06044405918405654,
+    "pinch_to_command_m": 0.004960839920266293,
+    "grasp": false
+   },
+   {
+    "step": 54,
+    "phase": "descend",
+    "reward": -0.19123130268387914,
+    "pinch_to_piece_m": 0.0560599806087852,
+    "pinch_to_command_m": 0.00528794337360953,
+    "grasp": false
+   },
+   {
+    "step": 55,
+    "phase": "descend",
+    "reward": -0.19016566438157792,
+    "pinch_to_piece_m": 0.05250785293444774,
+    "pinch_to_command_m": 0.007304087201988112,
+    "grasp": false
+   },
+   {
+    "step": 56,
+    "phase": "close",
+    "reward": -0.18951685679534921,
+    "pinch_to_piece_m": 0.05034516098035206,
+    "pinch_to_command_m": 0.008454746670284343,
+    "grasp": false
+   },
+   {
+    "step": 57,
+    "phase": "close",
+    "reward": -0.1893397993371963,
+    "pinch_to_piece_m": 0.04975496945317567,
+    "pinch_to_command_m": 0.008219168217645222,
+    "grasp": false
+   },
+   {
+    "step": 58,
+    "phase": "close",
+    "reward": -0.18933371712453467,
+    "pinch_to_piece_m": 0.049625122205658186,
+    "pinch_to_command_m": 0.006738984058344721,
+    "grasp": false
+   },
+   {
+    "step": 59,
+    "phase": "close",
+    "reward": -0.1897983079063967,
+    "pinch_to_piece_m": 0.05111743175588553,
+    "pinch_to_command_m": 0.004559662115810204,
+    "grasp": false
+   },
+   {
+    "step": 60,
+    "phase": "close",
+    "reward": -0.18917564548743013,
+    "pinch_to_piece_m": 0.05287571078182075,
+    "pinch_to_command_m": 0.002739292961195032,
+    "grasp": false
+   },
+   {
+    "step": 61,
+    "phase": "close",
+    "reward": -0.18904190591672815,
+    "pinch_to_piece_m": 0.052834230386540476,
+    "pinch_to_command_m": 0.0028894933387441524,
+    "grasp": false
+   },
+   {
+    "step": 62,
+    "phase": "close",
+    "reward": -0.18937488690724513,
+    "pinch_to_piece_m": 0.052838699543162886,
+    "pinch_to_command_m": 0.00405924425766349,
+    "grasp": false
+   },
+   {
+    "step": 63,
+    "phase": "close",
+    "reward": -0.1900309204093605,
+    "pinch_to_piece_m": 0.052844742613365164,
+    "pinch_to_command_m": 0.0047489697998337735,
+    "grasp": false
+   },
+   {
+    "step": 64,
+    "phase": "close",
+    "reward": -0.190833438007672,
+    "pinch_to_piece_m": 0.052850357587600275,
+    "pinch_to_command_m": 0.004630500563954022,
+    "grasp": false
+   },
+   {
+    "step": 65,
+    "phase": "close",
+    "reward": -0.19161838348749952,
+    "pinch_to_piece_m": 0.05285471863361453,
+    "pinch_to_command_m": 0.0037970111622788786,
+    "grasp": false
+   },
+   {
+    "step": 66,
+    "phase": "close",
+    "reward": -0.1922620181724422,
+    "pinch_to_piece_m": 0.052857132251061596,
+    "pinch_to_command_m": 0.0025566314561437952,
+    "grasp": false
+   },
+   {
+    "step": 67,
+    "phase": "close",
+    "reward": -0.19269128870106755,
+    "pinch_to_piece_m": 0.052857174844775555,
+    "pinch_to_command_m": 0.0014942447825421572,
+    "grasp": false
+   },
+   {
+    "step": 68,
+    "phase": "close",
+    "reward": -0.1928840318269998,
+    "pinch_to_piece_m": 0.05285487868635868,
+    "pinch_to_command_m": 0.0015881976549794357,
+    "grasp": false
+   },
+   {
+    "step": 69,
+    "phase": "close",
+    "reward": -0.19286307090984137,
+    "pinch_to_piece_m": 0.05285087209497393,
+    "pinch_to_command_m": 0.0022871407181454815,
+    "grasp": false
+   },
+   {
+    "step": 70,
+    "phase": "close",
+    "reward": -0.19268645066649745,
+    "pinch_to_piece_m": 0.05284581643445721,
+    "pinch_to_command_m": 0.0026981020870536,
+    "grasp": false
+   },
+   {
+    "step": 71,
+    "phase": "close",
+    "reward": -0.1924331605026998,
+    "pinch_to_piece_m": 0.0528406002752906,
+    "pinch_to_command_m": 0.0026374686154978936,
+    "grasp": false
+   },
+   {
+    "step": 72,
+    "phase": "close",
+    "reward": -0.1921854127304479,
+    "pinch_to_piece_m": 0.05283607670225182,
+    "pinch_to_command_m": 0.0021603663036241657,
+    "grasp": false
+   },
+   {
+    "step": 73,
+    "phase": "close",
+    "reward": -0.1920107088022227,
+    "pinch_to_piece_m": 0.052832690057752894,
+    "pinch_to_command_m": 0.0014428745960145658,
+    "grasp": false
+   },
+   {
+    "step": 74,
+    "phase": "close",
+    "reward": -0.19194903984041933,
+    "pinch_to_piece_m": 0.052830676713649605,
+    "pinch_to_command_m": 0.0008190505798313605,
+    "grasp": false
+   },
+   {
+    "step": 75,
+    "phase": "close",
+    "reward": -0.19194765974705733,
+    "pinch_to_piece_m": 0.05283014938650253,
+    "pinch_to_command_m": 0.0009486778742188081,
+    "grasp": false
+   },
+   {
+    "step": 76,
+    "phase": "close",
+    "reward": -0.19195723057602251,
+    "pinch_to_piece_m": 0.052829368936168006,
+    "pinch_to_command_m": 0.0014502269215931763,
+    "grasp": false
+   },
+   {
+    "step": 77,
+    "phase": "close",
+    "reward": -0.192074727420213,
+    "pinch_to_piece_m": 0.05283031663696695,
+    "pinch_to_command_m": 0.0017173873219429486,
+    "grasp": false
+   },
+   {
+    "step": 78,
+    "phase": "close",
+    "reward": -0.19228449314804794,
+    "pinch_to_piece_m": 0.05283116797513172,
+    "pinch_to_command_m": 0.0016532602726313337,
+    "grasp": false
+   },
+   {
+    "step": 79,
+    "phase": "close",
+    "reward": -0.1925412290501829,
+    "pinch_to_piece_m": 0.05283137931036815,
+    "pinch_to_command_m": 0.0013120369804671063,
+    "grasp": false
+   },
+   {
+    "step": 80,
+    "phase": "close",
+    "reward": -0.1927991909650506,
+    "pinch_to_piece_m": 0.05283056128937059,
+    "pinch_to_command_m": 0.0008114655406597985,
+    "grasp": false
+   },
+   {
+    "step": 81,
+    "phase": "close",
+    "reward": -0.193007337208177,
+    "pinch_to_piece_m": 0.052827504461292966,
+    "pinch_to_command_m": 0.00046631267888716635,
+    "grasp": false
+   },
+   {
+    "step": 82,
+    "phase": "close",
+    "reward": -0.19318595623402865,
+    "pinch_to_piece_m": 0.052824520251124156,
+    "pinch_to_command_m": 0.0004781967349451784,
+    "grasp": false
+   },
+   {
+    "step": 83,
+    "phase": "close",
+    "reward": -0.19334007865027117,
+    "pinch_to_piece_m": 0.05282163838000852,
+    "pinch_to_command_m": 0.0006939524668996377,
+    "grasp": false
+   },
+   {
+    "step": 84,
+    "phase": "close",
+    "reward": -0.1934737990499101,
+    "pinch_to_piece_m": 0.052818848093536826,
+    "pinch_to_command_m": 0.0009204913214509112,
+    "grasp": false
+   },
+   {
+    "step": 85,
+    "phase": "close",
+    "reward": -0.1935904158976001,
+    "pinch_to_piece_m": 0.05281606774407043,
+    "pinch_to_command_m": 0.0011179338944081595,
+    "grasp": false
+   },
+   {
+    "step": 86,
+    "phase": "close",
+    "reward": -0.19361048891412702,
+    "pinch_to_piece_m": 0.05281179991919091,
+    "pinch_to_command_m": 0.0011092321129554474,
+    "grasp": false
+   },
+   {
+    "step": 87,
+    "phase": "close",
+    "reward": -0.19353995470674268,
+    "pinch_to_piece_m": 0.05280780290469297,
+    "pinch_to_command_m": 0.0008976459889749863,
+    "grasp": false
+   },
+   {
+    "step": 88,
+    "phase": "close",
+    "reward": -0.19347678165688126,
+    "pinch_to_piece_m": 0.05280579265799818,
+    "pinch_to_command_m": 0.0006934714308591413,
+    "grasp": false
+   },
+   {
+    "step": 89,
+    "phase": "close",
+    "reward": -0.19343190122196816,
+    "pinch_to_piece_m": 0.05280371270410688,
+    "pinch_to_command_m": 0.000533227272297113,
+    "grasp": false
+   },
+   {
+    "step": 90,
+    "phase": "close",
+    "reward": -0.19340153653494296,
+    "pinch_to_piece_m": 0.05280158980262868,
+    "pinch_to_command_m": 0.0004116180680279931,
+    "grasp": false
+   },
+   {
+    "step": 91,
+    "phase": "close",
+    "reward": -0.19338268839274336,
+    "pinch_to_piece_m": 0.052799460058559615,
+    "pinch_to_command_m": 0.0003249910180772582,
+    "grasp": false
+   },
+   {
+    "step": 92,
+    "phase": "close",
+    "reward": -0.19337298081544527,
+    "pinch_to_piece_m": 0.052797251483714884,
+    "pinch_to_command_m": 0.0002706513557787675,
+    "grasp": false
+   },
+   {
+    "step": 93,
+    "phase": "close",
+    "reward": -0.19337048681744987,
+    "pinch_to_piece_m": 0.052795047633153014,
+    "pinch_to_command_m": 0.00024452851235308524,
+    "grasp": false
+   },
+   {
+    "step": 94,
+    "phase": "close",
+    "reward": -0.19337360068263948,
+    "pinch_to_piece_m": 0.05279276119677031,
+    "pinch_to_command_m": 0.00023942231780672604,
+    "grasp": false
+   },
+   {
+    "step": 95,
+    "phase": "close",
+    "reward": -0.19338110095502484,
+    "pinch_to_piece_m": 0.05279049297973675,
+    "pinch_to_command_m": 0.0002467656423854947,
+    "grasp": false
+   },
+   {
+    "step": 96,
+    "phase": "close",
+    "reward": -0.19339194533952112,
+    "pinch_to_piece_m": 0.052788245602714834,
+    "pinch_to_command_m": 0.00025974997722660414,
+    "grasp": false
+   },
+   {
+    "step": 97,
+    "phase": "close",
+    "reward": -0.19340532484724998,
+    "pinch_to_piece_m": 0.052785954974587754,
+    "pinch_to_command_m": 0.0002742915131662757,
+    "grasp": false
+   },
+   {
+    "step": 98,
+    "phase": "close",
+    "reward": -0.19342062951547714,
+    "pinch_to_piece_m": 0.05278367404880831,
+    "pinch_to_command_m": 0.00028834233496961755,
+    "grasp": false
+   },
+   {
+    "step": 99,
+    "phase": "close",
+    "reward": -0.1934372825062918,
+    "pinch_to_piece_m": 0.05278141718329571,
+    "pinch_to_command_m": 0.00030102430189790945,
+    "grasp": false
+   },
+   {
+    "step": 100,
+    "phase": "close",
+    "reward": -0.19345489205851427,
+    "pinch_to_piece_m": 0.05277912027088374,
+    "pinch_to_command_m": 0.00031205889889723967,
+    "grasp": false
+   },
+   {
+    "step": 101,
+    "phase": "lift",
+    "reward": -0.19159698169710013,
+    "pinch_to_piece_m": 0.05279311475759657,
+    "pinch_to_command_m": 0.06190713830518388,
+    "grasp": false
+   },
+   {
+    "step": 102,
+    "phase": "lift",
+    "reward": -0.18906817722473615,
+    "pinch_to_piece_m": 0.05279255867514586,
+    "pinch_to_command_m": 0.055370932839025694,
+    "grasp": true
+   },
+   {
+    "step": 103,
+    "phase": "lift",
+    "reward": -0.18678805103528653,
+    "pinch_to_piece_m": 0.05277613370379327,
+    "pinch_to_command_m": 0.04640501280510442,
+    "grasp": true
+   },
+   {
+    "step": 104,
+    "phase": "lift",
+    "reward": -0.18563406692493667,
+    "pinch_to_piece_m": 0.052746551783505694,
+    "pinch_to_command_m": 0.03579451054629634,
+    "grasp": true
+   },
+   {
+    "step": 105,
+    "phase": "lift",
+    "reward": -0.18615916883631156,
+    "pinch_to_piece_m": 0.052708752144826974,
+    "pinch_to_command_m": 0.02437287859230871,
+    "grasp": true
+   },
+   {
+    "step": 106,
+    "phase": "lift",
+    "reward": -0.18835412774921656,
+    "pinch_to_piece_m": 0.05267359529737636,
+    "pinch_to_command_m": 0.013560227493861685,
+    "grasp": true
+   },
+   {
+    "step": 107,
+    "phase": "lift",
+    "reward": -0.19176489434303146,
+    "pinch_to_piece_m": 0.052646657548391186,
+    "pinch_to_command_m": 0.007948767519660255,
+    "grasp": true
+   },
+   {
+    "step": 108,
+    "phase": "lift",
+    "reward": -0.19606692040504506,
+    "pinch_to_piece_m": 0.052615865884273916,
+    "pinch_to_command_m": 0.011982562448044574,
+    "grasp": true
+   },
+   {
+    "step": 109,
+    "phase": "lift",
+    "reward": -0.2001576380034077,
+    "pinch_to_piece_m": 0.05260863439897292,
+    "pinch_to_command_m": 0.016789711737197347,
+    "grasp": true
+   },
+   {
+    "step": 110,
+    "phase": "lift",
+    "reward": -0.2030536560499807,
+    "pinch_to_piece_m": 0.052622367370174936,
+    "pinch_to_command_m": 0.018543810648985276,
+    "grasp": true
+   },
+   {
+    "step": 111,
+    "phase": "lift",
+    "reward": -0.20431422125089058,
+    "pinch_to_piece_m": 0.052644276976184366,
+    "pinch_to_command_m": 0.0168982156883162,
+    "grasp": true
+   },
+   {
+    "step": 112,
+    "phase": "lift",
+    "reward": -0.20400145169573447,
+    "pinch_to_piece_m": 0.05266972768563103,
+    "pinch_to_command_m": 0.012577882424067453,
+    "grasp": true
+   },
+   {
+    "step": 113,
+    "phase": "lift",
+    "reward": -0.20252117509281659,
+    "pinch_to_piece_m": 0.0526939827414362,
+    "pinch_to_command_m": 0.006970024748074272,
+    "grasp": true
+   },
+   {
+    "step": 114,
+    "phase": "lift",
+    "reward": -0.2004188281835692,
+    "pinch_to_piece_m": 0.052710368415242105,
+    "pinch_to_command_m": 0.0033204448967338444,
+    "grasp": true
+   },
+   {
+    "step": 115,
+    "phase": "lift",
+    "reward": -0.19820889556542098,
+    "pinch_to_piece_m": 0.05271652420809072,
+    "pinch_to_command_m": 0.006271495505585638,
+    "grasp": true
+   },
+   {
+    "step": 116,
+    "phase": "lift",
+    "reward": -0.19630109496552836,
+    "pinch_to_piece_m": 0.05271258379482859,
+    "pinch_to_command_m": 0.009323485810042238,
+    "grasp": true
+   },
+   {
+    "step": 117,
+    "phase": "lift",
+    "reward": -0.19498413222523434,
+    "pinch_to_piece_m": 0.052700520140989075,
+    "pinch_to_command_m": 0.010427091602137107,
+    "grasp": true
+   },
+   {
+    "step": 118,
+    "phase": "lift",
+    "reward": -0.19442353176220126,
+    "pinch_to_piece_m": 0.05268371857351289,
+    "pinch_to_command_m": 0.009512230416036192,
+    "grasp": true
+   },
+   {
+    "step": 119,
+    "phase": "lift",
+    "reward": -0.194648264969586,
+    "pinch_to_piece_m": 0.052665965839222686,
+    "pinch_to_command_m": 0.007036301484566326,
+    "grasp": true
+   },
+   {
+    "step": 120,
+    "phase": "lift",
+    "reward": -0.19553726416484138,
+    "pinch_to_piece_m": 0.0526506537084984,
+    "pinch_to_command_m": 0.0037796335724815536,
+    "grasp": true
+   },
+   {
+    "step": 121,
+    "phase": "lift",
+    "reward": -0.19683656608891542,
+    "pinch_to_piece_m": 0.05264030614932557,
+    "pinch_to_command_m": 0.0015478647514066543,
+    "grasp": true
+   },
+   {
+    "step": 122,
+    "phase": "lift",
+    "reward": -0.19822049865637878,
+    "pinch_to_piece_m": 0.05263594221786195,
+    "pinch_to_command_m": 0.0034319719684607385,
+    "grasp": true
+   },
+   {
+    "step": 123,
+    "phase": "lift",
+    "reward": -0.19937861034553767,
+    "pinch_to_piece_m": 0.052637112448000935,
+    "pinch_to_command_m": 0.0052322209854093965,
+    "grasp": true
+   },
+   {
+    "step": 124,
+    "phase": "lift",
+    "reward": -0.20009354640672689,
+    "pinch_to_piece_m": 0.05264235501918808,
+    "pinch_to_command_m": 0.005880892471527713,
+    "grasp": true
+   },
+   {
+    "step": 125,
+    "phase": "lift",
+    "reward": -0.20028170932434924,
+    "pinch_to_piece_m": 0.052649477756782595,
+    "pinch_to_command_m": 0.005362341791072901,
+    "grasp": true
+   },
+   {
+    "step": 126,
+    "phase": "traverse",
+    "reward": -0.195870126752487,
+    "pinch_to_piece_m": 0.05276599019246357,
+    "pinch_to_command_m": 0.17033345144912876,
+    "grasp": true
+   },
+   {
+    "step": 127,
+    "phase": "traverse",
+    "reward": -0.1876410099407349,
+    "pinch_to_piece_m": 0.0528548169600679,
+    "pinch_to_command_m": 0.16208257552569452,
+    "grasp": true
+   },
+   {
+    "step": 128,
+    "phase": "traverse",
+    "reward": -0.17864635000376655,
+    "pinch_to_piece_m": 0.052865922773836546,
+    "pinch_to_command_m": 0.15278848422793712,
+    "grasp": true
+   },
+   {
+    "step": 129,
+    "phase": "traverse",
+    "reward": -0.16988258722822905,
+    "pinch_to_piece_m": 0.05285816601253352,
+    "pinch_to_command_m": 0.14349859170778678,
+    "grasp": true
+   },
+   {
+    "step": 130,
+    "phase": "traverse",
+    "reward": -0.16144016555648993,
+    "pinch_to_piece_m": 0.05284980508029299,
+    "pinch_to_command_m": 0.13428028685645246,
+    "grasp": true
+   },
+   {
+    "step": 131,
+    "phase": "traverse",
+    "reward": -0.15336476861379242,
+    "pinch_to_piece_m": 0.0528408785310618,
+    "pinch_to_command_m": 0.12514033036190184,
+    "grasp": true
+   },
+   {
+    "step": 132,
+    "phase": "traverse",
+    "reward": -0.14570911373906595,
+    "pinch_to_piece_m": 0.05283147580799997,
+    "pinch_to_command_m": 0.11609946703439959,
+    "grasp": true
+   },
+   {
+    "step": 133,
+    "phase": "traverse",
+    "reward": -0.1385364126031889,
+    "pinch_to_piece_m": 0.05282184841410769,
+    "pinch_to_command_m": 0.10719771257129733,
+    "grasp": true
+   },
+   {
+    "step": 134,
+    "phase": "traverse",
+    "reward": -0.13192435473202505,
+    "pinch_to_piece_m": 0.052812028924585634,
+    "pinch_to_command_m": 0.09850174617976003,
+    "grasp": true
+   },
+   {
+    "step": 135,
+    "phase": "traverse",
+    "reward": -0.1258335064060577,
+    "pinch_to_piece_m": 0.05280187567309809,
+    "pinch_to_command_m": 0.08993285374811716,
+    "grasp": true
+   },
+   {
+    "step": 136,
+    "phase": "traverse",
+    "reward": -0.11975138126971929,
+    "pinch_to_piece_m": 0.052790003987239764,
+    "pinch_to_command_m": 0.08073159177046392,
+    "grasp": true
+   },
+   {
+    "step": 137,
+    "phase": "traverse",
+    "reward": -0.11334785355834255,
+    "pinch_to_piece_m": 0.052763804253872545,
+    "pinch_to_command_m": 0.07033743226643004,
+    "grasp": true
+   },
+   {
+    "step": 138,
+    "phase": "traverse",
+    "reward": -0.10680202234149294,
+    "pinch_to_piece_m": 0.05272296032509266,
+    "pinch_to_command_m": 0.05887177808320978,
+    "grasp": true
+   },
+   {
+    "step": 139,
+    "phase": "traverse",
+    "reward": -0.10055489229915608,
+    "pinch_to_piece_m": 0.052679309836959475,
+    "pinch_to_command_m": 0.046721482286883956,
+    "grasp": true
+   },
+   {
+    "step": 140,
+    "phase": "traverse",
+    "reward": -0.09572222454183699,
+    "pinch_to_piece_m": 0.05264896892287339,
+    "pinch_to_command_m": 0.03544974556636192,
+    "grasp": true
+   },
+   {
+    "step": 141,
+    "phase": "traverse",
+    "reward": -0.09224607993314274,
+    "pinch_to_piece_m": 0.05262301031581584,
+    "pinch_to_command_m": 0.025206415028412973,
+    "grasp": true
+   },
+   {
+    "step": 142,
+    "phase": "traverse",
+    "reward": -0.09003892221231105,
+    "pinch_to_piece_m": 0.05260108835759567,
+    "pinch_to_command_m": 0.01651038657025161,
+    "grasp": true
+   },
+   {
+    "step": 143,
+    "phase": "traverse",
+    "reward": -0.0887795950848243,
+    "pinch_to_piece_m": 0.0525714592398476,
+    "pinch_to_command_m": 0.011182268351312434,
+    "grasp": true
+   },
+   {
+    "step": 144,
+    "phase": "traverse",
+    "reward": -0.08822649243575378,
+    "pinch_to_piece_m": 0.052544682327311715,
+    "pinch_to_command_m": 0.012311339283982486,
+    "grasp": true
+   },
+   {
+    "step": 145,
+    "phase": "traverse",
+    "reward": -0.08783455406335938,
+    "pinch_to_piece_m": 0.05253099616063795,
+    "pinch_to_command_m": 0.015726821720140928,
+    "grasp": true
+   },
+   {
+    "step": 146,
+    "phase": "traverse",
+    "reward": -0.08703970623321707,
+    "pinch_to_piece_m": 0.052530035784091364,
+    "pinch_to_command_m": 0.017321661272843708,
+    "grasp": true
+   },
+   {
+    "step": 147,
+    "phase": "traverse",
+    "reward": -0.08572537303434469,
+    "pinch_to_piece_m": 0.052538981055771546,
+    "pinch_to_command_m": 0.016221888986663775,
+    "grasp": true
+   },
+   {
+    "step": 148,
+    "phase": "place",
+    "reward": -0.081074816140847,
+    "pinch_to_piece_m": 0.05272444636727898,
+    "pinch_to_command_m": 0.08525569240774122,
+    "grasp": true
+   },
+   {
+    "step": 149,
+    "phase": "place",
+    "reward": -0.07357029339955781,
+    "pinch_to_piece_m": 0.052908798763703434,
+    "pinch_to_command_m": 0.078124059254646,
+    "grasp": true
+   },
+   {
+    "step": 150,
+    "phase": "place",
+    "reward": -0.06526275620012419,
+    "pinch_to_piece_m": 0.05292692184941426,
+    "pinch_to_command_m": 0.06985494680543435,
+    "grasp": true
+   },
+   {
+    "step": 151,
+    "phase": "place",
+    "reward": -0.05764503099695849,
+    "pinch_to_piece_m": 0.052926058344576324,
+    "pinch_to_command_m": 0.06196134737350712,
+    "grasp": true
+   },
+   {
+    "step": 152,
+    "phase": "place",
+    "reward": -0.05082385153240979,
+    "pinch_to_piece_m": 0.052923855207596245,
+    "pinch_to_command_m": 0.054536702376210236,
+    "grasp": true
+   },
+   {
+    "step": 153,
+    "phase": "place",
+    "reward": -0.04473453508436846,
+    "pinch_to_piece_m": 0.0529209005872464,
+    "pinch_to_command_m": 0.04743203761608024,
+    "grasp": true
+   },
+   {
+    "step": 154,
+    "phase": "place",
+    "reward": -0.03938378273815887,
+    "pinch_to_piece_m": 0.05291739079260088,
+    "pinch_to_command_m": 0.040493991476584876,
+    "grasp": true
+   },
+   {
+    "step": 155,
+    "phase": "place",
+    "reward": -0.03499015627079785,
+    "pinch_to_piece_m": 0.05291368258574207,
+    "pinch_to_command_m": 0.03359068814045054,
+    "grasp": true
+   },
+   {
+    "step": 156,
+    "phase": "place",
+    "reward": -0.03217813618559323,
+    "pinch_to_piece_m": 0.052909927569451676,
+    "pinch_to_command_m": 0.026630845998044772,
+    "grasp": false
+   },
+   {
+    "step": 157,
+    "phase": "place",
+    "reward": -0.031013790988885473,
+    "pinch_to_piece_m": 0.05117425852008366,
+    "pinch_to_command_m": 0.019992793266471687,
+    "grasp": false
+   },
+   {
+    "step": 158,
+    "phase": "place",
+    "reward": -0.029386217578073554,
+    "pinch_to_piece_m": 0.04590826376881935,
+    "pinch_to_command_m": 0.014879313937857774,
+    "grasp": false
+   },
+   {
+    "step": 159,
+    "phase": "place",
+    "reward": -0.02729513179824889,
+    "pinch_to_piece_m": 0.040109199792681155,
+    "pinch_to_command_m": 0.009332281310234345,
+    "grasp": false
+   },
+   {
+    "step": 160,
+    "phase": "place",
+    "reward": -0.02579414222063356,
+    "pinch_to_piece_m": 0.03675153887674985,
+    "pinch_to_command_m": 0.005423462699142548,
+    "grasp": false
+   },
+   {
+    "step": 161,
+    "phase": "place",
+    "reward": -0.02932548997794049,
+    "pinch_to_piece_m": 0.038748982979008126,
+    "pinch_to_command_m": 0.004926286293478403,
+    "grasp": false
+   },
+   {
+    "step": 162,
+    "phase": "place",
+    "reward": -0.03903957735003483,
+    "pinch_to_piece_m": 0.040770734945981116,
+    "pinch_to_command_m": 0.006791936301894605,
+    "grasp": false
+   },
+   {
+    "step": 163,
+    "phase": "place",
+    "reward": -0.051590509862087526,
+    "pinch_to_piece_m": 0.03661782841014318,
+    "pinch_to_command_m": 0.012059655035309192,
+    "grasp": false
+   },
+   {
+    "step": 164,
+    "phase": "place",
+    "reward": -0.09574936708754729,
+    "pinch_to_piece_m": 0.06819783419193264,
+    "pinch_to_command_m": 0.016056506764569378,
+    "grasp": false
+   },
+   {
+    "step": 165,
+    "phase": "place",
+    "reward": -0.14166184918060631,
+    "pinch_to_piece_m": 0.10468685481199724,
+    "pinch_to_command_m": 0.016682041668625795,
+    "grasp": false
+   },
+   {
+    "step": 166,
+    "phase": "place",
+    "reward": -0.17726664880484075,
+    "pinch_to_piece_m": 0.13368161650398472,
+    "pinch_to_command_m": 0.014238214665164495,
+    "grasp": false
+   },
+   {
+    "step": 167,
+    "phase": "release",
+    "reward": -514.2024572022302,
+    "pinch_to_piece_m": 0.15551546465787686,
+    "pinch_to_command_m": 0.00968929787064679,
+    "grasp": false
+   }
+  ]
+ },
+ {
+  "start": "c7",
+  "target": "e5",
+  "reference": {
+   "outcome": "success",
+   "success": true,
+   "steps": 181
+  },
+  "is_success": false,
+  "grasp_success_ever": true,
+  "final_distance_m": 0.01925947144627571,
+  "closest_pinch_to_piece_m": 0.03827437727607318,
+  "steps": 156,
+  "commands_available": 181,
+  "terminated": true,
+  "truncated": false,
+  "terminated_reason": "bad_contact",
+  "phase_at_end": "place",
+  "ik_rejects": 0,
+  "board_contact_force_n": null,
+  "terminal_contacts": [
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ]
+  ],
+  "rows": [
+   {
+    "step": 0,
+    "phase": "approach",
+    "reward": -0.3617486388864729,
+    "pinch_to_piece_m": 0.4704378152498317,
+    "pinch_to_command_m": 0.36869386152312267,
+    "grasp": false
+   },
+   {
+    "step": 1,
+    "phase": "approach",
+    "reward": -0.3587760520846924,
+    "pinch_to_piece_m": 0.46052919257722985,
+    "pinch_to_command_m": 0.3585941791896355,
+    "grasp": false
+   },
+   {
+    "step": 2,
+    "phase": "approach",
+    "reward": -0.35535952537678794,
+    "pinch_to_piece_m": 0.4491407702175484,
+    "pinch_to_command_m": 0.3470145595377593,
+    "grasp": false
+   },
+   {
+    "step": 3,
+    "phase": "approach",
+    "reward": -0.35202731232030327,
+    "pinch_to_piece_m": 0.4380333933625995,
+    "pinch_to_command_m": 0.3357455805832228,
+    "grasp": false
+   },
+   {
+    "step": 4,
+    "phase": "approach",
+    "reward": -0.34884129560749855,
+    "pinch_to_piece_m": 0.42741333765325035,
+    "pinch_to_command_m": 0.32497310803169077,
+    "grasp": false
+   },
+   {
+    "step": 5,
+    "phase": "approach",
+    "reward": -0.34577630662296355,
+    "pinch_to_piece_m": 0.41719670770480033,
+    "pinch_to_command_m": 0.3146033563761394,
+    "grasp": false
+   },
+   {
+    "step": 6,
+    "phase": "approach",
+    "reward": -0.34280185249706163,
+    "pinch_to_piece_m": 0.4072818606184608,
+    "pinch_to_command_m": 0.30452511624234063,
+    "grasp": false
+   },
+   {
+    "step": 7,
+    "phase": "approach",
+    "reward": -0.33987857920636877,
+    "pinch_to_piece_m": 0.39753761631615114,
+    "pinch_to_command_m": 0.2945871506759261,
+    "grasp": false
+   },
+   {
+    "step": 8,
+    "phase": "approach",
+    "reward": -0.3369723857698846,
+    "pinch_to_piece_m": 0.3878503048612038,
+    "pinch_to_command_m": 0.28466972302856375,
+    "grasp": false
+   },
+   {
+    "step": 9,
+    "phase": "approach",
+    "reward": -0.33405150592198324,
+    "pinch_to_piece_m": 0.37811403870153265,
+    "pinch_to_command_m": 0.2746624168710551,
+    "grasp": false
+   },
+   {
+    "step": 10,
+    "phase": "approach",
+    "reward": -0.33108368119952597,
+    "pinch_to_piece_m": 0.36822128962667516,
+    "pinch_to_command_m": 0.2644546551449054,
+    "grasp": false
+   },
+   {
+    "step": 11,
+    "phase": "approach",
+    "reward": -0.32803540952749466,
+    "pinch_to_piece_m": 0.3580603840532373,
+    "pinch_to_command_m": 0.25393215246024203,
+    "grasp": false
+   },
+   {
+    "step": 12,
+    "phase": "approach",
+    "reward": -0.32488761085952766,
+    "pinch_to_piece_m": 0.3475677218266808,
+    "pinch_to_command_m": 0.24304877651831913,
+    "grasp": false
+   },
+   {
+    "step": 13,
+    "phase": "approach",
+    "reward": -0.3216080563277266,
+    "pinch_to_piece_m": 0.3366358733873438,
+    "pinch_to_command_m": 0.23169168720599936,
+    "grasp": false
+   },
+   {
+    "step": 14,
+    "phase": "approach",
+    "reward": -0.31815998734864076,
+    "pinch_to_piece_m": 0.32514231012372435,
+    "pinch_to_command_m": 0.21973106070935725,
+    "grasp": false
+   },
+   {
+    "step": 15,
+    "phase": "approach",
+    "reward": -0.3145080883849066,
+    "pinch_to_piece_m": 0.312969313577944,
+    "pinch_to_command_m": 0.20703893844036012,
+    "grasp": false
+   },
+   {
+    "step": 16,
+    "phase": "approach",
+    "reward": -0.3106218863819957,
+    "pinch_to_piece_m": 0.30001530690157424,
+    "pinch_to_command_m": 0.1934998528136966,
+    "grasp": false
+   },
+   {
+    "step": 17,
+    "phase": "approach",
+    "reward": -0.3064794750848332,
+    "pinch_to_piece_m": 0.28620726924436596,
+    "pinch_to_command_m": 0.17902415456295415,
+    "grasp": false
+   },
+   {
+    "step": 18,
+    "phase": "approach",
+    "reward": -0.3022386793669161,
+    "pinch_to_piece_m": 0.27207128351797566,
+    "pinch_to_command_m": 0.16418410319052576,
+    "grasp": false
+   },
+   {
+    "step": 19,
+    "phase": "approach",
+    "reward": -0.2979922172042522,
+    "pinch_to_piece_m": 0.25791640964242923,
+    "pinch_to_command_m": 0.1492813278270491,
+    "grasp": false
+   },
+   {
+    "step": 20,
+    "phase": "descend",
+    "reward": -0.2937566779627748,
+    "pinch_to_piece_m": 0.24379794550417133,
+    "pinch_to_command_m": 0.20855886521397393,
+    "grasp": false
+   },
+   {
+    "step": 21,
+    "phase": "descend",
+    "reward": -0.2895397495081582,
+    "pinch_to_piece_m": 0.2297415173221158,
+    "pinch_to_command_m": 0.19424348291898147,
+    "grasp": false
+   },
+   {
+    "step": 22,
+    "phase": "descend",
+    "reward": -0.28537185765989526,
+    "pinch_to_piece_m": 0.21584854449457272,
+    "pinch_to_command_m": 0.18007640333364155,
+    "grasp": false
+   },
+   {
+    "step": 23,
+    "phase": "descend",
+    "reward": -0.28126564944157506,
+    "pinch_to_piece_m": 0.2021611837668388,
+    "pinch_to_command_m": 0.1661020736166974,
+    "grasp": false
+   },
+   {
+    "step": 24,
+    "phase": "descend",
+    "reward": -0.2772316962779677,
+    "pinch_to_piece_m": 0.18871467322148078,
+    "pinch_to_command_m": 0.15236181670749957,
+    "grasp": false
+   },
+   {
+    "step": 25,
+    "phase": "descend",
+    "reward": -0.2732831436342741,
+    "pinch_to_piece_m": 0.1755528310758354,
+    "pinch_to_command_m": 0.13890943680563067,
+    "grasp": false
+   },
+   {
+    "step": 26,
+    "phase": "descend",
+    "reward": -0.2694358882361006,
+    "pinch_to_piece_m": 0.16272864641525717,
+    "pinch_to_command_m": 0.12581577911941094,
+    "grasp": false
+   },
+   {
+    "step": 27,
+    "phase": "descend",
+    "reward": -0.26570346148144797,
+    "pinch_to_piece_m": 0.1502872238997485,
+    "pinch_to_command_m": 0.11315632097730302,
+    "grasp": false
+   },
+   {
+    "step": 28,
+    "phase": "descend",
+    "reward": -0.26190190814742637,
+    "pinch_to_piece_m": 0.13761537945300983,
+    "pinch_to_command_m": 0.10037115064394864,
+    "grasp": false
+   },
+   {
+    "step": 29,
+    "phase": "descend",
+    "reward": -0.25776286969144085,
+    "pinch_to_piece_m": 0.1238185845997247,
+    "pinch_to_command_m": 0.08660943436475228,
+    "grasp": false
+   },
+   {
+    "step": 30,
+    "phase": "descend",
+    "reward": -0.2536081680215646,
+    "pinch_to_piece_m": 0.10996957903347054,
+    "pinch_to_command_m": 0.07293669167423944,
+    "grasp": false
+   },
+   {
+    "step": 31,
+    "phase": "descend",
+    "reward": -0.24976578392864024,
+    "pinch_to_piece_m": 0.09716163205705597,
+    "pinch_to_command_m": 0.060420641443187546,
+    "grasp": false
+   },
+   {
+    "step": 32,
+    "phase": "descend",
+    "reward": -0.24626279026323306,
+    "pinch_to_piece_m": 0.0854849865056987,
+    "pinch_to_command_m": 0.049129249236184176,
+    "grasp": false
+   },
+   {
+    "step": 33,
+    "phase": "descend",
+    "reward": -0.24304854088325203,
+    "pinch_to_piece_m": 0.07477082190576201,
+    "pinch_to_command_m": 0.038875517724142473,
+    "grasp": false
+   },
+   {
+    "step": 34,
+    "phase": "descend",
+    "reward": -0.24000144306005491,
+    "pinch_to_piece_m": 0.06461382916177161,
+    "pinch_to_command_m": 0.011073424291873525,
+    "grasp": false
+   },
+   {
+    "step": 35,
+    "phase": "descend",
+    "reward": -0.2370856621155147,
+    "pinch_to_piece_m": 0.05489455934663759,
+    "pinch_to_command_m": 0.0034339156529498227,
+    "grasp": false
+   },
+   {
+    "step": 36,
+    "phase": "descend",
+    "reward": -0.2345698730898492,
+    "pinch_to_piece_m": 0.04650859592775252,
+    "pinch_to_command_m": 0.008044978592189373,
+    "grasp": false
+   },
+   {
+    "step": 37,
+    "phase": "descend",
+    "reward": -0.2328336414022513,
+    "pinch_to_piece_m": 0.04072115696909289,
+    "pinch_to_command_m": 0.013345296508624937,
+    "grasp": false
+   },
+   {
+    "step": 38,
+    "phase": "descend",
+    "reward": -0.23209960749434538,
+    "pinch_to_piece_m": 0.03827437727607318,
+    "pinch_to_command_m": 0.015562697554769665,
+    "grasp": false
+   },
+   {
+    "step": 39,
+    "phase": "descend",
+    "reward": -0.23236790076802732,
+    "pinch_to_piece_m": 0.03916868818834633,
+    "pinch_to_command_m": 0.01458308847421799,
+    "grasp": false
+   },
+   {
+    "step": 40,
+    "phase": "descend",
+    "reward": -0.23343973613749383,
+    "pinch_to_piece_m": 0.04274147275323462,
+    "pinch_to_command_m": 0.011040225603414987,
+    "grasp": false
+   },
+   {
+    "step": 41,
+    "phase": "descend",
+    "reward": -0.2349883009229171,
+    "pinch_to_piece_m": 0.04790335537131213,
+    "pinch_to_command_m": 0.006027568440104258,
+    "grasp": false
+   },
+   {
+    "step": 42,
+    "phase": "descend",
+    "reward": -0.23664630288754887,
+    "pinch_to_piece_m": 0.05343002858675145,
+    "pinch_to_command_m": 0.001673774637386606,
+    "grasp": false
+   },
+   {
+    "step": 43,
+    "phase": "descend",
+    "reward": -0.23808193939631228,
+    "pinch_to_piece_m": 0.05821548361596286,
+    "pinch_to_command_m": 0.004704345580482955,
+    "grasp": false
+   },
+   {
+    "step": 44,
+    "phase": "descend",
+    "reward": -0.23936455673457663,
+    "pinch_to_piece_m": 0.0624908747435106,
+    "pinch_to_command_m": 0.0028315449790695404,
+    "grasp": false
+   },
+   {
+    "step": 45,
+    "phase": "descend",
+    "reward": -0.24036253324410786,
+    "pinch_to_piece_m": 0.06581746310861475,
+    "pinch_to_command_m": 0.005209306789482881,
+    "grasp": false
+   },
+   {
+    "step": 46,
+    "phase": "descend",
+    "reward": -0.24093010142667198,
+    "pinch_to_piece_m": 0.0677093570504951,
+    "pinch_to_command_m": 0.006907666716588051,
+    "grasp": false
+   },
+   {
+    "step": 47,
+    "phase": "descend",
+    "reward": -0.24102146129414836,
+    "pinch_to_piece_m": 0.06801388994208309,
+    "pinch_to_command_m": 0.007186694502618978,
+    "grasp": false
+   },
+   {
+    "step": 48,
+    "phase": "descend",
+    "reward": -0.240687634091805,
+    "pinch_to_piece_m": 0.06690113260093848,
+    "pinch_to_command_m": 0.006127291520283019,
+    "grasp": false
+   },
+   {
+    "step": 49,
+    "phase": "descend",
+    "reward": -0.24005392048145896,
+    "pinch_to_piece_m": 0.06478875389978508,
+    "pinch_to_command_m": 0.004135148473016629,
+    "grasp": false
+   },
+   {
+    "step": 50,
+    "phase": "descend",
+    "reward": -0.23928562710148568,
+    "pinch_to_piece_m": 0.06222777596654084,
+    "pinch_to_command_m": 0.0018867868258031926,
+    "grasp": false
+   },
+   {
+    "step": 51,
+    "phase": "descend",
+    "reward": -0.23855051705155658,
+    "pinch_to_piece_m": 0.05977740913344384,
+    "pinch_to_command_m": 0.0015008202875193709,
+    "grasp": false
+   },
+   {
+    "step": 52,
+    "phase": "descend",
+    "reward": -0.23798573678695162,
+    "pinch_to_piece_m": 0.05789480825142728,
+    "pinch_to_command_m": 0.003013140884756314,
+    "grasp": false
+   },
+   {
+    "step": 53,
+    "phase": "descend",
+    "reward": -0.23767498521612082,
+    "pinch_to_piece_m": 0.05685896968199125,
+    "pinch_to_command_m": 0.003976721847683955,
+    "grasp": false
+   },
+   {
+    "step": 54,
+    "phase": "close",
+    "reward": -0.23764854432802476,
+    "pinch_to_piece_m": 0.05677083338833774,
+    "pinch_to_command_m": 0.00406420502206143,
+    "grasp": false
+   },
+   {
+    "step": 55,
+    "phase": "close",
+    "reward": -0.23784878111336905,
+    "pinch_to_piece_m": 0.05743828933948537,
+    "pinch_to_command_m": 0.00343022962237544,
+    "grasp": false
+   },
+   {
+    "step": 56,
+    "phase": "close",
+    "reward": -0.23821510307953583,
+    "pinch_to_piece_m": 0.05865936256004136,
+    "pinch_to_command_m": 0.0022681005309929895,
+    "grasp": false
+   },
+   {
+    "step": 57,
+    "phase": "close",
+    "reward": -0.23876671274839092,
+    "pinch_to_piece_m": 0.06043115524246455,
+    "pinch_to_command_m": 0.0008154031559286341,
+    "grasp": false
+   },
+   {
+    "step": 58,
+    "phase": "close",
+    "reward": -0.2393269408252115,
+    "pinch_to_piece_m": 0.06234045442815453,
+    "pinch_to_command_m": 0.0018897242920841257,
+    "grasp": false
+   },
+   {
+    "step": 59,
+    "phase": "close",
+    "reward": -0.24006958194332118,
+    "pinch_to_piece_m": 0.06230900313313785,
+    "pinch_to_command_m": 0.002477488709208755,
+    "grasp": false
+   },
+   {
+    "step": 60,
+    "phase": "close",
+    "reward": -0.24091490331824464,
+    "pinch_to_piece_m": 0.06216746977752584,
+    "pinch_to_command_m": 0.0024214155374528094,
+    "grasp": false
+   },
+   {
+    "step": 61,
+    "phase": "close",
+    "reward": -0.24126039355626627,
+    "pinch_to_piece_m": 0.062152392653323674,
+    "pinch_to_command_m": 0.0021423517532710174,
+    "grasp": false
+   },
+   {
+    "step": 62,
+    "phase": "close",
+    "reward": -0.2412789698535072,
+    "pinch_to_piece_m": 0.062265275615409704,
+    "pinch_to_command_m": 0.0020599398333922933,
+    "grasp": false
+   },
+   {
+    "step": 63,
+    "phase": "close",
+    "reward": -0.24129168755208152,
+    "pinch_to_piece_m": 0.06237993857578095,
+    "pinch_to_command_m": 0.00207859880696334,
+    "grasp": false
+   },
+   {
+    "step": 64,
+    "phase": "close",
+    "reward": -0.2412934579544861,
+    "pinch_to_piece_m": 0.06247743238793436,
+    "pinch_to_command_m": 0.002156500082647876,
+    "grasp": false
+   },
+   {
+    "step": 65,
+    "phase": "close",
+    "reward": -0.24128082416687746,
+    "pinch_to_piece_m": 0.06254116767758597,
+    "pinch_to_command_m": 0.0022102340426100463,
+    "grasp": false
+   },
+   {
+    "step": 66,
+    "phase": "close",
+    "reward": -0.2412610702481794,
+    "pinch_to_piece_m": 0.06255777437386502,
+    "pinch_to_command_m": 0.0021867540070074046,
+    "grasp": false
+   },
+   {
+    "step": 67,
+    "phase": "close",
+    "reward": -0.24123245772466298,
+    "pinch_to_piece_m": 0.0625520049447893,
+    "pinch_to_command_m": 0.0021310098420066308,
+    "grasp": false
+   },
+   {
+    "step": 68,
+    "phase": "close",
+    "reward": -0.2411902535809573,
+    "pinch_to_piece_m": 0.0625393751109628,
+    "pinch_to_command_m": 0.0020571611008538327,
+    "grasp": false
+   },
+   {
+    "step": 69,
+    "phase": "close",
+    "reward": -0.24113731214522682,
+    "pinch_to_piece_m": 0.0625091833909142,
+    "pinch_to_command_m": 0.0019529459577190959,
+    "grasp": false
+   },
+   {
+    "step": 70,
+    "phase": "close",
+    "reward": -0.24107721092941953,
+    "pinch_to_piece_m": 0.06246401676345508,
+    "pinch_to_command_m": 0.0018362464870686354,
+    "grasp": false
+   },
+   {
+    "step": 71,
+    "phase": "close",
+    "reward": -0.2410127012995593,
+    "pinch_to_piece_m": 0.062408874123530966,
+    "pinch_to_command_m": 0.001721726475901082,
+    "grasp": false
+   },
+   {
+    "step": 72,
+    "phase": "close",
+    "reward": -0.2409460265703105,
+    "pinch_to_piece_m": 0.062348799330361346,
+    "pinch_to_command_m": 0.0016156482853463868,
+    "grasp": false
+   },
+   {
+    "step": 73,
+    "phase": "close",
+    "reward": -0.24087884984236416,
+    "pinch_to_piece_m": 0.0622876472546477,
+    "pinch_to_command_m": 0.0015166086464278256,
+    "grasp": false
+   },
+   {
+    "step": 74,
+    "phase": "close",
+    "reward": -0.24081209235498896,
+    "pinch_to_piece_m": 0.062227644294817946,
+    "pinch_to_command_m": 0.0014198614860660254,
+    "grasp": false
+   },
+   {
+    "step": 75,
+    "phase": "close",
+    "reward": -0.24074585487767383,
+    "pinch_to_piece_m": 0.06216912634916854,
+    "pinch_to_command_m": 0.0013219193603702835,
+    "grasp": false
+   },
+   {
+    "step": 76,
+    "phase": "close",
+    "reward": -0.2406795082928939,
+    "pinch_to_piece_m": 0.062110443394118996,
+    "pinch_to_command_m": 0.0012221333464474196,
+    "grasp": false
+   },
+   {
+    "step": 77,
+    "phase": "close",
+    "reward": -0.24061214812673876,
+    "pinch_to_piece_m": 0.06204902755147047,
+    "pinch_to_command_m": 0.00112139235545447,
+    "grasp": false
+   },
+   {
+    "step": 78,
+    "phase": "close",
+    "reward": -0.24054259317055662,
+    "pinch_to_piece_m": 0.061981239482274346,
+    "pinch_to_command_m": 0.00101885700731407,
+    "grasp": false
+   },
+   {
+    "step": 79,
+    "phase": "close",
+    "reward": -0.240471801900466,
+    "pinch_to_piece_m": 0.061906350134477685,
+    "pinch_to_command_m": 0.0009184879055306716,
+    "grasp": false
+   },
+   {
+    "step": 80,
+    "phase": "close",
+    "reward": -0.24040004761445924,
+    "pinch_to_piece_m": 0.061819409377985704,
+    "pinch_to_command_m": 0.0008064300380627214,
+    "grasp": false
+   },
+   {
+    "step": 81,
+    "phase": "close",
+    "reward": -0.24032798273203723,
+    "pinch_to_piece_m": 0.06172184688640811,
+    "pinch_to_command_m": 0.0006827964318028734,
+    "grasp": false
+   },
+   {
+    "step": 82,
+    "phase": "close",
+    "reward": -0.24025567770838682,
+    "pinch_to_piece_m": 0.061619957315919904,
+    "pinch_to_command_m": 0.0005566360804757627,
+    "grasp": false
+   },
+   {
+    "step": 83,
+    "phase": "close",
+    "reward": -0.24018276658474735,
+    "pinch_to_piece_m": 0.06151535202461257,
+    "pinch_to_command_m": 0.00042910078373804226,
+    "grasp": false
+   },
+   {
+    "step": 84,
+    "phase": "close",
+    "reward": -0.24010923756838803,
+    "pinch_to_piece_m": 0.0614079917033833,
+    "pinch_to_command_m": 0.00030075100612964755,
+    "grasp": false
+   },
+   {
+    "step": 85,
+    "phase": "close",
+    "reward": -0.24003496786504833,
+    "pinch_to_piece_m": 0.06129781473179153,
+    "pinch_to_command_m": 0.00017425736430003345,
+    "grasp": false
+   },
+   {
+    "step": 86,
+    "phase": "close",
+    "reward": -0.239959957618448,
+    "pinch_to_piece_m": 0.061184672577291266,
+    "pinch_to_command_m": 7.466570549768011e-05,
+    "grasp": false
+   },
+   {
+    "step": 87,
+    "phase": "close",
+    "reward": -0.239884117662611,
+    "pinch_to_piece_m": 0.06106856604318613,
+    "pinch_to_command_m": 0.00013391753437712336,
+    "grasp": false
+   },
+   {
+    "step": 88,
+    "phase": "close",
+    "reward": -0.23980753582888914,
+    "pinch_to_piece_m": 0.06094929119527578,
+    "pinch_to_command_m": 0.0002643126397939057,
+    "grasp": false
+   },
+   {
+    "step": 89,
+    "phase": "close",
+    "reward": -0.2397299666361117,
+    "pinch_to_piece_m": 0.06082697350320009,
+    "pinch_to_command_m": 0.00040351672574248643,
+    "grasp": false
+   },
+   {
+    "step": 90,
+    "phase": "close",
+    "reward": -0.2396514544787015,
+    "pinch_to_piece_m": 0.06070146292514451,
+    "pinch_to_command_m": 0.0005472100409871986,
+    "grasp": false
+   },
+   {
+    "step": 91,
+    "phase": "close",
+    "reward": -0.23957189457419473,
+    "pinch_to_piece_m": 0.06057270820945359,
+    "pinch_to_command_m": 0.0006944109837759807,
+    "grasp": false
+   },
+   {
+    "step": 92,
+    "phase": "close",
+    "reward": -0.23949117767339245,
+    "pinch_to_piece_m": 0.060440841897504045,
+    "pinch_to_command_m": 0.0008443064361201017,
+    "grasp": false
+   },
+   {
+    "step": 93,
+    "phase": "close",
+    "reward": -0.23940930926140186,
+    "pinch_to_piece_m": 0.06030528622653873,
+    "pinch_to_command_m": 0.0009980735675037828,
+    "grasp": false
+   },
+   {
+    "step": 94,
+    "phase": "close",
+    "reward": -0.23932627548746166,
+    "pinch_to_piece_m": 0.060166293050577184,
+    "pinch_to_command_m": 0.001154972441936422,
+    "grasp": false
+   },
+   {
+    "step": 95,
+    "phase": "close",
+    "reward": -0.23924196457295457,
+    "pinch_to_piece_m": 0.06002363878584042,
+    "pinch_to_command_m": 0.0013152149097647424,
+    "grasp": false
+   },
+   {
+    "step": 96,
+    "phase": "close",
+    "reward": -0.23916085518037902,
+    "pinch_to_piece_m": 0.05988554678478593,
+    "pinch_to_command_m": 0.0014623641538811698,
+    "grasp": false
+   },
+   {
+    "step": 97,
+    "phase": "close",
+    "reward": -0.2390826793867909,
+    "pinch_to_piece_m": 0.05975211738167972,
+    "pinch_to_command_m": 0.001602979240337443,
+    "grasp": false
+   },
+   {
+    "step": 98,
+    "phase": "close",
+    "reward": -0.2390075477215796,
+    "pinch_to_piece_m": 0.05962406670158081,
+    "pinch_to_command_m": 0.0017413207525295443,
+    "grasp": false
+   },
+   {
+    "step": 99,
+    "phase": "lift",
+    "reward": -0.2387363591559517,
+    "pinch_to_piece_m": 0.05888416660089884,
+    "pinch_to_command_m": 0.06107452252222962,
+    "grasp": false
+   },
+   {
+    "step": 100,
+    "phase": "lift",
+    "reward": -0.23727087028202387,
+    "pinch_to_piece_m": 0.057955163961548706,
+    "pinch_to_command_m": 0.05769440161561497,
+    "grasp": false
+   },
+   {
+    "step": 101,
+    "phase": "lift",
+    "reward": -0.2333315215840533,
+    "pinch_to_piece_m": 0.058129049782817424,
+    "pinch_to_command_m": 0.05189853948627905,
+    "grasp": true
+   },
+   {
+    "step": 102,
+    "phase": "lift",
+    "reward": -0.22757424819556143,
+    "pinch_to_piece_m": 0.05951694011977201,
+    "pinch_to_command_m": 0.04383071019016239,
+    "grasp": true
+   },
+   {
+    "step": 103,
+    "phase": "lift",
+    "reward": -0.22255992166553668,
+    "pinch_to_piece_m": 0.06091542616005507,
+    "pinch_to_command_m": 0.033818324172996184,
+    "grasp": true
+   },
+   {
+    "step": 104,
+    "phase": "lift",
+    "reward": -0.2213999319440821,
+    "pinch_to_piece_m": 0.06149425717416711,
+    "pinch_to_command_m": 0.0221901722018199,
+    "grasp": true
+   },
+   {
+    "step": 105,
+    "phase": "lift",
+    "reward": -0.22522936882864397,
+    "pinch_to_piece_m": 0.06147707906997744,
+    "pinch_to_command_m": 0.010081997284257597,
+    "grasp": true
+   },
+   {
+    "step": 106,
+    "phase": "lift",
+    "reward": -0.2326791811457537,
+    "pinch_to_piece_m": 0.061124986566193334,
+    "pinch_to_command_m": 0.008345174878595063,
+    "grasp": true
+   },
+   {
+    "step": 107,
+    "phase": "lift",
+    "reward": -0.24199076484500498,
+    "pinch_to_piece_m": 0.06022425131198861,
+    "pinch_to_command_m": 0.01654413212032384,
+    "grasp": true
+   },
+   {
+    "step": 108,
+    "phase": "lift",
+    "reward": -0.25121488537015263,
+    "pinch_to_piece_m": 0.05867797022467662,
+    "pinch_to_command_m": 0.0217520715207574,
+    "grasp": true
+   },
+   {
+    "step": 109,
+    "phase": "lift",
+    "reward": -0.2580910328128588,
+    "pinch_to_piece_m": 0.05691439015953131,
+    "pinch_to_command_m": 0.022614865014934045,
+    "grasp": true
+   },
+   {
+    "step": 110,
+    "phase": "lift",
+    "reward": -0.2605767857482824,
+    "pinch_to_piece_m": 0.05584692340784383,
+    "pinch_to_command_m": 0.01962066444701128,
+    "grasp": true
+   },
+   {
+    "step": 111,
+    "phase": "lift",
+    "reward": -0.2577503638239485,
+    "pinch_to_piece_m": 0.05627717136402333,
+    "pinch_to_command_m": 0.013564262659091822,
+    "grasp": true
+   },
+   {
+    "step": 112,
+    "phase": "lift",
+    "reward": -0.25021066708582845,
+    "pinch_to_piece_m": 0.0581723763948748,
+    "pinch_to_command_m": 0.006132167742237081,
+    "grasp": true
+   },
+   {
+    "step": 113,
+    "phase": "lift",
+    "reward": -0.24038946213306012,
+    "pinch_to_piece_m": 0.06046889828248225,
+    "pinch_to_command_m": 0.0033164690322832076,
+    "grasp": true
+   },
+   {
+    "step": 114,
+    "phase": "lift",
+    "reward": -0.23203012181747676,
+    "pinch_to_piece_m": 0.061939700889213876,
+    "pinch_to_command_m": 0.008599975618136184,
+    "grasp": true
+   },
+   {
+    "step": 115,
+    "phase": "lift",
+    "reward": -0.2277170959883665,
+    "pinch_to_piece_m": 0.06240584577909279,
+    "pinch_to_command_m": 0.012101982197175573,
+    "grasp": true
+   },
+   {
+    "step": 116,
+    "phase": "lift",
+    "reward": -0.2279685679913486,
+    "pinch_to_piece_m": 0.06228435166707467,
+    "pinch_to_command_m": 0.012878054427716308,
+    "grasp": true
+   },
+   {
+    "step": 117,
+    "phase": "lift",
+    "reward": -0.2324048572262773,
+    "pinch_to_piece_m": 0.06152142865149481,
+    "pinch_to_command_m": 0.011133492862857565,
+    "grasp": true
+   },
+   {
+    "step": 118,
+    "phase": "lift",
+    "reward": -0.23929717862463792,
+    "pinch_to_piece_m": 0.06000999688627988,
+    "pinch_to_command_m": 0.007573074852945436,
+    "grasp": true
+   },
+   {
+    "step": 119,
+    "phase": "lift",
+    "reward": -0.2455562518061039,
+    "pinch_to_piece_m": 0.058492328067897885,
+    "pinch_to_command_m": 0.0032348115811132593,
+    "grasp": true
+   },
+   {
+    "step": 120,
+    "phase": "lift",
+    "reward": -0.24874425674853715,
+    "pinch_to_piece_m": 0.05802544439428353,
+    "pinch_to_command_m": 0.0018860385259500958,
+    "grasp": true
+   },
+   {
+    "step": 121,
+    "phase": "lift",
+    "reward": -0.24813112983610236,
+    "pinch_to_piece_m": 0.05892506471958433,
+    "pinch_to_command_m": 0.0050444167640463266,
+    "grasp": true
+   },
+   {
+    "step": 122,
+    "phase": "lift",
+    "reward": -0.24460059265407774,
+    "pinch_to_piece_m": 0.06055662566134845,
+    "pinch_to_command_m": 0.0070226720587564665,
+    "grasp": true
+   },
+   {
+    "step": 123,
+    "phase": "lift",
+    "reward": -0.24016578046896045,
+    "pinch_to_piece_m": 0.06199368332551536,
+    "pinch_to_command_m": 0.007408327097807202,
+    "grasp": true
+   },
+   {
+    "step": 124,
+    "phase": "traverse",
+    "reward": -0.2344544905058554,
+    "pinch_to_piece_m": 0.062442149596747855,
+    "pinch_to_command_m": 0.2167967417251955,
+    "grasp": true
+   },
+   {
+    "step": 125,
+    "phase": "traverse",
+    "reward": -0.2277198562254769,
+    "pinch_to_piece_m": 0.062027020331972986,
+    "pinch_to_command_m": 0.20794036614421926,
+    "grasp": true
+   },
+   {
+    "step": 126,
+    "phase": "traverse",
+    "reward": -0.2210242213102716,
+    "pinch_to_piece_m": 0.06108012838249,
+    "pinch_to_command_m": 0.19786153666472112,
+    "grasp": true
+   },
+   {
+    "step": 127,
+    "phase": "traverse",
+    "reward": -0.21364247746859819,
+    "pinch_to_piece_m": 0.060226567837755846,
+    "pinch_to_command_m": 0.18776501274057739,
+    "grasp": true
+   },
+   {
+    "step": 128,
+    "phase": "traverse",
+    "reward": -0.20434569807160344,
+    "pinch_to_piece_m": 0.060022853854909373,
+    "pinch_to_command_m": 0.17769568946068492,
+    "grasp": true
+   },
+   {
+    "step": 129,
+    "phase": "traverse",
+    "reward": -0.19279834349751995,
+    "pinch_to_piece_m": 0.060653428892312025,
+    "pinch_to_command_m": 0.16761819172157014,
+    "grasp": true
+   },
+   {
+    "step": 130,
+    "phase": "traverse",
+    "reward": -0.17983459082334138,
+    "pinch_to_piece_m": 0.061778331699930876,
+    "pinch_to_command_m": 0.1574661184850448,
+    "grasp": true
+   },
+   {
+    "step": 131,
+    "phase": "traverse",
+    "reward": -0.16705905447583336,
+    "pinch_to_piece_m": 0.0628300193343208,
+    "pinch_to_command_m": 0.1472041107408007,
+    "grasp": true
+   },
+   {
+    "step": 132,
+    "phase": "traverse",
+    "reward": -0.15580750347137,
+    "pinch_to_piece_m": 0.0634257277170667,
+    "pinch_to_command_m": 0.13680541052219028,
+    "grasp": true
+   },
+   {
+    "step": 133,
+    "phase": "traverse",
+    "reward": -0.14642995596931782,
+    "pinch_to_piece_m": 0.06352240843926561,
+    "pinch_to_command_m": 0.12624591673816632,
+    "grasp": true
+   },
+   {
+    "step": 134,
+    "phase": "traverse",
+    "reward": -0.1386989193156334,
+    "pinch_to_piece_m": 0.06315531399348459,
+    "pinch_to_command_m": 0.11550490845655544,
+    "grasp": true
+   },
+   {
+    "step": 135,
+    "phase": "traverse",
+    "reward": -0.1321624921798553,
+    "pinch_to_piece_m": 0.062359135031649096,
+    "pinch_to_command_m": 0.10456480180765583,
+    "grasp": true
+   },
+   {
+    "step": 136,
+    "phase": "traverse",
+    "reward": -0.12593500629844737,
+    "pinch_to_piece_m": 0.06142177733389776,
+    "pinch_to_command_m": 0.09341270139695866,
+    "grasp": true
+   },
+   {
+    "step": 137,
+    "phase": "traverse",
+    "reward": -0.11878124403805633,
+    "pinch_to_piece_m": 0.060826209778623436,
+    "pinch_to_command_m": 0.08204180368243214,
+    "grasp": true
+   },
+   {
+    "step": 138,
+    "phase": "traverse",
+    "reward": -0.10995702300453099,
+    "pinch_to_piece_m": 0.06096121682007816,
+    "pinch_to_command_m": 0.07045367058847941,
+    "grasp": true
+   },
+   {
+    "step": 139,
+    "phase": "traverse",
+    "reward": -0.10009782640329055,
+    "pinch_to_piece_m": 0.06181721482644651,
+    "pinch_to_command_m": 0.05866580399764504,
+    "grasp": true
+   },
+   {
+    "step": 140,
+    "phase": "traverse",
+    "reward": -0.09134458259127846,
+    "pinch_to_piece_m": 0.06298863243335855,
+    "pinch_to_command_m": 0.04672936770390295,
+    "grasp": true
+   },
+   {
+    "step": 141,
+    "phase": "traverse",
+    "reward": -0.08599377795635223,
+    "pinch_to_piece_m": 0.06397948909397122,
+    "pinch_to_command_m": 0.034784264779162556,
+    "grasp": true
+   },
+   {
+    "step": 142,
+    "phase": "traverse",
+    "reward": -0.08409050741623678,
+    "pinch_to_piece_m": 0.06449733803109454,
+    "pinch_to_command_m": 0.02304782625806608,
+    "grasp": true
+   },
+   {
+    "step": 143,
+    "phase": "traverse",
+    "reward": -0.08411860755162327,
+    "pinch_to_piece_m": 0.06467234065389929,
+    "pinch_to_command_m": 0.013247987922796103,
+    "grasp": true
+   },
+   {
+    "step": 144,
+    "phase": "traverse",
+    "reward": -0.08489330362692155,
+    "pinch_to_piece_m": 0.06466173468082072,
+    "pinch_to_command_m": 0.01022745511504446,
+    "grasp": true
+   },
+   {
+    "step": 145,
+    "phase": "traverse",
+    "reward": -0.08606432727416848,
+    "pinch_to_piece_m": 0.064640255485657,
+    "pinch_to_command_m": 0.014578309571595739,
+    "grasp": true
+   },
+   {
+    "step": 146,
+    "phase": "traverse",
+    "reward": -0.08696682388723359,
+    "pinch_to_piece_m": 0.06471098744672091,
+    "pinch_to_command_m": 0.018305380448025432,
+    "grasp": true
+   },
+   {
+    "step": 147,
+    "phase": "traverse",
+    "reward": -0.08668206104746853,
+    "pinch_to_piece_m": 0.06483607719710782,
+    "pinch_to_command_m": 0.01895786761360666,
+    "grasp": true
+   },
+   {
+    "step": 148,
+    "phase": "traverse",
+    "reward": -0.08454033164302387,
+    "pinch_to_piece_m": 0.06488465362521932,
+    "pinch_to_command_m": 0.016567063091552807,
+    "grasp": true
+   },
+   {
+    "step": 149,
+    "phase": "place",
+    "reward": -0.07815908323146058,
+    "pinch_to_piece_m": 0.06487136269334794,
+    "pinch_to_command_m": 0.08548272333140212,
+    "grasp": true
+   },
+   {
+    "step": 150,
+    "phase": "place",
+    "reward": -0.06794427918726594,
+    "pinch_to_piece_m": 0.06455738800546824,
+    "pinch_to_command_m": 0.07843010254650701,
+    "grasp": true
+   },
+   {
+    "step": 151,
+    "phase": "place",
+    "reward": -0.05620276824219157,
+    "pinch_to_piece_m": 0.06396709285123912,
+    "pinch_to_command_m": 0.0691509830153916,
+    "grasp": true
+   },
+   {
+    "step": 152,
+    "phase": "place",
+    "reward": -0.03804555195506088,
+    "pinch_to_piece_m": 0.08911309872851346,
+    "pinch_to_command_m": 0.06015478703997601,
+    "grasp": false
+   },
+   {
+    "step": 153,
+    "phase": "place",
+    "reward": -0.03662412227772281,
+    "pinch_to_piece_m": 0.07867186906710616,
+    "pinch_to_command_m": 0.05182460051451594,
+    "grasp": false
+   },
+   {
+    "step": 154,
+    "phase": "place",
+    "reward": -0.03600875107431087,
+    "pinch_to_piece_m": 0.06579238318680633,
+    "pinch_to_command_m": 0.04405954051032131,
+    "grasp": false
+   },
+   {
+    "step": 155,
+    "phase": "place",
+    "reward": -514.0358821694371,
+    "pinch_to_piece_m": 0.055408993302566656,
+    "pinch_to_command_m": 0.03672020289841473,
+    "grasp": false
+   }
+  ]
+ },
+ {
+  "start": "f2",
+  "target": "e5",
+  "reference": {
+   "outcome": "success",
+   "success": true,
+   "steps": 132
+  },
+  "is_success": false,
+  "grasp_success_ever": false,
+  "final_distance_m": 0.24665768444538116,
+  "closest_pinch_to_piece_m": 0.11345644548307116,
+  "steps": 57,
+  "commands_available": 132,
+  "terminated": true,
+  "truncated": false,
+  "terminated_reason": "bad_contact",
+  "phase_at_end": "lift",
+  "ik_rejects": 0,
+  "board_contact_force_n": null,
+  "terminal_contacts": [
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "ur_gripper_right_pad1",
+    "ur_gripper_left_pad1"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ],
+   [
+    "piece_a_base",
+    "board_slab"
+   ]
+  ],
+  "rows": [
+   {
+    "step": 0,
+    "phase": "approach",
+    "reward": -0.39968106178044077,
+    "pinch_to_piece_m": 0.5100779244501987,
+    "pinch_to_command_m": 0.41816512471384953,
+    "grasp": false
+   },
+   {
+    "step": 1,
+    "phase": "approach",
+    "reward": -0.39681959325275107,
+    "pinch_to_piece_m": 0.5005396960245663,
+    "pinch_to_command_m": 0.4084142601948817,
+    "grasp": false
+   },
+   {
+    "step": 2,
+    "phase": "approach",
+    "reward": -0.39400120693636953,
+    "pinch_to_piece_m": 0.4911450749699612,
+    "pinch_to_command_m": 0.3987591986010972,
+    "grasp": false
+   },
+   {
+    "step": 3,
+    "phase": "approach",
+    "reward": -0.3912410480955376,
+    "pinch_to_piece_m": 0.48194454550052146,
+    "pinch_to_command_m": 0.389270531864366,
+    "grasp": false
+   },
+   {
+    "step": 4,
+    "phase": "approach",
+    "reward": -0.38852773397407203,
+    "pinch_to_piece_m": 0.47290016509563637,
+    "pinch_to_command_m": 0.3799142130703657,
+    "grasp": false
+   },
+   {
+    "step": 5,
+    "phase": "approach",
+    "reward": -0.38584953996152155,
+    "pinch_to_piece_m": 0.463972851720468,
+    "pinch_to_command_m": 0.37065345422363355,
+    "grasp": false
+   },
+   {
+    "step": 6,
+    "phase": "approach",
+    "reward": -0.38319456030253163,
+    "pinch_to_piece_m": 0.45512291952383493,
+    "pinch_to_command_m": 0.361450215684309,
+    "grasp": false
+   },
+   {
+    "step": 7,
+    "phase": "approach",
+    "reward": -0.3805513575015398,
+    "pinch_to_piece_m": 0.4463122435205289,
+    "pinch_to_command_m": 0.35226684958660287,
+    "grasp": false
+   },
+   {
+    "step": 8,
+    "phase": "approach",
+    "reward": -0.3779090764053966,
+    "pinch_to_piece_m": 0.43750463986671817,
+    "pinch_to_command_m": 0.34306740861046714,
+    "grasp": false
+   },
+   {
+    "step": 9,
+    "phase": "approach",
+    "reward": -0.37525789031830376,
+    "pinch_to_piece_m": 0.428667352909742,
+    "pinch_to_command_m": 0.3338187530207562,
+    "grasp": false
+   },
+   {
+    "step": 10,
+    "phase": "approach",
+    "reward": -0.3725891634499645,
+    "pinch_to_piece_m": 0.4197715966819444,
+    "pinch_to_command_m": 0.32449153907034295,
+    "grasp": false
+   },
+   {
+    "step": 11,
+    "phase": "approach",
+    "reward": -0.3698957566103449,
+    "pinch_to_piece_m": 0.4107935738832126,
+    "pinch_to_command_m": 0.31506112739781733,
+    "grasp": false
+   },
+   {
+    "step": 12,
+    "phase": "approach",
+    "reward": -0.36717215842783957,
+    "pinch_to_piece_m": 0.40171491327486125,
+    "pinch_to_command_m": 0.30550840934461015,
+    "grasp": false
+   },
+   {
+    "step": 13,
+    "phase": "approach",
+    "reward": -0.3644146547397879,
+    "pinch_to_piece_m": 0.39252323431468916,
+    "pinch_to_command_m": 0.2958205149430537,
+    "grasp": false
+   },
+   {
+    "step": 14,
+    "phase": "approach",
+    "reward": -0.36162151983435187,
+    "pinch_to_piece_m": 0.3832127846299024,
+    "pinch_to_command_m": 0.2859913435714421,
+    "grasp": false
+   },
+   {
+    "step": 15,
+    "phase": "approach",
+    "reward": -0.3587929795716569,
+    "pinch_to_piece_m": 0.37378431708758575,
+    "pinch_to_command_m": 0.27602185268180407,
+    "grasp": false
+   },
+   {
+    "step": 16,
+    "phase": "approach",
+    "reward": -0.35593125263094855,
+    "pinch_to_piece_m": 0.3642452272852246,
+    "pinch_to_command_m": 0.2659200556388316,
+    "grasp": false
+   },
+   {
+    "step": 17,
+    "phase": "approach",
+    "reward": -0.35304023218232355,
+    "pinch_to_piece_m": 0.35460849245647463,
+    "pinch_to_command_m": 0.25570071606948236,
+    "grasp": false
+   },
+   {
+    "step": 18,
+    "phase": "approach",
+    "reward": -0.3501254848958375,
+    "pinch_to_piece_m": 0.3448926681681877,
+    "pinch_to_command_m": 0.24538477661425187,
+    "grasp": false
+   },
+   {
+    "step": 19,
+    "phase": "approach",
+    "reward": -0.3473131487302109,
+    "pinch_to_piece_m": 0.3355182142827658,
+    "pinch_to_command_m": 0.2354308034602658,
+    "grasp": false
+   },
+   {
+    "step": 20,
+    "phase": "approach",
+    "reward": -0.34461241569535417,
+    "pinch_to_piece_m": 0.3265157708332433,
+    "pinch_to_command_m": 0.22587213893648517,
+    "grasp": false
+   },
+   {
+    "step": 21,
+    "phase": "approach",
+    "reward": -0.342022583300913,
+    "pinch_to_piece_m": 0.3178829961851062,
+    "pinch_to_command_m": 0.2167086243059948,
+    "grasp": false
+   },
+   {
+    "step": 22,
+    "phase": "approach",
+    "reward": -0.33954186475416775,
+    "pinch_to_piece_m": 0.30961393436262197,
+    "pinch_to_command_m": 0.20793681191039032,
+    "grasp": false
+   },
+   {
+    "step": 23,
+    "phase": "descend",
+    "reward": -0.33716779623105386,
+    "pinch_to_piece_m": 0.3017003726189091,
+    "pinch_to_command_m": 0.2684518950101616,
+    "grasp": false
+   },
+   {
+    "step": 24,
+    "phase": "descend",
+    "reward": -0.3348972843645241,
+    "pinch_to_piece_m": 0.2941319997304765,
+    "pinch_to_command_m": 0.2607390395728034,
+    "grasp": false
+   },
+   {
+    "step": 25,
+    "phase": "descend",
+    "reward": -0.3327167846195257,
+    "pinch_to_piece_m": 0.28686366724714846,
+    "pinch_to_command_m": 0.2533360556288178,
+    "grasp": false
+   },
+   {
+    "step": 26,
+    "phase": "descend",
+    "reward": -0.33058834342470944,
+    "pinch_to_piece_m": 0.27976886326442757,
+    "pinch_to_command_m": 0.24611546025982609,
+    "grasp": false
+   },
+   {
+    "step": 27,
+    "phase": "descend",
+    "reward": -0.3284697434349604,
+    "pinch_to_piece_m": 0.2727068632985975,
+    "pinch_to_command_m": 0.2389325266663629,
+    "grasp": false
+   },
+   {
+    "step": 28,
+    "phase": "descend",
+    "reward": -0.32631814585669944,
+    "pinch_to_piece_m": 0.26553487137106097,
+    "pinch_to_command_m": 0.23163862098357463,
+    "grasp": false
+   },
+   {
+    "step": 29,
+    "phase": "descend",
+    "reward": -0.32409098482800286,
+    "pinch_to_piece_m": 0.25811100127540565,
+    "pinch_to_command_m": 0.22408386062921415,
+    "grasp": false
+   },
+   {
+    "step": 30,
+    "phase": "descend",
+    "reward": -0.32174779633129813,
+    "pinch_to_piece_m": 0.25030037295305657,
+    "pinch_to_command_m": 0.21612480747416063,
+    "grasp": false
+   },
+   {
+    "step": 31,
+    "phase": "descend",
+    "reward": -0.31939158163283743,
+    "pinch_to_piece_m": 0.24244632395818766,
+    "pinch_to_command_m": 0.20811007967487452,
+    "grasp": false
+   },
+   {
+    "step": 32,
+    "phase": "descend",
+    "reward": -0.3171733958606158,
+    "pinch_to_piece_m": 0.23505237138411555,
+    "pinch_to_command_m": 0.20055557978819383,
+    "grasp": false
+   },
+   {
+    "step": 33,
+    "phase": "descend",
+    "reward": -0.3150881668731927,
+    "pinch_to_piece_m": 0.22810160809270502,
+    "pinch_to_command_m": 0.19344281669544305,
+    "grasp": false
+   },
+   {
+    "step": 34,
+    "phase": "descend",
+    "reward": -0.31311651236369215,
+    "pinch_to_piece_m": 0.2215294263943699,
+    "pinch_to_command_m": 0.18670594341601587,
+    "grasp": false
+   },
+   {
+    "step": 35,
+    "phase": "descend",
+    "reward": -0.31124030979964207,
+    "pinch_to_piece_m": 0.2152754178475363,
+    "pinch_to_command_m": 0.1802842361090325,
+    "grasp": false
+   },
+   {
+    "step": 36,
+    "phase": "descend",
+    "reward": -0.3094434422159631,
+    "pinch_to_piece_m": 0.20928585923527301,
+    "pinch_to_command_m": 0.17412366464686654,
+    "grasp": false
+   },
+   {
+    "step": 37,
+    "phase": "descend",
+    "reward": -0.3077117537785649,
+    "pinch_to_piece_m": 0.20351356444394586,
+    "pinch_to_command_m": 0.16817749817907146,
+    "grasp": false
+   },
+   {
+    "step": 38,
+    "phase": "descend",
+    "reward": -0.3060332665134747,
+    "pinch_to_piece_m": 0.1979186068936451,
+    "pinch_to_command_m": 0.16240631842800998,
+    "grasp": false
+   },
+   {
+    "step": 39,
+    "phase": "descend",
+    "reward": -0.3043980145666164,
+    "pinch_to_piece_m": 0.19246776707078414,
+    "pinch_to_command_m": 0.15677774007025222,
+    "grasp": false
+   },
+   {
+    "step": 40,
+    "phase": "descend",
+    "reward": -0.3027980213687893,
+    "pinch_to_piece_m": 0.18713445641136053,
+    "pinch_to_command_m": 0.15126600924221234,
+    "grasp": false
+   },
+   {
+    "step": 41,
+    "phase": "descend",
+    "reward": -0.3012270854267236,
+    "pinch_to_piece_m": 0.18189800327114145,
+    "pinch_to_command_m": 0.14585157004459418,
+    "grasp": false
+   },
+   {
+    "step": 42,
+    "phase": "descend",
+    "reward": -0.2996920255092515,
+    "pinch_to_piece_m": 0.17678113687956787,
+    "pinch_to_command_m": 0.13947063214287003,
+    "grasp": false
+   },
+   {
+    "step": 43,
+    "phase": "descend",
+    "reward": -0.2981863339582387,
+    "pinch_to_piece_m": 0.17176216504285838,
+    "pinch_to_command_m": 0.13416451238661872,
+    "grasp": false
+   },
+   {
+    "step": 44,
+    "phase": "descend",
+    "reward": -0.29670463968793936,
+    "pinch_to_piece_m": 0.16682318414186068,
+    "pinch_to_command_m": 0.12893525476176382,
+    "grasp": false
+   },
+   {
+    "step": 45,
+    "phase": "descend",
+    "reward": -0.29524896862996586,
+    "pinch_to_piece_m": 0.16197094728194905,
+    "pinch_to_command_m": 0.12232657240356656,
+    "grasp": false
+   },
+   {
+    "step": 46,
+    "phase": "descend",
+    "reward": -0.2938155300355455,
+    "pinch_to_piece_m": 0.1571928186338812,
+    "pinch_to_command_m": 0.11717310887678098,
+    "grasp": false
+   },
+   {
+    "step": 47,
+    "phase": "descend",
+    "reward": -0.29240204330547187,
+    "pinch_to_piece_m": 0.1524811962003023,
+    "pinch_to_command_m": 0.11208597280660844,
+    "grasp": false
+   },
+   {
+    "step": 48,
+    "phase": "close",
+    "reward": -0.2910104645465773,
+    "pinch_to_piece_m": 0.14784260033732052,
+    "pinch_to_command_m": 0.10707598980765384,
+    "grasp": false
+   },
+   {
+    "step": 49,
+    "phase": "close",
+    "reward": -0.2896340919454744,
+    "pinch_to_piece_m": 0.14325469166697755,
+    "pinch_to_command_m": 0.10213583493202352,
+    "grasp": false
+   },
+   {
+    "step": 50,
+    "phase": "close",
+    "reward": -0.28827793268537755,
+    "pinch_to_piece_m": 0.13873416079998788,
+    "pinch_to_command_m": 0.09729671160579388,
+    "grasp": false
+   },
+   {
+    "step": 51,
+    "phase": "close",
+    "reward": -0.2869392984927339,
+    "pinch_to_piece_m": 0.1342720468245092,
+    "pinch_to_command_m": 0.09256100838916007,
+    "grasp": false
+   },
+   {
+    "step": 52,
+    "phase": "close",
+    "reward": -0.2856139684287823,
+    "pinch_to_piece_m": 0.12985427994467041,
+    "pinch_to_command_m": 0.08791948056854809,
+    "grasp": false
+   },
+   {
+    "step": 53,
+    "phase": "close",
+    "reward": -0.28429741824894733,
+    "pinch_to_piece_m": 0.1254657793452205,
+    "pinch_to_command_m": 0.08335666009118582,
+    "grasp": false
+   },
+   {
+    "step": 54,
+    "phase": "close",
+    "reward": -0.282984159990796,
+    "pinch_to_piece_m": 0.12108825181804951,
+    "pinch_to_command_m": 0.07884962056215988,
+    "grasp": false
+   },
+   {
+    "step": 55,
+    "phase": "close",
+    "reward": -0.2816705280697475,
+    "pinch_to_piece_m": 0.1167094787478878,
+    "pinch_to_command_m": 0.07437920221409915,
+    "grasp": false
+   },
+   {
+    "step": 56,
+    "phase": "lift",
+    "reward": -514.2806946180903,
+    "pinch_to_piece_m": 0.11345644548307116,
+    "pinch_to_command_m": 0.01330409142248979,
+    "grasp": false
+   }
+  ]
+ }
+]
