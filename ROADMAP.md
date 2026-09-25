@@ -164,7 +164,11 @@ labels any implausible piece state whatever its cause. See D14 and D11 in
 
 **What T2's figures do and do not show (D15).** The T2 obstacle term fired
 **0/315 in both** T2 sweeps, with a maximum obstacle displacement of 0.000 mm
-anywhere. The scripted expert makes no attempt to avoid obstacles and still
+anywhere. (Those figures were first read from the terminal step, which could
+miss a disturbance that was undone; re-measured with F6's per-episode latch,
+`n_obstacles=2`, it is still **0/315**, max peak displacement 0.000003 mm --
+see D15's correction. The `n_obstacles=0` sweep places no obstacles, so its
+0/315 is trivially true.) The scripted expert makes no attempt to avoid obstacles and still
 never disturbs one: the transit corridor clears a standing piece, and the
 placement policy excludes the only squares the gripper comes near. **T2 as
 currently configured therefore measures task completion with static clutter
