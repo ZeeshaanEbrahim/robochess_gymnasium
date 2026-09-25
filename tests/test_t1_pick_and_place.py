@@ -269,7 +269,7 @@ def test_grasp_success_true_during_a_real_scripted_grasp():
 
     # a1->h8, not d1->a8: F1's new self-contact check (round 2) found a real,
     # isolated ur_upper_arm_link/ur_wrist_2_link graze specific to d1->a8's
-    # descend trajectory (D21, DECISIONS.md) -- unrelated to what this test
+    # descend trajectory (D24, DECISIONS.md) -- unrelated to what this test
     # checks. a1->h8 is one of ten pairs confirmed self-contact-free by the
     # same survey.
     env = RoboChessEnv(max_episode_steps=350)

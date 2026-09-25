@@ -1588,7 +1588,7 @@ was ever disturbed mid-episode. F6 added a per-episode latch
 `scripts/fullboard_validation_t2.py` now reports it. Re-measured with the
 latch on the same five-target sweep, `n_obstacles=2`, 315 episodes: **latch
 fired 0/315, maximum peak displacement 0.000003 mm** (303/315 successes; the
-303, not 313, is the post-F1 baseline, see the D21 note on the d1/e1 starts).
+303, not 313, is the post-F1 baseline, see the D24 note on the d1/e1 starts).
 So the corrected, latch-based figure is also 0/315. The `n_obstacles=0`
 sweep places no obstacles, so its 0/315 is trivially true and says nothing
 about disturbance. Limits that still apply: the latch is sampled once per
@@ -1878,7 +1878,122 @@ unstaged), so the staged policy had 3x more steps per episode to approach and
 still did not do better; and the hold-at-goal risk above could not appear in a
 run that never grasped.
 
-## D21 — self-contact on `d1->a8`: a hairline arm/wrist graze during `descend`, isolated to this one pair
+## D21 — a pick-up training stage: grasp and lift 30 mm, with its own reward and observation, behind `pickup_mode` (default off)
+
+**Date:** 2026-09-20 (`851e6f2`; probe configs `33569ca`).
+**Numbering.** The roadmap table's numbering is canonical. This entry was
+backfilled here from the commits; the repo's own D21 was the d1->a8
+self-contact entry, which is now D24.
+
+**Decision.** Add a separate training stage whose task is only to grasp one
+piece and lift it 30 mm, as a stepping stone after D20's finding that contact
+was not reachable from the staged shaped reward. Everything is config-gated and
+default OFF, so the reward stack every earlier run used is unchanged (four
+fixed-seed random traces, absolute and delta, with `shaped_staged` on and off,
+plus a close-gated expert replay that grasps, all hash byte-identically to the
+parent commit).
+
+**What it pays.** `pickup_mode` replaces the reward outright (no goal-distance
+term, no travelling failure penalty). Per step: a reach term times a posture
+(tilt) factor, a close term gated on a viable pose ("pose gate") times gripper
+closure, a lift term while HELD, a success term while succeeding, a one-time
+first-grasp bonus, and a failure penalty on `bad_contact` / `piece_off_board`.
+
+**Choices worth recording (each measured in the commit message):**
+- Distance is taken to the grasp pose `piece + (0, 0, dz)`, not the piece
+  origin. The e4->e5 diagnosis found the policy 45 deg off top-down at its
+  closest approach. `dz` is `GRASP_Z` minus the piece's resting height, 0.03725
+  +/- 0.5 mm.
+- `POSTURE_FLOOR/SPAN` 0.5/0.5, not 0.25/0.75: at 0.25/0.75 the reward fell along
+  the expert's own path (home 0.2373 vs pre-descend hover 0.2253).
+- First-grasp bonus and lift term are keyed on HELD (both pads on the piece AND
+  the piece clear of the board), not pinched and not `grasp_success`. Pinched
+  alone paid for a non-grasp twice; D18's toppled piece is the other case.
+- Success does not terminate the episode; `info["pickup_success"]` latches and
+  reaches `monitor.monitor.csv` (the keyword is added only in pick-up mode).
+- `pickup_obs` (default off, T1 only) appends 15 entries after the existing 21.
+
+**Probes run** (`33569ca`, joint delta, e4->e5, 300-step budget, 1M steps: PPO
+seeds 0/1/2, SAC seed 0). Counted from their `monitor.monitor.csv` on
+2026-09-25: episodes with `pickup_success` true were 65/3408, 2/3358, 34/3381
+and 18/3382; `terminated_reason == "success"` rows were 0, 0, 3, 1;
+`solver_instability` rows 0 in all four. Not diagnosed here.
+
+**Tests.** 37 new (148 -> 185), covering flag-off identity, each reward term,
+the held-vs-pinched distinction against D18's toppled piece and a real expert
+grasp, and per-episode state reset.
+
+## D22 — a 4-dimensional Cartesian action mode (`action_mode="cartesian"`), with a height-dependent inner radial limit
+
+**Date:** 2026-09-21 to 2026-09-22 (`c9bf295`, `f4cacdf`; merged 2026-09-25 as `8c11be2`).
+
+**Decision.** Add a third action mode beside absolute and delta: `(dx, dy, dz,
+gripper)`, driving the pinch point through mink IK with the tool locked
+top-down to the pose D2's reach sweep validated. Absolute and delta are
+untouched: byte-identical to `33569ca` on random-action and expert-replay
+traces, pinned as frozen-hash regression tests.
+
+**Design (`c9bf295`).** Each step rebuilds the target from the MEASURED pinch
+position plus the scaled delta (never an accumulated target, D19's lesson),
+clips it to a workspace box and then to a reach-aware radial limit, re-syncs
+mink from the live qpos and solves. Points recorded with their measurements:
+- Joint-change limiting is a uniform scale of the whole solved change
+  (`_windup_scale`), not a per-joint clip: per-joint clipping rotated the tool
+  out of top-down and then latched (48/60 steps rejected driving to e4,
+  10.68 deg tilt); uniform scaling reaches the square in 56 steps, 0 rejects.
+- The reach limit is height-aware (`CARTESIAN_REACH_Z/_R`); reach shrinks by
+  115.6 mm from floor to box top.
+- A rejected or non-converged solve increments `info["ik_rejects"]` (present
+  and 0 in every mode) and holds the previous targets.
+- `CARTESIAN_IK_MAX_ITERS` is 20 (the expert uses 400).
+
+**Inner radial limit (`f4cacdf`).** `CARTESIAN_INNER_Z / CARTESIAN_INNER_R`
+(margin 0.015 m) scales a target closer to the base axis than the limit
+outward along its radius. The table comes from a static self-collision map of
+`ur_upper_arm_link` against `ur_wrist_2_link`. At `GRASP_Z` (0.79925 m) the
+limit is 0.2409 m, inside d1/e1 at 0.2501 m, so d1/e1 stay reachable; it does
+not remove their self-contact (D24). Recorded limitation: a sustained push into
+the near-base corner still produces self-contact (about 465 N peak over 250
+steps plus a 20-step hold, 0 rejects), deferred to the referee's self-contact
+policy.
+
+**Measured.** All 64 squares reach hover and `GRASP_Z` (128/128, 0 rejects,
+0.58-2.00 mm). IK cost, corrected in the project record: about 0.4 ms, one
+iteration, about 10% throughput (an earlier figure of 5 ms / 11 iterations was
+an artefact of driving a delta-mode env with absolute targets).
+
+## D23 — referee before training: repair what the environment counts as success, contact and termination before any training on an interface is trusted
+
+**Date:** 2026-09-22 to 2026-09-25 (referee round 2 commits, `4a39715` through `5dbc2db`).
+**Provenance.** The roadmap table's wording for D23 is not in the repo. This
+entry is reconstructed from the commit history and should be reconciled to the
+table (the table wins).
+
+**Decision.** Training results are only as good as the referee that scores
+them. The success test, the contact classification, the termination rules and
+the validity of the simulator state are audited and repaired first; only then
+is an interface (delta, Cartesian) gated with the scripted expert and trained
+on.
+
+**What round 2 repaired** (all linear commits on `master`, ancestors of `5dbc2db`):
+- F7 (`4a39715`): a consistent fallback transition, NaN detection, and an
+  `invalid_transition` flag.
+- F10 (`2fe28c1`): derived simulator state refreshed after every env step.
+- F1 (`aa188e0`, `ff8b23f`): robot geometry by body ancestry instead of a
+  `ur_` name prefix (which matched 4 of 23 collidable robot geoms), a
+  self-contact category, and a board force ceiling; the measured board contact
+  force is exposed in info.
+- F2 (`977b11a`): placement success tightened (5 mm height, linear-speed and
+  tilt terms).
+- F6 and F11 (`f75919c`, docs `aef7eb9`, `5bd2227`): T2 obstacle disturbance
+  latched; obstacle config validated once.
+- `5dbc2db`: absolute/delta trace hashes re-frozen to the post-repair baseline.
+
+**Consequence to remember.** The T1 full-board baseline is 303/315, not 313:
+F1 made self-contact visible for the first time, and it fires on the d1/e1
+starts (D24). The earlier 313 figures predate the repairs.
+
+## D24 — self-contact on the d1/e1 starts: a hairline arm/wrist graze during `descend` (first recorded as `d1->a8`)
 
 **Date:** 2026-09-22 (referee track, F1 round 2)
 **Status:** open, not root-caused. No fix attempted; out of scope for F1
@@ -1917,3 +2032,55 @@ not constrained to it and could plausibly produce brushing self-contact more
 often than this single-pair, single-instance finding suggests. No training
 data exists yet to check this against — flagged here so it's checked once
 some does, not assumed either way.
+
+**Update (2026-09-25) -- the finding was wider than "isolated".** Re-run on the
+five-target 315-episode sweep, the upper-arm/wrist-2 contact fires on EVERY
+trajectory that starts on d1 or e1: 10 of the 12 failures (d1 and e1 against
+e5, a1, h8, a8, h1), each `bad_contact` at step 37 in `descend`, one macro-step,
+on `ur_upper_arm_link` / `ur_wrist_2_link`. The other two failures are D10's.
+The "one pair only" reading above came from an 11-episode sample that happened
+to contain a single d1 start. Driven arrival at d1/e1 under Cartesian control
+gives 65-68 N and 0.07-0.14 mm penetration. `CARTESIAN_INNER_R` is 0.2409 m at
+`GRASP_Z` against d1/e1's 0.2501 m radius (D22), so the limit keeps the squares
+reachable but does not prevent the contact. Still open: not root-caused, no fix
+attempted. D25 does not touch this: arm-to-arm contact still terminates.
+
+## D25 — gripper-internal contact is not a referee violation; closing on air is a recoverable action, judged by the success check and logged, not terminated
+
+**Date:** 2026-09-25 (`5760449`).
+
+**Finding.** With the F1 self-contact rule (D23), closing the gripper on
+nothing put `ur_gripper_right_pad1` on `ur_gripper_left_pad1` and ended the
+episode with `bad_contact` at step 9. Measured on current code: 4 of 4
+close-on-air runs (delta and Cartesian, from home and hovering 0.09-0.10 m over
+e4, piece elsewhere) terminated at step 9 with pad-on-pad forces of 2.75-8.3 N
+and 0.01-0.03 mm penetration. Replays of the scripted expert through Cartesian
+control (b4, g6, c7) showed the pads touching only 3-6 steps AFTER the piece was
+lost, never while it was held; the joint-mode 315-episode expert sweep had zero
+pad-on-pad steps. So the rule punished an empty close, not a bad grasp.
+
+**Decision.** A robot-to-robot contact with one geom in the gripper's left
+finger subtree (`ur_gripper_left_driver`, `..._left_spring_link` and below) and
+the other in the right no longer counts toward `bad_contact`. 6 collidable
+geoms per side, 36 exempt pairs; in practice pad on pad. MuJoCo's contact
+physics is unchanged. Arm-to-arm, arm-to-gripper (including the gripper base
+and mount), same-side finger and furniture contacts still terminate.
+`info["gripper_self_contact"]` (bool, always present) reports the exempt
+contact and is in `MONITOR_INFO_KEYWORDS`, so closing on air stays visible.
+
+**Why a recoverable action.** An empty close is a mistake the task can recover
+from (open again and retry) and is already judged by the success check;
+terminating it also charges the failure penalty (771 at 300 steps, D20), which
+would penalise closing the gripper at all; whether that changes learned
+behaviour has not been measured.
+
+**Verified.** Close-on-air x50 steps, four configurations: no termination, flag
+true from step 9 (42/50 steps), aperture settles at 0.7822. D24 unchanged (d1/e1
+still terminate). Negative controls that still terminate: arm-to-gripper
+(upper arm through `gripper_base_mount`), pad against forearm, pad against
+table. Full-board sweep 303/315, 0 of 315 episodes changed in outcome, reason,
+length or contact pair. Throughput unchanged (561.5 vs 561.2 steps/s, noise
+about 7%). 337 tests pass.
+
+**Not addressed.** Why a held piece slips out during lift and place (b4, g6, c7
+in the Cartesian replay) is a separate open question, not diagnosed here.
