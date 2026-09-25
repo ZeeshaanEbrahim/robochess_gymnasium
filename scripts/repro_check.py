@@ -74,11 +74,12 @@ def _recorder_class():
 def run(cfg: dict, steps: int, tag: str, outdir: Path) -> Path:
     """Train once and write the full trace to `outdir/trace_<tag>.npz`."""
     import numpy as np
-    from stable_baselines3 import PPO
 
     venv = _recorder_class()(train.build_vec_env(cfg))
-    model = PPO(policy="MultiInputPolicy", env=venv, seed=cfg["seed"],
-                device=cfg["device"], verbose=0)
+    # The training path's own builder, so the algorithm (PPO / SAC, and SAC's
+    # HER replay buffer) is the one the config names. (F13: this used to build
+    # PPO unconditionally, so a SAC config was "checked" against a PPO run.)
+    model = train.build_model(cfg, venv)
     model.learn(total_timesteps=steps)
 
     acts = np.concatenate(venv.actions, axis=0)
