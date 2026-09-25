@@ -232,6 +232,15 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
             "terms belong to the shaped reward only."
         )
 
+    # F11: the same validator the T2 constructor and reset() use, so the range
+    # rule lives in one place. Count only; obstacle squares are not configurable.
+    from robochess.tasks import t2_obstacle_pick_and_place as _t2
+
+    try:
+        _t2.validate_obstacle_config(cfg["n_obstacles"], None)
+    except ValueError as exc:
+        raise ConfigError(str(exc)) from exc
+
     if cfg["task"] == "t1" and cfg["n_obstacles"] != 0:
         raise ConfigError(
             f"n_obstacles={cfg['n_obstacles']} but task=t1; obstacles only exist on t2"

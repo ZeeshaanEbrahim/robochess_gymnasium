@@ -54,6 +54,7 @@ shaped-vs-sparse results are analysed.
 
 from __future__ import annotations
 
+import numbers
 from typing import Any
 
 import gymnasium as gym
@@ -106,6 +107,72 @@ OBSTACLE_DISPLACEMENT_TOL = 0.005
 OBSTACLE_TILT_TOL = 0.26  # rad
 
 
+def validate_obstacle_config(
+    n_obstacles: Any,
+    obstacle_squares: Any = None,
+    start: str | None = None,
+    target: str | None = None,
+    allow_piece_overlap: bool = False,
+) -> tuple[int, tuple[str, ...] | None]:
+    """The one place T2's obstacle configuration is validated (F11).
+
+    Called by the T2ObstacleTask constructor, by its ``reset()`` (for a
+    per-episode ``options["obstacle_squares"]`` override, once the episode's
+    start and target squares are known) and by the config layer
+    (``robochess.experiment.resolve_config``, count only). Keeping a single copy
+    is the point: two versions of a rule drift apart, which is how the
+    contact-classification check went wrong before F1.
+
+    Checks, raising ``ValueError``:
+
+      * ``n_obstacles`` is a real integer (not a bool, float, NaN, string or
+        None) in ``[0, N_OBSTACLE_SLOTS]``;
+      * ``obstacle_squares`` is None, or a list/tuple (not a bare string) of
+        valid square names, exactly ``n_obstacles`` long, all distinct;
+      * when ``start`` / ``target`` are given, no obstacle sits on either --
+        two bodies spawned on one square overlap and the solver pushes them
+        apart (measured: the working piece ended 5 mm off the board). Skipped
+        when ``allow_piece_overlap`` is true. That opt-out is a T2ObstacleTask
+        constructor keyword only; the config layer has no key for it, on
+        purpose.
+
+    Returns ``(n_obstacles, tuple(obstacle_squares) or None)``.
+    """
+    if isinstance(n_obstacles, bool) or not isinstance(n_obstacles, numbers.Integral):
+        raise ValueError(f"n_obstacles must be an int in [0, {N_OBSTACLE_SLOTS}]; got {n_obstacles!r}.")
+    n = int(n_obstacles)
+    if not 0 <= n <= N_OBSTACLE_SLOTS:
+        raise ValueError(f"n_obstacles must be in [0, {N_OBSTACLE_SLOTS}]; got {n_obstacles}.")
+    if obstacle_squares is None:
+        return n, None
+    if not isinstance(obstacle_squares, (list, tuple)):
+        raise ValueError(
+            "obstacle_squares must be a sequence (list or tuple) of square names, "
+            f"got {type(obstacle_squares).__name__}: {obstacle_squares!r}."
+        )
+    squares = tuple(obstacle_squares)
+    if len(squares) != n:
+        raise ValueError(
+            f"obstacle_squares has {len(squares)} entries but n_obstacles is {n}."
+        )
+    for sq in squares:
+        if sq not in ALL_SQUARES:
+            raise ValueError(f"Not a valid square: {sq!r}")
+    if len(set(squares)) != len(squares):
+        raise ValueError("obstacle_squares must be distinct.")
+    if not allow_piece_overlap:
+        if start is not None and start in squares:
+            raise ValueError(
+                f"obstacle_squares puts an obstacle on the start square {start!r}, "
+                "where the working piece spawns."
+            )
+        if target is not None and target in squares:
+            raise ValueError(
+                f"obstacle_squares puts an obstacle on the target square {target!r}."
+            )
+    return n, squares
+
+
 def file_adjacent_squares(square: str) -> tuple[str, ...]:
     """The squares one file either side of ``square``, same rank.
 
@@ -141,10 +208,18 @@ class T2ObstacleTask(T1PickAndPlaceTask):
     constructor, or per-episode via
     ``reset(options={"obstacle_squares": [...]})``, to fix them instead.
 
-    Success requires everything ``RoboChessEnv`` requires *and*
-    ``info["obstacles_undisturbed"]``. Disturbing an obstacle does not
-    terminate the episode -- the trajectory runs to its natural end so RL
-    sees a complete episode, it simply cannot be scored a success.
+    Success requires everything ``RoboChessEnv`` requires *and* that no
+    obstacle was disturbed at any point in the episode
+    (``info["obstacles_ever_disturbed"]``, a latch -- F6; the instantaneous
+    ``info["obstacles_undisturbed"]`` still reports the current state only).
+    Disturbing an obstacle does not terminate the episode -- the trajectory
+    runs to its natural end so RL sees a complete episode, it simply cannot be
+    scored a success.
+
+    Obstacle configuration is validated by :func:`validate_obstacle_config`
+    (F11), including on the ``reset()`` override. ``allow_piece_overlap=True``
+    lets an obstacle share the start or target square; code-only, never
+    configurable.
     """
 
     def __init__(
@@ -157,6 +232,7 @@ class T2ObstacleTask(T1PickAndPlaceTask):
         reachable_squares: tuple[str, ...] = REACHABLE_SQUARES,
         displacement_tol: float = OBSTACLE_DISPLACEMENT_TOL,
         tilt_tol: float = OBSTACLE_TILT_TOL,
+        allow_piece_overlap: bool = False,
     ):
         super().__init__(
             env,
@@ -164,24 +240,18 @@ class T2ObstacleTask(T1PickAndPlaceTask):
             target_square=target_square,
             reachable_squares=reachable_squares,
         )
-        if not 0 <= n_obstacles <= N_OBSTACLE_SLOTS:
-            raise ValueError(
-                f"n_obstacles must be in [0, {N_OBSTACLE_SLOTS}]; got {n_obstacles}."
-            )
-        if obstacle_squares is not None:
-            if len(obstacle_squares) != n_obstacles:
-                raise ValueError(
-                    f"obstacle_squares has {len(obstacle_squares)} entries but "
-                    f"n_obstacles is {n_obstacles}."
-                )
-            for sq in obstacle_squares:
-                if sq not in ALL_SQUARES:
-                    raise ValueError(f"Not a valid square: {sq!r}")
-            if len(set(obstacle_squares)) != len(obstacle_squares):
-                raise ValueError("obstacle_squares must be distinct.")
+        # Code-only: deliberately not a key the config layer accepts (F11).
+        self.allow_piece_overlap = bool(allow_piece_overlap)
+        n_obstacles, obstacle_squares = validate_obstacle_config(
+            n_obstacles,
+            obstacle_squares,
+            start=start_square,
+            target=target_square,
+            allow_piece_overlap=self.allow_piece_overlap,
+        )
 
-        self.n_obstacles = int(n_obstacles)
-        self.obstacle_squares = tuple(obstacle_squares) if obstacle_squares else None
+        self.n_obstacles = n_obstacles
+        self.obstacle_squares = obstacle_squares
         self.displacement_tol = float(displacement_tol)
         self.tilt_tol = float(tilt_tol)
 
@@ -208,6 +278,11 @@ class T2ObstacleTask(T1PickAndPlaceTask):
         # against -- not the square centre, so a placement that settles a
         # fraction of a millimetre does not read as disturbance.
         self._placed_xy = np.zeros((N_OBSTACLE_SLOTS, 2), dtype=np.float64)
+        # F6: per-episode memory. `_obstacle_status()` is a snapshot, so an
+        # obstacle moved and put back read "undisturbed" again. Reset in
+        # reset() (after placement), updated in _augment_info().
+        self._obstacle_peak_disp = np.zeros(N_OBSTACLE_SLOTS, dtype=np.float64)
+        self._obstacles_ever_disturbed = False
 
         # D12: the observation extension is declared here, on the wrapper.
         # The base env's observation_space is left exactly as it is.
@@ -238,7 +313,16 @@ class T2ObstacleTask(T1PickAndPlaceTask):
         self, start: str, target: str, requested: tuple[str, ...] | None
     ) -> tuple[str, ...]:
         if requested is not None:
-            return tuple(requested)
+            # F11: the per-episode override reaches here unchecked otherwise.
+            # start/target are this episode's, known only after the env reset.
+            _, squares = validate_obstacle_config(
+                self.n_obstacles,
+                requested,
+                start=start,
+                target=target,
+                allow_piece_overlap=self.allow_piece_overlap,
+            )
+            return squares
         if self.n_obstacles == 0:
             return ()
         candidates = self._obstacle_candidates(start, target)
@@ -344,6 +428,8 @@ class T2ObstacleTask(T1PickAndPlaceTask):
         # Re-read after mj_forward so _placed_xy is the settled pose the rest
         # of the episode is measured against.
         self._placed_xy[: len(squares)] = self._obstacle_xy()[: len(squares)]
+        self._obstacle_peak_disp[:] = 0.0
+        self._obstacles_ever_disturbed = False
 
         obs = self._base._get_obs()
         info = self._augment_info(self._base._build_info(terminated_reason=None))
@@ -360,9 +446,21 @@ class T2ObstacleTask(T1PickAndPlaceTask):
         info = super()._augment_info(info)
         moved, disturbed = self._obstacle_status()
         undisturbed = bool(not disturbed.any())
+        # F6: latch. Idempotent (max / or), so repeated calls in one step are
+        # harmless. Sampled once per env step, like every other referee read:
+        # a knock-and-return entirely inside one macro-step is not seen.
+        n = moved.size
+        self._obstacle_peak_disp[:n] = np.maximum(self._obstacle_peak_disp[:n], moved)
+        self._obstacles_ever_disturbed = self._obstacles_ever_disturbed or not undisturbed
+        ever_disturbed = self._obstacles_ever_disturbed
 
         info["obstacle_squares"] = self.current_obstacle_squares
-        info["obstacles_undisturbed"] = undisturbed
+        info["obstacles_undisturbed"] = undisturbed  # instantaneous, unchanged meaning
+        info["obstacles_ever_disturbed"] = bool(ever_disturbed)
+        info["obstacle_peak_displacements_mm"] = (self._obstacle_peak_disp[:n] * 1000.0).tolist()
+        info["max_obstacle_peak_displacement_mm"] = (
+            float(self._obstacle_peak_disp[:n].max() * 1000.0) if n else 0.0
+        )
         info["obstacle_displacements_mm"] = (moved * 1000.0).tolist()
         info["max_obstacle_displacement_mm"] = float(moved.max() * 1000.0) if moved.size else 0.0
         # T1 sets this to 0 as a forward-compatible field; T2 is what it was
@@ -373,7 +471,7 @@ class T2ObstacleTask(T1PickAndPlaceTask):
         # stays exactly as D3/D9 left it. SparsePickAndPlaceReward reads
         # info["is_success"], so it inherits this with no change of its own.
         base_success = bool(info["is_success"])
-        info["is_success"] = bool(base_success and undisturbed)
+        info["is_success"] = bool(base_success and not ever_disturbed)
 
         # The base env terminates on its OWN success criterion, which a wrapper
         # cannot influence without reaching into the env. So the fifth term can
@@ -385,7 +483,7 @@ class T2ObstacleTask(T1PickAndPlaceTask):
         # scripts/scripted_expert.py copies terminated_reason into its episode
         # `outcome`, so this string is what a sweep reports for the new
         # outcome type T2 introduces.
-        if base_success and not undisturbed and info.get("terminated_reason") == "success":
+        if base_success and ever_disturbed and info.get("terminated_reason") == "success":
             info["terminated_reason"] = "success_obstacles_disturbed"
         return info
 
