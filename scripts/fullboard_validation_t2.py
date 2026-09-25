@@ -56,7 +56,11 @@ def run(targets, budget, n_obstacles, progress_every=20):
             task.start_square, task.target_square = start, target
             rec = expert.run_episode(seed=0)
             # The expert's record does not carry T2's fields; read them off the
-            # task's last info, which reflects the terminal step.
+            # task's last info, which reflects the terminal step. The "ever" /
+            # "peak" fields are the F6 latch and cover the whole episode; the
+            # "undisturbed" / "max_obstacle_displacement_mm" fields are the
+            # instantaneous terminal snapshot, kept for comparison with figures
+            # recorded before F6 (which could miss a disturbance that was undone).
             info = task._augment_info(env._build_info(terminated_reason=None))
             results.append({
                 "target": target,
@@ -67,6 +71,9 @@ def run(targets, budget, n_obstacles, progress_every=20):
                 "steps": int(rec["steps"]),
                 "final_distance_mm": round(rec["final_distance"] * 1000.0, 2),
                 "obstacle_squares": list(task.current_obstacle_squares),
+                "obstacles_ever_disturbed": bool(info["obstacles_ever_disturbed"]),
+                "max_obstacle_peak_displacement_mm": round(
+                    float(info["max_obstacle_peak_displacement_mm"]), 4),
                 "obstacles_undisturbed": bool(info["obstacles_undisturbed"]),
                 "n_disturbed": int(info["unintended_displacement_count"]),
                 "max_obstacle_displacement_mm": round(
@@ -103,12 +110,18 @@ def main() -> int:
 
     ok = sum(r["success"] for r in results)
     n = len(results)
-    disturbed = [r for r in results if not r["obstacles_undisturbed"]]
+    disturbed = [r for r in results if r["obstacles_ever_disturbed"]]
+    snapshot_disturbed = [r for r in results if not r["obstacles_undisturbed"]]
     print("")
     print("scene=t2 targets=%s obstacles=%d budget=%d"
           % (",".join(targets), args.obstacles, args.budget))
     print("RESULT: %d/%d (%.1f%%)  elapsed=%.0fs" % (ok, n, 100.0 * ok / n, elapsed))
-    print("OBSTACLE TERM fired: %d/%d (%.1f%%)" % (len(disturbed), n, 100.0 * len(disturbed) / n))
+    print("OBSTACLE TERM fired (latched, whole episode): %d/%d (%.1f%%)"
+          % (len(disturbed), n, 100.0 * len(disturbed) / n))
+    print("max obstacle peak displacement (latched): %.4f mm"
+          % max((r["max_obstacle_peak_displacement_mm"] for r in results), default=0.0))
+    print("terminal-snapshot obstacle term (pre-F6 measurement): %d/%d"
+          % (len(snapshot_disturbed), n))
 
     if results:
         print("outcomes: %s" % dict(Counter(r["outcome"] for r in results)))
@@ -118,10 +131,10 @@ def main() -> int:
         print("failures (%d):" % len(failures))
         for r in failures:
             print("  %s->%s  outcome=%-28s phase=%-9s steps=%3d  dist=%8.1f mm  "
-                  "obstacles=%s disturbed=%d maxdisp=%.1f mm"
+                  "obstacles=%s ever_disturbed=%s peak=%.1f mm"
                   % (r["start"], r["target"], r["outcome"], r["failed_phase"],
                      r["steps"], r["final_distance_mm"], ",".join(r["obstacle_squares"]),
-                     r["n_disturbed"], r["max_obstacle_displacement_mm"]))
+                     r["obstacles_ever_disturbed"], r["max_obstacle_peak_displacement_mm"]))
 
     if args.out:
         with open(args.out, "w") as fh:

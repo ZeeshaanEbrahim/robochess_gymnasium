@@ -1579,6 +1579,24 @@ term fired **0/315 in both**, and the maximum obstacle displacement anywhere
 was 0.000 mm. The scripted expert makes no attempt whatsoever to avoid
 obstacles, and still never disturbs one.
 
+**Correction (F6, referee-repairs).** Those original figures were read from
+the terminal step's snapshot, and the disturbance check had no episode memory:
+an obstacle knocked and then put back read "undisturbed" again. So the 0/315
+and 0.000 mm were a measurement of the end state, not proof that no obstacle
+was ever disturbed mid-episode. F6 added a per-episode latch
+(`obstacles_ever_disturbed`, `max_obstacle_peak_displacement_mm`) and
+`scripts/fullboard_validation_t2.py` now reports it. Re-measured with the
+latch on the same five-target sweep, `n_obstacles=2`, 315 episodes: **latch
+fired 0/315, maximum peak displacement 0.000003 mm** (303/315 successes; the
+303, not 313, is the post-F1 baseline, see the D21 note on the d1/e1 starts).
+So the corrected, latch-based figure is also 0/315. The `n_obstacles=0`
+sweep places no obstacles, so its 0/315 is trivially true and says nothing
+about disturbance. Limits that still apply: the latch is sampled once per
+env step (a knock-and-return inside one 20-substep macro-step is not seen),
+it covers the scripted expert's single fixed trajectory family only, and the
+10 `d1`/`e1` episodes end at step 37 on `bad_contact`, so they say little
+about the rest of their trajectories.
+
 So, stated plainly: **T2 as currently configured measures task completion
 with static clutter present on the board. It does not measure active
 obstacle avoidance under pressure.** The transit corridor clears a standing
