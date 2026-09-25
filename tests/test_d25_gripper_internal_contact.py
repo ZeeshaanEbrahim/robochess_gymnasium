@@ -95,6 +95,7 @@ def test_monitor_logs_the_flag():
     train = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(train)
     assert "gripper_self_contact" in train.MONITOR_INFO_KEYWORDS
+    assert "ik_rejects" in train.MONITOR_INFO_KEYWORDS
     assert "gripper_self_contact" in train.monitor_info_keywords({})
 
 
