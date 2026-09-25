@@ -171,7 +171,9 @@ Success now requires three independent conditions, all reported separately in
 | condition | test |
 | --- | --- |
 | `piece_on_square` | XY distance to the goal < `goal_tolerance` (30 mm) |
-| `piece_resting` | piece origin within `rest_tolerance` (10 mm) of the board surface |
+| `piece_resting` | piece origin within `PLACEMENT_REST_TOLERANCE` (5 mm, F2) of the board surface. `rest_tolerance` stays 10 mm for T1's `lifted` and D18's grasp check |
+| `piece_still` | (F2) piece linear speed < 0.01 m/s for 3 consecutive steps |
+| `piece_upright` | (F2) piece tilt from vertical < 10 degrees for 3 consecutive steps |
 | `gripper_released` | gripper driver joint < `gripper_open_threshold` (0.2 rad) |
 
 The gripper threshold is set from measurement, not guessed: the driver joint

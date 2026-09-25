@@ -130,6 +130,16 @@ WINDUP_MARGIN_FORCE_MULTIPLE = 2.0
 PIECE_ANG_SETTLE_TOL = 0.05  # rad/s
 PIECE_SETTLE_CONSECUTIVE_STEPS = 3
 
+# F2 (referee review 2026-09-21): the placement criterion accepted a piece 10 mm
+# off the board, still translating, or tilted well off vertical. Thresholds
+# approved by Zee. `rest_tolerance` deliberately stays 10 mm: it is also T1's
+# `lifted` term and D18's grasp check, so the tighter placement height is its own
+# constant. The linear-speed and tilt terms reuse PIECE_SETTLE_CONSECUTIVE_STEPS
+# and the same streak-in-step() mechanism as the angular-speed term.
+PLACEMENT_REST_TOLERANCE = 0.005  # m
+PIECE_LIN_SETTLE_TOL = 0.01  # m/s
+PIECE_TILT_TOL_DEG = 10.0  # degrees between the piece's z axis and world z
+
 
 class RoboChessEnv(gym.Env):
     """UR5e + Robotiq 2F-85 manipulating a chess piece on a 78 mm board.
@@ -148,8 +158,8 @@ class RoboChessEnv(gym.Env):
     Actions are 7-dimensional position targets: 6 arm joints + 1 gripper.
 
     Success requires the piece to be *placed*, not merely carried near the
-    target: within ``goal_tolerance`` in XY, within ``rest_tolerance`` of the
-    board surface in z, and with the gripper open past
+    target: within ``goal_tolerance`` in XY, within ``PLACEMENT_REST_TOLERANCE``
+    of the board surface in z, upright and still, and with the gripper open past
     ``gripper_open_threshold``. See :meth:`_success_terms`.
     """
 
@@ -359,6 +369,9 @@ class RoboChessEnv(gym.Env):
         # a forgotten reset here would silently let one episode's settled
         # state leak into the next episode's early steps.
         self._piece_ang_settled_streak = 0
+        # F2: same pattern and same reset requirement, for linear speed / tilt.
+        self._piece_lin_settled_streak = 0
+        self._piece_upright_streak = 0
 
     # ------------------------------------------------------------------ ids
     def _body_id(self, name: str) -> int:
@@ -498,6 +511,8 @@ class RoboChessEnv(gym.Env):
         self._desired_goal = self._sample_desired_goal()
         self._elapsed_steps = 0
         self._piece_ang_settled_streak = 0  # D9: must not leak across episodes
+        self._piece_lin_settled_streak = 0  # F2: likewise
+        self._piece_upright_streak = 0
 
         obs = self._get_obs()
         self._snapshot_last_good_obs(obs)
@@ -608,8 +623,8 @@ class RoboChessEnv(gym.Env):
         return board_force > BOARD_CONTACT_FORCE_CEILING_N
 
     # -------------------------------------------------------------- success
-    def _success_terms(self) -> tuple[bool, bool, bool, bool, float]:
-        """The four independent conditions for a successful placement.
+    def _success_terms(self) -> tuple[bool, bool, bool, bool, float, bool, bool]:
+        """The six independent conditions for a successful placement.
 
         A 3D distance-to-goal test alone is not enough: with a 30 mm tolerance a
         piece still clamped in the gripper 25 mm above its target square scores
@@ -618,18 +633,31 @@ class RoboChessEnv(gym.Env):
         success requires all four of:
 
           on_square  piece within goal_tolerance of the goal in XY
-          resting    piece origin at board height (not still elevated)
+          resting    piece origin within PLACEMENT_REST_TOLERANCE (5 mm, F2) of
+                     board height (not still elevated). Deliberately not
+                     `rest_tolerance`, which stays 10 mm for T1's `lifted`.
           released   gripper open wide enough that it cannot be holding the piece
           settled    piece's own angular speed has stayed below
                      PIECE_ANG_SETTLE_TOL for PIECE_SETTLE_CONSECUTIVE_STEPS
                      consecutive step() calls (D9, DECISIONS.md)
+          still      (F2) piece's linear speed below PIECE_LIN_SETTLE_TOL for
+                     PIECE_SETTLE_CONSECUTIVE_STEPS consecutive step() calls
+          upright    (F2) piece's tilt from vertical below PIECE_TILT_TOL_DEG
+                     for PIECE_SETTLE_CONSECUTIVE_STEPS consecutive step() calls
+
+        The tuple is (on_square, resting, released, settled, xy_dist, still,
+        upright): the F2 terms are appended so existing positional readers are
+        unaffected. `still` / `upright` exist because `settled` only watches
+        ANGULAR speed, so a piece sliding across the board, or resting tilted on
+        its rim, satisfied all four original terms.
 
         `settled` exists because on_square+resting+released alone can be
         satisfied while the piece is still spinning (D8/D9): a chess piece
         gripped by a rotationally-underconstrained head-only grasp can pass
         through a valid position/height/release state mid-spin, not only once
         genuinely at rest. `_piece_ang_settled_streak` (updated in `step()`)
-        tracks this across steps; it is reset to 0 in `reset()` and must never
+        tracks this across steps, as do `_piece_lin_settled_streak` and
+        `_piece_upright_streak`; all are reset to 0 in `reset()` and must never
         be allowed to leak between episodes.
 
         Note for HER: `is_success` is therefore NOT a pure function of
@@ -642,14 +670,21 @@ class RoboChessEnv(gym.Env):
         achieved = self._achieved_goal()
         xy_dist = float(np.linalg.norm(achieved[:2] - self._desired_goal[:2]))
         on_square = xy_dist < self.goal_tolerance
-        resting = abs(float(achieved[2]) - self._board_surface_z) < self.rest_tolerance
+        resting = abs(float(achieved[2]) - self._board_surface_z) < PLACEMENT_REST_TOLERANCE
         released = float(self.data.qpos[self._grip_qadr]) < self.gripper_open_threshold
         settled = self._piece_ang_settled_streak >= PIECE_SETTLE_CONSECUTIVE_STEPS
-        return on_square, resting, released, settled, xy_dist
+        still = self._piece_lin_settled_streak >= PIECE_SETTLE_CONSECUTIVE_STEPS
+        upright = self._piece_upright_streak >= PIECE_SETTLE_CONSECUTIVE_STEPS
+        return on_square, resting, released, settled, xy_dist, still, upright
+
+    def _piece_tilt_deg(self) -> float:
+        """Angle between the tracked piece's z axis and world z, in degrees."""
+        zz = float(self.data.xmat[self._piece_bid][8])
+        return float(np.degrees(np.arccos(np.clip(zz, -1.0, 1.0))))
 
     def _is_success(self) -> bool:
-        on_square, resting, released, settled, _ = self._success_terms()
-        return bool(on_square and resting and released and settled)
+        on_square, resting, released, settled, _, still, upright = self._success_terms()
+        return bool(on_square and resting and released and settled and still and upright)
 
     def _piece_kinetic_energy(self) -> float:
         """Translational + rotational KE of the tracked piece, in joules."""
@@ -700,10 +735,13 @@ class RoboChessEnv(gym.Env):
         step can never read as a success -- matching ``step()``'s own precedence.
         """
         dist = float(np.linalg.norm(self._achieved_goal() - self._desired_goal))
-        on_square, resting, released, settled, xy_dist = self._success_terms()
+        on_square, resting, released, settled, xy_dist, still, upright = self._success_terms()
         unstable = self._solver_instability()
         return {
-            "is_success": bool(on_square and resting and released and settled and not unstable),
+            "is_success": bool(
+                on_square and resting and released and settled and still and upright
+                and not unstable
+            ),
             "distance_to_goal": dist,
             # The success terms are reported separately so a failure says
             # which condition was missing rather than just "not close enough".
@@ -712,6 +750,8 @@ class RoboChessEnv(gym.Env):
             "piece_resting": bool(resting),
             "gripper_released": bool(released),
             "piece_settled": bool(settled),
+            "piece_still": bool(still),
+            "piece_upright": bool(upright),
             "piece_height_above_board": float(self._achieved_goal()[2] - self._board_surface_z),
             "piece_off_board": bool(self._piece_off_board()),
             "bad_contact": bool(self._bad_contact()),
@@ -758,6 +798,17 @@ class RoboChessEnv(gym.Env):
         )
         self._piece_ang_settled_streak = (
             self._piece_ang_settled_streak + 1 if piece_ang_speed < PIECE_ANG_SETTLE_TOL else 0
+        )
+        # F2: same mechanism for translational speed and tilt (read from the
+        # refreshed xmat, per F10).
+        piece_lin_speed = float(
+            np.linalg.norm(self.data.qvel[self._piece_vadr : self._piece_vadr + 3])
+        )
+        self._piece_lin_settled_streak = (
+            self._piece_lin_settled_streak + 1 if piece_lin_speed < PIECE_LIN_SETTLE_TOL else 0
+        )
+        self._piece_upright_streak = (
+            self._piece_upright_streak + 1 if self._piece_tilt_deg() < PIECE_TILT_TOL_DEG else 0
         )
 
         achieved = self._achieved_goal()

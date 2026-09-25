@@ -227,7 +227,7 @@ def test_corrupted_step_never_reports_success(monkeypatch):
         env.reset(seed=0)
         base = env.unwrapped
         env.step(_hold(env))
-        monkeypatch.setattr(base, "_success_terms", lambda: (True, True, True, True, 0.0))
+        monkeypatch.setattr(base, "_success_terms", lambda: (True, True, True, True, 0.0, True, True))
         _inject_spike(base)
         _, reward, terminated, truncated, info = env.step(_hold(env))
         assert info["invalid_transition"] is True
