@@ -1,8 +1,21 @@
 """RoboChessEnv's Cartesian action mode: (dx, dy, dz, gripper), top-down IK.
 
-Frozen-hash notes (item a.i below): absolute and delta modes' byte-identical
-reproduction against the commit this feature branched from, 33569ca, was
-verified by diffing a live run against a REAL worktree of that commit
+Frozen-hash notes (item a.i below). The hashes now pin the POST-referee-repairs
+baseline (branch referee-repairs at 5bd2227), not 33569ca. They were first
+frozen against 33569ca, the commit this feature branched from, and matched
+4/4 there. After the referee fixes landed they legitimately stopped matching:
+F1 (contact classification, so different bad_contact terminations), F7
+(invalid-transition handling) and F10 (derived state refreshed after each
+step, so observations read the state being returned) change the observations,
+rewards and terminations a random-action trace records. Which fix moves which
+hash was not bisected. What the test still guarantees is its purpose: adding
+the Cartesian mode does not perturb absolute or delta. Verified by computing
+the same four hashes on referee-repairs alone and on the merge of
+cartesian-mode into it (8c11be2): identical, so the merge changes nothing in
+those two modes. Re-freeze these again, after the same kind of comparison,
+whenever a referee-level change is meant to alter absolute/delta traces.
+
+The original verification against 33569ca was done by diffing a live run against a REAL worktree of that commit
 (``git worktree add --detach ... 33569ca``), not by a test that depends on
 such a worktree existing on disk -- exactly the reason
 test_action_mode.py's own module docstring gives for keeping its analogous
@@ -83,18 +96,20 @@ def _random_trace_hash(mode, seed, steps=300):
     return h.hexdigest()
 
 
-# Frozen against a real worktree of HEAD 33569ca (the commit this branch
-# started from), 300 random-action steps, seeds 0 and 1.
+# Frozen against branch referee-repairs at 5bd2227 (before the Cartesian merge),
+# 300 random-action steps, seeds 0 and 1. The pre-referee values, frozen against
+# 33569ca, were 11795eec..., 4cb85553..., 88c41c98..., 10635ec1... (abs 0, abs 1,
+# delta 0, delta 1).
 _FROZEN_HASHES = {
-    ("absolute", 0): "11795eeccfb3cc526f38d284357f8c405803cabfa88336f4cd18ed9ee7ac49a6",
-    ("absolute", 1): "4cb855536b297a5cff28648aacefff371deb3b98cb07abbd42216d89bbec0272",
-    ("delta", 0): "88c41c9841c049360484edfbd688e75a2bdaa145854e4f4b14446b6e72b4bbd7",
-    ("delta", 1): "10635ec10875b9c79348e5472e58a1bc8472539941ac2fe869ff87e8a4668ef1",
+    ("absolute", 0): "e9bbd853c05ab1a9bee748818b7abf9112b7aa430e860026c137c05880641a90",
+    ("absolute", 1): "3879bbcc9c89355940d2fe08ef5ca3322b02cb0cd83286099d8066c919e2f10e",
+    ("delta", 0): "852593e78f40f70fd0b619065364ad8d09f2110a5a1e9278535ec50d8d0046ce",
+    ("delta", 1): "1653667839a80e336024ad940024184bee42c8704cea1006576025eef82faa72",
 }
 
 
 @pytest.mark.parametrize("mode,seed", list(_FROZEN_HASHES))
-def test_absolute_and_delta_are_byte_identical_to_head_33569ca(mode, seed):
+def test_absolute_and_delta_match_the_post_referee_repairs_baseline(mode, seed):
     assert _random_trace_hash(mode, seed) == _FROZEN_HASHES[(mode, seed)]
 
 
