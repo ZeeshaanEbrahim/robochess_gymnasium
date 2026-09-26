@@ -10,6 +10,7 @@ import warnings
 
 import gymnasium as gym
 import numpy as np
+from _d27_helpers import prime_carried_release
 import pytest
 from gymnasium.utils.env_checker import check_env
 
@@ -191,6 +192,7 @@ def test_success_when_all_three_conditions_hold(env):
     env.reset(seed=0)
     goal = env._desired_goal
     _place_piece(env, [goal[0], goal[1], env._board_surface_z], gripper_qpos=0.0)
+    prime_carried_release(env)  # D27
 
     for _ in range(PIECE_SETTLE_CONSECUTIVE_STEPS - 1):
         _, _, terminated, _, info = env.step(env.home_action())
@@ -226,6 +228,7 @@ def test_terminated_and_truncated_are_mutually_exclusive(env):
     # requires PIECE_SETTLE_CONSECUTIVE_STEPS consecutive low-velocity steps,
     # counted from step() calls, so drive up to the last one before asserting.
     _place_piece(env, env._desired_goal, gripper_qpos=0.0)
+    prime_carried_release(env)  # D27
 
     for _ in range(PIECE_SETTLE_CONSECUTIVE_STEPS - 1):
         env.step(env.home_action())

@@ -186,7 +186,10 @@ def build_env(cfg: dict):
 # Per-episode info keys copied into monitor.monitor.csv alongside r, l, t.
 # `ik_rejects` (Cartesian mode's rejected-solve count) is always present in info,
 # 0 in the other modes, so Monitor never hits a missing key.
-MONITOR_INFO_KEYWORDS = ("terminated_reason", "gripper_self_contact", "ik_rejects")
+MONITOR_INFO_KEYWORDS = (
+    "terminated_reason", "gripper_self_contact", "ik_rejects",
+    "ever_held", "release_height_mm",  # D27
+)
 
 # Number of parallel environments; recorded in the manifest.
 N_ENVS = 1

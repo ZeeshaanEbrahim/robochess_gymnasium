@@ -273,6 +273,15 @@ PLACEMENT_REST_TOLERANCE = 0.005  # m
 PIECE_LIN_SETTLE_TOL = 0.01  # m/s
 PIECE_TILT_TOL_DEG = 10.0  # degrees between the piece's z axis and world z
 
+# D27 (referee sweep on experiments/adv-sweep, a8517ba/eefd05e): F2 passed a
+# piece pushed onto its square and then "released" with no grasp, and a piece
+# dropped from up to 81 mm. Success now also requires the piece to have been
+# HELD (both pads on it, off the board) at some point, and to have been let go
+# on target from no more than this height: the piece base's height above the
+# board at the last step both pads were still on it. Locked at 15 mm before
+# any result was seen; do not tune it against outcomes.
+PLACEMENT_RELEASE_MAX_HEIGHT = 0.015  # m
+
 
 class RoboChessEnv(gym.Env):
     """UR5e + Robotiq 2F-85 manipulating a chess piece on a 78 mm board.
@@ -384,6 +393,13 @@ class RoboChessEnv(gym.Env):
             self.model.body_pos[self._body_id("board")][2]
             + self.model.geom_size[self._geom_id("board_slab")][2]
         )
+
+        # D27: bodies for the piece-contact scan, so `held` / `pinched` exist in
+        # every mode and not only under PickupReward. The task wrappers read the
+        # cached result; nothing else scans.
+        self._board_bid = self._body_id("board")
+        self._left_pad_bid = self._body_id("ur_gripper_left_pad")
+        self._right_pad_bid = self._body_id("ur_gripper_right_pad")
 
         # Geoms whose contact with the robot means the episode has gone wrong
         # (the arm has driven into the furniture). Zero tolerance, unchanged
@@ -549,6 +565,11 @@ class RoboChessEnv(gym.Env):
         # F2: same pattern and same reset requirement, for linear speed / tilt.
         self._piece_lin_settled_streak = 0
         self._piece_upright_streak = 0
+        # D27 per-episode state; set here so the first _build_info() (from
+        # reset()) can read it, and cleared again in reset().
+        self._contact_flags: tuple[bool, bool, bool] = (False, False, False)
+        self._ever_held = False
+        self._release_record: tuple[float, float] | None = None
 
     # ------------------------------------------------------------------ ids
     def _body_id(self, name: str) -> int:
@@ -854,6 +875,11 @@ class RoboChessEnv(gym.Env):
         validate the Gymnasium contract end to end. P2 replaces it per task class.
 
         Batched (HER relabelling) and single-transition inputs both work.
+
+        D27: this cannot recompute the ever_held / release-height history term
+        of the success criterion (it is a function of the goals only), so a
+        relabelled transition's success flag is not reproducible from here. HER
+        stays off (known issue F3).
         """
         achieved = np.asarray(achieved_goal, dtype=np.float64)
         desired = np.asarray(desired_goal, dtype=np.float64)
@@ -892,6 +918,12 @@ class RoboChessEnv(gym.Env):
         self._piece_ang_settled_streak = 0  # D9: must not leak across episodes
         self._piece_lin_settled_streak = 0  # F2: likewise
         self._piece_upright_streak = 0
+        # D27: no latch or release record may leak across episodes. The contact
+        # flags are NOT zeroed but scanned on the reset state, so a wrapper's
+        # _augment_info reads real flags (home: no pad, board contact).
+        self._ever_held = False
+        self._release_record = None
+        self._refresh_contact_flags()
 
         obs = self._get_obs()
         self._snapshot_last_good_obs(obs)
@@ -1025,7 +1057,60 @@ class RoboChessEnv(gym.Env):
         return board_force > BOARD_CONTACT_FORCE_CEILING_N
 
     # -------------------------------------------------------------- success
-    def _success_terms(self) -> tuple[bool, bool, bool, bool, float, bool, bool]:
+    def _piece_contact_flags(self) -> tuple[bool, bool, bool]:
+        """(left pad, right pad, board): what the tracked piece is touching.
+
+        The one contact scan in the project (D27; it used to live on the T1
+        task wrapper). Read from MuJoCo's active contact list (``data.contact``
+        geom pairs, mapped to bodies via ``model.geom_bodyid``). Bodies, not
+        geom names, so every collision geom on a pad counts; on the board that
+        is only ``board_slab`` (its square geoms are visual). Callers that want
+        the current step's answer read ``self._contact_flags``, which ``step()``
+        and ``reset()`` refresh.
+        """
+        m, d = self.model, self.data
+        piece = self._piece_bid
+        left = right = board = False
+        for k in range(d.ncon):
+            c = d.contact[k]
+            b1, b2 = int(m.geom_bodyid[c.geom1]), int(m.geom_bodyid[c.geom2])
+            if piece == b1:
+                other = b2
+            elif piece == b2:
+                other = b1
+            else:
+                continue
+            left = left or other == self._left_pad_bid
+            right = right or other == self._right_pad_bid
+            board = board or other == self._board_bid
+        return left, right, board
+
+    def _refresh_contact_flags(self) -> None:
+        """Scan the current state and cache the result (see _piece_contact_flags)."""
+        self._contact_flags = self._piece_contact_flags()
+
+    def _piece_height_above_board(self) -> float:
+        """Signed height of the piece's base above the board top, in metres.
+
+        The piece origin is its base (0 mm at the home keyframe). This is the
+        height F2's ``resting`` term and ``info["piece_height_above_board"]``
+        use, and the one the D27 release record stores.
+        """
+        return float(self._achieved_goal()[2] - self._board_surface_z)
+
+    def _release_ok(self) -> bool:
+        """D27: was the piece held once, and let go on target from low down?
+
+        The record is the (xy error, height) at the LAST step both pads were on
+        the piece, so a re-grasp overwrites an earlier release and a push that
+        was never a grasp fails ``ever_held``.
+        """
+        if not self._ever_held or self._release_record is None:
+            return False
+        xy_error, height = self._release_record
+        return bool(xy_error <= self.goal_tolerance and height <= PLACEMENT_RELEASE_MAX_HEIGHT)
+
+    def _success_terms(self) -> tuple[bool, bool, bool, bool, float, bool, bool, bool]:
         """The six independent conditions for a successful placement.
 
         A 3D distance-to-goal test alone is not enough: with a 30 mm tolerance a
@@ -1048,8 +1133,8 @@ class RoboChessEnv(gym.Env):
                      for PIECE_SETTLE_CONSECUTIVE_STEPS consecutive step() calls
 
         The tuple is (on_square, resting, released, settled, xy_dist, still,
-        upright): the F2 terms are appended so existing positional readers are
-        unaffected. `still` / `upright` exist because `settled` only watches
+        upright, release_ok): the F2 and D27 terms are appended so existing
+        positional readers are unaffected. `still` / `upright` exist because `settled` only watches
         ANGULAR speed, so a piece sliding across the board, or resting tilted on
         its rim, satisfied all four original terms.
 
@@ -1061,6 +1146,12 @@ class RoboChessEnv(gym.Env):
         tracks this across steps, as do `_piece_lin_settled_streak` and
         `_piece_upright_streak`; all are reset to 0 in `reset()` and must never
         be allowed to leak between episodes.
+
+          release_ok (D27) the piece was HELD (both pads on it, off the board) at
+                     some step, and at the last step both pads were on it its
+                     XY error was within `goal_tolerance` and its base at most
+                     PLACEMENT_RELEASE_MAX_HEIGHT (15 mm) above the board. See
+                     `_release_ok`.
 
         Note for HER: `is_success` is therefore NOT a pure function of
         (achieved_goal, desired_goal) -- `released` and `settled` depend on
@@ -1077,7 +1168,7 @@ class RoboChessEnv(gym.Env):
         settled = self._piece_ang_settled_streak >= PIECE_SETTLE_CONSECUTIVE_STEPS
         still = self._piece_lin_settled_streak >= PIECE_SETTLE_CONSECUTIVE_STEPS
         upright = self._piece_upright_streak >= PIECE_SETTLE_CONSECUTIVE_STEPS
-        return on_square, resting, released, settled, xy_dist, still, upright
+        return on_square, resting, released, settled, xy_dist, still, upright, self._release_ok()
 
     def _piece_tilt_deg(self) -> float:
         """Angle between the tracked piece's z axis and world z, in degrees."""
@@ -1085,8 +1176,10 @@ class RoboChessEnv(gym.Env):
         return float(np.degrees(np.arccos(np.clip(zz, -1.0, 1.0))))
 
     def _is_success(self) -> bool:
-        on_square, resting, released, settled, _, still, upright = self._success_terms()
-        return bool(on_square and resting and released and settled and still and upright)
+        on_square, resting, released, settled, _, still, upright, release_ok = self._success_terms()
+        return bool(
+            on_square and resting and released and settled and still and upright and release_ok
+        )
 
     def _piece_kinetic_energy(self) -> float:
         """Translational + rotational KE of the tracked piece, in joules."""
@@ -1137,12 +1230,15 @@ class RoboChessEnv(gym.Env):
         step can never read as a success -- matching ``step()``'s own precedence.
         """
         dist = float(np.linalg.norm(self._achieved_goal() - self._desired_goal))
-        on_square, resting, released, settled, xy_dist, still, upright = self._success_terms()
+        on_square, resting, released, settled, xy_dist, still, upright, release_ok = (
+            self._success_terms()
+        )
         unstable = self._solver_instability()
+        record = self._release_record
         return {
             "is_success": bool(
                 on_square and resting and released and settled and still and upright
-                and not unstable
+                and release_ok and not unstable
             ),
             "distance_to_goal": dist,
             # The success terms are reported separately so a failure says
@@ -1154,7 +1250,13 @@ class RoboChessEnv(gym.Env):
             "piece_settled": bool(settled),
             "piece_still": bool(still),
             "piece_upright": bool(upright),
-            "piece_height_above_board": float(self._achieved_goal()[2] - self._board_surface_z),
+            # D27. None = no release recorded yet; not NaN because check_env's
+            # data_equivalence fails on NaN.
+            "ever_held": bool(self._ever_held),
+            "release_height_mm": float(record[1] * 1000.0) if record else None,
+            "release_xy_error_mm": float(record[0] * 1000.0) if record else None,
+            "release_ok": bool(release_ok),
+            "piece_height_above_board": self._piece_height_above_board(),
             "piece_off_board": bool(self._piece_off_board()),
             "bad_contact": bool(self._bad_contact()),
             # D25: the gripper's fingers touching each other (closing on air).
@@ -1236,6 +1338,24 @@ class RoboChessEnv(gym.Env):
             # only keeps the value finite. (Finite corrupted rewards are left as
             # they were -- see invalid_transition in _build_info.)
             reward = 0.0
+
+        # D27: on a corrupted step nothing is read from the contact list -- the
+        # cached flags, the ever_held latch and the release record all keep their
+        # last valid values (the same skip PickupReward makes on
+        # invalid_transition). Scan -> cache -> latch, then the success terms
+        # below read the updated record.
+        if not unstable:
+            self._refresh_contact_flags()
+            left, right, board = self._contact_flags
+            if left and right:  # pinched
+                if not board:  # held
+                    self._ever_held = True
+                # Overwritten on EVERY pinched step, so it is the state at the
+                # last step the pads were on the piece, i.e. the release.
+                self._release_record = (
+                    float(np.linalg.norm(achieved[:2] - self._desired_goal[:2])),
+                    self._piece_height_above_board(),
+                )
 
         success = (not unstable) and self._is_success()
         off_board = self._piece_off_board()

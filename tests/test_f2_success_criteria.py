@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import mujoco
 import numpy as np
+from _d27_helpers import prime_carried_release
 import pytest
 
 from robochess.envs import RoboChessEnv
@@ -83,6 +84,7 @@ def _run(env):
 def test_control_upright_still_piece_on_the_board_succeeds(env):
     """Sanity: the fixture method itself does not defeat success."""
     _pose(env, height_m=0.002)
+    prime_carried_release(env)  # D27
     success, info, _ = _run(env)
     assert abs(_tilt_deg(env)) < 0.5 and _lin_speed(env) < 1e-3 and _ang_speed(env) < 1e-3
     assert success, info

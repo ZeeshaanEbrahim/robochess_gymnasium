@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import mujoco
 import numpy as np
+from _d27_helpers import prime_carried_release
 import pytest
 
 from robochess.tasks import (
@@ -159,6 +160,7 @@ def _episode_with_optional_disturbance(disturb: bool):
     s = SparsePickAndPlaceReward(t)
     s.reset(seed=0)
     _park_piece_on_goal(t)
+    prime_carried_release(t)  # D27
     if disturb:
         _displace(t, 0.010)
     out = [s.step(t._base.home_action())]

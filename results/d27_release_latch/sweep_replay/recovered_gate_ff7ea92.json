@@ -1,0 +1,102 @@
+[
+ {
+  "file": "s3_fu_push_then_open_b7_g2.json",
+  "steps": 515,
+  "success": true,
+  "final_tilt_deg": 0.0015410756216089542,
+  "final_target_distance_mm": 28.575871139764786,
+  "reward_shaped": -183.01722502796684,
+  "reward_pickup": 364.9711214635628,
+  "identical_to_sweep_record": true
+ },
+ {
+  "file": "s3_fu_push_then_open_e4_e5.json",
+  "steps": 150,
+  "success": true,
+  "final_tilt_deg": 0.0017670612785508134,
+  "final_target_distance_mm": 15.137729234993458,
+  "reward_shaped": -16.116453965928095,
+  "reward_pickup": 82.7122460242181,
+  "identical_to_sweep_record": true
+ },
+ {
+  "file": "s3_push_closed_e4_e5.json",
+  "steps": 150,
+  "success": true,
+  "final_tilt_deg": 0.0017670612785508134,
+  "final_target_distance_mm": 15.137729234993458,
+  "reward_shaped": -16.116453965928095,
+  "reward_pickup": 82.7122460242181,
+  "identical_to_sweep_record": true
+ },
+ {
+  "file": "s3_push_closed_final_b7_g2.json",
+  "steps": 1000,
+  "success": false,
+  "final_tilt_deg": 0.0018913364142703652,
+  "final_target_distance_mm": 28.575871139764786,
+  "reward_shaped": -213.81874966003727,
+  "reward_pickup": 599.9143225575042,
+  "identical_to_sweep_record": true
+ },
+ {
+  "file": "s3_push_closed_final_e4_e5.json",
+  "steps": 1000,
+  "success": false,
+  "final_tilt_deg": 0.001046458694262179,
+  "final_target_distance_mm": 28.854090720415115,
+  "reward_shaped": -71.09366863901779,
+  "reward_pickup": 498.66168360374076,
+  "identical_to_sweep_record": true
+ },
+ {
+  "file": "s3_push_open_final_b7_g2.json",
+  "steps": 1000,
+  "success": false,
+  "final_tilt_deg": 0.0017008416074950955,
+  "final_target_distance_mm": 550.7234334945679,
+  "reward_shaped": -575.6090741878886,
+  "reward_pickup": 512.5465277823305,
+  "identical_to_sweep_record": true
+ },
+ {
+  "file": "s3_push_open_final_e4_e5.json",
+  "steps": 1000,
+  "success": false,
+  "final_tilt_deg": 0.0016811236697448098,
+  "final_target_distance_mm": 77.27566361427307,
+  "reward_shaped": -100.19435607040641,
+  "reward_pickup": 543.0706681497471,
+  "identical_to_sweep_record": true
+ },
+ {
+  "file": "s3_topple_e4_near_target_e4_e5.json",
+  "steps": 152,
+  "success": true,
+  "final_tilt_deg": 0.002075658415998262,
+  "final_target_distance_mm": 24.02368374168873,
+  "reward_shaped": -16.746213918363868,
+  "reward_pickup": 280.3626333325794,
+  "identical_to_sweep_record": true
+ },
+ {
+  "file": "s3_topple_final_b7_g2.json",
+  "steps": 300,
+  "success": false,
+  "final_tilt_deg": 103.9651518847971,
+  "final_target_distance_mm": 8.615052327513695,
+  "reward_shaped": -77.25245871320097,
+  "reward_pickup": 521.7121159655707,
+  "identical_to_sweep_record": true
+ },
+ {
+  "file": "s3_topple_final_e4_e5.json",
+  "steps": 300,
+  "success": false,
+  "final_tilt_deg": 0.0015977463079876607,
+  "final_target_distance_mm": 40.98466783761978,
+  "reward_shaped": -25.580292789956662,
+  "reward_pickup": 351.4841368130136,
+  "identical_to_sweep_record": true
+ }
+]

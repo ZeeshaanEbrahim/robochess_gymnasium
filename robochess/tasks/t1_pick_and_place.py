@@ -105,8 +105,8 @@ class T1PickAndPlaceTask(gym.Wrapper):
         self._board_bid = base._body_id("board")
         # Finger pad bodies for grasp_success's contact terms (the board body,
         # above, is the third).
-        self._left_pad_bid = base._body_id("ur_gripper_left_pad")
-        self._right_pad_bid = base._body_id("ur_gripper_right_pad")
+        self._left_pad_bid = base._left_pad_bid
+        self._right_pad_bid = base._right_pad_bid
 
         self.current_start_square: str | None = None
         self.current_target_square: str | None = None
@@ -159,6 +159,8 @@ class T1PickAndPlaceTask(gym.Wrapper):
         self._teleport_piece(start)
         self._set_goal(target)
         mujoco.mj_forward(self._base.model, self._base.data)
+        # The teleport moved the piece after the base env's own reset scan.
+        self._base._refresh_contact_flags()
         # F7: the base env snapshotted its own default e4->e5 episode inside
         # env.reset(); the D14 fallback must hand back THIS episode's state.
         self._base._snapshot_last_good_obs()
@@ -179,28 +181,14 @@ class T1PickAndPlaceTask(gym.Wrapper):
     def _piece_contacts(self) -> tuple[bool, bool, bool]:
         """(left pad, right pad, board): what the tracked piece is touching.
 
-        Read from MuJoCo's active contact list (``data.contact`` geom pairs,
-        mapped to bodies via ``model.geom_bodyid``). Bodies, not geom names, so
-        every collision geom on a pad counts; on the board that is only
-        ``board_slab`` (its square geoms are visual).
+        D27: a thin read of the base env's cached flags, which its step() and
+        reset() refresh once per step (the single scan lives in
+        ``RoboChessEnv._piece_contact_flags``). Tests that patch THIS method
+        change what the wrapper reads but do not reach the base env's
+        ever_held / release-record latch; D27 tests must use real replays or
+        fake contacts at the base-env level.
         """
-        base = self._base
-        m, d = base.model, base.data
-        piece = base._piece_bid
-        left = right = board = False
-        for k in range(d.ncon):
-            c = d.contact[k]
-            b1, b2 = int(m.geom_bodyid[c.geom1]), int(m.geom_bodyid[c.geom2])
-            if piece == b1:
-                other = b2
-            elif piece == b2:
-                other = b1
-            else:
-                continue
-            left = left or other == self._left_pad_bid
-            right = right or other == self._right_pad_bid
-            board = board or other == self._board_bid
-        return left, right, board
+        return self._base._contact_flags
 
     def _pad_piece_contact(self) -> tuple[bool, bool]:
         """(left, right): whether each gripper pad body is touching the piece."""

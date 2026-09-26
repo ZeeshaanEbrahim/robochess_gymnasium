@@ -2057,3 +2057,81 @@ about 7%). 337 tests pass.
 
 **Not addressed.** Why a held piece slips out during lift and place (b4, g6, c7
 in the Cartesian replay) is a separate open question, not diagnosed here.
+
+---
+
+## D27 — Placement requires carry and low release (H = 15 mm)
+
+**Date:** 2026-09-26
+**Status:** accepted
+**Evidence:** `results/d27_release_latch/` (README names each file and how it was produced), branch
+`referee-release-latch` from `ff7ea92`. `tests/test_d27_release_latch.py`.
+
+### Problem
+
+The adversarial sweep (branch `experiments/adv-sweep`, `a8517ba` and `eefd05e`) showed that F2 passes (a) a piece
+pushed onto its square and then "released" with no grasp, and (b) a piece dropped from any height up to 81 mm.
+F2 asks where the piece is and how it is resting; it never asks how it got there.
+
+### Decision
+
+Success gains an eighth term, `release_ok`, appended to the tuple `_success_terms()` returns; the other seven are
+unchanged. `_is_success()` and `_build_info()` both require it.
+
+* `ever_held` latches True on any step where `held` (both pads on the piece, no piece-board contact).
+* The release record `(xy error, base height above the board)` is overwritten on every step where `pinched` (both
+  pads on the piece), so it is the state at the last step the pads were on the piece. The height is the signed
+  `piece_height_above_board`, the same expression F2's `resting` uses.
+* `release_ok = ever_held and record exists and xy_error <= goal_tolerance (30 mm) and height <= H`.
+* **H = `PLACEMENT_RELEASE_MAX_HEIGHT` = 15 mm**, locked before any result was seen.
+* `info` gains `ever_held`, `release_height_mm`, `release_xy_error_mm` (both `None` until a record exists, not NaN,
+  because `check_env`'s `data_equivalence` fails on NaN), `release_ok`; `ever_held` and `release_height_mm` are in
+  `MONITOR_INFO_KEYWORDS`.
+* `compute_reward` (the HER path) cannot recompute this history term; HER stays off (known issue F3).
+
+`held` and `pinched` now exist in every mode: the one contact scan moved from the T1 task wrapper to
+`RoboChessEnv._piece_contact_flags()`, run once per step (after `mj_forward` and the instability check, only when
+not unstable) and cached. The wrapper's `_piece_contacts()` reads the cache, so `_grasp_success()` and
+`PickupReward.contact_state()` are unchanged in classification (same bodies, same geoms). On an
+`invalid_transition` step the cached flags, latch and record keep their last valid values (a behaviour change on
+invalid transitions only). `reset()` scans the reset state, and the T1 and T2 `reset()` refresh again after they
+move the piece or obstacles.
+
+D27 only adds a condition that must also hold, so it can remove a success but never create one.
+
+### Verified
+
+* Suite: 362 passed (340 existing + 22 new), `-W error::UserWarning`, exit 0. Ten existing tests build success by
+  teleporting the piece with no carry; each gained one `prime_carried_release(env)` line
+  (`tests/_d27_helpers.py`) and no assertion changed. Two assertions on `MONITOR_INFO_KEYWORDS` changed to include
+  the two new keys. The four trace hashes in `tests/test_cartesian_mode.py` are unchanged.
+* Equivalence: on joint and Cartesian replays with `pickup_mode` on, the flags, D21 per-step rewards, `pinched`,
+  `held` and the first-grasp step are identical to `ff7ea92` over 645 common steps (0 mismatches).
+* Full-board expert (315): joint 303/315; T2 at `--obstacles 0` and `2` 303/315 each. 0 of 945 episodes differ from
+  `ff7ea92` in success, outcome, phase or step count; the same 12 failures (10 d1/e1 `bad_contact` in descend, 2
+  h1<->h8 `piece_off_board` in traverse). Release height over the successes: min -0.98, median -0.45, max 4.92 mm
+  (joint).
+* Cartesian v3 gate, 10 pairs: env `is_success` 10/10, identical step counts, release heights -0.30 to 9.70 mm.
+* Throughput (bare env, random actions, 1 worker): 577.1 -> 558.7 steps/s median, about 3.2%.
+* Adversarial sweep re-run (the sweep's own `section3.py`, plus two recovered scripts reproduced on `ff7ea92`):
+  * 13 drops: the 5 at or below 15 mm (e4->e5 5 and 10, b7->g2 5 and 10, c1->f6 10) still succeed with episode
+    length and D20/D21 identical to the sweep; the 8 above (20, 30, 80 mm) fail with `release_ok` as the only
+    failing term. Recorded release heights equal the sweep's last-pad-contact heights to three decimals.
+  * Push-then-open e4->e5 and b7->g2: `ever_held` False, `release_ok` the only failing term; the other six terms
+    first all hold at step 150 and step 515, the sweep's F2 success steps.
+  * Clean references c1->f6 and f1->c6: succeed, identical to the sweep.
+  * b7->g2 topple: fails (final tilt 103.97 deg; resting, settled and upright terms), `ever_held` True,
+    `release_ok` False (released at 22.2 mm).
+  * The recovered scripts reproduced all ten of the sweep's recorded outcomes on `ff7ea92` before being run on D27.
+
+### Fast set-down finding
+
+Max-step descent plus a 2-step closed dwell topples the piece; max-step descent from 60 mm displaces it 16.4 mm and
+tips it. D27 records the release correctly in all cases (`release_ok` True); the failures are F2's upright and XY
+terms. This is a place-stage input, not a D27 issue. The test scenario has no dwell.
+
+### Not addressed
+
+The release record is sampled once per env step, like every other referee read (see F6); contacts inside a macro-step
+are not seen. The sweep's substep measurements (`releases_2ms.json` in `eefd05e`) differ from the per-step figures by
+up to 0.37 mm across the 13 drops, far from H, so no verdict here depends on it.

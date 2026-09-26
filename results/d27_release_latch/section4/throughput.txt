@@ -1,0 +1,9 @@
+rep1 old RESULT_JSON:{"workers": 1, "cameras": 0, "resolution": 0, "vec_steps": 4000, "env_steps": 4000, "seconds": 6.92, "steps_per_sec": 577.7, "hours_for_500k": 0.24}
+rep1 new RESULT_JSON:{"workers": 1, "cameras": 0, "resolution": 0, "vec_steps": 4000, "env_steps": 4000, "seconds": 7.03, "steps_per_sec": 568.7, "hours_for_500k": 0.24}
+rep2 old RESULT_JSON:{"workers": 1, "cameras": 0, "resolution": 0, "vec_steps": 4000, "env_steps": 4000, "seconds": 6.95, "steps_per_sec": 575.6, "hours_for_500k": 0.24}
+rep2 new RESULT_JSON:{"workers": 1, "cameras": 0, "resolution": 0, "vec_steps": 4000, "env_steps": 4000, "seconds": 7.16, "steps_per_sec": 558.7, "hours_for_500k": 0.25}
+rep3 old RESULT_JSON:{"workers": 1, "cameras": 0, "resolution": 0, "vec_steps": 4000, "env_steps": 4000, "seconds": 6.93, "steps_per_sec": 577.1, "hours_for_500k": 0.24}
+rep3 new RESULT_JSON:{"workers": 1, "cameras": 0, "resolution": 0, "vec_steps": 4000, "env_steps": 4000, "seconds": 7.22, "steps_per_sec": 553.9, "hours_for_500k": 0.25}
+# produced by (old tree = git worktree of ff7ea92; new = referee-release-latch), alternating, nothing else running:
+#   PYTHONPATH=<tree> python scripts/profile_env.py --single --workers 1 --cameras 0 --steps 4000 --warmup 200 --max-seconds 120
+# medians: old 577.1 steps/s (range 575.6-577.7), new 558.7 (553.9-568.7): about 3.2% cost

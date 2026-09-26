@@ -428,6 +428,7 @@ class T2ObstacleTask(T1PickAndPlaceTask):
         # Re-read after mj_forward so _placed_xy is the settled pose the rest
         # of the episode is measured against.
         self._placed_xy[: len(squares)] = self._obstacle_xy()[: len(squares)]
+        self._base._refresh_contact_flags()  # obstacles were placed after the T1 scan
         self._obstacle_peak_disp[:] = 0.0
         self._obstacles_ever_disturbed = False
 

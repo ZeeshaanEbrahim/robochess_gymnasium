@@ -21,6 +21,7 @@ from pathlib import Path
 
 import mujoco
 import numpy as np
+from _d27_helpers import prime_carried_release
 import pytest
 from gymnasium.utils.env_checker import check_env
 
@@ -354,6 +355,7 @@ def test_obstacle_term_blocks_an_otherwise_successful_episode(t2_sparse):
     t2_sparse.reset(seed=0)
     base = t2_sparse.unwrapped
     _place_piece(t2_sparse, base._desired_goal, gripper_qpos=0.0)
+    prime_carried_release(t2_sparse)  # D27
     _move_obstacle(t2_sparse, 0, dxy=(0.02, 0.0))
 
     for _ in range(PIECE_SETTLE_CONSECUTIVE_STEPS - 1):
@@ -379,6 +381,7 @@ def test_success_when_all_conditions_hold_including_obstacles(t2_sparse):
     t2_sparse.reset(seed=0)
     base = t2_sparse.unwrapped
     _place_piece(t2_sparse, base._desired_goal, gripper_qpos=0.0)
+    prime_carried_release(t2_sparse)  # D27
 
     for _ in range(PIECE_SETTLE_CONSECUTIVE_STEPS - 1):
         t2_sparse.step(base.home_action())
@@ -449,6 +452,7 @@ def test_sparse_reward_does_respond_to_obstacle_disturbance(t2_sparse):
     def run(disturb):
         t2_sparse.reset(seed=0)
         _place_piece(t2_sparse, base._desired_goal, gripper_qpos=0.0)
+        prime_carried_release(t2_sparse)  # D27
         if disturb:
             _move_obstacle(t2_sparse, 0, dxy=(0.02, 0.0))
         for _ in range(PIECE_SETTLE_CONSECUTIVE_STEPS - 1):
