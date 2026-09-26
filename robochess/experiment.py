@@ -61,6 +61,9 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     # a config that omits these is unchanged by their existence.
     "start_square": None,
     "target_square": None,
+    # D26: squares no task role (start, target, obstacle) may use. Empty ->
+    # all 64 squares, identical to every run so far.
+    "excluded_squares": [],
     # Staged shaped reward (DECISIONS.md D20). Default OFF: with this false the
     # shaped reward is exactly the one every pilot and sanity run used so far.
     "shaped_staged": False,
@@ -164,7 +167,7 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
         if cfg[key] <= 0:
             raise ConfigError(f"{key} must be > 0, got {cfg[key]}")
 
-    from robochess.tasks.squares import ALL_SQUARES
+    from robochess.tasks.squares import ALL_SQUARES, reject_excluded, validate_excluded_squares
 
     for key in ("start_square", "target_square"):
         value = cfg[key]
@@ -175,6 +178,15 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
         raise ConfigError(
             f"start_square and target_square are both {cfg['start_square']!r}; they must differ"
         )
+
+    try:
+        excluded = validate_excluded_squares(cfg["excluded_squares"])
+        for key in ("start_square", "target_square"):
+            if cfg[key] is not None:
+                reject_excluded(key, cfg[key], excluded)
+    except ValueError as exc:
+        raise ConfigError(str(exc)) from exc
+    cfg["excluded_squares"] = list(excluded)
 
     if not isinstance(cfg["shaped_staged"], bool):
         raise ConfigError(f"shaped_staged must be a bool, got {cfg['shaped_staged']!r}")

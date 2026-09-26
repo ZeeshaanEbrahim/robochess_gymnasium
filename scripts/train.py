@@ -142,7 +142,8 @@ def build_env(cfg: dict):
                       action_mode=cfg.get("action_mode", "absolute"))
     # .get: pre-existing configs and manifests carry no square keys and keep
     # the task wrapper's own random sampling (square=None means "sample it").
-    squares = dict(start_square=cfg.get("start_square"), target_square=cfg.get("target_square"))
+    squares = dict(start_square=cfg.get("start_square"), target_square=cfg.get("target_square"),
+                   excluded_squares=tuple(cfg.get("excluded_squares", ())))
     if cfg["task"] == "t1":
         base = RoboChessEnv(**env_kwargs)
         task = T1PickAndPlaceTask(base, **squares)

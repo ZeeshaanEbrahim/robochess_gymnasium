@@ -64,7 +64,13 @@ import numpy as np
 from pathlib import Path
 
 from robochess.envs.robochess_env import SQUARE_PITCH, RoboChessEnv
-from robochess.tasks.squares import ALL_SQUARES, FILES, RANKS, square_to_local_xy
+from robochess.tasks.squares import (
+    ALL_SQUARES,
+    FILES,
+    RANKS,
+    reject_excluded,
+    square_to_local_xy,
+)
 from robochess.tasks.t1_pick_and_place import REACHABLE_SQUARES, T1PickAndPlaceTask
 
 # The scene T2 needs: scene.xml plus the obstacle pool. Build it with
@@ -113,6 +119,7 @@ def validate_obstacle_config(
     start: str | None = None,
     target: str | None = None,
     allow_piece_overlap: bool = False,
+    excluded: tuple[str, ...] = (),
 ) -> tuple[int, tuple[str, ...] | None]:
     """The one place T2's obstacle configuration is validated (F11).
 
@@ -134,7 +141,8 @@ def validate_obstacle_config(
         apart (measured: the working piece ended 5 mm off the board). Skipped
         when ``allow_piece_overlap`` is true. That opt-out is a T2ObstacleTask
         constructor keyword only; the config layer has no key for it, on
-        purpose.
+        purpose;
+      * no obstacle sits on an ``excluded`` square (D26), overlap opt-out or not.
 
     Returns ``(n_obstacles, tuple(obstacle_squares) or None)``.
     """
@@ -160,6 +168,7 @@ def validate_obstacle_config(
             raise ValueError(f"Not a valid square: {sq!r}")
     if len(set(squares)) != len(squares):
         raise ValueError("obstacle_squares must be distinct.")
+    reject_excluded("obstacle square", squares, excluded)
     if not allow_piece_overlap:
         if start is not None and start in squares:
             raise ValueError(
@@ -230,6 +239,7 @@ class T2ObstacleTask(T1PickAndPlaceTask):
         n_obstacles: int = 2,
         obstacle_squares: tuple[str, ...] | None = None,
         reachable_squares: tuple[str, ...] = REACHABLE_SQUARES,
+        excluded_squares: tuple[str, ...] = (),
         displacement_tol: float = OBSTACLE_DISPLACEMENT_TOL,
         tilt_tol: float = OBSTACLE_TILT_TOL,
         allow_piece_overlap: bool = False,
@@ -239,6 +249,7 @@ class T2ObstacleTask(T1PickAndPlaceTask):
             start_square=start_square,
             target_square=target_square,
             reachable_squares=reachable_squares,
+            excluded_squares=excluded_squares,
         )
         # Code-only: deliberately not a key the config layer accepts (F11).
         self.allow_piece_overlap = bool(allow_piece_overlap)
@@ -248,6 +259,7 @@ class T2ObstacleTask(T1PickAndPlaceTask):
             start=start_square,
             target=target_square,
             allow_piece_overlap=self.allow_piece_overlap,
+            excluded=self.excluded_squares,
         )
 
         self.n_obstacles = n_obstacles
@@ -321,6 +333,7 @@ class T2ObstacleTask(T1PickAndPlaceTask):
                 start=start,
                 target=target,
                 allow_piece_overlap=self.allow_piece_overlap,
+            excluded=self.excluded_squares,
             )
             return squares
         if self.n_obstacles == 0:

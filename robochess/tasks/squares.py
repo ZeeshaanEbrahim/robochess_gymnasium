@@ -34,3 +34,36 @@ def square_to_local_xy(square: str) -> np.ndarray:
     x = (file_idx - 3.5) * SQUARE_PITCH
     y = (rank_idx - 3.5) * SQUARE_PITCH
     return np.array([x, y], dtype=np.float64)
+
+
+def validate_excluded_squares(excluded: object) -> tuple[str, ...]:
+    """The one place ``excluded_squares`` is validated (D26, same idea as F11).
+
+    Called by the task wrappers' constructors and by the config layer. Must be
+    a list/tuple (not a bare string) of distinct, valid square names; returns
+    them as a tuple. Empty means "exclude nothing".
+    """
+    if not isinstance(excluded, (list, tuple)):
+        raise ValueError(
+            "excluded_squares must be a sequence (list or tuple) of square names, "
+            f"got {type(excluded).__name__}: {excluded!r}."
+        )
+    squares = tuple(excluded)
+    for sq in squares:
+        if not isinstance(sq, str) or sq not in ALL_SQUARES:
+            raise ValueError(f"excluded_squares: not a valid square: {sq!r}")
+    if len(set(squares)) != len(squares):
+        raise ValueError("excluded_squares must be distinct.")
+    return squares
+
+
+def reject_excluded(role: str, squares: object, excluded: tuple[str, ...]) -> None:
+    """Raise ``ValueError`` if ``squares`` (one name or an iterable) hits ``excluded``.
+
+    One rule for every role (start, target, obstacle): an excluded square is
+    not used by the task in any role.
+    """
+    names = (squares,) if isinstance(squares, str) else tuple(squares)
+    bad = [sq for sq in names if sq in excluded]
+    if bad:
+        raise ValueError(f"{role} {bad[0]!r} is an excluded square (excluded_squares={list(excluded)}).")

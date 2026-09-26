@@ -32,7 +32,12 @@ import mujoco
 import numpy as np
 
 from robochess.envs.robochess_env import N_ARM_ACTUATORS, RoboChessEnv
-from robochess.tasks.squares import ALL_SQUARES, square_to_local_xy
+from robochess.tasks.squares import (
+    ALL_SQUARES,
+    reject_excluded,
+    square_to_local_xy,
+    validate_excluded_squares,
+)
 
 # D2 (DECISIONS.md) swept top-down IK over all 64 squares and found every one
 # reachable. T1 only ever does top-down grasps, the same condition D2 tested,
@@ -81,6 +86,7 @@ class T1PickAndPlaceTask(gym.Wrapper):
         start_square: str | None = None,
         target_square: str | None = None,
         reachable_squares: tuple[str, ...] = REACHABLE_SQUARES,
+        excluded_squares: tuple[str, ...] = (),
     ):
         super().__init__(env)
         base = self.unwrapped
@@ -90,14 +96,17 @@ class T1PickAndPlaceTask(gym.Wrapper):
             )
         self._base: RoboChessEnv = base
 
-        self.reachable_squares = tuple(reachable_squares)
+        # D26: excluded squares are removed from the sampling pool, order
+        # preserved, so with an empty list the pool -- and therefore every RNG
+        # draw -- is exactly what it was before the key existed.
+        self.excluded_squares = validate_excluded_squares(excluded_squares)
+        self.reachable_squares = tuple(
+            s for s in reachable_squares if s not in self.excluded_squares
+        )
         if len(self.reachable_squares) < 2:
             raise ValueError("Need >= 2 reachable_squares to pick a distinct start/target pair.")
-        for name, sq in (("start_square", start_square), ("target_square", target_square)):
-            if sq is not None and sq not in self.reachable_squares:
-                raise ValueError(f"{name}={sq!r} is not in reachable_squares.")
-        self.start_square = start_square
-        self.target_square = target_square
+        self.start_square = self._check_fixed("start_square", start_square)
+        self.target_square = self._check_fixed("target_square", target_square)
 
         # Piece height at rest, read from the model's own spawn keyframe
         # rather than hardcoded, so a change to piece geometry propagates here.
@@ -130,8 +139,19 @@ class T1PickAndPlaceTask(gym.Wrapper):
             [xy[0], xy[1], self._base._board_surface_z], dtype=np.float32
         )
 
+    def _check_fixed(self, name: str, sq: str | None) -> str | None:
+        """Shared check for a fixed square, from the constructor or an ``options`` override."""
+        if sq is None:
+            return None
+        reject_excluded(name, sq, self.excluded_squares)
+        if sq not in self.reachable_squares:
+            raise ValueError(f"{name}={sq!r} is not in reachable_squares.")
+        return sq
+
     def _resolve_squares(self, start: str | None, target: str | None) -> tuple[str, str]:
         rng = self._base.np_random
+        start = self._check_fixed("start_square", start)
+        target = self._check_fixed("target_square", target)
         if start is not None and target is not None:
             if start == target:
                 raise ValueError("start_square and target_square must differ.")

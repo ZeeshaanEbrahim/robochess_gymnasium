@@ -2060,6 +2060,44 @@ in the Cartesian replay) is a separate open question, not diagnosed here.
 
 ---
 
+## D26 — `excluded_squares`: d1 and e1 are excluded from Cartesian-mode square sampling
+
+**Date:** 2026-09-26
+**Status:** accepted
+**Evidence:** `results/d26_excluded_squares/` (determinism script, both hashes, README), branch `excluded-squares`
+from `a42dfa7`. `tests/test_d26_excluded_squares.py`.
+
+### Decision
+
+New config key `excluded_squares` (list of square names, default empty). The rule is one sentence: an excluded square is
+not used by the task in any role. It is removed, order-preserving, from the sampling pool
+(`[s for s in ALL_SQUARES if s not in excluded]`), and a fixed start, target or obstacle list that names one is rejected
+wherever it enters: the task constructors, per-episode `options`, and `resolve_config`. Validation lives in
+`robochess/tasks/squares.py` (`validate_excluded_squares`, `reject_excluded`), shared as F11's obstacle validator is.
+Use: `excluded_squares: [d1, e1]`.
+
+### Reason
+
+D24: under the zero-tolerance referee both d1 and e1 terminate on arm self-contact, in either action mode. Sampling
+them puts episodes in the training set that cannot be completed.
+
+### Cost
+
+2 of 64 squares (62 remain). d1 and e1 are the queen and king home squares, so this is a documented limitation: the
+benchmark does not cover starts or targets there.
+
+### Default unchanged
+
+With the default empty list the pool is the same 64 squares in the same order, so RNG draws are unchanged: 10,000
+`(start, target)` pairs from seed 123 hash to `868586369d198f25602f4a1f2851b75ff878636befc2c659bc3969e5ca24f28e`
+before and after.
+
+### Side effect
+
+Per-episode `options["start_square"]` / `["target_square"]` are now checked against the pool (previously only
+start != target was checked when both were given). No existing test or literal in scripts passes a value outside
+`ALL_SQUARES`; the only invalid literal, `z9`, is an already-expected constructor error.
+
 ## D27 — Placement requires carry and low release (H = 15 mm)
 
 **Date:** 2026-09-26
