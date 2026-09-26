@@ -14,6 +14,7 @@ the 100k / 200k / 500k checkpoints; 20 deterministic episodes at `final_model`) 
 `scripts/eval_probe_agg.py`; `agg.out` is its full output. Files: `<run>_{ck100000,ck200000,
 ck500000,final,det}.json`. `ppo_seed2_final.json` keeps per-step trajectories for its first 5 of
 300 episodes only (file size); its summaries cover all 300.
+`ppo_seed2_final.json` keeps trajectories for the first 5 of 300 episodes; the full 16,457,668-byte file is archived outside the repo (`~/robochess_archive/cart_pickup_probes/ppo_seed2_final_full.json`), sha256 `63004573f2955e9cffb1a8295adb35a0ac5fb13088e4b69682555c8b8900cd24`.
 
 ## Headline (Section 2): stochastic rates, 95% Wilson intervals
 
