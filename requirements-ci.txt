@@ -24,10 +24,12 @@ numpy==2.4.6
 # only the test suite.
 mink==1.2.0
 
-# CPU build of the pinned torch version. Nothing under tests/ imports torch
-# today; it is installed so that when SB3-backed tests arrive they resolve
-# against this CPU wheel rather than silently dragging in the CUDA stack.
+# CPU build of the pinned torch version, plus the SB3 stack the training
+# scripts and tests/test_repro_check.py (which trains PPO and SAC in a
+# subprocess) import. Versions match requirements.txt.
 torch==2.13.0+cpu
+stable-baselines3==2.9.0
+sb3-contrib==2.9.0
 
 # Config loading (scripts/train.py, robochess/experiment.py).
 PyYAML==6.0.2
