@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
 
     env:
@@ -17,10 +17,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: pip
@@ -52,10 +52,15 @@ jobs:
       # Deliberately NOT requirements.txt: that is the frozen experiment set and
       # pins a CUDA torch build (~4.5 GB of wheels) that a GPU-less runner
       # cannot use. See the header of requirements-ci.txt.
+      # The CPU index is passed here as well as being named inside
+      # requirements-ci.txt, so the workflow states it and a torch wheel can
+      # never come from the default (CUDA) index.
       - name: Install dependencies (CI set, CPU torch)
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-ci.txt
+          pip install -r requirements-ci.txt \
+            --index-url https://download.pytorch.org/whl/cpu \
+            --extra-index-url https://pypi.org/simple
 
       - name: Confirm torch is the CPU build
         run: |
