@@ -34,6 +34,10 @@ if _place:
             print(f"   {st_:20s} {v['k']}/{v['n']}  Wilson[{100*v['wilson_lo']:.1f},{100*v['wilson_hi']:.1f}] at n={v['effective_n']}")
         t = r["truncated_in_s2"]
         print(f"   truncated in S2 {t['k']}/{t['n']}  final gripper qpos {t['final_gripper_qpos']}")
+        pa = r.get("push_assisted")
+        if pa and pa["successful"]:
+            print(f"   {pa['label']} (reported, not a gate): {pa['push_assisted']}/{pa['successful']} successful episodes "
+                  f"({pa['rule']}); carry_mm per successful episode {[None if e['carry_mm'] is None else round(e['carry_mm'], 1) for e in pa['per_episode']]}")
     if not os.path.exists(f"{E}/ppo_seed0_final.json"):
         sys.exit(0)
 

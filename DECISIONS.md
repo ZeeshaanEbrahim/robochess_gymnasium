@@ -2279,6 +2279,34 @@ Also added: `vecnormalize_clip_reward` (default 10.0, PPO's VecNormalize reward 
   [0, 1]. Output for pick-up runs is byte-identical after both (aggregate output on the existing probe directory
   compared against 76e116c; `eval_probe.py` output on a pick-up run likewise).
 
+### D27 push test is numeric-kernel dependent (found in CI)
+
+`test_push_then_open_is_not_success_e4_e5` failed on CI for `place-reward` (a9a9191), with identical package versions
+to a passing master rerun. It was not the branch: in an environment built with exactly the CI versions the test passes at
+76e116c, 3aa7590 and a9a9191 with the default OpenBLAS kernel, and fails at 76e116c and a9a9191 alike (per-step traces
+identical, 194 steps) when OpenBLAS is forced to a non-FMA kernel (`OPENBLAS_CORETYPE` SANDYBRIDGE, NEHALEM, PRESCOTT;
+HASWELL and ZEN pass; SKYLAKEX could not be run on the local CPU). The traces first differ at step 12 in the fifth
+decimal of the gripper qpos and grow into a different contact sequence. Under HASWELL the push pinches the piece at step
+104 with the piece still on the board (not held). Under SANDYBRIDGE the piece is also pinched at steps 107 and 114 lifted
+about 4 mm with no board contact, which is held; `ever_held` latches from a single such step.
+
+* The pre-registered "a push fails with `ever_held` False" held locally but is kernel-dependent.
+* The D27 guarantee held on every kernel tested: `release_ok` and `is_success` are False on every step of the push
+  scenario. The test now asserts that guarantee on every step and records `ever_held` without asserting it.
+* Full suites in the CI-version environment: 395 passed at 76e116c and 471 at 3aa7590 and a9a9191 (default kernel); under
+  SANDYBRIDGE the only failure was this test, at 76e116c and a9a9191 alike.
+* CI now prints `lscpu` (model name, flags) and `numpy.show_config()` before the tests, so the runner hardware is on record.
+
+### Push-assisted diagnostic
+
+D27 does not stop a policy from pushing the piece most of the way along the board and then taking one token lift to
+latch `ever_held` (a held step while `release_ok` needs only a release at most 15 mm up on target). To see whether
+successes are earned by a carry, the place evaluation reports, per episode, `held_steps` and `carry_mm` (the horizontal
+distance the piece moved between its first and last held step), and for successful episodes the fraction whose
+`carry_mm` is under 50% of the start-to-target distance, labelled "push-assisted". It is reported, not a gate: a real
+carry over a short pair (e4->e5 is 78 mm) is fine, and the 50% line is a flag for reading the runs, not a criterion.
+On the expert clean place e4->e5 it reads carry 73.6 mm of 78.0 mm over 74 held steps (not push-assisted).
+
 ### Acceptance (final constants; `results/d28_place_reward/acceptance.json`, `analyze.py`)
 
 * 4a, the Cartesian gate expert on e4->e5, a1->h8, c1->f6, b7->g2: the recurring reward is non-decreasing through

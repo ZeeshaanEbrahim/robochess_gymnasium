@@ -67,7 +67,8 @@ class Rec(gym.Wrapper):
                              grasp=bool(info.get("grasp_success", False)), lift=float(t.get("lift", 0.0)),
                              ps=bool(info.get("pickup_success", False)), gsc=bool(info.get("gripper_self_contact", False)))
         if "place_terms" in info:      # D28: only place runs carry these keys (other output unchanged)
-            row.update(st=info["place_state"], dxy=float(info["place_terms"]["d_xy"]), succ=bool(info["is_success"]))
+            row.update(st=info["place_state"], dxy=float(info["place_terms"]["d_xy"]), succ=bool(info["is_success"]),
+                       pxy=[float(v) for v in self.b._achieved_goal()[:2]], gxy=[float(v) for v in self.b._desired_goal[:2]])
         self.cur.append(row)
         if term or trunc:
             self.episodes.append(dict(rows=self.cur, reason=info.get("terminated_reason") or "time_limit",

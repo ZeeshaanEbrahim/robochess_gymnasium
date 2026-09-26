@@ -40,13 +40,25 @@ def test_constant_is_locked_at_15mm():
 
 # ------------------------------------------------------------ push, no grasp
 def test_push_then_open_is_not_success_e4_e5():
+    """The D27 guarantee: a push never yields release_ok or success, on EVERY step.
+
+    `ever_held` is recorded, not asserted. Under non-FMA OpenBLAS kernels (SANDYBRIDGE,
+    NEHALEM, PRESCOTT) the push can produce single held steps -- the piece lifted about 4 mm
+    between both pads (steps 107 and 114 of this scenario) -- so ever_held is kernel-dependent
+    here. It passes with FMA kernels (HASWELL, ZEN), which is why it looked stable locally;
+    release_ok and is_success stay False on every kernel tested.
+    """
     dr = sc.Driver("e4", "e5")
     sc.push_then_open(dr)
+    infos = dr.trace.infos
+    assert len(infos) > 100
+    assert not any(i["release_ok"] for i in infos)
+    assert not any(i["is_success"] for i in infos)
     info = dr.trace.last
     assert all(_others_hold(info).values()), _others_hold(info)  # F2's other terms are met
-    assert info["ever_held"] is False
     assert info["release_ok"] is False
     assert info["is_success"] is False
+    recorded_ever_held = info["ever_held"]  # noqa: F841  kernel-dependent; recorded only
 
 
 # ------------------------------------------------------------------- drops

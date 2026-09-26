@@ -70,5 +70,12 @@ jobs:
         run: |
           python -c "import mujoco; mujoco.MjModel.from_xml_path('assets/scene.xml'); print('scene OK')"
 
+      # Diagnostic: some tests depend on the numeric kernel OpenBLAS picks for the runner's CPU
+      # (FMA vs non-FMA, DECISIONS D28), so the runner hardware is recorded with every run.
+      - name: Print CPU and numpy configuration
+        run: |
+          lscpu | grep -E "^(Model name|Flags)"
+          python -c "import numpy; numpy.show_config()"
+
       - name: Run test suite
         run: pytest tests/ -v -W error::UserWarning

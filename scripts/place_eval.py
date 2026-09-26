@@ -2,7 +2,8 @@
 
 Pure functions over per-step rows so they can be tested without a model or an env.
 A row is a dict with: st (place_state S0..S3), held, pinched (bool), lift (m), dxy (m),
-ap (gripper qpos), succ (env is_success).
+ap (gripper qpos), succ (env is_success); optionally pxy (piece x, y in m) and gxy (target x, y),
+which the push-assisted diagnostic needs.
 """
 from __future__ import annotations
 
@@ -32,11 +33,35 @@ def place_episode_summary(rows: list[dict], reason: str) -> dict:
         r["st"] == "S1" and r["dxy"] < CARRY_TOL_M for r in rows[lift_k:])
     released = any(r["st"] == "S2" for r in rows)
     placed = bool(rows[-1]["succ"])
-    return dict(held=held, lifted_30mm=lift_k is not None, carried_within_3cm=carried,
+    held_idx = [k for k, r in enumerate(rows) if r["held"]]
+    carry_mm = start_to_target_mm = None
+    if "pxy" in rows[0] and "gxy" in rows[0]:
+        start_to_target_mm = 1e3 * math.dist(rows[0]["pxy"], rows[0]["gxy"])
+        if held_idx:
+            carry_mm = 1e3 * math.dist(rows[held_idx[0]]["pxy"], rows[held_idx[-1]]["pxy"])
+    return dict(held=held, held_steps=len(held_idx), carry_mm=carry_mm,
+                start_to_target_mm=start_to_target_mm, lifted_30mm=lift_k is not None, carried_within_3cm=carried,
                 released=released, placed=placed,
                 truncated_in_s2=bool(reason == "time_limit" and rows[-1]["st"] == "S2"),
                 final_state=rows[-1]["st"], final_gripper_qpos=float(rows[-1]["ap"]),
                 s2_steps=sum(r["st"] == "S2" for r in rows), n=len(rows))
+
+
+PUSH_ASSISTED_FRACTION = 0.5
+
+
+def push_assisted(summaries: list[dict]) -> dict:
+    """Reported, not a gate: of the SUCCESSFUL episodes, those whose held phase moved the piece
+    less than half the start-to-target distance (the piece got most of the way by being pushed,
+    with at most a token lift). Successful episodes with no held step count as push-assisted."""
+    ok = [e for e in summaries if e["placed"] and e.get("start_to_target_mm") is not None]
+    flagged = [e for e in ok if e["carry_mm"] is None
+               or e["carry_mm"] < PUSH_ASSISTED_FRACTION * e["start_to_target_mm"]]
+    return dict(label="push-assisted", successful=len(ok), push_assisted=len(flagged),
+                fraction=(len(flagged) / len(ok) if ok else None),
+                rule=f"carry_mm < {PUSH_ASSISTED_FRACTION:.0%} of start-to-target distance",
+                per_episode=[dict(held_steps=e["held_steps"], carry_mm=e["carry_mm"],
+                                  start_to_target_mm=e["start_to_target_mm"]) for e in ok])
 
 
 STAGES = ("held", "lifted_30mm", "carried_within_3cm", "released", "placed")
@@ -60,8 +85,9 @@ def place_report(summaries: list[dict], deterministic: bool = False, identical: 
         rates[s] = dict(k=k, n=n, rate=(k / n if n else 0.0), effective_k=ke, effective_n=eff,
                         wilson_lo=lo, wilson_hi=hi)
     t2 = [e for e in summaries if e["truncated_in_s2"]]
+    push = push_assisted(summaries)
     lo, hi = wilson(len(t2) if eff == n else round(len(t2) * scale), eff)
     return dict(n=n, effective_n=eff, deterministic=deterministic, identical_episodes=identical,
-                rates=rates,
+                rates=rates, push_assisted=push,
                 truncated_in_s2=dict(k=len(t2), n=n, wilson_lo=lo, wilson_hi=hi,
                                      final_gripper_qpos=sorted(round(e["final_gripper_qpos"], 4) for e in t2)))
