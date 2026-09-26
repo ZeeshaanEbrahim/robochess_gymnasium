@@ -19,6 +19,24 @@ E=sys.argv[1] if len(sys.argv) > 1 else str(Path(__file__).resolve().parents[1] 
 def wil(k,n,z=1.96):
     p=k/n; d=1+z*z/n; c=(p+z*z/(2*n))/d; h=z*math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d; return c-h,c+h
 def f(k,n): lo,hi=wil(k,n); return f"{k}/{n}={100*k/n:.1f}% [{100*lo:.1f},{100*hi:.1f}]"
+# D28 place-mode runs: printed only when the directory holds eval_probe.py outputs that carry a
+# `place_report`, so the pick-up report is unchanged for the existing result directories. It runs first and
+# stops when the directory holds no pick-up probe outputs (a place-only directory).
+_place = sorted(p for p in Path(E).glob("*.json")
+                if p.name.endswith((".json",)) and "place_report" in json.loads(p.read_text()))
+if _place:
+    print("\nPLACE MODE: held (D27) -> lifted 30 mm -> carried within 3 cm -> released -> placed (95% Wilson)")
+    for pth in _place:
+        d = json.loads(pth.read_text()); r = d["place_report"]
+        lab = "deterministic, EFFECTIVE n = %d of %d episodes" % (r["effective_n"], r["n"]) if r["deterministic"] else f"stochastic n={r['n']}"
+        print(f"{d['run']} {pth.stem}: {lab}")
+        for st_, v in r["rates"].items():
+            print(f"   {st_:20s} {v['k']}/{v['n']}  Wilson[{100*v['wilson_lo']:.1f},{100*v['wilson_hi']:.1f}] at n={v['effective_n']}")
+        t = r["truncated_in_s2"]
+        print(f"   truncated in S2 {t['k']}/{t['n']}  final gripper qpos {t['final_gripper_qpos']}")
+    if not os.path.exists(f"{E}/ppo_seed0_final.json"):
+        sys.exit(0)
+
 runs=["ppo_seed0","ppo_seed1","ppo_seed2","sac_seed0"]
 print("SECTION 2: stochastic eval, seed 20000")
 for a in runs:
@@ -53,18 +71,3 @@ for i in range(5):
         if k<=len(tr[i]):
             x=tr[i][k-1]; print(f"    step {k:3d}: rel {x['rel']} |d|={x['d']*1e3:.1f}mm ap={x['ap']:.3f} pads L={int(x['l'])} R={int(x['r'])} board={int(x['board'])} tilt={x['tilt']:.1f}")
         else: print(f"    step {k:3d}: (episode ended at {len(tr[i])})")
-
-# D28 place-mode runs: printed only when the directory holds eval_probe.py outputs that carry a
-# `place_report`, so the pick-up report above is unchanged for the existing result directories.
-_place = sorted(p for p in Path(E).glob("*.json")
-                if p.name.endswith((".json",)) and "place_report" in json.loads(p.read_text()))
-if _place:
-    print("\nPLACE MODE: grasp -> lifted 30 mm -> carried within 3 cm -> released -> placed (95% Wilson)")
-    for pth in _place:
-        d = json.loads(pth.read_text()); r = d["place_report"]
-        lab = "deterministic, EFFECTIVE n = %d of %d episodes" % (r["effective_n"], r["n"]) if r["deterministic"] else f"stochastic n={r['n']}"
-        print(f"{d['run']} {pth.stem}: {lab}")
-        for st_, v in r["rates"].items():
-            print(f"   {st_:20s} {v['k']}/{v['n']}  Wilson[{100*v['wilson_lo']:.1f},{100*v['wilson_hi']:.1f}] at n={v['effective_n']}")
-        t = r["truncated_in_s2"]
-        print(f"   truncated in S2 {t['k']}/{t['n']}  final gripper qpos {t['final_gripper_qpos']}")

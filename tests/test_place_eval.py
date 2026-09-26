@@ -37,15 +37,16 @@ def test_wilson_matches_the_probe_report_formula():
 
 def test_stage_flags_positive_and_negative_controls():
     s = pe.place_episode_summary(clean_place(), "success")
-    assert (s["grasp"], s["lifted_30mm"], s["carried_within_3cm"], s["released"], s["placed"]) == (True,) * 5
+    assert "grasp" not in s and "grasp" not in pe.STAGES        # cannot be confused with D18 grasp_success
+    assert (s["held"], s["lifted_30mm"], s["carried_within_3cm"], s["released"], s["placed"]) == (True,) * 5
     assert not s["truncated_in_s2"]
-    # never grasps
+    # never held
     s = pe.place_episode_summary([row("S0")] * 5, "time_limit")
     assert not any(s[k] for k in pe.STAGES)
-    # grasp but never lifted 30 mm
+    # held but never lifted 30 mm
     rows = [row("S0"), row("S1", True, True, 0.01, 0.02)]
     s = pe.place_episode_summary(rows, "time_limit")
-    assert s["grasp"] and not s["lifted_30mm"] and not s["carried_within_3cm"]
+    assert s["held"] and not s["lifted_30mm"] and not s["carried_within_3cm"]
     # lifted but never within 3 cm of the target
     rows = [row("S1", True, True, 0.05, 0.2)] * 3
     s = pe.place_episode_summary(rows, "time_limit")

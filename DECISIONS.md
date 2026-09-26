@@ -2249,11 +2249,35 @@ Also added: `vecnormalize_clip_reward` (default 10.0, PPO's VecNormalize reward 
   (with VecNormalize) and SAC occupy S0 for 100% of steps, never reach S1 or S2, invalid-transition rate 0; gripper
   qpos median 0.40 (PPO) and 0.39 (SAC), 6% and 4% of steps below 0.2; PPO 20/20 `time_limit`, SAC 16 `time_limit`
   and 4 `bad_contact`.
-* Evaluation: `scripts/eval_probe.py` gains a place-mode report (`scripts/place_eval.py`): grasp, lifted 30 mm,
+* Evaluation: `scripts/eval_probe.py` gains a place-mode report (`scripts/place_eval.py`): held (the D27 condition, both pads on the piece with no board contact; NOT D18 `grasp_success`), lifted 30 mm,
   carried within 3 cm, released, placed rates with Wilson intervals, the fraction of episodes truncated in S2 and their
   final gripper qpos, and a 20-episode deterministic run labelled effective n = 1 when the trajectories are identical.
   Output for pick-up runs is byte-identical to 76e116c (checked on a pick-up run); `--runs-dir` was added
   (default unchanged).
+
+### Probe configs, smoke runs and the read-out rule
+
+* `configs/_probe_cart_place_{ppo_seed0,ppo_seed1,ppo_seed2,sac_seed0}.yaml` are copies of the Cartesian pick-up probes
+  (e4->e5, home start, 300 steps, 1M steps). Against their pick-up counterparts only these keys differ: `pickup_mode`
+  becomes `place_mode`, `place_obs: true` is added, `vecnormalize_clip_reward: 1000` on the PPO files, `run_name`,
+  `notes`. Training seeds 0, 1, 2 (PPO) and 0 (SAC); evaluation seed 20000.
+* Checkpoints every 100,000 steps, each with its own VecNormalize file for PPO, so 500k and 1M are saved exactly (the
+  pick-up runs did the same); a 5k smoke with a 2,500-step frequency saved 2,500 and 5,000.
+* Smoke throughput, four concurrent runs on 12 cores: place PPO 157 to 159 fps against 181 to 186 for pick-up (about
+  13 to 16% slower); SAC 32 fps either way. Estimated wall-clock for 1M steps: PPO about 1.8 h, SAC about 8.7 h. The
+  Monitor CSV carries `place_state`. A 5-episode evaluation of each smoke model (seed 20000, frozen VecNormalize) ran
+  end to end; the numbers (0/5 everywhere) only prove the pipeline.
+* The decision rule is judged on `final_model` (1,001,472 steps for PPO), as for the pick-up probes; `rc_500000` is
+  used only for the rising check.
+* The grasp comparison with the pick-up probes (final: grasp 300/300 on all four; lifted 299, 299, 1, 300 of 300) uses
+  D18 `grasp_ever` from `eval_probe.py`. The place report's "held" stage is a different metric. A grasp rate below 50%
+  at 1M on two or more PPO seeds means D28 broke grasp learning, a different failure from not learning to place. The
+  truncated-in-S2 tripwire (10% or more of evaluation episodes on any PPO seed) is a reported diagnostic; the S2 cap
+  was its fallback and is already applied, so a hit is a finding, with no change mid-experiment.
+* Two script fixes: `eval_probe_agg.py` prints the place section first and exits when the directory has no pick-up
+  outputs (it previously crashed on the missing pick-up files before reaching it), and `place_eval.wilson` clamps to
+  [0, 1]. Output for pick-up runs is byte-identical after both (aggregate output on the existing probe directory
+  compared against 76e116c; `eval_probe.py` output on a pick-up run likewise).
 
 ### Acceptance (final constants; `results/d28_place_reward/acceptance.json`, `analyze.py`)
 

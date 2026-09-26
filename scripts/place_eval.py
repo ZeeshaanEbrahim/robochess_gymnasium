@@ -19,25 +19,27 @@ def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
     d = 1 + z * z / n
     c = (p + z * z / (2 * n)) / d
     h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
-    return c - h, c + h
+    return max(0.0, c - h), min(1.0, c + h)
 
 
 def place_episode_summary(rows: list[dict], reason: str) -> dict:
-    """Per-episode booleans, in the order of the task: grasp -> lifted -> carried -> released -> placed."""
-    grasp = any(r["held"] for r in rows)
+    """Per-episode booleans, in the order of the task: held -> lifted -> carried -> released -> placed."""
+    # "held" is the D27 condition (both pads on the piece, no piece-board contact); it is NOT D18
+    # grasp_success, which eval_probe.py reports separately as grasp_ever.
+    held = any(r["held"] for r in rows)
     lift_k = next((k for k, r in enumerate(rows) if r["st"] == "S1" and r["pinched"] and r["lift"] >= LIFT_M), None)
     carried = lift_k is not None and any(
         r["st"] == "S1" and r["dxy"] < CARRY_TOL_M for r in rows[lift_k:])
     released = any(r["st"] == "S2" for r in rows)
     placed = bool(rows[-1]["succ"])
-    return dict(grasp=grasp, lifted_30mm=lift_k is not None, carried_within_3cm=carried,
+    return dict(held=held, lifted_30mm=lift_k is not None, carried_within_3cm=carried,
                 released=released, placed=placed,
                 truncated_in_s2=bool(reason == "time_limit" and rows[-1]["st"] == "S2"),
                 final_state=rows[-1]["st"], final_gripper_qpos=float(rows[-1]["ap"]),
                 s2_steps=sum(r["st"] == "S2" for r in rows), n=len(rows))
 
 
-STAGES = ("grasp", "lifted_30mm", "carried_within_3cm", "released", "placed")
+STAGES = ("held", "lifted_30mm", "carried_within_3cm", "released", "placed")
 
 
 def place_report(summaries: list[dict], deterministic: bool = False, identical: bool | None = None) -> dict:
