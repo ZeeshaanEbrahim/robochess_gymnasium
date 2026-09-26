@@ -31,8 +31,9 @@ p.add_argument("run"); p.add_argument("--checkpoint", type=int, default=None)
 p.add_argument("--episodes", type=int, default=100); p.add_argument("--seed", type=int, default=20000)
 p.add_argument("--deterministic", action="store_true"); p.add_argument("--steps", action="store_true")
 p.add_argument("--out", type=Path, required=True)
+p.add_argument("--runs-dir", type=Path, default=REPO / "runs")
 a = p.parse_args()
-run_dir = REPO / "runs" / a.run
+run_dir = a.runs_dir / a.run
 cfg = json.loads((run_dir / "manifest.json").read_text())["config_resolved"]
 train.apply_thread_pinning(1)
 
@@ -60,11 +61,14 @@ class Rec(gym.Wrapper):
     def step(self, act):
         obs, r, term, trunc, info = self.env.step(act)
         rel, tilt, l, rr, bd, ap, ptilt, ph = self._geo()
-        t = info.get("pickup_terms", {})
-        self.cur.append(dict(d=float(np.linalg.norm(rel)), rel=[round(float(x) * 1e3, 2) for x in rel], tilt=tilt, l=l, r=rr, board=bd,
+        t = info.get("pickup_terms") or info.get("place_terms", {})
+        row = dict(d=float(np.linalg.norm(rel)), rel=[round(float(x) * 1e3, 2) for x in rel], tilt=tilt, l=l, r=rr, board=bd,
                              ap=ap, ptilt=ptilt, ph=ph, held=bool(t.get("held", False)), pinched=bool(t.get("pinched", False)),
                              grasp=bool(info.get("grasp_success", False)), lift=float(t.get("lift", 0.0)),
-                             ps=bool(info.get("pickup_success", False)), gsc=bool(info.get("gripper_self_contact", False))))
+                             ps=bool(info.get("pickup_success", False)), gsc=bool(info.get("gripper_self_contact", False)))
+        if "place_terms" in info:      # D28: only place runs carry these keys (other output unchanged)
+            row.update(st=info["place_state"], dxy=float(info["place_terms"]["d_xy"]), succ=bool(info["is_success"]))
+        self.cur.append(row)
         if term or trunc:
             self.episodes.append(dict(rows=self.cur, reason=info.get("terminated_reason") or "time_limit",
                                       ik=int(info.get("ik_rejects", 0)), n=int(info["elapsed_steps"]))); self.cur = []
@@ -111,9 +115,23 @@ for e in eps:
              grasp_after_first=None if ps_first is None else sum(x["grasp"] for x in R[ps_first:]),
              lifted_at_end=lifted[-1], grasp_at_end=R[-1]["grasp"], max_lift_mm=max(x["lift"] for x in R) * 1e3)
     summ.append(s)
+place = None
+if cfg.get("place_mode"):
+    sys.path.insert(0, str(REPO / "scripts"))
+    import place_eval
+    for s_, e_ in zip(summ, eps):
+        s_["place"] = place_eval.place_episode_summary(e_["rows"], e_["reason"])
+    same_traj = all([x["ap"] for x in eps[i]["rows"]] == [x["ap"] for x in eps[0]["rows"]] for i in range(1, len(eps)))
+    place = place_eval.place_report([s_["place"] for s_ in summ], deterministic=a.deterministic,
+                                    identical=same_traj if a.deterministic else None)
 out = dict(run=a.run, checkpoint=ck, model=str(mp.relative_to(run_dir)), seed=a.seed, deterministic=a.deterministic,
            n=len(eps), obs_rms_identical_before_after=same, episodes=summ)
+if place is not None:
+    out["place_report"] = place
 if a.steps or a.deterministic:
     out["traj"] = [[{k: x[k] for k in ("rel", "ap", "l", "r", "board", "d", "tilt", "lift")} for x in e["rows"]] for e in eps]
 a.out.parent.mkdir(parents=True, exist_ok=True); a.out.write_text(json.dumps(out))
+if place is not None:
+    print(a.run, ck, "place", {k: f"{v['k']}/{v['n']}" for k, v in place["rates"].items()},
+          "truncated_in_S2", place["truncated_in_s2"]["k"], "effective_n", place["effective_n"])
 print(a.run, ck, "n", len(eps), "pickup", sum(s["pickup"] for s in summ), "grasp", sum(s["grasp_ever"] for s in summ), "rms_same", same, flush=True)

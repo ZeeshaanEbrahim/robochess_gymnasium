@@ -158,6 +158,25 @@ def build_env(cfg: dict):
     if cfg.get("pickup_obs", False):
         from robochess.tasks import PickupObservation
         task = PickupObservation(task)
+        if cfg.get("place_obs", False):
+            from robochess.tasks import PlaceObservation
+            task = PlaceObservation(task)
+    # D28. .get: older manifests carry no place_* keys.
+    if cfg.get("place_mode", False):
+        from robochess.tasks import PlaceReward
+
+        return PlaceReward(
+            task,
+            carry_weight=cfg.get("place_carry_weight", 2.0),
+            lower_weight=cfg.get("place_lower_weight", 4.0),
+            placed_reward=cfg.get("place_placed_reward", 10.0),
+            placed_floor=cfg.get("place_placed_floor", 8.0),
+            placed_ceiling=cfg.get("place_placed_ceiling", 9.0),
+            placed_bonus=cfg.get("place_placed_bonus", 10.0),
+            lift_bonus=cfg.get("place_lift_bonus", 5.0),
+            success_bonus=cfg.get("place_success_bonus", 20.0),
+            failure_penalty=cfg.get("place_failure_penalty", 5.0),
+        )
     # .get: manifests written before the pick-up stage existed carry no such
     # key and must resolve to the travelling reward they actually trained on.
     if cfg.get("pickup_mode", False):
@@ -199,13 +218,15 @@ N_ENVS = 1
 def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:
     """Which info keys reach monitor.monitor.csv for this config.
 
-    `pickup_success` is added ONLY in pick-up mode, because Monitor raises a
+    `pickup_success` (pick-up mode) and `place_state` (D28 place mode) are added ONLY there, because Monitor raises a
     KeyError for any keyword missing from a finished episode's info, and only
     PickupReward puts that key there. Adding it unconditionally would break
     every non-pick-up run.
     """
     if cfg.get("pickup_mode", False):
         return MONITOR_INFO_KEYWORDS + ("pickup_success",)
+    if cfg.get("place_mode", False):
+        return MONITOR_INFO_KEYWORDS + ("place_state",)
     return MONITOR_INFO_KEYWORDS
 
 
@@ -245,7 +266,8 @@ def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
             norm_reward=True,
             norm_obs_keys=VECNORMALIZE_OBS_KEYS,
             clip_obs=10.0,
-            clip_reward=10.0,
+            # .get: manifests written before this key existed trained on 10.0.
+            clip_reward=float(cfg.get("vecnormalize_clip_reward", 10.0)),
             gamma=0.99,
         )
     elif algorithm == "sac":
@@ -269,6 +291,20 @@ def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
         f"VecNormalize applied={applied} but policy says {expected} for {algorithm!r}"
     )
     return venv
+
+
+def check_place_gamma(cfg: dict, algorithm: str, gamma: float) -> None:
+    """D28's success lump hardcodes PLACE_GAMMA. There is no gamma config key
+    (unknown keys are rejected), so the learner runs the SB3 default -- checked,
+    not assumed, so a library change or a future key cannot silently detune it."""
+    if not cfg.get("place_mode", False):
+        return
+    from robochess.tasks import t1_pick_and_place as t1
+    if gamma != t1.PLACE_GAMMA:
+        raise ValueError(
+            f"place_mode needs gamma={t1.PLACE_GAMMA} (the success lump is sized "
+            f"against it); {algorithm} resolved gamma={gamma}."
+        )
 
 
 def build_model(cfg: dict, env):
@@ -306,6 +342,7 @@ def build_model(cfg: dict, env):
     else:
         raise ValueError(f"unknown algorithm {algorithm!r}")
 
+    check_place_gamma(cfg, algorithm, model.gamma)
     uses_her = isinstance(getattr(model, "replay_buffer", None), HerReplayBuffer)
     expected = (algorithm, reward_type) in HER_CELLS
     assert uses_her == expected, (

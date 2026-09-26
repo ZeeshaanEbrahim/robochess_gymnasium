@@ -1,0 +1,61 @@
+{
+ "ppo": {
+  "episodes": 20,
+  "steps": 6000,
+  "occupancy": {
+   "S0": 1.0
+  },
+  "gripper_qpos": {
+   "min": 0.000927056378122645,
+   "p10": 0.23406548326718044,
+   "median": 0.4038220759770276,
+   "p90": 0.5652978051288872,
+   "max": 0.7360326058883921,
+   "frac_open_below_0_2": 0.05819397993311037,
+   "frac_ge_0_6": 0.05518394648829431
+  },
+  "invalid_rate": 0.0,
+  "invalid_steps": 0,
+  "termination_reasons": {
+   "time_limit": 20
+  },
+  "episodes_reaching_state": {
+   "S0": 20
+  },
+  "episode_lengths": [
+   300
+  ]
+ },
+ "sac": {
+  "episodes": 20,
+  "steps": 5435,
+  "occupancy": {
+   "S0": 1.0
+  },
+  "gripper_qpos": {
+   "min": 0.005068428337802162,
+   "p10": 0.2416627868591767,
+   "median": 0.38667927447537337,
+   "p90": 0.5372900484765687,
+   "max": 0.7274626975950154,
+   "frac_open_below_0_2": 0.04469067405355494,
+   "frac_ge_0_6": 0.027331486611265006
+  },
+  "invalid_rate": 0.0,
+  "invalid_steps": 0,
+  "termination_reasons": {
+   "time_limit": 16,
+   "bad_contact": 4
+  },
+  "episodes_reaching_state": {
+   "S0": 20
+  },
+  "episode_lengths": [
+   111,
+   129,
+   183,
+   212,
+   300
+  ]
+ }
+}

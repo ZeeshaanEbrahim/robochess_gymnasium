@@ -2173,3 +2173,122 @@ terms. This is a place-stage input, not a D27 issue. The test scenario has no dw
 The release record is sampled once per env step, like every other referee read (see F6); contacts inside a macro-step
 are not seen. The sweep's substep measurements (`releases_2ms.json` in `eefd05e`) differ from the per-step figures by
 up to 0.37 mm across the 13 drops, far from H, so no verdict here depends on it.
+
+## D28 — Pick-and-place reward (`place_mode`, default off)
+
+### Decision
+
+`place_mode` (T1 only; needs `reward_type: shaped` and `pickup_obs`; rejected with `pickup_mode` and
+`shaped_staged`) replaces the reward with `PlaceReward`. Design rule: finishing the move pays more than any way of
+stalling or cheating, in total and discounted (gamma 0.99) return. D21's term functions are reused unchanged
+(`pickup_reach`, `pickup_posture`, `pickup_pose_gate`, `pickup_closure`, `pickup_geometry`). Per step:
+
+| state | condition | reward |
+|---|---|---|
+| S0 approach | not `ever_held` | D21 position + closing |
+| S1 grasped | pinched and `ever_held` | 2.0 + 2.0 lift_frac + 2.0 closeness + 4.0 near (1 - lift_frac) |
+| S2 placed | `release_ok`, not pinched, `piece_on_square`, piece tilt < 10 deg | 8.0 + 1.0 open_frac (max 9.0) |
+| S3 lost | `ever_held`, not pinched, not S2 | D21 position + closing |
+
+`open_frac = clip((0.782 - q) / (0.782 - 0.2), 0, 1)`, q the gripper qpos; 0.782 is the qpos fully closed on air
+(measured; grasps on the stem sit at 0.647 to 0.651), 0.2 the F2 released threshold. One-time bonuses: +5 first held
+step, +5 first 30 mm held 5 steps (replaces D21's +1 per step), +10 first entry to S2. Success (env `is_success`,
+terminates) pays the constant `R_placed / (1 - gamma) + 20 = 1020`; `-5` on `bad_contact` / `piece_off_board`;
+invalid-transition steps pay 0 and latch nothing (only the step counter, kept for info, moves). Config keys:
+`place_mode`, `place_obs`, `place_carry_weight` 2.0, `place_lower_weight` 4.0, `place_placed_reward` 10.0,
+`place_placed_floor` 8.0, `place_placed_ceiling` 9.0 (floor <= ceiling < R_placed), `place_placed_bonus` 10.0,
+`place_lift_bonus` 5.0, `place_success_bonus` 20.0, `place_failure_penalty` 5.0. `place_obs` appends
+`desired_goal - achieved_goal` (3 values, after the 15 `pickup_obs` values; `achieved_goal` is the piece body
+position). S2's horizontal test is `info["piece_on_square"]` (goal_tolerance 0.03 m), the test success uses. The
+15 mm in D27 is a release HEIGHT, not an XY limit. `monitor_info_keywords` adds `place_state` in place mode only.
+Also added: `vecnormalize_clip_reward` (default 10.0, PPO's VecNormalize reward clip; every existing config unchanged).
+
+### How the constants got here (each change approved before its results)
+
+1. Original lump `R (1 - gamma^(T-t)) / (1 - gamma) + 20` with S2 paying a flat 10. Section 4 (Cartesian gate
+   expert and Driver cheats, T = 300) passed the literal criteria, but two cheats never ran (success fires 4 to 5
+   steps after the release, before a re-close or topple can act) and a **part-open parking exploit** was found:
+   release to a gripper aperture of 0.4 to 0.6 (pads off the piece, above the 0.2 released threshold) and success
+   never fires while S2 keeps paying 10 per step. Margin below the clean place, measured from step 0: 4.94, 1.91,
+   2.28, 2.54 (e4->e5, a1->h8, c1->f6, b7->g2), against about 20 expected. Cause: everything is scaled by
+   gamma^(t-1) at the success step (t = 171 to 252).
+2. Rejected: hard-gating S2 on aperture < 0.2, which drops the reward from about 8 to S3 (<= 2) for the ~5 steps the
+   gripper takes to open, punishing the release. Also rejected: scaling the success bonus (the margin is small
+   because of where it is measured, not its size).
+3. Adopted: the S2 ramp `8 + 2 open_frac`. Pre-registered expectation: parking margin from the release step at least
+   3x the old value on every pair. **Failed under the like-for-like reading**: 2.98x, 2.24x, 2.42x, 2.53x versus the
+   old reward measured from the release step (15.8x to 27.1x only against the old step-0 figures, which is the change
+   of measuring point, not the ramp). Parked at aperture 0.203 the ramp adds almost nothing (margin 1.1x the old
+   one), because S2 then pays 9.99.
+4. Adopted after the audit below: the constant lump 1020 and the S2 cap of 9.0. Reason: both learners bootstrap the
+   300-step truncation and the policy cannot see the step index, so the value of parking in S2 is `R / (1 - gamma)`,
+   not a finite-horizon tail; a lump sized for a finite tail (about 27 discounted at the decision point) is what left
+   parking so close. With the cap below R_placed, parking is worth at most 9 / (1 - gamma) = 900 against 1020 for
+   finishing.
+5. `vecnormalize_clip_reward`: PPO's VecNormalize divides the reward by the running return std sigma and clips at
+   +-10. With sigma below about 75 the success lump (about 756 raw on e4->e5 under the original lump) is clipped to 10
+   while per-step cheats are not, so staying in S2 without success or holding pinched on target would beat finishing
+   under PPO. The place PPO configs set `vecnormalize_clip_reward: 1000`, which keeps the lump's ordering.
+
+### Notes on the residual margins and a known limitation
+
+* The re-grasp margin (9 to 10 from the release step) is the cost of delaying the constant lump by about one step
+  (roughly gamma^n of 1020), not an exploit: re-grasping earns nothing extra and the S2 bonus fires once.
+* Known limitation: S2 and the one-time bonuses depend on episode history (`ever_held`, `release_ok`, the first-held
+  and first-S2 latches) that is not in the observation, as with D21's bonuses. The policy sees the current geometry and
+  gripper state only, so the reward is not a function of the observation.
+
+### Audit (before change 4)
+
+* Truncation, SB3 2.9.0, script `results/d28_place_reward/audit_truncation.py` on a place-mode env with no gym
+  TimeLimit in the stack: DummyVecEnv sets `info["TimeLimit.truncated"] = True` on the 300th step; PPO's
+  `collect_rollouts` adds `gamma * V(terminal obs)` to that step's reward (buffer minus env reward is nonzero at steps
+  300 and 600 only, and equals gamma V exactly); SAC's `DictReplayBuffer` has `handle_timeout_termination = True`,
+  stores `timeouts` True at step 300 and samples that transition with `dones = 0`.
+* Untrained policies (`untrained_policies.py`, 20 stochastic episodes each, e4->e5, 300 steps): freshly initialised PPO
+  (with VecNormalize) and SAC occupy S0 for 100% of steps, never reach S1 or S2, invalid-transition rate 0; gripper
+  qpos median 0.40 (PPO) and 0.39 (SAC), 6% and 4% of steps below 0.2; PPO 20/20 `time_limit`, SAC 16 `time_limit`
+  and 4 `bad_contact`.
+* Evaluation: `scripts/eval_probe.py` gains a place-mode report (`scripts/place_eval.py`): grasp, lifted 30 mm,
+  carried within 3 cm, released, placed rates with Wilson intervals, the fraction of episodes truncated in S2 and their
+  final gripper qpos, and a 20-episode deterministic run labelled effective n = 1 when the trajectories are identical.
+  Output for pick-up runs is byte-identical to 76e116c (checked on a pick-up run); `--runs-dir` was added
+  (default unchanged).
+
+### Acceptance (final constants; `results/d28_place_reward/acceptance.json`, `analyze.py`)
+
+* 4a, the Cartesian gate expert on e4->e5, a1->h8, c1->f6, b7->g2: the recurring reward is non-decreasing through
+  home, hover, close, first held, lifted 30 mm, mid-carry, over target at height, set down pinched, placed (S2 first step
+  8.27 to 8.39, between 8 and 9); the S2 ramp is non-decreasing and at least 8 on every release. Values on e4->e5:
+  0.239, 0.482, 1.892, 3.028, 4.867, 5.199, 5.898, 7.277, 8.273 (hand: about 0.24, -, 2, 2.88, 4.88, -, 6.0, 8.0, 9).
+* 4b: every cheat is below the clean place in discounted return from step 0 and from the clean place's first release
+  step, plain and bootstrapped (a case truncated at T gets `gamma^(T-t) * last reward / (1 - gamma)`), on all four
+  pairs. Part-open parking margin from the release step, bootstrapped: 141.9 to 160.1 (aperture 0.40) and 112.2 to
+  126.6 (aperture 0.203), against a required 100. Re-grasp margin from the release step is only 9.2 to 10.4. The
+  fully-open topple and the lift-then-re-close never run (success first); they equal the clean place. Undiscounted
+  return is informational: parking beats the clean place on e4->e5 only (+94, +139).
+* Smoothness of the recurring reward on the four expert replays: median per-step change 0.012 to 0.022, 99th
+  percentile 0.45 to 0.95, maximum 0.64 to 1.30 (the S1->S2 switch at release on three pairs, a place-descent step on
+  c1->f6); largest change within a state 0.64 to 0.75. One-time events are +5, +5, +10 and the 1020 lump.
+
+### Test-suite notes
+
+* `tests/test_place_reward.py`: the invalid-step lift-streak assertion was corrected. Original: after four valid held
+  steps and one invalid step ("would have been the 5th"), the next valid step was asserted to pay 0.0. That step is the
+  5th valid one, so it correctly pays the +5; the assertion was wrong. Corrected: three valid steps, one invalid, then
+  the 4th valid step pays 0.0 and the 5th pays 5.0.
+* Building a real SB3 model inside the full pytest process segfaults torch (exit 139; the same test passes alone).
+  A known test-environment issue: model-building checks run as scripts or in a subprocess
+  (`audit_truncation.py`, `tests/test_place_eval.py`); `check_place_gamma` is unit-tested without a model.
+* Counts: 443 (Section 3) + 7 (clip key) + 14 (S2 ramp; an earlier report said 21, a miscount) = 464; then +6
+  (`tests/test_place_eval.py`) and a net +1 in `test_place_reward.py` = 471. In that file
+  `test_lump_is_exactly_the_success_bonus_at_t_equals_T` was removed and
+  `test_success_lump_is_the_discounted_tail_plus_bonus` (5 parametrised cases) became
+  `test_success_lump_is_the_constant_value_of_staying_placed`; `test_lump_still_uses_r_placed_not_the_floor` became
+  `test_lump_is_paid_on_top_of_a_floor_level_s2_step`; `test_lump_follows_r_placed_and_the_bonus_not_the_s2_ceiling` and
+  `test_s2_ceiling_is_configurable_and_finishing_beats_parking` are new.
+* Flag off: rewards, observations and info are byte-identical to 76e116c on a joint expert replay, a Cartesian
+  replay and a pick-up replay (1128 steps, sha256 e4362657...da58 on both sides); the resolved config of each of the 29
+  existing configs differs only in the new keys. `config_sha256` in a manifest hashes the config file bytes, and
+  `run_name` comes from the filename and seed, so no run ID or hash changes; only `config_resolved` in new manifests
+  carries the new keys.

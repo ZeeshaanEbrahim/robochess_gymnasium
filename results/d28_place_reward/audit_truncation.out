@@ -1,0 +1,10 @@
+stable-baselines3 2.9.0
+wrapper stack: ['Monitor', 'PlaceReward', 'PlaceObservation', 'PickupObservation', 'T1PickAndPlaceTask', 'RoboChessEnv']
+(a) episode ended at step 300: done=True TimeLimit.truncated=True terminated_reason=None has terminal_observation=True
+(b) rollout of 600 steps: buffer-minus-env reward is nonzero at (0-based) steps [299, 599] (1-based: [300, 600])
+    predict_values calls: 3 (2 truncation bootstraps + 1 final-obs value)
+    exact: buffer - env reward at step 300 = gamma*V(terminal obs) = 0.99*0.449408 = 0.444914; step 600: -0.293319; zero at every other step
+(c) replay buffer: DictReplayBuffer handle_timeout_termination = True
+    step 300 stored: dones=True timeouts=True; other steps timeouts any=False
+    value sampled for the truncation transition: dones=0.0  (bootstrapped: target uses (1 - dones))
+A1: PASS (a)(b)(c)

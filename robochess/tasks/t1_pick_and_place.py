@@ -992,3 +992,305 @@ class PickupReward(gym.Wrapper):
                                     pinched=pinched, held=held, grasp_success=grasped)
         self._last_terms = dict(info["pickup_terms"])
         return obs, float(reward), terminated, truncated, info
+
+
+# --------------------------------------------------------------------------
+# D28: pick-and-place reward (place_mode)
+# --------------------------------------------------------------------------
+# Discount the success lump is sized against. Fixed, not read from the learner: it is the gamma
+# both PPO and SAC train with (SB3 default, and VecNormalize's gamma in train.py). Success pays the
+# constant value of staying in the placed state forever, R_placed / (1 - gamma) + success_bonus:
+# both learners bootstrap a 300-step truncation (DummyVecEnv marks TimeLimit.truncated; PPO adds
+# gamma V(terminal obs), SAC samples the transition as not-done -- audit_truncation.py) and the
+# policy cannot see the step index, so the value of parking is R / (1 - gamma), not a
+# finite-horizon tail.
+PLACE_GAMMA = 0.99
+PLACE_LIFT_SPAN = 0.03          # lift_frac = clip(lift / 0.03, 0, 1)
+PLACE_NEAR_WIDTH = 0.02         # near = exp(-(d_xy / 0.02)^2)
+PLACE_CLOSE_LINEAR_SPAN = 0.4   # closeness linear ramp span
+PLACE_CLOSE_EXP_WIDTH = 0.03
+PLACE_S2_TILT_DEG = 10.0        # S2 needs the piece within this of upright
+# S2 pays floor + (ceiling - floor) * open_frac, open_frac = clip((q_ref - q)/(q_ref - q_open), 0, 1).
+# q_ref: the gripper driver's qpos fully closed on air (measured 0.7822; the joint range tops out at
+# 0.8). It sits ABOVE the qpos at a grasp (0.647-0.651, pads stopped by the piece's stem), so S2
+# starts above the floor with no dip at release. q_open is the F2 released threshold.
+PLACE_Q_CLOSED = 0.782
+PLACE_Q_OPEN = 0.2
+PLACE_HOLD_LIFT = 0.03          # the +5 lift bonus: 30 mm ...
+PLACE_HOLD_STEPS = 5            # ... held for 5 consecutive steps
+N_PLACE_OBS = 3
+
+PLACE_STATES = ("S0", "S1", "S2", "S3")
+
+
+def place_closeness(d_xy: float) -> float:
+    """0.5 linear ramp over 0.4 m plus 0.5 narrow exponential; 1 at the target."""
+    d_xy = float(d_xy)
+    return (0.5 * (1.0 - min(d_xy / PLACE_CLOSE_LINEAR_SPAN, 1.0))
+            + 0.5 * float(np.exp(-d_xy / PLACE_CLOSE_EXP_WIDTH)))
+
+
+def place_near(d_xy: float) -> float:
+    """Gaussian bump, 1 directly over the target."""
+    return float(np.exp(-((float(d_xy) / PLACE_NEAR_WIDTH) ** 2)))
+
+
+def place_open_frac(q: float) -> float:
+    """How far the gripper has opened: 0 fully closed, 1 at the released threshold or beyond."""
+    return float(np.clip((PLACE_Q_CLOSED - float(q)) / (PLACE_Q_CLOSED - PLACE_Q_OPEN), 0.0, 1.0))
+
+
+def place_lift_frac(lift: float) -> float:
+    return float(np.clip(float(lift) / PLACE_LIFT_SPAN, 0.0, 1.0))
+
+
+class PlaceObservation(gym.Wrapper):
+    """Appends ``desired_goal - achieved_goal`` (`N_PLACE_OBS` entries) to the observation.
+
+    Sits on top of `PickupObservation`, so the entries land after its 15. The
+    target is already visible to the policy as ``desired_goal``; this gives it
+    the relative form inside ``observation`` (which VecNormalize covers).
+    T1 only, like the pick-up features. F7: an invalid step returns this
+    wrapper's own last good observation.
+    """
+
+    def __init__(self, env: gym.Env):
+        super().__init__(env)
+        if not isinstance(self.unwrapped, RoboChessEnv):
+            raise TypeError(f"Expects a RoboChessEnv underneath; got {type(self.unwrapped).__name__}.")
+        node = env
+        while node is not None and not isinstance(node, PickupObservation):
+            if isinstance(node, gym.Wrapper) and type(node).__name__ == "T2ObstacleTask":
+                break
+            node = getattr(node, "env", None)
+        if not isinstance(node, PickupObservation):
+            raise TypeError("place_obs needs pickup_obs (PickupObservation) beneath it, T1 only.")
+        obs_space = self.env.observation_space["observation"]
+        pad = np.full(N_PLACE_OBS, 5.0).astype(obs_space.dtype)
+        self.observation_space = gym.spaces.Dict({
+            "observation": gym.spaces.Box(
+                low=np.concatenate([obs_space.low, -pad]),
+                high=np.concatenate([obs_space.high, pad]),
+                dtype=obs_space.dtype,
+            ),
+            "achieved_goal": self.env.observation_space["achieved_goal"],
+            "desired_goal": self.env.observation_space["desired_goal"],
+        })
+
+    def _extend(self, obs: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
+        space = self.observation_space["observation"]
+        rel = np.asarray(obs["desired_goal"], dtype=np.float64) - np.asarray(
+            obs["achieved_goal"], dtype=np.float64)
+        obs = dict(obs)
+        obs["observation"] = np.clip(
+            np.concatenate([obs["observation"], rel]), space.low, space.high
+        ).astype(space.dtype)
+        return obs
+
+    def reset(self, **kwargs):
+        obs, info = self.env.reset(**kwargs)
+        obs = self._extend(obs)
+        self._last_good_obs = {k: v.copy() for k, v in obs.items()}
+        return obs, info
+
+    def step(self, action: np.ndarray):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        if info.get("invalid_transition"):
+            obs = {k: v.copy() for k, v in self._last_good_obs.items()}
+        else:
+            obs = self._extend(obs)
+            self._last_good_obs = {k: v.copy() for k, v in obs.items()}
+        return obs, reward, terminated, truncated, info
+
+
+class PlaceReward(gym.Wrapper):
+    """D28 pick-and-place reward (place_mode, default off). T1 only.
+
+    Design rule: finishing the move pays more than any way of stalling or
+    cheating, in total and discounted return. Per-step reward by state::
+
+        S0 approach   not ever_held          D21 position + D21 closing
+        S1 grasped    pinched and ever_held  2.0 + 2.0 lift_frac + C closeness
+                                             + L near (1 - lift_frac)
+        S2 placed     release_ok, not pinched, piece_on_square, tilt < 10 deg
+                                             floor + (ceiling - floor) open_frac
+                                             (8 at a closed gripper, 9 fully open)
+        S3 lost       ever_held, not pinched, not S2   D21 position + closing
+
+    Plus one-time bonuses (+5 first held step, +5 first 30 mm held for 5
+    steps, +10 first entry to S2); on success (env is_success, which
+    terminates) the constant ``R_placed / (1 - gamma) + success_bonus`` (1020 by
+    default), the value of staying placed forever; ``-failure_penalty`` on a
+    penalised termination. S2's per-step reward is capped below R_placed, so
+    finishing always beats parking in S2.
+
+    The D21 term functions are used unchanged (weights 1.0). S2's horizontal
+    test is ``info["piece_on_square"]`` -- the same test success uses.
+
+    F7: an invalid-transition step pays 0, fires nothing and latches nothing;
+    only the step counter moves. The counter is 1-based, counts every step and
+    is reset in reset(); it is reported in ``place_terms["t"]`` and no longer
+    enters the reward.
+    """
+
+    def __init__(
+        self,
+        env: gym.Env,
+        carry_weight: float = 2.0,
+        lower_weight: float = 4.0,
+        placed_reward: float = 10.0,
+        placed_floor: float = 8.0,
+        placed_ceiling: float = 9.0,
+        placed_bonus: float = 10.0,
+        lift_bonus: float = 5.0,
+        success_bonus: float = 20.0,
+        failure_penalty: float = 5.0,
+        first_grasp_bonus: float = 5.0,
+    ):
+        super().__init__(env)
+        base = self.unwrapped
+        if not isinstance(base, RoboChessEnv):
+            raise TypeError(f"Expects a RoboChessEnv underneath; got {type(base).__name__}.")
+        self._base: RoboChessEnv = base
+        self._pinch_sid = _pinch_site_id(base.model)
+        self.carry_weight = float(carry_weight)
+        self.lower_weight = float(lower_weight)
+        self.placed_reward = float(placed_reward)
+        self.placed_floor = float(placed_floor)
+        self.placed_ceiling = float(placed_ceiling)
+        if not self.placed_floor <= self.placed_ceiling < self.placed_reward:
+            raise ValueError(f"need placed_floor <= placed_ceiling < placed_reward, got "
+                             f"{placed_floor}, {placed_ceiling}, {placed_reward}")
+        self.placed_bonus = float(placed_bonus)
+        self.lift_bonus = float(lift_bonus)
+        self.success_bonus = float(success_bonus)
+        self.failure_penalty = float(failure_penalty)
+        self.first_grasp_bonus = float(first_grasp_bonus)
+        self.dz = pickup_dz(float(base.model.key_qpos[base._home_key][base._piece_qadr + 2]))
+        self._contacts_owner = find_contacts_owner(
+            self.env,
+            "place_mode needs a task wrapper providing _piece_contacts() "
+            "(T1PickAndPlaceTask) between this wrapper and the env.",
+        )
+        self._reset_latches()
+
+    def _reset_latches(self) -> None:
+        self._t = 0
+        self._held_once = False
+        self._lift_streak = 0
+        self._lift_bonus_paid = False
+        self._s2_entered = False
+        self._last_state = "S0"
+        self._last_terms: dict[str, Any] = {}
+
+    def reset(self, **kwargs):
+        self._reset_latches()
+        out = self.env.reset(**kwargs)
+        self._last_terms = dict(
+            state="S0", d_xy=0.0, lift=0.0, lift_frac=0.0, closeness=0.0, near=0.0, open_frac=0.0,
+            position_term=0.0, closing_term=0.0, state_reward=0.0, first_grasp_bonus=0.0,
+            lift_bonus=0.0, placed_bonus=0.0, success_lump=0.0, failure_penalty=0.0,
+            pinched=False, held=False, t=0,
+        )
+        return out
+
+    def step(self, action: np.ndarray):
+        obs, _base_reward, terminated, truncated, info = self.env.step(action)
+        self._t += 1
+        if info.get("invalid_transition"):
+            info = dict(info)
+            info["place_state"] = self._last_state
+            info["place_terms"] = dict(
+                self._last_terms, state_reward=0.0, first_grasp_bonus=0.0, lift_bonus=0.0,
+                placed_bonus=0.0, success_lump=0.0, failure_penalty=0.0, t=self._t,
+            )
+            return obs, 0.0, terminated, truncated, info
+
+        left, right, board = self._contacts_owner._piece_contacts()
+        pinched = bool(left and right)
+        held = bool(pinched and not board)
+        ever_held = bool(info["ever_held"])
+
+        geom = pickup_geometry(self._base, self._pinch_sid, self.dz)
+        offset = geom["g_to_pinch"]
+        tilt = geom["tilt"]
+        lift = geom["lift"]
+        d_xy = float(info["xy_distance_to_goal"])
+        lift_frac = place_lift_frac(lift)
+        closeness = place_closeness(d_xy)
+        near = place_near(d_xy)
+
+        position = pickup_reach(float(np.linalg.norm(offset))) * pickup_posture(tilt)
+        gate = pickup_pose_gate(float(np.linalg.norm(offset[:2])), float(abs(offset[2])), tilt)
+        closing = gate * pickup_closure(geom["aperture"])
+
+        open_frac = place_open_frac(geom["aperture"])
+        piece_tilt = self._base._piece_tilt_deg()
+        in_s2 = bool(
+            info["release_ok"] and not pinched and info["piece_on_square"]
+            and piece_tilt < PLACE_S2_TILT_DEG
+        )
+        if not ever_held:
+            state = "S0"
+        elif pinched:
+            state = "S1"
+        elif in_s2:
+            state = "S2"
+        else:
+            state = "S3"
+
+        if state == "S1":
+            state_reward = (2.0 + 2.0 * lift_frac + self.carry_weight * closeness
+                            + self.lower_weight * near * (1.0 - lift_frac))
+        elif state == "S2":
+            state_reward = self.placed_floor + (self.placed_ceiling - self.placed_floor) * open_frac
+        else:  # S0 and S3: the D21 approach terms
+            state_reward = position + closing
+        reward = state_reward
+
+        first_grasp = held and not self._held_once
+        if first_grasp:
+            self._held_once = True
+            reward += self.first_grasp_bonus
+
+        # D21's hold test: grasp_success with the piece >= 30 mm up, consecutive.
+        if bool(info.get("grasp_success", False)) and lift >= PLACE_HOLD_LIFT:
+            self._lift_streak += 1
+        else:
+            self._lift_streak = 0
+        lift_fired = self._lift_streak >= PLACE_HOLD_STEPS and not self._lift_bonus_paid
+        if lift_fired:
+            self._lift_bonus_paid = True
+            reward += self.lift_bonus
+
+        placed_fired = state == "S2" and not self._s2_entered
+        if placed_fired:
+            self._s2_entered = True
+            reward += self.placed_bonus
+
+        lump = 0.0
+        if info.get("is_success", False):
+            lump = self.placed_reward / (1.0 - PLACE_GAMMA) + self.success_bonus
+            reward += lump
+
+        penalty = 0.0
+        if terminated and info.get("terminated_reason") in PENALISED_TERMINATIONS:
+            penalty = self.failure_penalty
+            reward -= penalty
+
+        self._last_state = state
+        terms = dict(
+            state=state, d_xy=d_xy, lift=lift, lift_frac=lift_frac, closeness=closeness,
+            near=near, open_frac=open_frac, position_term=position, closing_term=closing,
+            state_reward=state_reward,
+            first_grasp_bonus=self.first_grasp_bonus if first_grasp else 0.0,
+            lift_bonus=self.lift_bonus if lift_fired else 0.0,
+            placed_bonus=self.placed_bonus if placed_fired else 0.0,
+            success_lump=lump, failure_penalty=penalty,
+            pinched=pinched, held=held, piece_tilt_deg=piece_tilt, t=self._t,
+        )
+        self._last_terms = dict(terms)
+        info = dict(info)
+        info["place_state"] = state
+        info["place_terms"] = terms
+        return obs, float(reward), terminated, truncated, info

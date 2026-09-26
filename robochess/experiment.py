@@ -89,6 +89,25 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "pickup_lift_weight": 2.0,
     "pickup_success_weight": 1.0,
     "pickup_first_grasp_bonus": 5.0,
+    # D28 pick-and-place reward (T1 only). Default OFF: with this false the
+    # reward stack is exactly the one every run so far used. When true it
+    # REPLACES the reward and needs reward_type shaped and pickup_obs.
+    # place_obs appends (target - piece) to the observation, after pickup_obs.
+    # PPO's VecNormalize reward clip (SAC has no VecNormalize). The default is
+    # what every run so far used. D28's success lump (~756 raw) needs a larger
+    # clip than 10 to keep its ordering; see DECISIONS.md D28.
+    "vecnormalize_clip_reward": 10.0,
+    "place_mode": False,
+    "place_obs": False,
+    "place_carry_weight": 2.0,
+    "place_lower_weight": 4.0,
+    "place_placed_reward": 10.0,
+    "place_placed_floor": 8.0,
+    "place_placed_ceiling": 9.0,
+    "place_placed_bonus": 10.0,
+    "place_lift_bonus": 5.0,
+    "place_success_bonus": 20.0,
+    "place_failure_penalty": 5.0,
     "output_root": "runs",
     "run_name": None,          # None -> derived from the config filename + seed
     "notes": "",
@@ -227,6 +246,44 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
             f"pickup_mode=True with reward_type={cfg['reward_type']!r}: the pick-up "
             "reward replaces reward_type entirely; leave it at 'shaped'."
         )
+    for key in ("place_mode", "place_obs"):
+        if not isinstance(cfg[key], bool):
+            raise ConfigError(f"{key} must be a bool, got {cfg[key]!r}")
+    for key in ("place_carry_weight", "place_lower_weight", "place_placed_reward",
+                "place_placed_floor", "place_placed_ceiling", "place_placed_bonus", "place_lift_bonus", "place_success_bonus",
+                "place_failure_penalty"):
+        if isinstance(cfg[key], bool) or not isinstance(cfg[key], (int, float)):
+            raise ConfigError(f"{key} must be a number, got {cfg[key]!r}")
+        if cfg[key] < 0:
+            raise ConfigError(f"{key} must be >= 0, got {cfg[key]}")
+    clip = cfg["vecnormalize_clip_reward"]
+    if isinstance(clip, bool) or not isinstance(clip, (int, float)) or not clip > 0:
+        raise ConfigError(f"vecnormalize_clip_reward must be a number > 0, got {clip!r}")
+    if not cfg["place_placed_floor"] <= cfg["place_placed_ceiling"] < cfg["place_placed_reward"]:
+        raise ConfigError(
+            "need place_placed_floor <= place_placed_ceiling < place_placed_reward, got "
+            f"{cfg['place_placed_floor']}, {cfg['place_placed_ceiling']}, {cfg['place_placed_reward']}")
+    if cfg["place_mode"] and cfg["task"] != "t1":
+        raise ConfigError(
+            f"place_mode=True with task={cfg['task']!r}: the pick-and-place reward is T1 only.")
+    if cfg["place_mode"] and cfg["pickup_mode"]:
+        raise ConfigError(
+            "place_mode=True with pickup_mode=True: both replace the reward, "
+            "so one of them would be silently ignored. Choose one.")
+    if cfg["place_mode"] and cfg["shaped_staged"]:
+        raise ConfigError(
+            "place_mode=True with shaped_staged=True: both replace the reward, "
+            "so one of them would be silently ignored. Choose one.")
+    if cfg["place_mode"] and cfg["reward_type"] != "shaped":
+        raise ConfigError(
+            f"place_mode=True with reward_type={cfg['reward_type']!r}: the place "
+            "reward replaces reward_type entirely; leave it at 'shaped'.")
+    if cfg["place_mode"] and not cfg["pickup_obs"]:
+        raise ConfigError("place_mode=True needs pickup_obs=True.")
+    if cfg["place_obs"] and not cfg["pickup_obs"]:
+        raise ConfigError("place_obs=True needs pickup_obs=True (the target features follow them).")
+    if cfg["place_obs"] and cfg["task"] != "t1":
+        raise ConfigError(f"place_obs=True with task={cfg['task']!r}: T1 only.")
     if cfg["pickup_obs"] and cfg["task"] != "t1":
         raise ConfigError(
             f"pickup_obs=True with task={cfg['task']!r}: the pick-up observation "
