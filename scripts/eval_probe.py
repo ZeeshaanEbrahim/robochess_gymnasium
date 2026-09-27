@@ -40,8 +40,13 @@ train.apply_thread_pinning(1)
 import gymnasium as gym, numpy as np
 from stable_baselines3 import PPO, SAC
 from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from robochess.tasks.t1_pick_and_place import _pinch_site_id, find_contacts_owner
+# D29: unconditional (not lazy like build_model's), so a ppo_mean_squash
+# model's pickled policy class always resolves on load, whether or not this
+# particular run used it.
+from robochess.policies import SquashedMultiInputActorCriticPolicy  # noqa: F401
 
 class Rec(gym.Wrapper):
     """Pass-through; records per-step geometry, harvests a finished episode on done."""
@@ -68,7 +73,8 @@ class Rec(gym.Wrapper):
                              ps=bool(info.get("pickup_success", False)), gsc=bool(info.get("gripper_self_contact", False)))
         if "place_terms" in info:      # D28: only place runs carry these keys (other output unchanged)
             row.update(st=info["place_state"], dxy=float(info["place_terms"]["d_xy"]), succ=bool(info["is_success"]),
-                       pxy=[float(v) for v in self.b._achieved_goal()[:2]], gxy=[float(v) for v in self.b._desired_goal[:2]])
+                       pxy=[float(v) for v in self.b._achieved_goal()[:2]], gxy=[float(v) for v in self.b._desired_goal[:2]],
+                       pg=float(info["place_terms"].get("posture_gate", 1.0)))  # D29, reported not gated
         self.cur.append(row)
         if term or trunc:
             self.episodes.append(dict(rows=self.cur, reason=info.get("terminated_reason") or "time_limit",
@@ -89,6 +95,11 @@ if cfg["algorithm"] == "ppo":
                     (venv.obs_rms.items() if isinstance(venv.obs_rms, dict) else [("obs", venv.obs_rms)])}
     rms_before = snap()
 model = (PPO if cfg["algorithm"] == "ppo" else SAC).load(str(mp), env=venv, device="cpu")
+# D29: seed the learner's own RNGs (python/numpy/torch, action_space, and --
+# model.set_random_seed also calls env.seed internally -- see the D29
+# DECISIONS entry) so a stochastic rollout is reproducible run to run.
+set_random_seed(a.seed)
+model.set_random_seed(a.seed)
 venv.seed(a.seed); obs = venv.reset(); w = holder["w"]
 while len(w.episodes) < a.episodes:
     act, _ = model.predict(obs, deterministic=a.deterministic)

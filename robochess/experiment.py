@@ -108,6 +108,13 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "place_lift_bonus": 5.0,
     "place_success_bonus": 20.0,
     "place_failure_penalty": 5.0,
+    # D29, each default off and byte-identical to D28 when off.
+    "place_posture_gate": False,
+    "place_gate_tilt_lo_deg": 10.0,
+    "place_gate_tilt_hi_deg": 45.0,
+    "place_carry_potential": False,
+    "place_carry_potential_k": 50.0,
+    "ppo_mean_squash": False,
     "output_root": "runs",
     "run_name": None,          # None -> derived from the config filename + seed
     "notes": "",
@@ -280,6 +287,25 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
             "reward replaces reward_type entirely; leave it at 'shaped'.")
     if cfg["place_mode"] and not cfg["pickup_obs"]:
         raise ConfigError("place_mode=True needs pickup_obs=True.")
+    for key in ("place_posture_gate", "place_carry_potential", "ppo_mean_squash"):
+        if not isinstance(cfg[key], bool):
+            raise ConfigError(f"{key} must be a bool, got {cfg[key]!r}")
+    for key in ("place_gate_tilt_lo_deg", "place_gate_tilt_hi_deg", "place_carry_potential_k"):
+        if isinstance(cfg[key], bool) or not isinstance(cfg[key], (int, float)):
+            raise ConfigError(f"{key} must be a number, got {cfg[key]!r}")
+    if not cfg["place_gate_tilt_lo_deg"] < cfg["place_gate_tilt_hi_deg"]:
+        raise ConfigError(
+            "need place_gate_tilt_lo_deg < place_gate_tilt_hi_deg, got "
+            f"{cfg['place_gate_tilt_lo_deg']}, {cfg['place_gate_tilt_hi_deg']}")
+    if cfg["place_carry_potential_k"] <= 0:
+        raise ConfigError(
+            f"place_carry_potential_k must be > 0, got {cfg['place_carry_potential_k']}")
+    if (cfg["place_posture_gate"] or cfg["place_carry_potential"]) and not cfg["place_mode"]:
+        raise ConfigError(
+            "place_posture_gate/place_carry_potential=True needs place_mode=True.")
+    if cfg["ppo_mean_squash"] and cfg["algorithm"] != "ppo":
+        raise ConfigError(
+            f"ppo_mean_squash=True with algorithm={cfg['algorithm']!r}: PPO only.")
     if cfg["place_obs"] and not cfg["pickup_obs"]:
         raise ConfigError("place_obs=True needs pickup_obs=True (the target features follow them).")
     if cfg["place_obs"] and cfg["task"] != "t1":

@@ -3,7 +3,8 @@
 Pure functions over per-step rows so they can be tested without a model or an env.
 A row is a dict with: st (place_state S0..S3), held, pinched (bool), lift (m), dxy (m),
 ap (gripper qpos), succ (env is_success); optionally pxy (piece x, y in m) and gxy (target x, y),
-which the push-assisted diagnostic needs.
+which the push-assisted diagnostic needs; optionally ptilt (piece tilt, deg) and pg
+(place_terms["posture_gate"], D29), which the gate diagnostic needs.
 """
 from __future__ import annotations
 
@@ -39,12 +40,20 @@ def place_episode_summary(rows: list[dict], reason: str) -> dict:
         start_to_target_mm = 1e3 * math.dist(rows[0]["pxy"], rows[0]["gxy"])
         if held_idx:
             carry_mm = 1e3 * math.dist(rows[held_idx[0]]["pxy"], rows[held_idx[-1]]["pxy"])
+    # D29, reported not gated: S1 steps and how many the posture gate discounted
+    # (pg < 1), plus the max piece tilt reached in S1 -- 0/None when the gate is
+    # off (posture_gate then defaults to 1.0 every step, so gate_lt1 is always 0).
+    s1_rows = [r for r in rows if r["st"] == "S1"]
+    s1_gate_lt1 = sum(1 for r in s1_rows if r.get("pg", 1.0) < 1.0)
+    s1_tilts = [r["ptilt"] for r in s1_rows if "ptilt" in r]
+    max_s1_tilt = max(s1_tilts) if s1_tilts else None
     return dict(held=held, held_steps=len(held_idx), carry_mm=carry_mm,
                 start_to_target_mm=start_to_target_mm, lifted_30mm=lift_k is not None, carried_within_3cm=carried,
                 released=released, placed=placed,
                 truncated_in_s2=bool(reason == "time_limit" and rows[-1]["st"] == "S2"),
                 final_state=rows[-1]["st"], final_gripper_qpos=float(rows[-1]["ap"]),
-                s2_steps=sum(r["st"] == "S2" for r in rows), n=len(rows))
+                s2_steps=sum(r["st"] == "S2" for r in rows), n=len(rows),
+                s1_steps=len(s1_rows), s1_gate_lt1_steps=s1_gate_lt1, max_s1_tilt=max_s1_tilt)
 
 
 PUSH_ASSISTED_FRACTION = 0.5
@@ -62,6 +71,21 @@ def push_assisted(summaries: list[dict]) -> dict:
                 rule=f"carry_mm < {PUSH_ASSISTED_FRACTION:.0%} of start-to-target distance",
                 per_episode=[dict(held_steps=e["held_steps"], carry_mm=e["carry_mm"],
                                   start_to_target_mm=e["start_to_target_mm"]) for e in ok])
+
+
+def gate_diagnostics(summaries: list[dict]) -> dict:
+    """D29, reported not gated: of the PLACED episodes, the fraction of S1 steps
+    the posture gate discounted (posture_gate < 1) and the max S1 tilt reached.
+    Both are None/0 with no placed episodes, and fraction_gate_lt1 is always 0.0
+    for a flag-off (D28) replay, since posture_gate then defaults to 1.0."""
+    ok = [e for e in summaries if e["placed"]]
+    total_s1 = sum(e["s1_steps"] for e in ok)
+    total_gate_lt1 = sum(e["s1_gate_lt1_steps"] for e in ok)
+    tilts = [e["max_s1_tilt"] for e in ok if e["max_s1_tilt"] is not None]
+    return dict(label="gate (placed episodes only)", placed=len(ok),
+                s1_steps=total_s1, s1_gate_lt1_steps=total_gate_lt1,
+                fraction_gate_lt1=(total_gate_lt1 / total_s1 if total_s1 else None),
+                max_s1_tilt_deg=(max(tilts) if tilts else None))
 
 
 STAGES = ("held", "lifted_30mm", "carried_within_3cm", "released", "placed")
@@ -86,8 +110,9 @@ def place_report(summaries: list[dict], deterministic: bool = False, identical: 
                         wilson_lo=lo, wilson_hi=hi)
     t2 = [e for e in summaries if e["truncated_in_s2"]]
     push = push_assisted(summaries)
+    gate = gate_diagnostics(summaries)
     lo, hi = wilson(len(t2) if eff == n else round(len(t2) * scale), eff)
     return dict(n=n, effective_n=eff, deterministic=deterministic, identical_episodes=identical,
-                rates=rates, push_assisted=push,
+                rates=rates, push_assisted=push, gate=gate,
                 truncated_in_s2=dict(k=len(t2), n=n, wilson_lo=lo, wilson_hi=hi,
                                      final_gripper_qpos=sorted(round(e["final_gripper_qpos"], 4) for e in t2)))

@@ -176,6 +176,13 @@ def build_env(cfg: dict):
             lift_bonus=cfg.get("place_lift_bonus", 5.0),
             success_bonus=cfg.get("place_success_bonus", 20.0),
             failure_penalty=cfg.get("place_failure_penalty", 5.0),
+            # D29, each .get default matching resolve_config's own default so
+            # a pre-D29 manifest (no such key) resolves to the D28 reward.
+            posture_gate=cfg.get("place_posture_gate", False),
+            gate_tilt_lo_deg=cfg.get("place_gate_tilt_lo_deg", 10.0),
+            gate_tilt_hi_deg=cfg.get("place_gate_tilt_hi_deg", 45.0),
+            carry_potential=cfg.get("place_carry_potential", False),
+            carry_potential_k=cfg.get("place_carry_potential_k", 50.0),
         )
     # .get: manifests written before the pick-up stage existed carry no such
     # key and must resolve to the travelling reward they actually trained on.
@@ -322,6 +329,13 @@ def build_model(cfg: dict, env):
 
     algorithm, reward_type = cfg["algorithm"], cfg["reward_type"]
     if algorithm == "ppo":
+        # D29: only imported (and only replaces the policy string) when asked
+        # for -- resolve_config already rejects this key for any other
+        # algorithm, so this branch is PPO-only by construction.
+        if cfg.get("ppo_mean_squash", False):
+            from robochess.policies import SquashedMultiInputActorCriticPolicy
+
+            common["policy"] = SquashedMultiInputActorCriticPolicy
         # On-policy: no replay buffer exists to swap, so HER cannot apply.
         model = PPO(**common)
     elif algorithm == "sac":

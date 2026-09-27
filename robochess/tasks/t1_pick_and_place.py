@@ -1044,6 +1044,22 @@ def place_lift_frac(lift: float) -> float:
     return float(np.clip(float(lift) / PLACE_LIFT_SPAN, 0.0, 1.0))
 
 
+def place_posture_gate_value(tilt_deg: float, lo_deg: float, hi_deg: float) -> float:
+    """D29 posture gate: 1 at/below `lo_deg` (upright), 0 at/above `hi_deg`
+    (toppled), cosine ease-out between."""
+    tilt_deg = float(tilt_deg)
+    if tilt_deg <= lo_deg:
+        return 1.0
+    if tilt_deg >= hi_deg:
+        return 0.0
+    return 0.5 * (1.0 + float(np.cos(np.pi * (tilt_deg - lo_deg) / (hi_deg - lo_deg))))
+
+
+def place_carry_potential(d_xy: float, k: float) -> float:
+    """D29 carry-potential shaping function: Phi(s) = -k * d_xy(piece, target)."""
+    return -float(k) * float(d_xy)
+
+
 class PlaceObservation(gym.Wrapper):
     """Appends ``desired_goal - achieved_goal`` (`N_PLACE_OBS` entries) to the observation.
 
@@ -1131,6 +1147,22 @@ class PlaceReward(gym.Wrapper):
     only the step counter moves. The counter is 1-based, counts every step and
     is reset in reset(); it is reported in ``place_terms["t"]`` and no longer
     enters the reward.
+
+    D29 additions, each its own constructor flag, default off and
+    byte-identical to the above when off:
+
+      * ``posture_gate``: in S1 only, blends the S1 recurring term above with
+        the S0/S3 D21 position+closing terms by a cosine gate on piece tilt
+        (1 upright, 0 toppled -- see ``place_posture_gate_value``), so a
+        held-but-toppled piece stops collecting the S1 rate.
+      * ``carry_potential``: potential-based shaping, ``Phi(s) = -k * d_xy``,
+        added to every valid step's reward as ``gamma * Phi(s') - Phi(s)``
+        (all states, including a terminal step, where Phi(s') is the actual
+        post-step value -- not zeroed). An invalid-transition step applies no
+        update and reports ``shaping=0.0``.
+
+    ``place_terms`` gains ``posture_gate`` (1.0 when the gate is off or the
+    state is not S1) and ``shaping`` (0.0 when the potential is off) either way.
     """
 
     def __init__(
@@ -1146,6 +1178,11 @@ class PlaceReward(gym.Wrapper):
         success_bonus: float = 20.0,
         failure_penalty: float = 5.0,
         first_grasp_bonus: float = 5.0,
+        posture_gate: bool = False,
+        gate_tilt_lo_deg: float = 10.0,
+        gate_tilt_hi_deg: float = 45.0,
+        carry_potential: bool = False,
+        carry_potential_k: float = 50.0,
     ):
         super().__init__(env)
         base = self.unwrapped
@@ -1166,6 +1203,16 @@ class PlaceReward(gym.Wrapper):
         self.success_bonus = float(success_bonus)
         self.failure_penalty = float(failure_penalty)
         self.first_grasp_bonus = float(first_grasp_bonus)
+        self.posture_gate = bool(posture_gate)
+        self.gate_tilt_lo_deg = float(gate_tilt_lo_deg)
+        self.gate_tilt_hi_deg = float(gate_tilt_hi_deg)
+        if not self.gate_tilt_lo_deg < self.gate_tilt_hi_deg:
+            raise ValueError(f"need gate_tilt_lo_deg < gate_tilt_hi_deg, got "
+                             f"{gate_tilt_lo_deg}, {gate_tilt_hi_deg}")
+        self.carry_potential = bool(carry_potential)
+        self.carry_potential_k = float(carry_potential_k)
+        if not self.carry_potential_k > 0:
+            raise ValueError(f"need carry_potential_k > 0, got {carry_potential_k}")
         self.dz = pickup_dz(float(base.model.key_qpos[base._home_key][base._piece_qadr + 2]))
         self._contacts_owner = find_contacts_owner(
             self.env,
@@ -1182,14 +1229,25 @@ class PlaceReward(gym.Wrapper):
         self._s2_entered = False
         self._last_state = "S0"
         self._last_terms: dict[str, Any] = {}
+        self._phi = 0.0
 
     def reset(self, **kwargs):
         self._reset_latches()
         out = self.env.reset(**kwargs)
+        # D29: Phi(s) at reset, read from the same piece-position source
+        # (`_achieved_goal`) that `info["xy_distance_to_goal"]` is built from
+        # after every step's F10 refresh -- the task wrapper's own reset has
+        # already teleported the piece and called mj_forward by the time
+        # `self.env.reset()` above returns.
+        if self.carry_potential:
+            d_xy0 = float(np.linalg.norm(
+                self._base._achieved_goal()[:2] - self._base._desired_goal[:2]))
+            self._phi = place_carry_potential(d_xy0, self.carry_potential_k)
         self._last_terms = dict(
             state="S0", d_xy=0.0, lift=0.0, lift_frac=0.0, closeness=0.0, near=0.0, open_frac=0.0,
             position_term=0.0, closing_term=0.0, state_reward=0.0, first_grasp_bonus=0.0,
             lift_bonus=0.0, placed_bonus=0.0, success_lump=0.0, failure_penalty=0.0,
+            posture_gate=1.0, shaping=0.0,
             pinched=False, held=False, t=0,
         )
         return out
@@ -1202,7 +1260,7 @@ class PlaceReward(gym.Wrapper):
             info["place_state"] = self._last_state
             info["place_terms"] = dict(
                 self._last_terms, state_reward=0.0, first_grasp_bonus=0.0, lift_bonus=0.0,
-                placed_bonus=0.0, success_lump=0.0, failure_penalty=0.0, t=self._t,
+                placed_bonus=0.0, success_lump=0.0, failure_penalty=0.0, shaping=0.0, t=self._t,
             )
             return obs, 0.0, terminated, truncated, info
 
@@ -1239,9 +1297,15 @@ class PlaceReward(gym.Wrapper):
         else:
             state = "S3"
 
+        gate = 1.0
         if state == "S1":
-            state_reward = (2.0 + 2.0 * lift_frac + self.carry_weight * closeness
+            s1_recurring = (2.0 + 2.0 * lift_frac + self.carry_weight * closeness
                             + self.lower_weight * near * (1.0 - lift_frac))
+            if self.posture_gate:
+                gate = place_posture_gate_value(piece_tilt, self.gate_tilt_lo_deg, self.gate_tilt_hi_deg)
+                state_reward = gate * s1_recurring + (1.0 - gate) * (position + closing)
+            else:
+                state_reward = s1_recurring
         elif state == "S2":
             state_reward = self.placed_floor + (self.placed_ceiling - self.placed_floor) * open_frac
         else:  # S0 and S3: the D21 approach terms
@@ -1278,6 +1342,16 @@ class PlaceReward(gym.Wrapper):
             penalty = self.failure_penalty
             reward -= penalty
 
+        # D29 carry potential: F = gamma * Phi(s') - Phi(s), every valid step,
+        # every state, including a terminal step (Phi(s') is the actual
+        # post-step value here, never zeroed for termination).
+        shaping = 0.0
+        if self.carry_potential:
+            phi_next = place_carry_potential(d_xy, self.carry_potential_k)
+            shaping = PLACE_GAMMA * phi_next - self._phi
+            self._phi = phi_next
+            reward += shaping
+
         self._last_state = state
         terms = dict(
             state=state, d_xy=d_xy, lift=lift, lift_frac=lift_frac, closeness=closeness,
@@ -1287,6 +1361,7 @@ class PlaceReward(gym.Wrapper):
             lift_bonus=self.lift_bonus if lift_fired else 0.0,
             placed_bonus=self.placed_bonus if placed_fired else 0.0,
             success_lump=lump, failure_penalty=penalty,
+            posture_gate=gate, shaping=shaping,
             pinched=pinched, held=held, piece_tilt_deg=piece_tilt, t=self._t,
         )
         self._last_terms = dict(terms)
