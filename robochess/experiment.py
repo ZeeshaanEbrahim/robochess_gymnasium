@@ -156,6 +156,15 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
     Strict in both directions: every required key must be present, and every
     key present must be one this schema knows about.
     """
+    if raw.get("task") == "t3":
+        from robochess.tasks.t3_capture import reject_t3_training_options
+
+        try:
+            reject_t3_training_options(raw)
+        except ValueError as exc:
+            raise ConfigError(str(exc)) from exc
+        raise ConfigError("T3 reward not implemented; use make_t3_env for task-only checks")
+
     known = set(REQUIRED_KEYS) | set(OPTIONAL_DEFAULTS)
     unknown = sorted(set(raw) - known)
     if unknown:

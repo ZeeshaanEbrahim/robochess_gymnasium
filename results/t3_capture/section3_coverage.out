@@ -1,0 +1,47 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: /root/projects/robochess_t3
+plugins: cov-7.1.0
+collected 505 items
+
+tests/test_action_mode.py ......................................         [  7%]
+tests/test_cartesian_mode.py .....................................       [ 14%]
+tests/test_d25_gripper_internal_contact.py .........                     [ 16%]
+tests/test_d26_excluded_squares.py .................................     [ 23%]
+tests/test_d27_release_latch.py ......................                   [ 27%]
+tests/test_env_basic.py ..................                               [ 31%]
+tests/test_f10_derived_state.py ........                                 [ 32%]
+tests/test_f11_obstacle_validation.py .................................. [ 39%]
+....                                                                     [ 40%]
+tests/test_f1_contact_classification.py ....                             [ 40%]
+tests/test_f2_success_criteria.py ....                                   [ 41%]
+tests/test_f6_obstacle_latch.py ..........                               [ 43%]
+tests/test_f7_invalid_transition.py .................................... [ 50%]
+......                                                                   [ 52%]
+tests/test_pickup_reward.py .....................................        [ 59%]
+tests/test_place_eval.py ..........                                      [ 61%]
+tests/test_place_reward.py ............................................. [ 70%]
+.........................                                                [ 75%]
+tests/test_repro_check.py ...                                            [ 75%]
+tests/test_solver_instability_guard.py ...........                       [ 78%]
+tests/test_t1_pick_and_place.py ........................................ [ 85%]
+...                                                                      [ 86%]
+tests/test_t2_obstacle_pick_and_place.py ............................... [ 92%]
+.......                                                                  [ 94%]
+tests/test_t3_capture.py ............................                    [ 99%]
+tests/test_t3_scene.py ..                                                [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.11.15-final-0 _______________
+
+Name                                            Stmts   Miss  Cover   Missing
+-----------------------------------------------------------------------------
+robochess/tasks/__init__.py                         4      0   100%
+robochess/tasks/squares.py                         29      0   100%
+robochess/tasks/t1_pick_and_place.py              494      6    99%   54, 468, 1060, 1064, 1099, 1153
+robochess/tasks/t2_obstacle_pick_and_place.py     172      0   100%
+robochess/tasks/t3_capture.py                     200      9    96%   64-66, 80, 85, 103, 225, 295, 310
+-----------------------------------------------------------------------------
+TOTAL                                             899     15    98%
+Coverage JSON written to file results/t3_capture/section3_coverage.json
+======================= 505 passed in 157.95s (0:02:37) ========================

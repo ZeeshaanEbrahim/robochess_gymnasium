@@ -1,0 +1,12 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: /root/projects/robochess_t3
+plugins: cov-7.1.0
+collected 18 items / 17 deselected / 1 selected
+
+tests/test_t3_capture.py   [warn] descend: pinch residual 1.27 mm still above 1.0 mm after 2 correction pass(es); continuing uncorrected.
+  [warn] descend: pinch residual 1.52 mm still above 1.0 mm after 2 correction pass(es); continuing uncorrected.
+physical positive: {'pair': ('c4', 'f6'), 'stage_latch_step': 141, 'success_step': 301, 'captured_release_height_mm': -0.883085156216934, 'capturing_release_height_mm': -0.504910945892334}
+.
+
+======================= 1 passed, 17 deselected in 1.69s =======================

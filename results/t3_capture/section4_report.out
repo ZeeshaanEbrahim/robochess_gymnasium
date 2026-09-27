@@ -1,0 +1,26 @@
+SUMMARY {"successes": 17, "episodes": 20, "successful_lengths": {"min": 258, "median": 281, "max": 380}, "fit_budgets": {"300": 13, "400": 17, "500": 17, "600": 17}}
+PAIR c4→f6 True 141 160 301
+PAIR b3→e7 True 179 160 339
+PAIR e4→e5 True 132 149 281
+PAIR d4→c4 True 128 145 273
+PAIR e4→f5 True 131 150 281
+PAIR c3→b2 True 127 146 273
+PAIR g2→h2 True 119 139 258
+PAIR a2→h2 True 119 159 278
+PAIR f4→h3 True 119 149 268
+PAIR b5→h1 True 121 170 291
+PAIR g3→g2 True 121 150 271
+PAIR h3→c6 True 142 152 294
+PAIR h2→a7 True 180 157 337
+PAIR b6→a8 True 197 183 380
+PAIR c2→a1 True 127 153 280
+PAIR g6→h8 False None None 142
+PAIR c1→c4 True 128 154 282
+PAIR f1→f3 True 123 151 274
+PAIR h1→h8 False None None 142
+PAIR h8→h1 False 121 170 291
+INTERACTIONS remove {'min_distance_mm': 2.324982, 'max_peak_displacement_mm': 0.013077736, 'max_peak_tilt_deg': 0.003000253}
+INTERACTIONS move {'min_distance_mm': 5.804268, 'max_peak_displacement_mm': 3.1494e-05, 'max_peak_tilt_deg': 0.002797456}
+Gripper geom counts: [28]
+Order violations: 0
+Report: /root/projects/robochess_t3/results/t3_capture/section4_report.md

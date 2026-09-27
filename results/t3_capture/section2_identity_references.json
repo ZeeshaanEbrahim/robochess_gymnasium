@@ -1,0 +1,37 @@
+{
+  "base": "f59027b302ee83d2bf515ebb9ce0f901f5d2f220",
+  "frozen_trace_hashes": [
+    {
+      "mode": "absolute",
+      "seed": 0,
+      "sha256": "e9bbd853c05ab1a9bee748818b7abf9112b7aa430e860026c137c05880641a90"
+    },
+    {
+      "mode": "absolute",
+      "seed": 1,
+      "sha256": "3879bbcc9c89355940d2fe08ef5ca3322b02cb0cd83286099d8066c919e2f10e"
+    },
+    {
+      "mode": "delta",
+      "seed": 0,
+      "sha256": "852593e78f40f70fd0b619065364ad8d09f2110a5a1e9278535ec50d8d0046ce"
+    },
+    {
+      "mode": "delta",
+      "seed": 1,
+      "sha256": "1653667839a80e336024ad940024184bee42c8704cea1006576025eef82faa72"
+    }
+  ],
+  "sampling_hash": "868586369d198f25602f4a1f2851b75ff878636befc2c659bc3969e5ca24f28e",
+  "file_sha256": {
+    "assets/scene.xml": "63b27b93a75529263167706e5d83bdff7601b39c312f4f7fa3d0c0033add3bd9",
+    "assets/scene_t2.xml": "66c9828d38cfd7eed7271988f1dc9d9fd50fb7de4300424d9064c8530b01c9d6",
+    "robochess/envs/robochess_env.py": "9daa0aa83b622fa81aa41824c852fc92f22121ec8ec39bd76fc86a7e9b2ac205",
+    "robochess/tasks/t1_pick_and_place.py": "ace0e2fa79c140b364ef7478499848f6965188b7153398dee528fc8539f77909",
+    "robochess/tasks/t2_obstacle_pick_and_place.py": "7b3e5692c838d612e6aab5a4878a17de9745ca21dddf9308d920d97cf81539b8",
+    "scripts/scripted_expert.py": "803a00ef0f3bed01f2667fd36746048d27e60b4f31201855987cb7b229e2498c",
+    "tests/test_cartesian_mode.py": "d45e0bb2d69d2859e65ea71df81798cc40a20659c24fbb6b96edf2fdb4103e74",
+    "tests/test_d26_excluded_squares.py": "50a4dfad589fd2ad306b804fe4261683585bf36718f75f00cbbbc34884203d08"
+  },
+  "note": "Existing frozen random traces cover the base absolute/delta modes. No separate T2 trajectory SHA literal is asserted by the current suite; T1/T2 source and scene hashes are also preserved here."
+}

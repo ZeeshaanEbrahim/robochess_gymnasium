@@ -1,0 +1,24 @@
+scene minus additions byte-identical: True
+scene.xml piece_a qpos/qvel addresses: 14 14
+scene_t3.xml piece_a qpos/qvel addresses: 14 14
+T3 MuJoCo loads: True nq: 28 keyframe qpos length: 28
+piece_b jnt_qposadr: 21 own keyframe values: [0.039, 0.559, 0.762, 1.0, 0.0, 0.0, 0.0]
+identity source hashes unchanged: 8
+existing configs compared: 33 mismatches: 0
+rejection: {'reward_type': 'sparse'} T3 reward not implemented
+rejection: {'her': False} T3 goal covers one piece; HER not supported
+rejection: {'pickup_obs': False} T3 does not support pickup_obs or place-reward keys
+rejection: {'place_reward': False} T3 does not support pickup_obs or place-reward keys
+capture pad body: board in board geoms: True ceiling N: 250.0
+pad force probe: {'pinch_z': 0.7935, 'pad_contact_count': 0, 'pad_normal_sum_N': 0, 'base_counted_N': None, 'bad_with_pad': False, 'bad_without_pad': False}
+pad force probe: {'pinch_z': 0.7885, 'pad_contact_count': 0, 'pad_normal_sum_N': 0, 'base_counted_N': None, 'bad_with_pad': False, 'bad_without_pad': False}
+pad force probe: {'pinch_z': 0.7835, 'pad_contact_count': 0, 'pad_normal_sum_N': 0, 'base_counted_N': None, 'bad_with_pad': False, 'bad_without_pad': False}
+pad force probe: {'pinch_z': 0.7785, 'pad_contact_count': 8, 'pad_normal_sum_N': 713.0012188464159, 'base_counted_N': 713.0012188464159, 'bad_with_pad': True, 'bad_without_pad': False}
+held probe: {'lift_from_rest_mm': 0.0, 'measured_height_mm': -0.012905019177278376, 'left': True, 'right': True, 'board': True, 'held': False}
+held probe: {'lift_from_rest_mm': 5.0, 'measured_height_mm': 4.987094980822726, 'left': True, 'right': True, 'board': False, 'held': True}
+smoke reset: (32,) stage: 0
+smoke steps: 50 observation shape: (32,) stage: 0 observation stage: 0.0 ended: []
+sampling pool: 62 excluded: ('d1', 'e1') distinct reset pair: True
+base helper overrides: []
+plain captured D14 check: True
+D14 step: {'terminated': False, 'truncated': True, 'reason': 'solver_instability', 'success': False, 'captured_guard': True, 'last_good_returned': True, 'stage': 0}

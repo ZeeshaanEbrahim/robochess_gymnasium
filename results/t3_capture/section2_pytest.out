@@ -1,0 +1,33 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: /root/projects/robochess_t3
+plugins: cov-7.1.0
+collected 477 items
+
+tests/test_action_mode.py ......................................         [  7%]
+tests/test_cartesian_mode.py .....................................       [ 15%]
+tests/test_d25_gripper_internal_contact.py .........                     [ 17%]
+tests/test_d26_excluded_squares.py .................................     [ 24%]
+tests/test_d27_release_latch.py ......................                   [ 29%]
+tests/test_env_basic.py ..................                               [ 32%]
+tests/test_f10_derived_state.py ........                                 [ 34%]
+tests/test_f11_obstacle_validation.py .................................. [ 41%]
+....                                                                     [ 42%]
+tests/test_f1_contact_classification.py ....                             [ 43%]
+tests/test_f2_success_criteria.py ....                                   [ 44%]
+tests/test_f6_obstacle_latch.py ..........                               [ 46%]
+tests/test_f7_invalid_transition.py .................................... [ 53%]
+......                                                                   [ 55%]
+tests/test_pickup_reward.py .....................................        [ 62%]
+tests/test_place_eval.py ..........                                      [ 64%]
+tests/test_place_reward.py ............................................. [ 74%]
+.........................                                                [ 79%]
+tests/test_repro_check.py ...                                            [ 80%]
+tests/test_solver_instability_guard.py ...........                       [ 82%]
+tests/test_t1_pick_and_place.py ........................................ [ 90%]
+...                                                                      [ 91%]
+tests/test_t2_obstacle_pick_and_place.py ............................... [ 98%]
+.......                                                                  [ 99%]
+tests/test_t3_scene.py ..                                                [100%]
+
+======================= 477 passed in 146.55s (0:02:26) ========================

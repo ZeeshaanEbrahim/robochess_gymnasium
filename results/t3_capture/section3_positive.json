@@ -1,0 +1,2792 @@
+{
+  "success": true,
+  "rows": [
+    {
+      "step": 1,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 2,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 3,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 4,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 5,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 6,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 7,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 8,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 9,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 10,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 11,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 12,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 13,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 14,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 15,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 16,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 17,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 18,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 19,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 20,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 21,
+      "phase": "captured:approach",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 22,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 23,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 24,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 25,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 26,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 27,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 28,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 29,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 30,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 31,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 32,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 33,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 34,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 35,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 36,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 37,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 38,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 39,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 40,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 41,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 42,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 43,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 44,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 45,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 46,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 47,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 48,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 49,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 50,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 51,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 52,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 53,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 54,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 55,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 56,
+      "phase": "captured:descend",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 57,
+      "phase": "captured:close",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 58,
+      "phase": "captured:close",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 59,
+      "phase": "captured:close",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": null,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 60,
+      "phase": "captured:close",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.18391072113177476,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 61,
+      "phase": "captured:close",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.25353605197253604,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 62,
+      "phase": "captured:close",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 0.009631467429827012,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 63,
+      "phase": "captured:close",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 0.01870433561224072,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 64,
+      "phase": "captured:close",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 0.014577189046516281,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 65,
+      "phase": "captured:close",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 0.007757975318156696,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 66,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 9.525980683918744,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 67,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 19.841082422550894,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 68,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 28.22556717630964,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 69,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 35.01985230506233,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 70,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 40.526849529982314,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 71,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 44.991809881677284,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 72,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 48.61299336604641,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 73,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 51.55068880219693,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 74,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 53.9345300586479,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 75,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 55.86940518022432,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 76,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 57.440220515721506,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 77,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 58.71573950866438,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 78,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 59.751676276049714,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 79,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 60.59318992226459,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 80,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 61.276897086995795,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 81,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 61.832497030175794,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 82,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 62.284084856699785,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 83,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 62.65121349594682,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 84,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 62.949753070477676,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 85,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 63.19258671775063,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 86,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 63.39017427976978,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 87,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 63.55100915554368,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 88,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 63.68198870748842,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 89,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 63.788714677621705,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 90,
+      "phase": "captured:lift",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 63.87573690650472,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 91,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 65.69826628634657,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 92,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 68.57381406733099,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 93,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 70.22118137405286,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 94,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 71.20364500589137,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 95,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 71.77208006020174,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 96,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.08732538024387,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 97,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.25187572642578,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 98,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.33002285459322,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 99,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.36130014048969,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 100,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.36938243692093,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 101,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.36793040402966,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 102,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.3643950255064,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 103,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.36246887474506,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 104,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.36364554740405,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 105,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.3681958095057,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 106,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.37576571663007,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 107,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.38573245600999,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 108,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.39740709404663,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 109,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.41014235154253,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 110,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.42338291845896,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 111,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.43668222400335,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 112,
+      "phase": "captured:traverse",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 72.44970067142332,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 113,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 57.865346457641074,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 114,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 43.88789389605196,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 115,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 32.59376213932575,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 116,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 23.46622025762968,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 117,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 16.0845646066019,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 118,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 10.110221789390916,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 119,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 5.271165750327045,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 120,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": 1.348856383341146,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 121,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.43332878651092255,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 122,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.617144436937167,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 123,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.7297079169220622,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 124,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.7384037422629719,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 125,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.7659562117554586,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 126,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.8382028405719,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 127,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.8796135456472509,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 128,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.910415881899107,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 129,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.9346381595735087,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 130,
+      "phase": "captured:place",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.9366344216018563,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 131,
+      "phase": "captured:release",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.9365149734226197,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 132,
+      "phase": "captured:release",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.9352353187586093,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 133,
+      "phase": "captured:release",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 134,
+      "phase": "captured:release",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 135,
+      "phase": "captured:release",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 136,
+      "phase": "captured:release",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 137,
+      "phase": "captured:release",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 138,
+      "phase": "captured:release",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 139,
+      "phase": "captured:release",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 140,
+      "phase": "captured:release",
+      "stage": 0,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 141,
+      "phase": "captured:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 142,
+      "phase": "captured:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 143,
+      "phase": "captured:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 144,
+      "phase": "captured:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 145,
+      "phase": "captured:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 146,
+      "phase": "captured:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 147,
+      "phase": "captured:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 148,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 149,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 150,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 151,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 152,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 153,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 154,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 155,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 156,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 157,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 158,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 159,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 160,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 161,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 162,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 163,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 164,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 165,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 166,
+      "phase": "captured:retreat",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 167,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 168,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 169,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 170,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 171,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 172,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 173,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 174,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 175,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 176,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 177,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 178,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 179,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 180,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 181,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 182,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 183,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 184,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 185,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 186,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 187,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 188,
+      "phase": "capturing:approach",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 189,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 190,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 191,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 192,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 193,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 194,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 195,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 196,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 197,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 198,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 199,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 200,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 201,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 202,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 203,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 204,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 205,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 206,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 207,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 208,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 209,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 210,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 211,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 212,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 213,
+      "phase": "capturing:descend",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 214,
+      "phase": "capturing:close",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 215,
+      "phase": "capturing:close",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 216,
+      "phase": "capturing:close",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": null
+    },
+    {
+      "step": 217,
+      "phase": "capturing:close",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.26226043701171875
+    },
+    {
+      "step": 218,
+      "phase": "capturing:close",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.41544437408447266
+    },
+    {
+      "step": 219,
+      "phase": "capturing:close",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.0667572021484375
+    },
+    {
+      "step": 220,
+      "phase": "capturing:close",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 0.03504753112792969
+    },
+    {
+      "step": 221,
+      "phase": "capturing:close",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 0.08660554885864258
+    },
+    {
+      "step": 222,
+      "phase": "capturing:close",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 0.1163482666015625
+    },
+    {
+      "step": 223,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 11.316120624542236
+    },
+    {
+      "step": 224,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 22.638142108917236
+    },
+    {
+      "step": 225,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 31.85749053955078
+    },
+    {
+      "step": 226,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 39.357542991638184
+    },
+    {
+      "step": 227,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 45.457541942596436
+    },
+    {
+      "step": 228,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 50.41855573654175
+    },
+    {
+      "step": 229,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 54.45355176925659
+    },
+    {
+      "step": 230,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 57.7358603477478
+    },
+    {
+      "step": 231,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 60.40626764297485
+    },
+    {
+      "step": 232,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 62.579333782196045
+    },
+    {
+      "step": 233,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 64.34792280197144
+    },
+    {
+      "step": 234,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 65.78761339187622
+    },
+    {
+      "step": 235,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 66.95979833602905
+    },
+    {
+      "step": 236,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 67.91430711746216
+    },
+    {
+      "step": 237,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 68.69173049926758
+    },
+    {
+      "step": 238,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 69.3250298500061
+    },
+    {
+      "step": 239,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 69.84096765518188
+    },
+    {
+      "step": 240,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 70.26141881942749
+    },
+    {
+      "step": 241,
+      "phase": "capturing:lift",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 70.60414552688599
+    },
+    {
+      "step": 242,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 71.59119844436646
+    },
+    {
+      "step": 243,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 72.26210832595825
+    },
+    {
+      "step": 244,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 72.22598791122437
+    },
+    {
+      "step": 245,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 71.79683446884155
+    },
+    {
+      "step": 246,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 71.17092609405518
+    },
+    {
+      "step": 247,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 70.4692006111145
+    },
+    {
+      "step": 248,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 69.76383924484253
+    },
+    {
+      "step": 249,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 69.09555196762085
+    },
+    {
+      "step": 250,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 68.4850811958313
+    },
+    {
+      "step": 251,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 67.9408311843872
+    },
+    {
+      "step": 252,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 67.46387481689453
+    },
+    {
+      "step": 253,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 67.05105304718018
+    },
+    {
+      "step": 254,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 66.6971206665039
+    },
+    {
+      "step": 255,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 66.39587879180908
+    },
+    {
+      "step": 256,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 66.14089012145996
+    },
+    {
+      "step": 257,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 65.92607498168945
+    },
+    {
+      "step": 258,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 65.7457709312439
+    },
+    {
+      "step": 259,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 65.59485197067261
+    },
+    {
+      "step": 260,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 65.4689073562622
+    },
+    {
+      "step": 261,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 65.36400318145752
+    },
+    {
+      "step": 262,
+      "phase": "capturing:traverse",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 65.27680158615112
+    },
+    {
+      "step": 263,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 51.42277479171753
+    },
+    {
+      "step": 264,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 37.25302219390869
+    },
+    {
+      "step": 265,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 25.743424892425537
+    },
+    {
+      "step": 266,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 16.419708728790283
+    },
+    {
+      "step": 267,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 8.866429328918457
+    },
+    {
+      "step": 268,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": 2.74658203125
+    },
+    {
+      "step": 269,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.4265308380126953
+    },
+    {
+      "step": 270,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.5929470062255859
+    },
+    {
+      "step": 271,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6530880928039551
+    },
+    {
+      "step": 272,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.615537166595459
+    },
+    {
+      "step": 273,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6014704704284668
+    },
+    {
+      "step": 274,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6022453308105469
+    },
+    {
+      "step": 275,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6092190742492676
+    },
+    {
+      "step": 276,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6195306777954102
+    },
+    {
+      "step": 277,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6306171417236328
+    },
+    {
+      "step": 278,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6412267684936523
+    },
+    {
+      "step": 279,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6511807441711426
+    },
+    {
+      "step": 280,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6614327430725098
+    },
+    {
+      "step": 281,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6713271141052246
+    },
+    {
+      "step": 282,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6800293922424316
+    },
+    {
+      "step": 283,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6886720657348633
+    },
+    {
+      "step": 284,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.6962418556213379
+    },
+    {
+      "step": 285,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.7026791572570801
+    },
+    {
+      "step": 286,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.7094144821166992
+    },
+    {
+      "step": 287,
+      "phase": "capturing:place",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.715792179107666
+    },
+    {
+      "step": 288,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.7219910621643066
+    },
+    {
+      "step": 289,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.7299184799194336
+    },
+    {
+      "step": 290,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.7911920547485352
+    },
+    {
+      "step": 291,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.7395744323730469
+    },
+    {
+      "step": 292,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.504910945892334
+    },
+    {
+      "step": 293,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.504910945892334
+    },
+    {
+      "step": 294,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.504910945892334
+    },
+    {
+      "step": 295,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.504910945892334
+    },
+    {
+      "step": 296,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.504910945892334
+    },
+    {
+      "step": 297,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.504910945892334
+    },
+    {
+      "step": 298,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.504910945892334
+    },
+    {
+      "step": 299,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.504910945892334
+    },
+    {
+      "step": 300,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": false,
+      "reason": null,
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.504910945892334
+    },
+    {
+      "step": 301,
+      "phase": "capturing:release",
+      "stage": 1,
+      "success": true,
+      "reason": "success",
+      "captured_release_height_mm": -0.883085156216934,
+      "capturing_release_height_mm": -0.504910945892334
+    }
+  ],
+  "stopped_phase": "capturing:release",
+  "contacts": [
+    [
+      94,
+      61,
+      -6.784325876793267e-06
+    ],
+    [
+      94,
+      61,
+      -6.784325876793267e-06
+    ],
+    [
+      94,
+      61,
+      -6.784325876793267e-06
+    ],
+    [
+      94,
+      61,
+      -6.784325876793267e-06
+    ],
+    [
+      94,
+      61,
+      -6.784325876793267e-06
+    ],
+    [
+      100,
+      60,
+      -6.778158160877608e-06
+    ],
+    [
+      100,
+      60,
+      -6.778158160877608e-06
+    ],
+    [
+      100,
+      60,
+      -6.778158160877608e-06
+    ],
+    [
+      100,
+      60,
+      -6.778158160877608e-06
+    ],
+    [
+      100,
+      60,
+      -6.778158160877608e-06
+    ]
+  ],
+  "info": {
+    "stage": 1,
+    "is_success": true,
+    "terminated_reason": "success",
+    "captured_terms": {
+      "in_zone": true,
+      "resting": true,
+      "still": true,
+      "settled": true,
+      "upright": true,
+      "released": true,
+      "pinched": false,
+      "held": false,
+      "board_contact": true,
+      "ever_held": true,
+      "release_ok": true,
+      "height_mm": -0.0068905026686660875,
+      "linear_speed": 2.393241232365418e-06,
+      "angular_speed": 0.0018495119512578469,
+      "tilt_deg": 0.001558150471212215
+    },
+    "captured_release_height_mm": -0.883085156216934,
+    "release_height_mm": -0.504910945892334,
+    "order_violation": false
+  }
+}

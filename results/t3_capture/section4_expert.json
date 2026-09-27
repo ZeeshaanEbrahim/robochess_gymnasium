@@ -1,0 +1,2271 @@
+{
+  "summary": {
+    "successes": 17,
+    "episodes": 20,
+    "successful_lengths": {
+      "min": 258,
+      "median": 281,
+      "max": 380
+    },
+    "fit_budgets": {
+      "300": 13,
+      "400": 17,
+      "500": 17,
+      "600": 17
+    }
+  },
+  "results": [
+    {
+      "start": "c4",
+      "target": "f6",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 141,
+      "stage_2_length": 160,
+      "total_length": 301,
+      "phase_lengths": {
+        "remove:approach": 21,
+        "remove:descend": 35,
+        "remove:close": 9,
+        "remove:lift": 25,
+        "remove:traverse": 22,
+        "remove:place": 18,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 22,
+        "move:descend": 25,
+        "move:close": 9,
+        "move:lift": 19,
+        "move:traverse": 21,
+        "move:place": 25,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.883085156216934,
+        "xy_m": [
+          0.34521920164535147,
+          0.32654240026788983
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.0068905026686660875,
+          "linear_speed": 2.393241232365418e-06,
+          "angular_speed": 0.0018495119512578469,
+          "tilt_deg": 0.001558150471212215
+        },
+        "pad_edge_distances_mm": {
+          "left": 33.21920164535147,
+          "right": 44.78079835464849,
+          "near": 40.5424002678898,
+          "far": 37.45759973211016
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.504910945892334,
+        "xy_error_mm": 9.455864317715168
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 200.15189822650638,
+          "min_pair": [
+            "geom_50@ur_gripper_left_coupler",
+            "piece_a_base"
+          ],
+          "min_step": 36,
+          "peak_displacement_mm": 0.012859385199374225,
+          "peak_tilt_deg": 0.0022881898281704198,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 57.284270700719055,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 167,
+          "peak_displacement_mm": 2.006439772133089e-05,
+          "peak_tilt_deg": 0.002257280807263033,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "b3",
+      "target": "e7",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 179,
+      "stage_2_length": 160,
+      "total_length": 339,
+      "phase_lengths": {
+        "remove:approach": 20,
+        "remove:descend": 34,
+        "remove:close": 45,
+        "remove:lift": 25,
+        "remove:traverse": 24,
+        "remove:place": 17,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 23,
+        "move:descend": 25,
+        "move:close": 9,
+        "move:lift": 18,
+        "move:traverse": 24,
+        "move:place": 25,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.8522795512443393,
+        "xy_m": [
+          0.3455950192749182,
+          0.33000418266473364
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006888095358981161,
+          "linear_speed": 1.0351855448372176e-05,
+          "angular_speed": 0.004159224212679605,
+          "tilt_deg": 0.0018567572783951742
+        },
+        "pad_edge_distances_mm": {
+          "left": 33.5950192749182,
+          "right": 44.40498072508176,
+          "near": 44.004182664733605,
+          "far": 33.99581733526635
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.49167871475219727,
+        "xy_error_mm": 12.512785382568836
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 320.36221152239165,
+          "min_pair": [
+            "geom_50@ur_gripper_left_coupler",
+            "piece_a_base"
+          ],
+          "min_step": 34,
+          "peak_displacement_mm": 0.012842065883099734,
+          "peak_tilt_deg": 0.002663515032253139,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 54.67183074319553,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 202,
+          "peak_displacement_mm": 2.2724159292891223e-05,
+          "peak_tilt_deg": 0.00245991967823146,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "e4",
+      "target": "e5",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 132,
+      "stage_2_length": 149,
+      "total_length": 281,
+      "phase_lengths": {
+        "remove:approach": 22,
+        "remove:descend": 29,
+        "remove:close": 9,
+        "remove:lift": 20,
+        "remove:traverse": 21,
+        "remove:place": 20,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 21,
+        "move:descend": 24,
+        "move:close": 9,
+        "move:lift": 19,
+        "move:traverse": 17,
+        "move:place": 20,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.8878718449365497,
+        "xy_m": [
+          0.3450649859663629,
+          0.32516218476779835
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006909226351270448,
+          "linear_speed": 1.2421703535017928e-06,
+          "angular_speed": 0.0007661628520545531,
+          "tilt_deg": 0.0018025400111623818
+        },
+        "pad_edge_distances_mm": {
+          "left": 33.064985966362926,
+          "right": 44.93501403363703,
+          "near": 39.162184767798315,
+          "far": 38.83781523220164
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.4010200500488281,
+        "xy_error_mm": 8.80482979118824
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 54.08122423286992,
+          "min_pair": [
+            "ur_gripper_left_pad1",
+            "piece_a_base"
+          ],
+          "min_step": 55,
+          "peak_displacement_mm": 0.01278873221519928,
+          "peak_tilt_deg": 0.0020737439540300267,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 57.07195319043607,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 158,
+          "peak_displacement_mm": 1.9419611951013783e-05,
+          "peak_tilt_deg": 0.002208888814096187,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "d4",
+      "target": "c4",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 128,
+      "stage_2_length": 145,
+      "total_length": 273,
+      "phase_lengths": {
+        "remove:approach": 22,
+        "remove:descend": 25,
+        "remove:close": 9,
+        "remove:lift": 19,
+        "remove:traverse": 23,
+        "remove:place": 19,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 22,
+        "move:descend": 24,
+        "move:close": 9,
+        "move:lift": 19,
+        "move:traverse": 13,
+        "move:place": 19,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.5865394101800536,
+        "xy_m": [
+          0.3448720145733967,
+          0.3264017084784122
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006905739874829564,
+          "linear_speed": 3.272947134642122e-06,
+          "angular_speed": 0.002249215117321238,
+          "tilt_deg": 0.0019348420983279434
+        },
+        "pad_edge_distances_mm": {
+          "left": 32.872014573396726,
+          "right": 45.12798542660323,
+          "near": 40.40170847841218,
+          "far": 37.59829152158778
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.35434961318969727,
+        "xy_error_mm": 7.54568399861455
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 9.51659765124284,
+          "min_pair": [
+            "geom_42@ur_gripper_right_follower",
+            "piece_a_head"
+          ],
+          "min_step": 38,
+          "peak_displacement_mm": 0.012788732215199276,
+          "peak_tilt_deg": 0.0020737439540300267,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 56.87070616514015,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 154,
+          "peak_displacement_mm": 8.068672426725768e-06,
+          "peak_tilt_deg": 0.0019348451122333037,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "e4",
+      "target": "f5",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 131,
+      "stage_2_length": 150,
+      "total_length": 281,
+      "phase_lengths": {
+        "remove:approach": 22,
+        "remove:descend": 30,
+        "remove:close": 9,
+        "remove:lift": 21,
+        "remove:traverse": 20,
+        "remove:place": 18,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 21,
+        "move:descend": 24,
+        "move:close": 9,
+        "move:lift": 19,
+        "move:traverse": 17,
+        "move:place": 21,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.886262150968542,
+        "xy_m": [
+          0.34496875844975383,
+          0.32451963249147714
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.00694659897770844,
+          "linear_speed": 2.3819154800730615e-08,
+          "angular_speed": 3.3083802423529015e-06,
+          "tilt_deg": 0.0014473221115010122
+        },
+        "pad_edge_distances_mm": {
+          "left": 32.968758449753835,
+          "right": 45.03124155024613,
+          "near": 38.519632491477104,
+          "far": 39.48036750852285
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.4475712776184082,
+        "xy_error_mm": 9.052343666553497
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 48.84092815384584,
+          "min_pair": [
+            "ur_gripper_left_pad1",
+            "piece_a_base"
+          ],
+          "min_step": 38,
+          "peak_displacement_mm": 0.01278873221519928,
+          "peak_tilt_deg": 0.0020737439540300267,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 57.240023022600084,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 157,
+          "peak_displacement_mm": 5.1903990252187e-06,
+          "peak_tilt_deg": 0.002060558772912096,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "c3",
+      "target": "b2",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 127,
+      "stage_2_length": 146,
+      "total_length": 273,
+      "phase_lengths": {
+        "remove:approach": 23,
+        "remove:descend": 25,
+        "remove:close": 9,
+        "remove:lift": 18,
+        "remove:traverse": 23,
+        "remove:place": 19,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 23,
+        "move:descend": 24,
+        "move:close": 8,
+        "move:lift": 18,
+        "move:traverse": 14,
+        "move:place": 19,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.5337749458371732,
+        "xy_m": [
+          0.34571402516690947,
+          0.32667582462152367
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006926514796168348,
+          "linear_speed": 5.2748311474973825e-08,
+          "angular_speed": 7.281979603046998e-05,
+          "tilt_deg": 0.001638807116262542
+        },
+        "pad_edge_distances_mm": {
+          "left": 33.714025166909465,
+          "right": 44.28597483309049,
+          "near": 40.67582462152364,
+          "far": 37.32417537847632
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.2237558364868164,
+        "xy_error_mm": 4.979696124792099
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 54.864003277517305,
+          "min_pair": [
+            "ur_gripper_left_pad1",
+            "piece_a_head"
+          ],
+          "min_step": 77,
+          "peak_displacement_mm": 0.01288809150360744,
+          "peak_tilt_deg": 0.0023236105045971317,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 55.25211867999005,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 154,
+          "peak_displacement_mm": 9.503418019156918e-06,
+          "peak_tilt_deg": 0.0020180012511483232,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "g2",
+      "target": "h2",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 119,
+      "stage_2_length": 139,
+      "total_length": 258,
+      "phase_lengths": {
+        "remove:approach": 23,
+        "remove:descend": 24,
+        "remove:close": 9,
+        "remove:lift": 18,
+        "remove:traverse": 15,
+        "remove:place": 19,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 17,
+        "move:descend": 25,
+        "move:close": 8,
+        "move:lift": 18,
+        "move:traverse": 13,
+        "move:place": 19,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.5776768226415374,
+        "xy_m": [
+          0.344812755396863,
+          0.32183147858108496
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006877013696837686,
+          "linear_speed": 2.4540416516954303e-06,
+          "angular_speed": 0.001255350584773389,
+          "tilt_deg": 0.0025780466802314706
+        },
+        "pad_edge_distances_mm": {
+          "left": 32.81275539686301,
+          "right": 45.187244603136946,
+          "near": 35.83147858108493,
+          "far": 42.16852141891503
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.515282154083252,
+        "xy_error_mm": 6.745420396327972
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 5.407626675563946,
+          "min_pair": [
+            "geom_54@ur_gripper_left_follower",
+            "piece_a_head"
+          ],
+          "min_step": 40,
+          "peak_displacement_mm": 0.012963427646616642,
+          "peak_tilt_deg": 0.0023367165494870123,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 11.004731073538476,
+          "min_pair": [
+            "geom_42@ur_gripper_right_follower",
+            "piece_b_head"
+          ],
+          "min_step": 258,
+          "peak_displacement_mm": 7.087095181953884e-06,
+          "peak_tilt_deg": 0.002578051062773025,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "a2",
+      "target": "h2",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 119,
+      "stage_2_length": 159,
+      "total_length": 278,
+      "phase_lengths": {
+        "remove:approach": 23,
+        "remove:descend": 24,
+        "remove:close": 9,
+        "remove:lift": 18,
+        "remove:traverse": 15,
+        "remove:place": 19,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 24,
+        "move:descend": 24,
+        "move:close": 12,
+        "move:lift": 18,
+        "move:traverse": 24,
+        "move:place": 18,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.5776768226415374,
+        "xy_m": [
+          0.344812755396863,
+          0.32183147858108496
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006869979202961396,
+          "linear_speed": 8.50688534480934e-07,
+          "angular_speed": 0.0005431784161914338,
+          "tilt_deg": 0.0023413683375593524
+        },
+        "pad_edge_distances_mm": {
+          "left": 32.81275539686301,
+          "right": 45.187244603136946,
+          "near": 35.83147858108493,
+          "far": 42.16852141891503
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.5131959915161133,
+        "xy_error_mm": 5.810962058603764
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 385.4855199792264,
+          "min_pair": [
+            "ur_gripper_left_pad1",
+            "piece_a_head"
+          ],
+          "min_step": 2,
+          "peak_displacement_mm": 0.012956082978349336,
+          "peak_tilt_deg": 0.0026424492969245534,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 10.999189304887613,
+          "min_pair": [
+            "geom_42@ur_gripper_right_follower",
+            "piece_b_head"
+          ],
+          "min_step": 278,
+          "peak_displacement_mm": 7.1069381684868255e-06,
+          "peak_tilt_deg": 0.002578051062773025,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "f4",
+      "target": "h3",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 119,
+      "stage_2_length": 149,
+      "total_length": 268,
+      "phase_lengths": {
+        "remove:approach": 22,
+        "remove:descend": 24,
+        "remove:close": 9,
+        "remove:lift": 19,
+        "remove:traverse": 15,
+        "remove:place": 19,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 19,
+        "move:descend": 25,
+        "move:close": 9,
+        "move:lift": 19,
+        "move:traverse": 17,
+        "move:place": 21,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.8972023534415952,
+        "xy_m": [
+          0.3447428256482293,
+          0.3231742317531167
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.00685318943904889,
+          "linear_speed": 4.4405746038191304e-07,
+          "angular_speed": 0.00030980330981849393,
+          "tilt_deg": 0.002154570662854425
+        },
+        "pad_edge_distances_mm": {
+          "left": 32.74282564822928,
+          "right": 45.25717435177068,
+          "near": 37.17423175311668,
+          "far": 40.82576824688328
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.8764863014221191,
+        "xy_error_mm": 6.31663529202342
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 101.50159098139699,
+          "min_pair": [
+            "geom_50@ur_gripper_left_coupler",
+            "piece_a_head"
+          ],
+          "min_step": 38,
+          "peak_displacement_mm": 0.01282654556758709,
+          "peak_tilt_deg": 0.0023446869029322714,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 57.640459808120774,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_base"
+          ],
+          "min_step": 268,
+          "peak_displacement_mm": 2.3364169867376277e-05,
+          "peak_tilt_deg": 0.0026490915058791165,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "b5",
+      "target": "h1",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 121,
+      "stage_2_length": 170,
+      "total_length": 291,
+      "phase_lengths": {
+        "remove:approach": 23,
+        "remove:descend": 24,
+        "remove:close": 8,
+        "remove:lift": 18,
+        "remove:traverse": 18,
+        "remove:place": 20,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 23,
+        "move:descend": 31,
+        "move:close": 9,
+        "move:lift": 22,
+        "move:traverse": 24,
+        "move:place": 21,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.5857987924181574,
+        "xy_m": [
+          0.3451391565402639,
+          0.3207405526036707
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006874428147063405,
+          "linear_speed": 1.1574543991245913e-06,
+          "angular_speed": 0.0010230420101839182,
+          "tilt_deg": 0.0023393362075325662
+        },
+        "pad_edge_distances_mm": {
+          "left": 33.13915654026389,
+          "right": 44.86084345973607,
+          "near": 34.74055260367065,
+          "far": 43.25944739632931
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.45305490493774414,
+        "xy_error_mm": 6.2669385224580765
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 312.5311843436331,
+          "min_pair": [
+            "ur_gripper_left_pad1",
+            "piece_a_head"
+          ],
+          "min_step": 2,
+          "peak_displacement_mm": 0.012856133148524705,
+          "peak_tilt_deg": 0.002483512191373842,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 58.556668005200464,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_base"
+          ],
+          "min_step": 291,
+          "peak_displacement_mm": 9.530302489482029e-06,
+          "peak_tilt_deg": 0.002686227251433816,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "g3",
+      "target": "g2",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 121,
+      "stage_2_length": 150,
+      "total_length": 271,
+      "phase_lengths": {
+        "remove:approach": 23,
+        "remove:descend": 25,
+        "remove:close": 8,
+        "remove:lift": 18,
+        "remove:traverse": 17,
+        "remove:place": 19,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 17,
+        "move:descend": 25,
+        "move:close": 9,
+        "move:lift": 18,
+        "move:traverse": 15,
+        "move:place": 25,
+        "move:release": 16
+      },
+      "captured_release": {
+        "height_mm": -0.5819571629237519,
+        "xy_m": [
+          0.34468549617523403,
+          0.3213719566871186
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006875445786036494,
+          "linear_speed": 5.3714006907673506e-06,
+          "angular_speed": 0.003834002532185421,
+          "tilt_deg": 0.0022660112806730235
+        },
+        "pad_edge_distances_mm": {
+          "left": 32.68549617523403,
+          "right": 45.31450382476593,
+          "near": 35.37195668711857,
+          "far": 42.62804331288139
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.9339451789855957,
+        "xy_error_mm": 3.8690364453941584
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 50.269020980776794,
+          "min_pair": [
+            "ur_gripper_left_pad1",
+            "piece_a_base"
+          ],
+          "min_step": 56,
+          "peak_displacement_mm": 0.012853380238256613,
+          "peak_tilt_deg": 0.0025391509577692368,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 57.74372379587147,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 147,
+          "peak_displacement_mm": 1.6010057370154167e-05,
+          "peak_tilt_deg": 0.00279745589574378,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "h3",
+      "target": "c6",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 142,
+      "stage_2_length": 152,
+      "total_length": 294,
+      "phase_lengths": {
+        "remove:approach": 21,
+        "remove:descend": 35,
+        "remove:close": 9,
+        "remove:lift": 25,
+        "remove:traverse": 23,
+        "remove:place": 18,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 15,
+        "move:descend": 25,
+        "move:close": 9,
+        "move:lift": 19,
+        "move:traverse": 21,
+        "move:place": 24,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.8873417553436624,
+        "xy_m": [
+          0.34494987982218744,
+          0.3283951160567651
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.0068784173572478124,
+          "linear_speed": 4.509376877047672e-06,
+          "angular_speed": 0.002246567153163173,
+          "tilt_deg": 0.0017842208560788122
+        },
+        "pad_edge_distances_mm": {
+          "left": 32.94987982218744,
+          "right": 45.050120177812516,
+          "near": 42.39511605676505,
+          "far": 35.60488394323491
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.46318769454956055,
+        "xy_error_mm": 10.219295509159565
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 44.07707706108615,
+          "min_pair": [
+            "ur_gripper_left_pad1",
+            "piece_a_head"
+          ],
+          "min_step": 98,
+          "peak_displacement_mm": 0.0129284526423499,
+          "peak_tilt_deg": 0.003000252553536269,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 49.48228099909901,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_base"
+          ],
+          "min_step": 198,
+          "peak_displacement_mm": 3.1493595485186936e-05,
+          "peak_tilt_deg": 0.0022374548688105164,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "h2",
+      "target": "a7",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 180,
+      "stage_2_length": 157,
+      "total_length": 337,
+      "phase_lengths": {
+        "remove:approach": 20,
+        "remove:descend": 34,
+        "remove:close": 45,
+        "remove:lift": 25,
+        "remove:traverse": 25,
+        "remove:place": 19,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 15,
+        "move:descend": 24,
+        "move:close": 10,
+        "move:lift": 18,
+        "move:traverse": 30,
+        "move:place": 18,
+        "move:release": 18
+      },
+      "captured_release": {
+        "height_mm": -0.8833462011521576,
+        "xy_m": [
+          0.34505017473243177,
+          0.33248106481727085
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006885871610573524,
+          "linear_speed": 4.1187050980018615e-06,
+          "angular_speed": 0.0014388905343101733,
+          "tilt_deg": 0.0022614723401772592
+        },
+        "pad_edge_distances_mm": {
+          "left": 33.05017473243177,
+          "right": 44.94982526756819,
+          "near": 46.48106481727082,
+          "far": 31.518935182729134
+        }
+      },
+      "capturing_release": {
+        "height_mm": 3.68499755859375,
+        "xy_error_mm": 18.42278800904751
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 2.3249816058538517,
+          "min_pair": [
+            "geom_54@ur_gripper_left_follower",
+            "piece_a_head"
+          ],
+          "min_step": 185,
+          "peak_displacement_mm": 0.012986843385627025,
+          "peak_tilt_deg": 0.002633372326398975,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 5.80426797803544,
+          "min_pair": [
+            "geom_42@ur_gripper_right_follower",
+            "piece_b_head"
+          ],
+          "min_step": 243,
+          "peak_displacement_mm": 1.9341615502695937e-05,
+          "peak_tilt_deg": 0.0025373086965591258,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "b6",
+      "target": "a8",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 197,
+      "stage_2_length": 183,
+      "total_length": 380,
+      "phase_lengths": {
+        "remove:approach": 24,
+        "remove:descend": 45,
+        "remove:close": 45,
+        "remove:lift": 25,
+        "remove:traverse": 26,
+        "remove:place": 19,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 23,
+        "move:descend": 34,
+        "move:close": 9,
+        "move:lift": 25,
+        "move:traverse": 30,
+        "move:place": 25,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.8584310716559518,
+        "xy_m": [
+          0.3450024595615417,
+          0.33365134670349994
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006924384271633777,
+          "linear_speed": 3.480302997283318e-06,
+          "angular_speed": 0.0014212857741131406,
+          "tilt_deg": 0.0017920367160134682
+        },
+        "pad_edge_distances_mm": {
+          "left": 33.002459561541684,
+          "right": 44.99754043845827,
+          "near": 47.65134670349991,
+          "far": 30.34865329650005
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.5624294281005859,
+        "xy_error_mm": 10.93167345970869
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 90.16761072813868,
+          "min_pair": [
+            "ur_gripper_left_pad1",
+            "piece_a_head"
+          ],
+          "min_step": 141,
+          "peak_displacement_mm": 0.012853380238256613,
+          "peak_tilt_deg": 0.0025391509577692368,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 66.56381260831209,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 220,
+          "peak_displacement_mm": 2.4882032016258734e-05,
+          "peak_tilt_deg": 0.002193121321732429,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "c2",
+      "target": "a1",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 127,
+      "stage_2_length": 153,
+      "total_length": 280,
+      "phase_lengths": {
+        "remove:approach": 23,
+        "remove:descend": 24,
+        "remove:close": 8,
+        "remove:lift": 18,
+        "remove:traverse": 24,
+        "remove:place": 20,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 23,
+        "move:descend": 25,
+        "move:close": 8,
+        "move:lift": 18,
+        "move:traverse": 19,
+        "move:place": 20,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.6010363992943191,
+        "xy_m": [
+          0.3446549324199569,
+          0.3268113805968834
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.00688357131717332,
+          "linear_speed": 4.5630727981711085e-06,
+          "angular_speed": 0.002826277889372071,
+          "tilt_deg": 0.001873665547576094
+        },
+        "pad_edge_distances_mm": {
+          "left": 32.65493241995693,
+          "right": 45.34506758004303,
+          "near": 40.81138059688338,
+          "far": 37.188619403116576
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.1887679100036621,
+        "xy_error_mm": 3.6363389808684587
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 60.69196834628945,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_a_head"
+          ],
+          "min_step": 75,
+          "peak_displacement_mm": 0.012853380238256608,
+          "peak_tilt_deg": 0.0025391509577692368,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 55.53400886156957,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 154,
+          "peak_displacement_mm": 1.7261096089652287e-05,
+          "peak_tilt_deg": 0.002011874799665982,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "g6",
+      "target": "h8",
+      "success": false,
+      "max_episode_steps": 1000,
+      "stage_1_step": null,
+      "stage_2_length": null,
+      "total_length": 142,
+      "phase_lengths": {
+        "remove:approach": 24,
+        "remove:descend": 45,
+        "remove:close": 45,
+        "remove:lift": 25,
+        "remove:traverse": 3
+      },
+      "captured_release": {
+        "height_mm": 65.59100127277017,
+        "xy_m": [
+          0.35532833677229086,
+          0.6030091425484359
+        ],
+        "released": false,
+        "terms": {
+          "in_zone": false,
+          "resting": false,
+          "still": false,
+          "settled": false,
+          "upright": true,
+          "released": false,
+          "pinched": true,
+          "held": true,
+          "board_contact": false,
+          "ever_held": true,
+          "release_ok": false,
+          "height_mm": 65.59100127277017,
+          "linear_speed": 1.562550396411805,
+          "angular_speed": 0.30436972695744735,
+          "tilt_deg": 2.6636890791071153
+        },
+        "pad_edge_distances_mm": {
+          "left": 43.32833677229087,
+          "right": 34.67166322770909,
+          "near": 317.0091425484358,
+          "far": -239.00914254843585
+        }
+      },
+      "capturing_release": {
+        "height_mm": null,
+        "xy_error_mm": null
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 104.09507964869381,
+          "min_pair": [
+            "ur_gripper_left_pad1",
+            "piece_a_head"
+          ],
+          "min_step": 140,
+          "peak_displacement_mm": 0.012842065883099734,
+          "peak_tilt_deg": 0.002663515032253139,
+          "other_piece": "piece_a"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "piece_off_board",
+      "off_board_piece": "piece_b",
+      "order_violation": false,
+      "captured_removal": false,
+      "failure": {
+        "phase": "remove:traverse",
+        "terminated_reason": "piece_off_board",
+        "expert_status": "terminated",
+        "detail": null,
+        "referee_contact_pairs": [],
+        "active_contacts": [
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_right_pad1"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6710753421465664
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_right_pad1"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6501315420169504
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_right_pad2"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6168586501218709
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_right_pad2"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6168586501218709
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_left_pad1"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.5342113279833937
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_left_pad1"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.498537705166115
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_left_pad2"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.4659056807674519
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_left_pad2"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.4659056807674519
+          },
+          {
+            "pair": [
+              "piece_a_base",
+              "board_slab"
+            ],
+            "bodies": [
+              "piece_a",
+              "board"
+            ],
+            "distance_mm": -0.007284652565993088
+          },
+          {
+            "pair": [
+              "piece_a_base",
+              "board_slab"
+            ],
+            "bodies": [
+              "piece_a",
+              "board"
+            ],
+            "distance_mm": -0.007284652565993088
+          },
+          {
+            "pair": [
+              "piece_a_base",
+              "board_slab"
+            ],
+            "bodies": [
+              "piece_a",
+              "board"
+            ],
+            "distance_mm": -0.007284652565993088
+          },
+          {
+            "pair": [
+              "piece_a_base",
+              "board_slab"
+            ],
+            "bodies": [
+              "piece_a",
+              "board"
+            ],
+            "distance_mm": -0.007284652565993088
+          },
+          {
+            "pair": [
+              "piece_a_base",
+              "board_slab"
+            ],
+            "bodies": [
+              "piece_a",
+              "board"
+            ],
+            "distance_mm": -0.007284652565993088
+          }
+        ]
+      }
+    },
+    {
+      "start": "c1",
+      "target": "c4",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 128,
+      "stage_2_length": 154,
+      "total_length": 282,
+      "phase_lengths": {
+        "remove:approach": 22,
+        "remove:descend": 25,
+        "remove:close": 9,
+        "remove:lift": 19,
+        "remove:traverse": 23,
+        "remove:place": 19,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 22,
+        "move:descend": 26,
+        "move:close": 8,
+        "move:lift": 18,
+        "move:traverse": 21,
+        "move:place": 20,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.5865394101800536,
+        "xy_m": [
+          0.3448720145733967,
+          0.3264017084784122
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006905739873608319,
+          "linear_speed": 3.2729473198741645e-06,
+          "angular_speed": 0.0022492151157560243,
+          "tilt_deg": 0.0019348437936502862
+        },
+        "pad_edge_distances_mm": {
+          "left": 32.872014573396726,
+          "right": 45.12798542660323,
+          "near": 40.40170847841218,
+          "far": 37.59829152158778
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.338137149810791,
+        "xy_error_mm": 9.278680197894573
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 204.3622745664016,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_a_base"
+          ],
+          "min_step": 38,
+          "peak_displacement_mm": 0.012928452642349899,
+          "peak_tilt_deg": 0.003000252553536269,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 56.51237762333538,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 154,
+          "peak_displacement_mm": 8.07688785103756e-06,
+          "peak_tilt_deg": 0.0019348451122333037,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "f1",
+      "target": "f3",
+      "success": true,
+      "max_episode_steps": 1000,
+      "stage_1_step": 123,
+      "stage_2_length": 151,
+      "total_length": 274,
+      "phase_lengths": {
+        "remove:approach": 23,
+        "remove:descend": 24,
+        "remove:close": 9,
+        "remove:lift": 18,
+        "remove:traverse": 19,
+        "remove:place": 19,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 20,
+        "move:descend": 26,
+        "move:close": 10,
+        "move:lift": 18,
+        "move:traverse": 19,
+        "move:place": 19,
+        "move:release": 14
+      },
+      "captured_release": {
+        "height_mm": -0.9007894923338533,
+        "xy_m": [
+          0.3445498407272414,
+          0.3234621686176962
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006870847109152756,
+          "linear_speed": 3.2962004967672204e-06,
+          "angular_speed": 0.001613172122764268,
+          "tilt_deg": 0.0024184648224819466
+        },
+        "pad_edge_distances_mm": {
+          "left": 32.549840727241374,
+          "right": 45.45015927275858,
+          "near": 37.46216861769619,
+          "far": 40.53783138230377
+        }
+      },
+      "capturing_release": {
+        "height_mm": -0.29599666595458984,
+        "xy_error_mm": 8.935797028243542
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 129.79988639930468,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_a_base"
+          ],
+          "min_step": 40,
+          "peak_displacement_mm": 0.012897275668632316,
+          "peak_tilt_deg": 0.0025009612567044215,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 57.0276987002687,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 149,
+          "peak_displacement_mm": 1.4559985790999633e-05,
+          "peak_tilt_deg": 0.0025759059783811156,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "success",
+      "off_board_piece": null,
+      "order_violation": false,
+      "captured_removal": true
+    },
+    {
+      "start": "h1",
+      "target": "h8",
+      "success": false,
+      "max_episode_steps": 1000,
+      "stage_1_step": null,
+      "stage_2_length": null,
+      "total_length": 142,
+      "phase_lengths": {
+        "remove:approach": 24,
+        "remove:descend": 45,
+        "remove:close": 45,
+        "remove:lift": 25,
+        "remove:traverse": 3
+      },
+      "captured_release": {
+        "height_mm": 65.59100127277017,
+        "xy_m": [
+          0.35532833677229086,
+          0.6030091425484359
+        ],
+        "released": false,
+        "terms": {
+          "in_zone": false,
+          "resting": false,
+          "still": false,
+          "settled": false,
+          "upright": true,
+          "released": false,
+          "pinched": true,
+          "held": true,
+          "board_contact": false,
+          "ever_held": true,
+          "release_ok": false,
+          "height_mm": 65.59100127277017,
+          "linear_speed": 1.562550396411805,
+          "angular_speed": 0.30436972695744735,
+          "tilt_deg": 2.6636890791071153
+        },
+        "pad_edge_distances_mm": {
+          "left": 43.32833677229087,
+          "right": 34.67166322770909,
+          "near": 317.0091425484358,
+          "far": -239.00914254843585
+        }
+      },
+      "capturing_release": {
+        "height_mm": null,
+        "xy_error_mm": null
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 340.1130312605992,
+          "min_pair": [
+            "ur_gripper_left_pad1",
+            "piece_a_base"
+          ],
+          "min_step": 142,
+          "peak_displacement_mm": 0.013077736027740523,
+          "peak_tilt_deg": 0.0025934908794852983,
+          "other_piece": "piece_a"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "piece_off_board",
+      "off_board_piece": "piece_b",
+      "order_violation": false,
+      "captured_removal": false,
+      "failure": {
+        "phase": "remove:traverse",
+        "terminated_reason": "piece_off_board",
+        "expert_status": "terminated",
+        "detail": null,
+        "referee_contact_pairs": [],
+        "active_contacts": [
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_right_pad1"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6710753421465664
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_right_pad1"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6501315420169504
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_right_pad2"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6168586501218709
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_right_pad2"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6168586501218709
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_left_pad1"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.5342113279833937
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_left_pad1"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.498537705166115
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_left_pad2"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.4659056807674519
+          },
+          {
+            "pair": [
+              "piece_b_head",
+              "ur_gripper_left_pad2"
+            ],
+            "bodies": [
+              "piece_b",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.4659056807674519
+          },
+          {
+            "pair": [
+              "piece_a_base",
+              "board_slab"
+            ],
+            "bodies": [
+              "piece_a",
+              "board"
+            ],
+            "distance_mm": -0.007719172366746573
+          },
+          {
+            "pair": [
+              "piece_a_base",
+              "board_slab"
+            ],
+            "bodies": [
+              "piece_a",
+              "board"
+            ],
+            "distance_mm": -0.007719172366746573
+          },
+          {
+            "pair": [
+              "piece_a_base",
+              "board_slab"
+            ],
+            "bodies": [
+              "piece_a",
+              "board"
+            ],
+            "distance_mm": -0.007719172366746573
+          },
+          {
+            "pair": [
+              "piece_a_base",
+              "board_slab"
+            ],
+            "bodies": [
+              "piece_a",
+              "board"
+            ],
+            "distance_mm": -0.007719172366746573
+          },
+          {
+            "pair": [
+              "piece_a_base",
+              "board_slab"
+            ],
+            "bodies": [
+              "piece_a",
+              "board"
+            ],
+            "distance_mm": -0.007719172366746573
+          }
+        ]
+      }
+    },
+    {
+      "start": "h8",
+      "target": "h1",
+      "success": false,
+      "max_episode_steps": 1000,
+      "stage_1_step": 121,
+      "stage_2_length": 170,
+      "total_length": 291,
+      "phase_lengths": {
+        "remove:approach": 23,
+        "remove:descend": 24,
+        "remove:close": 8,
+        "remove:lift": 18,
+        "remove:traverse": 18,
+        "remove:place": 20,
+        "remove:release": 17,
+        "remove:retreat": 19,
+        "move:approach": 25,
+        "move:descend": 45,
+        "move:close": 45,
+        "move:lift": 25,
+        "move:traverse": 4
+      },
+      "captured_release": {
+        "height_mm": -0.5857987924181574,
+        "xy_m": [
+          0.3451391565402639,
+          0.3207405526036707
+        ],
+        "released": true,
+        "terms": {
+          "in_zone": true,
+          "resting": true,
+          "still": true,
+          "settled": true,
+          "upright": true,
+          "released": true,
+          "pinched": false,
+          "held": false,
+          "board_contact": true,
+          "ever_held": true,
+          "release_ok": true,
+          "height_mm": -0.006874428147063405,
+          "linear_speed": 1.1574543991230379e-06,
+          "angular_speed": 0.001023042010181949,
+          "tilt_deg": 0.0023393362075325662
+        },
+        "pad_edge_distances_mm": {
+          "left": 33.13915654026389,
+          "right": 44.86084345973607,
+          "near": 34.74055260367065,
+          "far": 43.25944739632931
+        }
+      },
+      "capturing_release": {
+        "height_mm": 86.43501996994019,
+        "xy_error_mm": 263.75386118888855
+      },
+      "interactions": {
+        "remove": {
+          "min_distance_mm": 389.6941167732287,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_a_head"
+          ],
+          "min_step": 4,
+          "peak_displacement_mm": 0.013077736027629492,
+          "peak_tilt_deg": 0.0025934908794852983,
+          "other_piece": "piece_a"
+        },
+        "move": {
+          "min_distance_mm": 66.81298186095596,
+          "min_pair": [
+            "ur_gripper_right_pad1",
+            "piece_b_head"
+          ],
+          "min_step": 147,
+          "peak_displacement_mm": 9.530302378958225e-06,
+          "peak_tilt_deg": 0.002686227251433816,
+          "other_piece": "piece_b"
+        }
+      },
+      "gripper_geom_count": 28,
+      "order_event": null,
+      "removal_lost_event": null,
+      "terminated_reason": "piece_off_board",
+      "off_board_piece": "piece_a",
+      "order_violation": false,
+      "captured_removal": true,
+      "failure": {
+        "phase": "move:traverse",
+        "terminated_reason": "piece_off_board",
+        "expert_status": "terminated",
+        "detail": null,
+        "referee_contact_pairs": [],
+        "active_contacts": [
+          {
+            "pair": [
+              "piece_a_head",
+              "ur_gripper_right_pad1"
+            ],
+            "bodies": [
+              "piece_a",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6538561272769472
+          },
+          {
+            "pair": [
+              "piece_a_head",
+              "ur_gripper_right_pad1"
+            ],
+            "bodies": [
+              "piece_a",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6309966223500447
+          },
+          {
+            "pair": [
+              "piece_a_head",
+              "ur_gripper_right_pad2"
+            ],
+            "bodies": [
+              "piece_a",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6317012425138858
+          },
+          {
+            "pair": [
+              "piece_a_head",
+              "ur_gripper_right_pad2"
+            ],
+            "bodies": [
+              "piece_a",
+              "ur_gripper_right_pad"
+            ],
+            "distance_mm": -0.6279408318896877
+          },
+          {
+            "pair": [
+              "piece_a_head",
+              "ur_gripper_left_pad1"
+            ],
+            "bodies": [
+              "piece_a",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.5149692930862086
+          },
+          {
+            "pair": [
+              "piece_a_head",
+              "ur_gripper_left_pad1"
+            ],
+            "bodies": [
+              "piece_a",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.48712301342856457
+          },
+          {
+            "pair": [
+              "piece_a_head",
+              "ur_gripper_left_pad2"
+            ],
+            "bodies": [
+              "piece_a",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.48818744018517235
+          },
+          {
+            "pair": [
+              "piece_a_head",
+              "ur_gripper_left_pad2"
+            ],
+            "bodies": [
+              "piece_a",
+              "ur_gripper_left_pad"
+            ],
+            "distance_mm": -0.4833879366493241
+          },
+          {
+            "pair": [
+              "piece_b_base",
+              "capture_pad"
+            ],
+            "bodies": [
+              "piece_b",
+              "board"
+            ],
+            "distance_mm": -0.006799474328299241
+          },
+          {
+            "pair": [
+              "piece_b_base",
+              "capture_pad"
+            ],
+            "bodies": [
+              "piece_b",
+              "board"
+            ],
+            "distance_mm": -0.006799474328299241
+          },
+          {
+            "pair": [
+              "piece_b_base",
+              "capture_pad"
+            ],
+            "bodies": [
+              "piece_b",
+              "board"
+            ],
+            "distance_mm": -0.006799474328299241
+          },
+          {
+            "pair": [
+              "piece_b_base",
+              "capture_pad"
+            ],
+            "bodies": [
+              "piece_b",
+              "board"
+            ],
+            "distance_mm": -0.006799474328299241
+          },
+          {
+            "pair": [
+              "piece_b_base",
+              "capture_pad"
+            ],
+            "bodies": [
+              "piece_b",
+              "board"
+            ],
+            "distance_mm": -0.006799474328299241
+          }
+        ]
+      }
+    }
+  ]
+}

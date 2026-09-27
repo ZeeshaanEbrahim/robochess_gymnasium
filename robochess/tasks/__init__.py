@@ -21,7 +21,12 @@ from robochess.tasks.t2_obstacle_pick_and_place import (
     make_t2_env,
 )
 
+from robochess.tasks.t3_capture import T3_SCENE_PATH, T3CaptureTask, make_t3_env
+
 __all__ = [
+    "T3_SCENE_PATH",
+    "T3CaptureTask",
+    "make_t3_env",
     "REACHABLE_SQUARES",
     "PickupObservation",
     "PickupReward",
