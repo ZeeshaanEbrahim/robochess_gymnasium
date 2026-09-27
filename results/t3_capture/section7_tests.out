@@ -1,0 +1,10 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: /root/projects/robochess_t3
+plugins: cov-7.1.0
+collected 35 items
+
+tests/test_t3_capture.py .................................               [ 94%]
+tests/test_t3_scene.py ..                                                [100%]
+
+============================== 35 passed in 6.38s ==============================

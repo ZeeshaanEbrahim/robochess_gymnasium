@@ -134,6 +134,7 @@ class T3CaptureTask(T1PickAndPlaceTask):
         self._captured_terms: dict[str, Any] = {}
         self._captured_removal = False
         self._off_board_piece = None
+        self._captured_offboard_exempt = False
         self._capturing_start_xyz = None
         self._last_good_t3_obs = None
 
@@ -151,6 +152,7 @@ class T3CaptureTask(T1PickAndPlaceTask):
 
     def _either_piece_off_board(self) -> bool:
         b = self._base
+        self._captured_offboard_exempt = False
         # The ordinary off-board envelope includes half a square of margin.
         # The explicit pad check prevents that overlap giving piece_a an exemption.
         if (RoboChessEnv._piece_off_board(b)
@@ -160,7 +162,20 @@ class T3CaptureTask(T1PickAndPlaceTask):
         captured_off = self._for_captured(RoboChessEnv._piece_off_board)
         pos = b.data.xpos[self._captured_bid]
         below = bool(pos[2] < b.data.xpos[self._board_bid, 2] - 0.05)
-        if below or (captured_off and not self._inside_pad(pos[:2])):
+        outside = captured_off and not self._inside_pad(pos[:2])
+        left, right, board = self._captured_contacts()
+        support = board
+        for contact in b.data.contact:
+            g1, g2 = int(contact.geom1), int(contact.geom2)
+            if ((int(b.model.geom_bodyid[g1]) == self._captured_bid
+                 and g2 in b._forbidden_geoms)
+                    or (int(b.model.geom_bodyid[g2]) == self._captured_bid
+                        and g1 in b._forbidden_geoms)):
+                support = True
+                break
+        self._captured_offboard_exempt = bool(outside and not below
+                                             and left and right and not support)
+        if below or (outside and not self._captured_offboard_exempt):
             self._off_board_piece = "piece_b"
             return True
         self._off_board_piece = None
@@ -254,6 +269,7 @@ class T3CaptureTask(T1PickAndPlaceTask):
             captured_release_position=record[:2] if record is not None else None,
             capture_zone_position=tuple(map(float, self.zone_position)),
             off_board_piece=self._off_board_piece,
+            captured_offboard_exempt=self._captured_offboard_exempt,
         )
         return info
 
@@ -281,6 +297,7 @@ class T3CaptureTask(T1PickAndPlaceTask):
         return obs, info
 
     def step(self, action: np.ndarray):
+        self._captured_offboard_exempt = False
         # Run the base normally. Its success is a candidate T1 result only;
         # the T3 wrapper owns the externally returned termination decision.
         obs, reward, _terminated, _truncated, info = self.env.step(action)

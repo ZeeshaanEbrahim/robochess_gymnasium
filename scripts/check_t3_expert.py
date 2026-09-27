@@ -3,8 +3,8 @@
 
 Interaction stages follow the two controller sequences (remove / move). The
 post-latch length is independently total minus the wrapper's stage-1 latch.
-Distances include EVERY gripper geom, including visual geoms, and every geom
-on the other piece. They are signed MuJoCo surface distances at macro-step
+Distances include collision geoms only (contype or conaffinity nonzero) on
+the gripper and other piece. They are signed MuJoCo surface distances at macro-step
 boundaries, matching the existing referee's measurement cadence.
 """
 import argparse
@@ -78,6 +78,7 @@ class Observer(gym.Wrapper):
         self.order_event=None
         self.removal_lost_event=None
         self.last_info=None
+        self.exempt_steps=[]
         b=self.unwrapped
         root=b._body_id('ur_gripper_base_mount')
         bodies=set()
@@ -87,7 +88,8 @@ class Observer(gym.Wrapper):
                 if parent==root:
                     bodies.add(body);break
                 parent=int(b.model.body_parentid[parent])
-        self.gripper_geoms=[g for g in range(b.model.ngeom) if int(b.model.geom_bodyid[g]) in bodies]
+        self.gripper_geoms=[g for g in range(b.model.ngeom) if int(b.model.geom_bodyid[g]) in bodies
+                            and (b.model.geom_contype[g] or b.model.geom_conaffinity[g])]
         assert self.gripper_geoms
 
     def begin_stage(self,stage):
@@ -95,7 +97,9 @@ class Observer(gym.Wrapper):
         bid=self.unwrapped._piece_bid if stage=='remove' else self.task._captured_bid
         self.other_bid=bid
         self.other_geoms=[g for g in range(self.unwrapped.model.ngeom)
-                          if int(self.unwrapped.model.geom_bodyid[g])==bid]
+                          if int(self.unwrapped.model.geom_bodyid[g])==bid
+                          and (self.unwrapped.model.geom_contype[g]
+                               or self.unwrapped.model.geom_conaffinity[g])]
         self.origin=self.unwrapped.data.xpos[bid].copy()
         self.metrics[stage]=dict(min_distance_mm=None,min_pair=None,min_step=None,
                                  peak_displacement_mm=0.,peak_tilt_deg=0.,other_piece='piece_a' if stage=='remove' else 'piece_b')
@@ -113,12 +117,16 @@ class Observer(gym.Wrapper):
                 bound=float(np.linalg.norm(d.geom_xpos[g]-d.geom_xpos[p])+m.geom_rbound[g]+m.geom_rbound[p])
                 distance=float(mujoco.mj_geomDistance(m,d,g,p,bound,None))*1000
                 if metric['min_distance_mm'] is None or distance<metric['min_distance_mm']:
-                    metric.update(min_distance_mm=distance,min_pair=[geom_name(b,g),geom_name(b,p)],min_step=b._elapsed_steps)
+                    metric.update(min_distance_mm=distance,min_pair=[geom_name(b,g),geom_name(b,p)],
+                                  min_step=b._elapsed_steps,min_contacts=contacts(b))
 
     def step(self,action):
         out=self.env.step(action)
         b=self.unwrapped;info=out[4]
         self.last_info=deepcopy(info)
+        if info.get('captured_offboard_exempt'):
+            self.exempt_steps.append(dict(step=b._elapsed_steps,
+                xy_m=b.data.xpos[self.task._captured_bid,:2].tolist()))
         self.lengths[self.phase]+=1
         self.measure()
         if info['stage']==1 and self.stage_1_step is None:self.stage_1_step=b._elapsed_steps
@@ -178,6 +186,7 @@ def run_pair(start,target):
                     order_event=observer.order_event,removal_lost_event=observer.removal_lost_event,
                     terminated_reason=info['terminated_reason'],off_board_piece=info['off_board_piece'],
                     order_violation=info['order_violation'],captured_removal=info['captured_removal'])
+        result['exempt_steps']=observer.exempt_steps
         if not result['success']:
             result['failure']=dict(phase=observer.phase,terminated_reason=info['terminated_reason'],
                                    expert_status='ik_failure' if exception else ('terminated' if info['terminated_reason'] else 'sequence_finished_without_success'),

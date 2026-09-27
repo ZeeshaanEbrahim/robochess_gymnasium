@@ -1,0 +1,19 @@
+{
+  "removable": 59,
+  "removal_episodes": 62,
+  "failing_squares": [
+    "h7",
+    "g8",
+    "h8"
+  ],
+  "extreme_successes": 5,
+  "combined_successes": 22,
+  "combined_episodes": 25,
+  "longest_pair": "b6\u2192a8",
+  "longest_length": 380,
+  "fit_budgets": {
+    "400": 22,
+    "500": 22,
+    "600": 22
+  }
+}

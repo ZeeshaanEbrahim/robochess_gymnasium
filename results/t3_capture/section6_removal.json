@@ -1,0 +1,3467 @@
+[
+  {
+    "square": "a1",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 127,
+    "total_length": 153,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 24,
+      "remove:close": 8,
+      "remove:lift": 18,
+      "remove:traverse": 24,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.6010363992943191,
+    "released": true,
+    "release_xy_m": [
+      0.3446549324199569,
+      0.3268113805968834
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.65493241995693,
+      "right": 45.34506758004303,
+      "near": 40.81138059688338,
+      "far": 37.188619403116576
+    },
+    "nearest_pad_edge_mm": 32.65493241995693,
+    "interactions": {
+      "min_distance_mm": 411.2548794798753,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_base"
+      ],
+      "min_step": 76,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3447421862737384,
+      0.3271241990284665
+    ]
+  },
+  {
+    "square": "b1",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 128,
+    "total_length": 153,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 7,
+      "remove:lift": 18,
+      "remove:traverse": 24,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5964223766998789,
+    "released": true,
+    "release_xy_m": [
+      0.34470667108726666,
+      0.3255122808334547
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.706671087266656,
+      "right": 45.2933289127333,
+      "near": 39.512280833454646,
+      "far": 38.48771916654531
+    },
+    "nearest_pad_edge_mm": 32.706671087266656,
+    "interactions": {
+      "min_distance_mm": 424.70970331402333,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 3,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3448139620140511,
+      0.32592118887513977
+    ]
+  },
+  {
+    "square": "c1",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 126,
+    "total_length": 152,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 26,
+      "remove:close": 8,
+      "remove:lift": 18,
+      "remove:traverse": 22,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.6019818505136332,
+    "released": true,
+    "release_xy_m": [
+      0.34450235855877287,
+      0.3252113387717878
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.50235855877287,
+      "right": 45.49764144122709,
+      "near": 39.21133877178779,
+      "far": 38.78866122821217
+    },
+    "nearest_pad_edge_mm": 32.50235855877287,
+    "interactions": {
+      "min_distance_mm": 442.4448955467375,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 3,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3445751097323211,
+      0.32543492153660547
+    ]
+  },
+  {
+    "square": "f1",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 127,
+    "total_length": 153,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 26,
+      "remove:close": 10,
+      "remove:lift": 18,
+      "remove:traverse": 21,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5941545332427411,
+    "released": true,
+    "release_xy_m": [
+      0.344822750218829,
+      0.3214764869684752
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.82275021882902,
+      "right": 45.177249781170936,
+      "near": 35.476486968475164,
+      "far": 42.52351303152479
+    },
+    "nearest_pad_edge_mm": 32.82275021882902,
+    "interactions": {
+      "min_distance_mm": 462.89395090867737,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 1,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34486627197389114,
+      0.32165666353580197
+    ]
+  },
+  {
+    "square": "g1",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 127,
+    "total_length": 152,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 10,
+      "remove:lift": 18,
+      "remove:traverse": 20,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5692993241780409,
+    "released": true,
+    "release_xy_m": [
+      0.3449666588777511,
+      0.3210726063603475
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.96665887775107,
+      "right": 45.033341122248885,
+      "near": 35.07260636034748,
+      "far": 42.92739363965248
+    },
+    "nearest_pad_edge_mm": 32.96665887775107,
+    "interactions": {
+      "min_distance_mm": 456.14578549251115,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 1,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34504154650908314,
+      0.32144206360075267
+    ]
+  },
+  {
+    "square": "h1",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 121,
+    "total_length": 147,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 24,
+      "remove:close": 8,
+      "remove:lift": 18,
+      "remove:traverse": 18,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5857987924181574,
+    "released": true,
+    "release_xy_m": [
+      0.3451391565402639,
+      0.3207405526036707
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.13915654026389,
+      "right": 44.86084345973607,
+      "near": 34.74055260367065,
+      "far": 43.25944739632931
+    },
+    "nearest_pad_edge_mm": 33.13915654026389,
+    "interactions": {
+      "min_distance_mm": 448.1713792024021,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 1,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34520852779511824,
+      0.3210648520826166
+    ]
+  },
+  {
+    "square": "a2",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 129,
+    "total_length": 154,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 24,
+      "remove:close": 10,
+      "remove:lift": 18,
+      "remove:traverse": 24,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.607957322079522,
+    "released": true,
+    "release_xy_m": [
+      0.3445824963971262,
+      0.3277981814371006
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.58249639712618,
+      "right": 45.41750360287378,
+      "near": 41.79818143710057,
+      "far": 36.20181856289939
+    },
+    "nearest_pad_edge_mm": 32.58249639712618,
+    "interactions": {
+      "min_distance_mm": 380.0797970779883,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_base"
+      ],
+      "min_step": 77,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3447802202705655,
+      0.3284214777270745
+    ]
+  },
+  {
+    "square": "b2",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 127,
+    "total_length": 153,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 9,
+      "remove:lift": 18,
+      "remove:traverse": 23,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5337749458371732,
+    "released": true,
+    "release_xy_m": [
+      0.34571402516690947,
+      0.32667582462152367
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.714025166909465,
+      "right": 44.28597483309049,
+      "near": 40.67582462152364,
+      "far": 37.32417537847632
+    },
+    "nearest_pad_edge_mm": 33.714025166909465,
+    "interactions": {
+      "min_distance_mm": 391.5819417636328,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 4,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34583957766193807,
+      0.3272082967655911
+    ]
+  },
+  {
+    "square": "c2",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 127,
+    "total_length": 153,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 10,
+      "remove:lift": 18,
+      "remove:traverse": 22,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.6192201708372647,
+    "released": true,
+    "release_xy_m": [
+      0.3445360133835339,
+      0.3257093425676606
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.5360133835339,
+      "right": 45.46398661646606,
+      "near": 39.70934256766056,
+      "far": 38.290657432339394
+    },
+    "nearest_pad_edge_mm": 32.5360133835339,
+    "interactions": {
+      "min_distance_mm": 402.7337195176297,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 4,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3445981182116379,
+      0.32590670411924016
+    ]
+  },
+  {
+    "square": "d2",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 125,
+    "total_length": 150,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 8,
+      "remove:lift": 18,
+      "remove:traverse": 21,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.6021321733228335,
+    "released": true,
+    "release_xy_m": [
+      0.34440306540406046,
+      0.3249276779646405
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.40306540406046,
+      "right": 45.5969345959395,
+      "near": 38.92767796464047,
+      "far": 39.072322035359484
+    },
+    "nearest_pad_edge_mm": 32.40306540406046,
+    "interactions": {
+      "min_distance_mm": 418.5504325171439,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 3,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.344565371808909,
+      0.3254614469439137
+    ]
+  },
+  {
+    "square": "e2",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 124,
+    "total_length": 149,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 8,
+      "remove:lift": 18,
+      "remove:traverse": 19,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5972969249868898,
+    "released": true,
+    "release_xy_m": [
+      0.34441531354423605,
+      0.3240098026897593
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.41531354423605,
+      "right": 45.584686455763915,
+      "near": 38.00980268975928,
+      "far": 39.990197310240674
+    },
+    "nearest_pad_edge_mm": 32.41531354423605,
+    "interactions": {
+      "min_distance_mm": 433.0639841431184,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 3,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3445745363086549,
+      0.3245188246798577
+    ]
+  },
+  {
+    "square": "f2",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 123,
+    "total_length": 148,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 8,
+      "remove:lift": 18,
+      "remove:traverse": 19,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5881945473085182,
+    "released": true,
+    "release_xy_m": [
+      0.3446678677621511,
+      0.32309033512059593
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.66786776215108,
+      "right": 45.332132237848874,
+      "near": 37.090335120595896,
+      "far": 40.90966487940406
+    },
+    "nearest_pad_edge_mm": 32.66786776215108,
+    "interactions": {
+      "min_distance_mm": 437.56487543731123,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 2,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34481431249051303,
+      0.3236348112700545
+    ]
+  },
+  {
+    "square": "g2",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 121,
+    "total_length": 146,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 8,
+      "remove:lift": 18,
+      "remove:traverse": 17,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5819571629237519,
+    "released": true,
+    "release_xy_m": [
+      0.34468549617523403,
+      0.3213719566871186
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.68549617523403,
+      "right": 45.31450382476593,
+      "near": 35.37195668711857,
+      "far": 42.62804331288139
+    },
+    "nearest_pad_edge_mm": 32.68549617523403,
+    "interactions": {
+      "min_distance_mm": 437.75048008073406,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 2,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34478807008095547,
+      0.3217978817122981
+    ]
+  },
+  {
+    "square": "h2",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 119,
+    "total_length": 144,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 24,
+      "remove:close": 9,
+      "remove:lift": 18,
+      "remove:traverse": 15,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5776768226415374,
+    "released": true,
+    "release_xy_m": [
+      0.344812755396863,
+      0.32183147858108496
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.81275539686301,
+      "right": 45.187244603136946,
+      "near": 35.83147858108493,
+      "far": 42.16852141891503
+    },
+    "nearest_pad_edge_mm": 32.81275539686301,
+    "interactions": {
+      "min_distance_mm": 437.58454877747755,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 2,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3449124312639298,
+      0.3222651716465529
+    ]
+  },
+  {
+    "square": "a3",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 127,
+    "total_length": 153,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 24,
+      "remove:close": 9,
+      "remove:lift": 19,
+      "remove:traverse": 24,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.6185600952456349,
+    "released": true,
+    "release_xy_m": [
+      0.3447343774398543,
+      0.32869405693269244
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.7343774398543,
+      "right": 45.26562256014566,
+      "near": 42.694056932692405,
+      "far": 35.30594306730755
+    },
+    "nearest_pad_edge_mm": 32.7343774398543,
+    "interactions": {
+      "min_distance_mm": 341.0878471950075,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_base"
+      ],
+      "min_step": 76,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34482872437976103,
+      0.32895512798359255
+    ]
+  },
+  {
+    "square": "b3",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 127,
+    "total_length": 153,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 9,
+      "remove:lift": 18,
+      "remove:traverse": 23,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.6067518828494212,
+    "released": true,
+    "release_xy_m": [
+      0.34471049186225466,
+      0.3270004588803283
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.71049186225466,
+      "right": 45.289508137745294,
+      "near": 41.000458880328274,
+      "far": 36.99954111967168
+    },
+    "nearest_pad_edge_mm": 32.71049186225466,
+    "interactions": {
+      "min_distance_mm": 353.1609747917189,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 6,
+      "peak_displacement_mm": 0.013077736027740518,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34494287060930784,
+      0.3276973359507424
+    ]
+  },
+  {
+    "square": "c3",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 124,
+    "total_length": 150,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 24,
+      "remove:close": 8,
+      "remove:lift": 18,
+      "remove:traverse": 22,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.610461958976849,
+    "released": true,
+    "release_xy_m": [
+      0.3446884605573164,
+      0.3259862695241891
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.68846055731639,
+      "right": 45.31153944268357,
+      "near": 39.98626952418904,
+      "far": 38.01373047581092
+    },
+    "nearest_pad_edge_mm": 32.68846055731639,
+    "interactions": {
+      "min_distance_mm": 364.0657434178593,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 5,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3448278439027709,
+      0.3264594384298669
+    ]
+  },
+  {
+    "square": "d3",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 124,
+    "total_length": 150,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 8,
+      "remove:lift": 18,
+      "remove:traverse": 21,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5921035182263612,
+    "released": true,
+    "release_xy_m": [
+      0.3450860659281968,
+      0.32581580710501457
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.086065928196795,
+      "right": 44.91393407180316,
+      "near": 39.815807105014535,
+      "far": 38.18419289498542
+    },
+    "nearest_pad_edge_mm": 33.086065928196795,
+    "interactions": {
+      "min_distance_mm": 381.92464552802033,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 5,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3452306087686121,
+      0.3262714163874811
+    ]
+  },
+  {
+    "square": "e3",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 124,
+    "total_length": 149,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 8,
+      "remove:lift": 18,
+      "remove:traverse": 20,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.9005114162804473,
+    "released": true,
+    "release_xy_m": [
+      0.34452673030946407,
+      0.32419120203699636
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.52673030946407,
+      "right": 45.473269690535886,
+      "near": 38.19120203699633,
+      "far": 39.80879796300363
+    },
+    "nearest_pad_edge_mm": 32.52673030946407,
+    "interactions": {
+      "min_distance_mm": 399.95112077519485,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 4,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3447729010568031,
+      0.3247664954071911
+    ]
+  },
+  {
+    "square": "f3",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 123,
+    "total_length": 148,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 24,
+      "remove:close": 9,
+      "remove:lift": 18,
+      "remove:traverse": 19,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.9007894923338533,
+    "released": true,
+    "release_xy_m": [
+      0.3445498407272414,
+      0.3234621686176962
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.549840727241374,
+      "right": 45.45015927275858,
+      "near": 37.46216861769619,
+      "far": 40.53783138230377
+    },
+    "nearest_pad_edge_mm": 32.549840727241374,
+    "interactions": {
+      "min_distance_mm": 413.30565316198283,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 3,
+      "peak_displacement_mm": 0.013077736027740518,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3447719445762689,
+      0.32399739314109666
+    ]
+  },
+  {
+    "square": "g3",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 122,
+    "total_length": 147,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 25,
+      "remove:close": 9,
+      "remove:lift": 18,
+      "remove:traverse": 17,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8983258884526224,
+    "released": true,
+    "release_xy_m": [
+      0.3446503829306352,
+      0.3230860777111836
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.65038293063521,
+      "right": 45.34961706936475,
+      "near": 37.08607771118355,
+      "far": 40.91392228881641
+    },
+    "nearest_pad_edge_mm": 32.65038293063521,
+    "interactions": {
+      "min_distance_mm": 421.9193251099592,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 2,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3448803900978305,
+      0.32362990667927916
+    ]
+  },
+  {
+    "square": "h3",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 119,
+    "total_length": 144,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 24,
+      "remove:close": 9,
+      "remove:lift": 19,
+      "remove:traverse": 15,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8972023534415952,
+    "released": true,
+    "release_xy_m": [
+      0.3447428256482293,
+      0.3231742317531167
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.74282564822928,
+      "right": 45.25717435177068,
+      "near": 37.17423175311668,
+      "far": 40.82576824688328
+    },
+    "nearest_pad_edge_mm": 32.74282564822928,
+    "interactions": {
+      "min_distance_mm": 425.5621578531313,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 2,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3449722822444814,
+      0.32372468014172645
+    ]
+  },
+  {
+    "square": "a4",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 133,
+    "total_length": 158,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 28,
+      "remove:close": 9,
+      "remove:lift": 20,
+      "remove:traverse": 24,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8923699189151701,
+    "released": true,
+    "release_xy_m": [
+      0.34473236181542793,
+      0.3282548299205733
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.732361815427936,
+      "right": 45.26763818457202,
+      "near": 42.25482992057328,
+      "far": 35.74517007942668
+    },
+    "nearest_pad_edge_mm": 32.732361815427936,
+    "interactions": {
+      "min_distance_mm": 281.95085398632904,
+      "min_pair": [
+        "geom_34@ur_gripper_base",
+        "piece_a_head"
+      ],
+      "min_step": 59,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3450483993204685,
+      0.32899644472745704
+    ]
+  },
+  {
+    "square": "b4",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 128,
+    "total_length": 153,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 25,
+      "remove:close": 9,
+      "remove:lift": 19,
+      "remove:traverse": 23,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8929216561121001,
+    "released": true,
+    "release_xy_m": [
+      0.3446984484929585,
+      0.3276318396913209
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.6984484929585,
+      "right": 45.30155150704146,
+      "near": 41.63183969132089,
+      "far": 36.368160308679066
+    },
+    "nearest_pad_edge_mm": 32.6984484929585,
+    "interactions": {
+      "min_distance_mm": 286.7284262706941,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_base"
+      ],
+      "min_step": 50,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34500095156687133,
+      0.32832209248572763
+    ]
+  },
+  {
+    "square": "c4",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 128,
+    "total_length": 153,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 25,
+      "remove:close": 9,
+      "remove:lift": 19,
+      "remove:traverse": 23,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5865394101800536,
+    "released": true,
+    "release_xy_m": [
+      0.3448720145733967,
+      0.3264017084784122
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.872014573396726,
+      "right": 45.12798542660323,
+      "near": 40.40170847841218,
+      "far": 37.59829152158778
+    },
+    "nearest_pad_edge_mm": 32.872014573396726,
+    "interactions": {
+      "min_distance_mm": 300.90661053290705,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_base"
+      ],
+      "min_step": 47,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3451369690443766,
+      0.32722805432303126
+    ]
+  },
+  {
+    "square": "d4",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 127,
+    "total_length": 152,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 25,
+      "remove:close": 9,
+      "remove:lift": 19,
+      "remove:traverse": 22,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5800126142936346,
+    "released": true,
+    "release_xy_m": [
+      0.34495619852949594,
+      0.32590031581517553
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.956198529495936,
+      "right": 45.04380147050402,
+      "near": 39.9003158151755,
+      "far": 38.099684184824454
+    },
+    "nearest_pad_edge_mm": 32.956198529495936,
+    "interactions": {
+      "min_distance_mm": 330.4497135666398,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_base"
+      ],
+      "min_step": 47,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3452061174560456,
+      0.3266510093535988
+    ]
+  },
+  {
+    "square": "e4",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 126,
+    "total_length": 151,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 25,
+      "remove:close": 9,
+      "remove:lift": 19,
+      "remove:traverse": 21,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5751904963164911,
+    "released": true,
+    "release_xy_m": [
+      0.34491592436424934,
+      0.32514833510351904
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.915924364249335,
+      "right": 45.08407563575062,
+      "near": 39.148335103519,
+      "far": 38.851664896480955
+    },
+    "nearest_pad_edge_mm": 32.915924364249335,
+    "interactions": {
+      "min_distance_mm": 367.66988109374927,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 5,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34516390586915613,
+      0.32590180573549216
+    ]
+  },
+  {
+    "square": "f4",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 123,
+    "total_length": 149,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 25,
+      "remove:close": 9,
+      "remove:lift": 19,
+      "remove:traverse": 19,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8953693946376351,
+    "released": true,
+    "release_xy_m": [
+      0.34472370894699933,
+      0.324248091542551
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.72370894699933,
+      "right": 45.27629105300063,
+      "near": 38.24809154255099,
+      "far": 39.75190845744897
+    },
+    "nearest_pad_edge_mm": 32.72370894699933,
+    "interactions": {
+      "min_distance_mm": 389.4889663289663,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 4,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34497703636486954,
+      0.3248455835236618
+    ]
+  },
+  {
+    "square": "g4",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 123,
+    "total_length": 148,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 25,
+      "remove:close": 9,
+      "remove:lift": 19,
+      "remove:traverse": 18,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8914976605839398,
+    "released": true,
+    "release_xy_m": [
+      0.3449355806166608,
+      0.3240195948728572
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.9355806166608,
+      "right": 45.06441938333916,
+      "near": 38.01959487285716,
+      "far": 39.980405127142795
+    },
+    "nearest_pad_edge_mm": 32.9355806166608,
+    "interactions": {
+      "min_distance_mm": 404.2348012855933,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 3,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34523728533599796,
+      0.3247608107506275
+    ]
+  },
+  {
+    "square": "h4",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 126,
+    "total_length": 151,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 28,
+      "remove:close": 9,
+      "remove:lift": 20,
+      "remove:traverse": 18,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8839098584341176,
+    "released": true,
+    "release_xy_m": [
+      0.3451584307939231,
+      0.32338267383109137
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.15843079392311,
+      "right": 44.84156920607685,
+      "near": 37.38267383109134,
+      "far": 40.61732616890862
+    },
+    "nearest_pad_edge_mm": 33.15843079392311,
+    "interactions": {
+      "min_distance_mm": 416.06977334152333,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 3,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34549030443090006,
+      0.3242203471598287
+    ]
+  },
+  {
+    "square": "a5",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 141,
+    "total_length": 166,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 32,
+      "remove:close": 9,
+      "remove:lift": 25,
+      "remove:traverse": 24,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8884919776007694,
+    "released": true,
+    "release_xy_m": [
+      0.344871600883283,
+      0.3288007694809298
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.871600883283,
+      "right": 45.128399116716956,
+      "near": 42.80076948092976,
+      "far": 35.1992305190702
+    },
+    "nearest_pad_edge_mm": 32.871600883283,
+    "interactions": {
+      "min_distance_mm": 205.7328803319886,
+      "min_pair": [
+        "ur_gripper_right_pad1",
+        "piece_a_base"
+      ],
+      "min_step": 60,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34523862727603216,
+      0.32961428674971943
+    ]
+  },
+  {
+    "square": "b5",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 139,
+    "total_length": 164,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 31,
+      "remove:close": 9,
+      "remove:lift": 22,
+      "remove:traverse": 23,
+      "remove:place": 21,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5840726403945062,
+    "released": true,
+    "release_xy_m": [
+      0.34513826265991326,
+      0.32728516113764605
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.138262659913266,
+      "right": 44.86173734008669,
+      "near": 41.28516113764602,
+      "far": 36.714838862353936
+    },
+    "nearest_pad_edge_mm": 33.138262659913266,
+    "interactions": {
+      "min_distance_mm": 208.3275689996243,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_base"
+      ],
+      "min_step": 53,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3454161931655627,
+      0.32800092016443144
+    ]
+  },
+  {
+    "square": "c5",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 136,
+    "total_length": 161,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 30,
+      "remove:close": 9,
+      "remove:lift": 21,
+      "remove:traverse": 23,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5654815859765794,
+    "released": true,
+    "release_xy_m": [
+      0.3451420911741438,
+      0.3264303387357712
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.14209117414379,
+      "right": 44.857908825856164,
+      "near": 40.43033873577117,
+      "far": 37.569661264228785
+    },
+    "nearest_pad_edge_mm": 33.14209117414379,
+    "interactions": {
+      "min_distance_mm": 228.10275762067928,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_base"
+      ],
+      "min_step": 52,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3455431183401076,
+      0.3273921375578346
+    ]
+  },
+  {
+    "square": "d5",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 131,
+    "total_length": 156,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 29,
+      "remove:close": 9,
+      "remove:lift": 20,
+      "remove:traverse": 22,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5688698792568614,
+    "released": true,
+    "release_xy_m": [
+      0.3449694474375798,
+      0.3257330954417671
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.96944743757979,
+      "right": 45.03055256242017,
+      "near": 39.73309544176706,
+      "far": 38.266904558232895
+    },
+    "nearest_pad_edge_mm": 32.96944743757979,
+    "interactions": {
+      "min_distance_mm": 264.8214569541739,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_base"
+      ],
+      "min_step": 51,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34530615507244145,
+      0.3266642136752024
+    ]
+  },
+  {
+    "square": "e5",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 132,
+    "total_length": 157,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 29,
+      "remove:close": 9,
+      "remove:lift": 20,
+      "remove:traverse": 21,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8878718449365497,
+    "released": true,
+    "release_xy_m": [
+      0.3450649859663629,
+      0.32516218476779835
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.064985966362926,
+      "right": 44.93501403363703,
+      "near": 39.162184767798315,
+      "far": 38.83781523220164
+    },
+    "nearest_pad_edge_mm": 33.064985966362926,
+    "interactions": {
+      "min_distance_mm": 316.16440322991485,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_base"
+      ],
+      "min_step": 51,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34544642207385323,
+      0.3260471592741828
+    ]
+  },
+  {
+    "square": "f5",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 131,
+    "total_length": 156,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 30,
+      "remove:close": 9,
+      "remove:lift": 21,
+      "remove:traverse": 20,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.886262150968542,
+    "released": true,
+    "release_xy_m": [
+      0.34496875844975383,
+      0.32451963249147714
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.968758449753835,
+      "right": 45.03124155024613,
+      "near": 38.519632491477104,
+      "far": 39.48036750852285
+    },
+    "nearest_pad_edge_mm": 32.968758449753835,
+    "interactions": {
+      "min_distance_mm": 363.22114683653984,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 5,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3453596516308306,
+      0.32539406808873206
+    ]
+  },
+  {
+    "square": "g5",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 136,
+    "total_length": 160,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 31,
+      "remove:close": 9,
+      "remove:lift": 22,
+      "remove:traverse": 20,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.883576905866823,
+    "released": true,
+    "release_xy_m": [
+      0.3452880990856949,
+      0.3240179590560387
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.28809908569491,
+      "right": 44.71190091430505,
+      "near": 38.01795905603866,
+      "far": 39.982040943961294
+    },
+    "nearest_pad_edge_mm": 33.28809908569491,
+    "interactions": {
+      "min_distance_mm": 386.26641725795355,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 4,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3457350286471575,
+      0.32508468370773697
+    ]
+  },
+  {
+    "square": "h5",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 139,
+    "total_length": 163,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 32,
+      "remove:close": 9,
+      "remove:lift": 25,
+      "remove:traverse": 21,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8807630779705811,
+    "released": true,
+    "release_xy_m": [
+      0.3454629207033755,
+      0.32430402136339215
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.462920703375474,
+      "right": 44.53707929662448,
+      "near": 38.30402136339212,
+      "far": 39.69597863660784
+    },
+    "nearest_pad_edge_mm": 33.462920703375474,
+    "interactions": {
+      "min_distance_mm": 401.7812110573497,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 3,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3459496517904148,
+      0.32552110622238506
+    ]
+  },
+  {
+    "square": "a6",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 180,
+    "total_length": 205,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 35,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 24,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.5658151484158047,
+    "released": true,
+    "release_xy_m": [
+      0.3449775381703738,
+      0.3308881682560948
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.9775381703738,
+      "right": 45.02246182962616,
+      "near": 44.888168256094765,
+      "far": 33.1118317439052
+    },
+    "nearest_pad_edge_mm": 32.9775381703738,
+    "interactions": {
+      "min_distance_mm": 128.34765031174413,
+      "min_pair": [
+        "ur_gripper_right_pad1",
+        "piece_a_base"
+      ],
+      "min_step": 62,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935120995126968,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3454610821800838,
+      0.33199428340474674
+    ]
+  },
+  {
+    "square": "b6",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 142,
+    "total_length": 167,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 35,
+      "remove:close": 9,
+      "remove:lift": 25,
+      "remove:traverse": 23,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8857457876484398,
+    "released": true,
+    "release_xy_m": [
+      0.34486687252770803,
+      0.3294974192588444
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.86687252770803,
+      "right": 45.133127472291925,
+      "near": 43.497419258844374,
+      "far": 34.50258074115558
+    },
+    "nearest_pad_edge_mm": 32.86687252770803,
+    "interactions": {
+      "min_distance_mm": 132.18483392459086,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_base"
+      ],
+      "min_step": 56,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34525236053269415,
+      0.3303995628848018
+    ]
+  },
+  {
+    "square": "c6",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 142,
+    "total_length": 167,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 35,
+      "remove:close": 9,
+      "remove:lift": 25,
+      "remove:traverse": 23,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8873417553436624,
+    "released": true,
+    "release_xy_m": [
+      0.34494987982218744,
+      0.3283951160567651
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.94987982218744,
+      "right": 45.050120177812516,
+      "near": 42.39511605676505,
+      "far": 35.60488394323491
+    },
+    "nearest_pad_edge_mm": 32.94987982218744,
+    "interactions": {
+      "min_distance_mm": 159.50649622594707,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_head"
+      ],
+      "min_step": 56,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.345325953804505,
+      0.329275739609378
+    ]
+  },
+  {
+    "square": "d6",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 141,
+    "total_length": 166,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 35,
+      "remove:close": 9,
+      "remove:lift": 25,
+      "remove:traverse": 22,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.885319888177416,
+    "released": true,
+    "release_xy_m": [
+      0.3449986778098011,
+      0.3272925679312103
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.998677809801094,
+      "right": 45.00132219019887,
+      "near": 41.29256793121028,
+      "far": 36.70743206878968
+    },
+    "nearest_pad_edge_mm": 32.998677809801094,
+    "interactions": {
+      "min_distance_mm": 208.8553677991409,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_head"
+      ],
+      "min_step": 56,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3455136456691186,
+      0.3284447607656979
+    ]
+  },
+  {
+    "square": "e6",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 140,
+    "total_length": 165,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 35,
+      "remove:close": 9,
+      "remove:lift": 25,
+      "remove:traverse": 21,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8843399471255564,
+    "released": true,
+    "release_xy_m": [
+      0.34499255409929,
+      0.32674499479382546
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.992554099290025,
+      "right": 45.00744590070993,
+      "near": 40.74499479382543,
+      "far": 37.25500520617453
+    },
+    "nearest_pad_edge_mm": 32.992554099290025,
+    "interactions": {
+      "min_distance_mm": 270.07425645462257,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_base"
+      ],
+      "min_step": 46,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3454451336870309,
+      0.3277645957805611
+    ]
+  },
+  {
+    "square": "f6",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 141,
+    "total_length": 166,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 35,
+      "remove:close": 9,
+      "remove:lift": 25,
+      "remove:traverse": 22,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.883085156216934,
+    "released": true,
+    "release_xy_m": [
+      0.34521920164535147,
+      0.32654240026788983
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.21920164535147,
+      "right": 44.78079835464849,
+      "near": 40.5424002678898,
+      "far": 37.45759973211016
+    },
+    "nearest_pad_edge_mm": 33.21920164535147,
+    "interactions": {
+      "min_distance_mm": 336.83713736579574,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_base"
+      ],
+      "min_step": 36,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935021219055453,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3456638346778048,
+      0.32757224628451737
+    ]
+  },
+  {
+    "square": "g6",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 179,
+    "total_length": 203,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 35,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 22,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8796559283570371,
+    "released": true,
+    "release_xy_m": [
+      0.34545857939082225,
+      0.3263450550445472
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.45857939082225,
+      "right": 44.541420609177706,
+      "near": 40.34505504454716,
+      "far": 37.6549449554528
+    },
+    "nearest_pad_edge_mm": 33.45857939082225,
+    "interactions": {
+      "min_distance_mm": 369.06998521526543,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 5,
+      "peak_displacement_mm": 0.013077736027740518,
+      "peak_tilt_deg": 0.0025935120995126968,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.345991891981709,
+      0.327605571256347
+    ]
+  },
+  {
+    "square": "h6",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 181,
+    "total_length": 205,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 35,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 23,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8559033249034842,
+    "released": true,
+    "release_xy_m": [
+      0.3458058821717436,
+      0.32652862473281663
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.805882171743576,
+      "right": 44.19411782825639,
+      "near": 40.528624732816596,
+      "far": 37.47137526718336
+    },
+    "nearest_pad_edge_mm": 33.805882171743576,
+    "interactions": {
+      "min_distance_mm": 391.5066316754894,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 4,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935120995126968,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34655404372723797,
+      0.3287585861027466
+    ]
+  },
+  {
+    "square": "a7",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 180,
+    "total_length": 204,
+    "phase_lengths": {
+      "remove:approach": 20,
+      "remove:descend": 34,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 25,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8833462011521576,
+    "released": true,
+    "release_xy_m": [
+      0.34505017473243177,
+      0.33248106481727085
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.05017473243177,
+      "right": 44.94982526756819,
+      "near": 46.48106481727082,
+      "far": 31.518935182729134
+    },
+    "nearest_pad_edge_mm": 31.518935182729134,
+    "interactions": {
+      "min_distance_mm": 51.226081376412296,
+      "min_pair": [
+        "ur_gripper_right_pad1",
+        "piece_a_base"
+      ],
+      "min_step": 60,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935120995126968,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34548707782434346,
+      0.333453154740012
+    ]
+  },
+  {
+    "square": "b7",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 178,
+    "total_length": 202,
+    "phase_lengths": {
+      "remove:approach": 20,
+      "remove:descend": 34,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 24,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8804724524130725,
+    "released": true,
+    "release_xy_m": [
+      0.3450708869485633,
+      0.3309749906864361
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.070886948563306,
+      "right": 44.92911305143665,
+      "near": 44.974990686436065,
+      "far": 33.02500931356389
+    },
+    "nearest_pad_edge_mm": 33.02500931356389,
+    "interactions": {
+      "min_distance_mm": 58.30807389503429,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_base"
+      ],
+      "min_step": 54,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935120995126968,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34565743633483803,
+      0.33236907490561757
+    ]
+  },
+  {
+    "square": "c7",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 180,
+    "total_length": 203,
+    "phase_lengths": {
+      "remove:approach": 20,
+      "remove:descend": 34,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 24,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8626158937444783,
+    "released": true,
+    "release_xy_m": [
+      0.34527189806992314,
+      0.32942650640101223
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.27189806992315,
+      "right": 44.72810193007681,
+      "near": 43.4265064010122,
+      "far": 34.57349359898776
+    },
+    "nearest_pad_edge_mm": 33.27189806992315,
+    "interactions": {
+      "min_distance_mm": 102.03284697704389,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_head"
+      ],
+      "min_step": 45,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935120995126968,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34581295589107053,
+      0.33175843427779395
+    ]
+  },
+  {
+    "square": "d7",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 179,
+    "total_length": 203,
+    "phase_lengths": {
+      "remove:approach": 20,
+      "remove:descend": 34,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 24,
+      "remove:place": 19,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8575812237209268,
+    "released": true,
+    "release_xy_m": [
+      0.34538436778413373,
+      0.3289824249538693
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.38436778413373,
+      "right": 44.61563221586623,
+      "near": 42.982424953869284,
+      "far": 35.01757504613068
+    },
+    "nearest_pad_edge_mm": 33.38436778413373,
+    "interactions": {
+      "min_distance_mm": 167.84020358313614,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_head"
+      ],
+      "min_step": 44,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935120995126968,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34607973297968037,
+      0.33137731185272035
+    ]
+  },
+  {
+    "square": "e7",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 179,
+    "total_length": 201,
+    "phase_lengths": {
+      "remove:approach": 20,
+      "remove:descend": 34,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 24,
+      "remove:place": 17,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8522795512443393,
+    "released": true,
+    "release_xy_m": [
+      0.3455950192749182,
+      0.33000418266473364
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.5950192749182,
+      "right": 44.40498072508176,
+      "near": 44.004182664733605,
+      "far": 33.99581733526635
+    },
+    "nearest_pad_edge_mm": 33.5950192749182,
+    "interactions": {
+      "min_distance_mm": 237.65819199710938,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_base"
+      ],
+      "min_step": 34,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935120995126968,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.346956099303717,
+      0.33321105874513207
+    ]
+  },
+  {
+    "square": "f7",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 179,
+    "total_length": 201,
+    "phase_lengths": {
+      "remove:approach": 20,
+      "remove:descend": 34,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 24,
+      "remove:place": 17,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8408888809322557,
+    "released": true,
+    "release_xy_m": [
+      0.3457508058249697,
+      0.32998998892630865
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.750805824969696,
+      "right": 44.24919417503026,
+      "near": 43.98998892630862,
+      "far": 34.01001107369134
+    },
+    "nearest_pad_edge_mm": 33.750805824969696,
+    "interactions": {
+      "min_distance_mm": 310.55668101053857,
+      "min_pair": [
+        "geom_50@ur_gripper_left_coupler",
+        "piece_a_base"
+      ],
+      "min_step": 34,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935120995126968,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3469812283061185,
+      0.3333330521633727
+    ]
+  },
+  {
+    "square": "g7",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 179,
+    "total_length": 201,
+    "phase_lengths": {
+      "remove:approach": 20,
+      "remove:descend": 34,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 24,
+      "remove:place": 17,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8447418499903936,
+    "released": true,
+    "release_xy_m": [
+      0.34580918533185545,
+      0.32997695366051816
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.80918533185545,
+      "right": 44.190814668144505,
+      "near": 43.97695366051813,
+      "far": 34.02304633948183
+    },
+    "nearest_pad_edge_mm": 33.80918533185545,
+    "interactions": {
+      "min_distance_mm": 354.70587830462375,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 5,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935120995126968,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3470496881798238,
+      0.33326971125674537
+    ]
+  },
+  {
+    "square": "h7",
+    "parked": "a8",
+    "stage_1_reached": false,
+    "stage_1_step": null,
+    "total_length": 128,
+    "phase_lengths": {
+      "remove:approach": 20,
+      "remove:descend": 34,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 4
+    },
+    "final_phase": "remove:traverse",
+    "release_height_mm": 72.0531074351538,
+    "released": false,
+    "release_xy_m": [
+      0.35260865605923764,
+      0.504060285271443
+    ],
+    "pad_edge_distances_mm": {
+      "left": 40.60865605923764,
+      "right": 37.391343940762326,
+      "near": 218.06028527144295,
+      "far": -140.06028527144298
+    },
+    "nearest_pad_edge_mm": -140.06028527144298,
+    "interactions": {
+      "min_distance_mm": 382.31978670836816,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 4,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": "piece_off_board",
+    "off_board_piece": "piece_b",
+    "final_carried_xy_m": [
+      0.35260865605923764,
+      0.504060285271443
+    ],
+    "failure": {
+      "phase": "remove:traverse",
+      "terminated_reason": "piece_off_board",
+      "exception": null,
+      "referee_contact_pairs": [],
+      "active_contacts": [
+        {
+          "pair": [
+            "piece_b_stem",
+            "ur_gripper_right_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.06925237942798941
+        },
+        {
+          "pair": [
+            "piece_b_stem",
+            "ur_gripper_right_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.06925237942798941
+        },
+        {
+          "pair": [
+            "piece_b_stem",
+            "ur_gripper_right_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.06925237942798941
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.6139397602866679
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.5963529424172689
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.5989975819998723
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.563817930903019
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.5340154512617421
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.5311307120995489
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.5312027252334546
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.5257758924586998
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.006795014197848064
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.006795014197848064
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.006795014197848064
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.006795014197848064
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.006795014197848064
+        }
+      ],
+      "carried_xy_m": [
+        0.35260865605923764,
+        0.504060285271443
+      ]
+    }
+  },
+  {
+    "square": "a8",
+    "parked": "b8",
+    "stage_1_reached": true,
+    "stage_1_step": 198,
+    "total_length": 221,
+    "phase_lengths": {
+      "remove:approach": 24,
+      "remove:descend": 45,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 26,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.867051809397057,
+    "released": true,
+    "release_xy_m": [
+      0.3450923298386143,
+      0.3339218871197098
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.09232983861432,
+      "right": 44.90767016138564,
+      "near": 47.921887119709794,
+      "far": 30.078112880290163
+    },
+    "nearest_pad_edge_mm": 30.078112880290163,
+    "interactions": {
+      "min_distance_mm": -0.018232699322972765,
+      "min_pair": [
+        "geom_42@ur_gripper_right_follower",
+        "piece_a_head"
+      ],
+      "min_step": 48,
+      "peak_displacement_mm": 0.13291537382750918,
+      "peak_tilt_deg": 0.6104158176831942,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3457914813865906,
+      0.33558647596895613
+    ]
+  },
+  {
+    "square": "b8",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 198,
+    "total_length": 220,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 45,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 26,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.866226469223963,
+    "released": true,
+    "release_xy_m": [
+      0.3451285760715096,
+      0.3328709241375136
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.1285760715096,
+      "right": 44.87142392849036,
+      "near": 46.87092413751359,
+      "far": 31.129075862486367
+    },
+    "nearest_pad_edge_mm": 31.129075862486367,
+    "interactions": {
+      "min_distance_mm": 2.031602727059623,
+      "min_pair": [
+        "geom_54@ur_gripper_left_follower",
+        "piece_a_head"
+      ],
+      "min_step": 48,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025935239039560935,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3457334492473947,
+      0.3343247130435645
+    ]
+  },
+  {
+    "square": "c8",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 195,
+    "total_length": 218,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 45,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 25,
+      "remove:place": 20,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8732773291684204,
+    "released": true,
+    "release_xy_m": [
+      0.3449928305973321,
+      0.33121548325739386
+    ],
+    "pad_edge_distances_mm": {
+      "left": 32.9928305973321,
+      "right": 45.007169402667856,
+      "near": 45.21548325739383,
+      "far": 32.78451674260613
+    },
+    "nearest_pad_edge_mm": 32.78451674260613,
+    "interactions": {
+      "min_distance_mm": 74.53679103052909,
+      "min_pair": [
+        "geom_54@ur_gripper_left_follower",
+        "piece_a_head"
+      ],
+      "min_step": 47,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935239039560935,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3455167119379681,
+      0.33341240153141294
+    ]
+  },
+  {
+    "square": "d8",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 190,
+    "total_length": 215,
+    "phase_lengths": {
+      "remove:approach": 21,
+      "remove:descend": 45,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 25,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8783107526484368,
+    "released": true,
+    "release_xy_m": [
+      0.34503620139923313,
+      0.32991140167176325
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.036201399233136,
+      "right": 44.96379860076682,
+      "near": 43.911401671763215,
+      "far": 34.08859832823674
+    },
+    "nearest_pad_edge_mm": 33.036201399233136,
+    "interactions": {
+      "min_distance_mm": 149.42479622037848,
+      "min_pair": [
+        "geom_54@ur_gripper_left_follower",
+        "piece_a_base"
+      ],
+      "min_step": 46,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935239039560935,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3454049672070445,
+      0.3307800250582531
+    ]
+  },
+  {
+    "square": "e8",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 192,
+    "total_length": 216,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 45,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 25,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.883637503586221,
+    "released": true,
+    "release_xy_m": [
+      0.3451612764412043,
+      0.3290950247913429
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.161276441204315,
+      "right": 44.83872355879564,
+      "near": 43.095024791342865,
+      "far": 34.9049752086571
+    },
+    "nearest_pad_edge_mm": 33.161276441204315,
+    "interactions": {
+      "min_distance_mm": 224.66812962177275,
+      "min_pair": [
+        "geom_54@ur_gripper_left_follower",
+        "piece_a_base"
+      ],
+      "min_step": 47,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935239039560935,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.3455656354480392,
+      0.3300518744994255
+    ]
+  },
+  {
+    "square": "f8",
+    "parked": "a8",
+    "stage_1_reached": true,
+    "stage_1_step": 192,
+    "total_length": 216,
+    "phase_lengths": {
+      "remove:approach": 22,
+      "remove:descend": 45,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 25,
+      "remove:place": 18,
+      "remove:release": 17,
+      "remove:retreat": 19
+    },
+    "final_phase": "remove:retreat",
+    "release_height_mm": -0.8843623757848196,
+    "released": true,
+    "release_xy_m": [
+      0.3451795246109593,
+      0.32847480042180704
+    ],
+    "pad_edge_distances_mm": {
+      "left": 33.1795246109593,
+      "right": 44.82047538904066,
+      "near": 42.47480042180701,
+      "far": 35.52519957819295
+    },
+    "nearest_pad_edge_mm": 33.1795246109593,
+    "interactions": {
+      "min_distance_mm": 300.7826993920993,
+      "min_pair": [
+        "geom_54@ur_gripper_left_follower",
+        "piece_a_base"
+      ],
+      "min_step": 47,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025935239039560935,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": null,
+    "off_board_piece": null,
+    "final_carried_xy_m": [
+      0.34551535475236855,
+      0.32930439591710775
+    ]
+  },
+  {
+    "square": "g8",
+    "parked": "a8",
+    "stage_1_reached": false,
+    "stage_1_step": null,
+    "total_length": 144,
+    "phase_lengths": {
+      "remove:approach": 23,
+      "remove:descend": 45,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 6
+    },
+    "final_phase": "remove:traverse",
+    "release_height_mm": 73.58878123753686,
+    "released": false,
+    "release_xy_m": [
+      0.35450535804532163,
+      0.4759572333777127
+    ],
+    "pad_edge_distances_mm": {
+      "left": 42.50535804532163,
+      "right": 35.49464195467833,
+      "near": 189.95723337771264,
+      "far": -111.95723337771268
+    },
+    "nearest_pad_edge_mm": -111.95723337771268,
+    "interactions": {
+      "min_distance_mm": 349.5052269266127,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 6,
+      "peak_displacement_mm": 0.013077736027629497,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": "piece_off_board",
+    "off_board_piece": "piece_b",
+    "final_carried_xy_m": [
+      0.35450535804532163,
+      0.4759572333777127
+    ],
+    "failure": {
+      "phase": "remove:traverse",
+      "terminated_reason": "piece_off_board",
+      "exception": null,
+      "referee_contact_pairs": [],
+      "active_contacts": [
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.6023046067719587
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.5839528013590871
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.5782786696898311
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.5782786696898311
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.5696877553109936
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.5309297879008967
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.5254160207989605
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.5254160207989605
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.006765463392507535
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.006765463392507535
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.006765463392507535
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.006765463392507535
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.006765463392507535
+        }
+      ],
+      "carried_xy_m": [
+        0.35450535804532163,
+        0.4759572333777127
+      ]
+    }
+  },
+  {
+    "square": "h8",
+    "parked": "a8",
+    "stage_1_reached": false,
+    "stage_1_step": null,
+    "total_length": 142,
+    "phase_lengths": {
+      "remove:approach": 24,
+      "remove:descend": 45,
+      "remove:close": 45,
+      "remove:lift": 25,
+      "remove:traverse": 3
+    },
+    "final_phase": "remove:traverse",
+    "release_height_mm": 65.59100127277017,
+    "released": false,
+    "release_xy_m": [
+      0.35532833677229086,
+      0.6030091425484359
+    ],
+    "pad_edge_distances_mm": {
+      "left": 43.32833677229087,
+      "right": 34.67166322770909,
+      "near": 317.0091425484358,
+      "far": -239.00914254843585
+    },
+    "nearest_pad_edge_mm": -239.00914254843585,
+    "interactions": {
+      "min_distance_mm": 381.7655557077514,
+      "min_pair": [
+        "ur_gripper_left_pad1",
+        "piece_a_head"
+      ],
+      "min_step": 4,
+      "peak_displacement_mm": 0.01307773602774052,
+      "peak_tilt_deg": 0.0025934908794852983,
+      "other_piece": "piece_a"
+    },
+    "terminated_reason": "piece_off_board",
+    "off_board_piece": "piece_b",
+    "final_carried_xy_m": [
+      0.35532833677229086,
+      0.6030091425484359
+    ],
+    "failure": {
+      "phase": "remove:traverse",
+      "terminated_reason": "piece_off_board",
+      "exception": null,
+      "referee_contact_pairs": [],
+      "active_contacts": [
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.6710753421465664
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.6501315420169504
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.6168586501218709
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_right_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_right_pad"
+          ],
+          "distance_mm": -0.6168586501218709
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.5342113279833937
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad1"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.498537705166115
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.4659056807674519
+        },
+        {
+          "pair": [
+            "piece_b_head",
+            "ur_gripper_left_pad2"
+          ],
+          "bodies": [
+            "piece_b",
+            "ur_gripper_left_pad"
+          ],
+          "distance_mm": -0.4659056807674519
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.007719172366858371
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.007719172366858371
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.007719172366858371
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.007719172366858371
+        },
+        {
+          "pair": [
+            "piece_a_base",
+            "board_slab"
+          ],
+          "bodies": [
+            "piece_a",
+            "board"
+          ],
+          "distance_mm": -0.007719172366858371
+        }
+      ],
+      "carried_xy_m": [
+        0.35532833677229086,
+        0.6030091425484359
+      ]
+    }
+  }
+]

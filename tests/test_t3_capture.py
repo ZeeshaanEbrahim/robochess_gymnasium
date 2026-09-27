@@ -35,7 +35,8 @@ def snapshot(env):
     mujoco.mj_getState(b.model, b.data, state, mujoco.mjtState.mjSTATE_INTEGRATION)
     fields = ('stage', 'order_violation', '_order_reason', '_captured_ever_held',
               '_captured_release_record', '_captured_streaks', '_captured_terms',
-              '_captured_removal', '_off_board_piece', '_capturing_start_xyz', '_last_good_t3_obs')
+              '_captured_removal', '_off_board_piece', '_captured_offboard_exempt',
+              '_capturing_start_xyz', '_last_good_t3_obs')
     base_fields = ('_elapsed_steps', '_ever_held', '_release_record', '_contact_flags',
                    '_piece_ang_settled_streak', '_piece_lin_settled_streak', '_piece_upright_streak',
                    '_last_good_obs', '_arm_target')
@@ -443,3 +444,53 @@ def test_physical_pinched_while_resting(positive):
                          height_mm=terms['height_mm'],released=terms['released'],removal=info['captured_removal'],stage=info['stage'])
         (ROOT/'results/t3_capture/section3b_pinched_resting.json').write_text(json.dumps(measurement,indent=2))
         print('physical pinched resting:',measurement)
+
+
+def test_physical_held_capture_crosses_edge_and_succeeds():
+    """Physical: unchanged chained joint expert, formerly failing h8 removal."""
+    from scripts.check_t3_expert import run_pair
+    result = run_pair('g6', 'h8')
+    assert result['exempt_steps']
+    assert result['success'] and result['terminated_reason'] == 'success'
+    assert result['captured_removal']
+
+
+def test_captured_released_outside_board_over_table(task):
+    """Constructed airborne release outside both allowed footprints."""
+    put_piece(task, True, [0.45, 0.52, 0.82])
+    _, _, terminated, truncated, info = quiet_step(task)
+    assert terminated and not truncated
+    assert info['terminated_reason'] == 'piece_off_board'
+    assert info['off_board_piece'] == 'piece_b'
+    assert not info['captured_offboard_exempt']
+    assert info['captured_terms']['released']
+
+
+def test_captured_pinched_on_table_outside_board(task):
+    """Constructed drag pose; bilateral finger and table contacts are real."""
+    b = task.unwrapped
+    close_at_home(task)
+    xy = np.array([0.36, 0.52])
+    table = b._geom_id('table')
+    top = b.data.geom_xpos[table, 2] + b.model.geom_size[table, 2]
+    put_piece(task, True, [*xy, top])
+    for _ in range(b.frame_skip):
+        mujoco.mj_step(b.model, b.data)
+    q = ScriptedExpert(task).solve_ik(np.array([*xy, GRASP_Z + top - task._zone_top]))
+    b.data.qpos[b._arm_qadr] = q
+    b.data.ctrl[:6] = q
+    b.data.qvel[:] = 0
+    mujoco.mj_forward(b.model, b.data)
+    assert all(task._captured_contacts()[:2])
+    assert any(table in (int(c.geom1), int(c.geom2)) and
+               task._captured_bid in (int(b.model.geom_bodyid[c.geom1]),
+                                     int(b.model.geom_bodyid[c.geom2]))
+               for c in b.data.contact)
+    assert task._either_piece_off_board()
+    assert not task._captured_offboard_exempt
+    _, _, terminated, truncated, info = quiet_step(task)
+    assert terminated and not truncated
+    assert info['terminated_reason'] == 'piece_off_board'
+    assert info['off_board_piece'] == 'piece_b'
+    assert info['captured_terms']['pinched']
+    assert not info['captured_offboard_exempt']
