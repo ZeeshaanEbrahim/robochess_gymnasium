@@ -1,0 +1,803 @@
+{
+  "pretanh": {
+    "n_held_steps": 11541,
+    "mean_min": [
+      -2.865020275115967,
+      -3.560328722000122,
+      -3.6523852348327637,
+      0.43803268671035767
+    ],
+    "mean_median": [
+      -0.023899592459201813,
+      -0.017147615551948547,
+      -0.07627514004707336,
+      3.2520947456359863
+    ],
+    "mean_max": [
+      2.511998176574707,
+      3.5456902980804443,
+      4.064278602600098,
+      5.072205543518066
+    ],
+    "std_min": [
+      0.22663567960262299,
+      0.10554532706737518,
+      0.16019369661808014,
+      0.0927017331123352
+    ],
+    "std_median": [
+      0.56378173828125,
+      0.4171499013900757,
+      0.5285378694534302,
+      0.5012333989143372
+    ],
+    "std_max": [
+      0.8625651001930237,
+      0.6340022683143616,
+      0.6984207630157471,
+      1.71110999584198
+    ]
+  },
+  "counterfactual": [
+    {
+      "episode": 0,
+      "n_steps": 150,
+      "final_pinched": true,
+      "final_held": true,
+      "ever_success": false,
+      "loss_step": 40,
+      "final_dxy_mm": 0.4663329164031893,
+      "final_lift_mm": 20.59110450744628,
+      "reward_path": [
+        {
+          "step": 0,
+          "reward": 4.7695
+        },
+        {
+          "step": 10,
+          "reward": 5.8511
+        },
+        {
+          "step": 20,
+          "reward": 5.4064
+        },
+        {
+          "step": 30,
+          "reward": 5.7452
+        },
+        {
+          "step": 40,
+          "reward": 6.9703
+        },
+        {
+          "step": 50,
+          "reward": 6.4235
+        },
+        {
+          "step": 60,
+          "reward": 6.6637
+        },
+        {
+          "step": 70,
+          "reward": 6.6013
+        },
+        {
+          "step": 80,
+          "reward": 6.6083
+        },
+        {
+          "step": 90,
+          "reward": 6.6187
+        },
+        {
+          "step": 100,
+          "reward": 6.6289
+        },
+        {
+          "step": 110,
+          "reward": 6.6047
+        },
+        {
+          "step": 120,
+          "reward": 6.6214
+        },
+        {
+          "step": 130,
+          "reward": 6.61
+        },
+        {
+          "step": 140,
+          "reward": 6.6243
+        },
+        {
+          "step": 149,
+          "reward": 6.6099
+        }
+      ]
+    },
+    {
+      "episode": 1,
+      "n_steps": 150,
+      "final_pinched": true,
+      "final_held": true,
+      "ever_success": false,
+      "loss_step": 40,
+      "final_dxy_mm": 0.4768854414578527,
+      "final_lift_mm": 20.917439937591542,
+      "reward_path": [
+        {
+          "step": 0,
+          "reward": 4.8508
+        },
+        {
+          "step": 10,
+          "reward": 5.6866
+        },
+        {
+          "step": 20,
+          "reward": 5.4314
+        },
+        {
+          "step": 30,
+          "reward": 5.7852
+        },
+        {
+          "step": 40,
+          "reward": 6.9939
+        },
+        {
+          "step": 50,
+          "reward": 6.3386
+        },
+        {
+          "step": 60,
+          "reward": 6.6748
+        },
+        {
+          "step": 70,
+          "reward": 6.5853
+        },
+        {
+          "step": 80,
+          "reward": 6.5831
+        },
+        {
+          "step": 90,
+          "reward": 6.6058
+        },
+        {
+          "step": 100,
+          "reward": 6.6014
+        },
+        {
+          "step": 110,
+          "reward": 6.5981
+        },
+        {
+          "step": 120,
+          "reward": 6.598
+        },
+        {
+          "step": 130,
+          "reward": 6.5954
+        },
+        {
+          "step": 140,
+          "reward": 6.5973
+        },
+        {
+          "step": 149,
+          "reward": 6.5879
+        }
+      ]
+    },
+    {
+      "episode": 2,
+      "n_steps": 150,
+      "final_pinched": true,
+      "final_held": true,
+      "ever_success": false,
+      "loss_step": 42,
+      "final_dxy_mm": 0.15726506535429507,
+      "final_lift_mm": 20.60105848312377,
+      "reward_path": [
+        {
+          "step": 0,
+          "reward": 4.7388
+        },
+        {
+          "step": 10,
+          "reward": 5.5684
+        },
+        {
+          "step": 20,
+          "reward": 5.4167
+        },
+        {
+          "step": 30,
+          "reward": 5.6929
+        },
+        {
+          "step": 40,
+          "reward": 6.4227
+        },
+        {
+          "step": 50,
+          "reward": 6.5995
+        },
+        {
+          "step": 60,
+          "reward": 6.6618
+        },
+        {
+          "step": 70,
+          "reward": 6.5825
+        },
+        {
+          "step": 80,
+          "reward": 6.6174
+        },
+        {
+          "step": 90,
+          "reward": 6.6385
+        },
+        {
+          "step": 100,
+          "reward": 6.6167
+        },
+        {
+          "step": 110,
+          "reward": 6.6218
+        },
+        {
+          "step": 120,
+          "reward": 6.6209
+        },
+        {
+          "step": 130,
+          "reward": 6.616
+        },
+        {
+          "step": 140,
+          "reward": 6.6195
+        },
+        {
+          "step": 149,
+          "reward": 6.6206
+        }
+      ]
+    },
+    {
+      "episode": 3,
+      "n_steps": 150,
+      "final_pinched": true,
+      "final_held": true,
+      "ever_success": false,
+      "loss_step": 42,
+      "final_dxy_mm": 0.19924114167224616,
+      "final_lift_mm": 20.874107360839833,
+      "reward_path": [
+        {
+          "step": 0,
+          "reward": 4.7421
+        },
+        {
+          "step": 10,
+          "reward": 5.8301
+        },
+        {
+          "step": 20,
+          "reward": 5.3754
+        },
+        {
+          "step": 30,
+          "reward": 5.6979
+        },
+        {
+          "step": 40,
+          "reward": 6.2246
+        },
+        {
+          "step": 50,
+          "reward": 6.6366
+        },
+        {
+          "step": 60,
+          "reward": 6.6551
+        },
+        {
+          "step": 70,
+          "reward": 6.5459
+        },
+        {
+          "step": 80,
+          "reward": 6.5998
+        },
+        {
+          "step": 90,
+          "reward": 6.6167
+        },
+        {
+          "step": 100,
+          "reward": 6.5992
+        },
+        {
+          "step": 110,
+          "reward": 6.603
+        },
+        {
+          "step": 120,
+          "reward": 6.6033
+        },
+        {
+          "step": 130,
+          "reward": 6.5969
+        },
+        {
+          "step": 140,
+          "reward": 6.6023
+        },
+        {
+          "step": 149,
+          "reward": 6.6011
+        }
+      ]
+    },
+    {
+      "episode": 4,
+      "n_steps": 150,
+      "final_pinched": true,
+      "final_held": true,
+      "ever_success": false,
+      "loss_step": 45,
+      "final_dxy_mm": 0.3601381613407284,
+      "final_lift_mm": 21.784985542297353,
+      "reward_path": [
+        {
+          "step": 0,
+          "reward": 4.7605
+        },
+        {
+          "step": 10,
+          "reward": 5.8805
+        },
+        {
+          "step": 20,
+          "reward": 5.3549
+        },
+        {
+          "step": 30,
+          "reward": 5.6863
+        },
+        {
+          "step": 40,
+          "reward": 5.9123
+        },
+        {
+          "step": 50,
+          "reward": 6.9634
+        },
+        {
+          "step": 60,
+          "reward": 6.4642
+        },
+        {
+          "step": 70,
+          "reward": 6.4793
+        },
+        {
+          "step": 80,
+          "reward": 6.5752
+        },
+        {
+          "step": 90,
+          "reward": 6.5428
+        },
+        {
+          "step": 100,
+          "reward": 6.5436
+        },
+        {
+          "step": 110,
+          "reward": 6.548
+        },
+        {
+          "step": 120,
+          "reward": 6.5347
+        },
+        {
+          "step": 130,
+          "reward": 6.5468
+        },
+        {
+          "step": 140,
+          "reward": 6.5447
+        },
+        {
+          "step": 149,
+          "reward": 6.5343
+        }
+      ]
+    },
+    {
+      "episode": 5,
+      "n_steps": 150,
+      "final_pinched": true,
+      "final_held": true,
+      "ever_success": false,
+      "loss_step": 38,
+      "final_dxy_mm": 0.36470143822953105,
+      "final_lift_mm": 20.382965087890614,
+      "reward_path": [
+        {
+          "step": 0,
+          "reward": 4.714
+        },
+        {
+          "step": 10,
+          "reward": 5.5088
+        },
+        {
+          "step": 20,
+          "reward": 5.4183
+        },
+        {
+          "step": 30,
+          "reward": 5.685
+        },
+        {
+          "step": 40,
+          "reward": 7.0372
+        },
+        {
+          "step": 50,
+          "reward": 6.4217
+        },
+        {
+          "step": 60,
+          "reward": 6.6799
+        },
+        {
+          "step": 70,
+          "reward": 6.6669
+        },
+        {
+          "step": 80,
+          "reward": 6.618
+        },
+        {
+          "step": 90,
+          "reward": 6.6399
+        },
+        {
+          "step": 100,
+          "reward": 6.6415
+        },
+        {
+          "step": 110,
+          "reward": 6.6307
+        },
+        {
+          "step": 120,
+          "reward": 6.6374
+        },
+        {
+          "step": 130,
+          "reward": 6.6349
+        },
+        {
+          "step": 140,
+          "reward": 6.6289
+        },
+        {
+          "step": 149,
+          "reward": 6.6278
+        }
+      ]
+    },
+    {
+      "episode": 6,
+      "n_steps": 150,
+      "final_pinched": true,
+      "final_held": true,
+      "ever_success": false,
+      "loss_step": 37,
+      "final_dxy_mm": 0.14118844410404563,
+      "final_lift_mm": 22.325957298278798,
+      "reward_path": [
+        {
+          "step": 0,
+          "reward": 5.1463
+        },
+        {
+          "step": 10,
+          "reward": 5.5354
+        },
+        {
+          "step": 20,
+          "reward": 5.6112
+        },
+        {
+          "step": 30,
+          "reward": 5.8741
+        },
+        {
+          "step": 40,
+          "reward": 6.9539
+        },
+        {
+          "step": 50,
+          "reward": 6.3036
+        },
+        {
+          "step": 60,
+          "reward": 6.4669
+        },
+        {
+          "step": 70,
+          "reward": 6.5566
+        },
+        {
+          "step": 80,
+          "reward": 6.5105
+        },
+        {
+          "step": 90,
+          "reward": 6.5044
+        },
+        {
+          "step": 100,
+          "reward": 6.5134
+        },
+        {
+          "step": 110,
+          "reward": 6.5119
+        },
+        {
+          "step": 120,
+          "reward": 6.5097
+        },
+        {
+          "step": 130,
+          "reward": 6.5083
+        },
+        {
+          "step": 140,
+          "reward": 6.5072
+        },
+        {
+          "step": 149,
+          "reward": 6.5063
+        }
+      ]
+    },
+    {
+      "episode": 7,
+      "n_steps": 150,
+      "final_pinched": true,
+      "final_held": true,
+      "ever_success": false,
+      "loss_step": 41,
+      "final_dxy_mm": 0.11235840793233365,
+      "final_lift_mm": 21.236443996429433,
+      "reward_path": [
+        {
+          "step": 0,
+          "reward": 4.8739
+        },
+        {
+          "step": 10,
+          "reward": 5.6129
+        },
+        {
+          "step": 20,
+          "reward": 5.4725
+        },
+        {
+          "step": 30,
+          "reward": 5.8347
+        },
+        {
+          "step": 40,
+          "reward": 6.7943
+        },
+        {
+          "step": 50,
+          "reward": 6.4273
+        },
+        {
+          "step": 60,
+          "reward": 6.6908
+        },
+        {
+          "step": 70,
+          "reward": 6.5551
+        },
+        {
+          "step": 80,
+          "reward": 6.5712
+        },
+        {
+          "step": 90,
+          "reward": 6.5982
+        },
+        {
+          "step": 100,
+          "reward": 6.5709
+        },
+        {
+          "step": 110,
+          "reward": 6.5777
+        },
+        {
+          "step": 120,
+          "reward": 6.5754
+        },
+        {
+          "step": 130,
+          "reward": 6.5757
+        },
+        {
+          "step": 140,
+          "reward": 6.5756
+        },
+        {
+          "step": 149,
+          "reward": 6.5799
+        }
+      ]
+    },
+    {
+      "episode": 8,
+      "n_steps": 150,
+      "final_pinched": true,
+      "final_held": true,
+      "ever_success": false,
+      "loss_step": null,
+      "final_dxy_mm": 0.23777264868840575,
+      "final_lift_mm": 17.952645301818837,
+      "reward_path": [
+        {
+          "step": 0,
+          "reward": 3.1863
+        },
+        {
+          "step": 10,
+          "reward": 3.3502
+        },
+        {
+          "step": 20,
+          "reward": 3.5168
+        },
+        {
+          "step": 30,
+          "reward": 3.7086
+        },
+        {
+          "step": 40,
+          "reward": 3.9901
+        },
+        {
+          "step": 50,
+          "reward": 5.7588
+        },
+        {
+          "step": 60,
+          "reward": 5.9282
+        },
+        {
+          "step": 70,
+          "reward": 6.6758
+        },
+        {
+          "step": 80,
+          "reward": 6.7853
+        },
+        {
+          "step": 90,
+          "reward": 6.7977
+        },
+        {
+          "step": 100,
+          "reward": 6.7902
+        },
+        {
+          "step": 110,
+          "reward": 6.8011
+        },
+        {
+          "step": 120,
+          "reward": 6.7988
+        },
+        {
+          "step": 130,
+          "reward": 6.7896
+        },
+        {
+          "step": 140,
+          "reward": 6.7983
+        },
+        {
+          "step": 149,
+          "reward": 6.7945
+        }
+      ]
+    },
+    {
+      "episode": 9,
+      "n_steps": 150,
+      "final_pinched": true,
+      "final_held": true,
+      "ever_success": false,
+      "loss_step": 42,
+      "final_dxy_mm": 0.2100662823067978,
+      "final_lift_mm": 20.59533643722533,
+      "reward_path": [
+        {
+          "step": 0,
+          "reward": 4.7178
+        },
+        {
+          "step": 10,
+          "reward": 5.5287
+        },
+        {
+          "step": 20,
+          "reward": 5.4058
+        },
+        {
+          "step": 30,
+          "reward": 5.6788
+        },
+        {
+          "step": 40,
+          "reward": 6.2071
+        },
+        {
+          "step": 50,
+          "reward": 6.6773
+        },
+        {
+          "step": 60,
+          "reward": 6.6517
+        },
+        {
+          "step": 70,
+          "reward": 6.5696
+        },
+        {
+          "step": 80,
+          "reward": 6.616
+        },
+        {
+          "step": 90,
+          "reward": 6.6308
+        },
+        {
+          "step": 100,
+          "reward": 6.624
+        },
+        {
+          "step": 110,
+          "reward": 6.6193
+        },
+        {
+          "step": 120,
+          "reward": 6.617
+        },
+        {
+          "step": 130,
+          "reward": 6.6217
+        },
+        {
+          "step": 140,
+          "reward": 6.6185
+        },
+        {
+          "step": 149,
+          "reward": 6.6193
+        }
+      ]
+    }
+  ]
+}

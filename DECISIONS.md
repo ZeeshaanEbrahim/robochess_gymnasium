@@ -2377,3 +2377,43 @@ On the expert clean place e4->e5 it reads carry 73.6 mm of 78.0 mm over 74 held 
   `final_model` reproduces the custom evaluation exactly: placed 297/300, held 300/300, grasp 46/300, `rms_same` True.
 * Underlying data, scripts and per-episode JSONs: `results/d28_place_reward/eval/` (untracked no longer; committed
   with this read-out).
+
+### Diagnosis of non-placing runs (seed 1, SAC); no fixes applied
+
+Read-only diagnosis, `results/d28_place_reward/diag/` (all scripts and JSON outputs committed with this section).
+Method notes: action-distribution statistics are exact analytic quantities from the policy (Gaussian mean/std read
+directly from `policy.get_distribution`/`actor.get_action_dist_params`, not sampled); counterfactuals fork the live
+MuJoCo `data` plus every stateful attribute on the base env and `PlaceReward` via `copy.deepcopy`, verified to
+produce an independent, steppable copy.
+
+* **Seed 1**: at held steps the dz (dim 2) action's unclipped Gaussian mean is saturated past the -1 clip bound --
+  final `median -1.93` (std 0.13, `P(|z|>1)` 0.96, i.e. lifting is effectively unsampleable); `rc_300000` `-0.83`
+  (std 0.46, lift still occasionally sampled); `rc_500000` `-1.28` (std 0.27). The grip itself is adequate: forking
+  10 stuck (step-150) episodes into a scripted lift-then-carry (the Cartesian gate expert's braked-step law) reaches
+  within 3 cm and ends held in 9/10; seed 1's loss rate per held step (0.166/100) is the *lowest* of the three PPO
+  seeds (seed 0 0.256, seed 2 0.412) once normalised for its ~250-vs-~75-step exposure. Contributing factor: the S1
+  carry-reward gradient is 0.006 per mm at 78->60 mm from the target (seed 1's typical starting range) against
+  0.12-0.19 per mm at 20->0 mm -- about 20x weaker far from the target, for both lift=0 and lift=20mm.
+* **SAC**: not saturated -- dz pre-tanh mean median -0.08 (std 0.53) at held steps, i.e. centred near neutral with
+  wide spread, unlike seed 1's locked-down mean. SAC instead holds the piece tilted: median 72 deg at step 150 (vs
+  <=2.1 deg median, all three PPO seeds, at their first held step), pinched near its own base (pad height on piece
+  median 2.4 mm). The S1 reward has no posture/tilt term, so a tilted hold at large lift still pays close to the S1
+  ceiling (~4.7-6.6/step observed; matches the arithmetic 4.879 at lift>=30mm, d_xy=78mm) while placement additionally
+  requires piece tilt < 10 deg (S2's own gate) -- unreachable from a 72-90 deg hold without first correcting the
+  tilt, which nothing in the reward asks for. Height above 30 mm is unpaid: `lift_frac = clip(lift/0.03, 0, 1)`
+  saturates, so the S1 reward is exactly flat (4.879 at this run's typical distance) for every lift from 30 to
+  300 mm -- confirmed arithmetically, not just observed. A scripted move-above-then-descend-then-open counterfactual
+  from 10 SAC stuck states set the piece down at 18-22 mm (never below), 82.5-90.9 deg tilt, with the Cartesian
+  pinch site clamped at exactly `CARTESIAN_Z_FLOOR_ABOVE_BOARD` (31.5 mm) throughout; the naive
+  floor-minus-pad-height arithmetic (31.5 - (-0.11) = 31.6 mm) does not match the observed 18-22 mm base height
+  (off by ~11 mm), because the calibrated 37.25 mm vertical pinch-to-piece offset (`pickup_dz`) assumes an upright
+  grasp and the piece is on its side. Seed 2's own successful releases sit above the floor (pinch z median 33.2 mm,
+  pad height median 13.0 mm, tilt within the <10 deg gate) -- an upright hold clears the floor with room to spare,
+  so the plateau is attributed to the tilt, not to the floor needing to move; **no environment change is indicated
+  by this diagnosis**.
+* **Reproducibility**: neither `scripts/eval_probe.py` nor `results/d28_place_reward/eval/custom_eval.py` seeds
+  torch (`venv.seed()` only sets the env's own `np_random` for the next reset, not torch's global RNG that
+  `predict(deterministic=False)` samples from) -- confirmed a fresh process's `torch.randn()` differs run to run.
+  Stochastic evaluations in this project are therefore not bit-repeatable across separate invocations, though
+  aggregate outcomes are often stable in practice because several action dimensions clip with high probability
+  (Section 3c/4c). Not changed as part of this diagnosis.
