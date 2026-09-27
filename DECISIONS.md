@@ -2344,3 +2344,36 @@ On the expert clean place e4->e5 it reads carry 73.6 mm of 78.0 mm over 74 held 
   existing configs differs only in the new keys. `config_sha256` in a manifest hashes the config file bytes, and
   `run_name` comes from the filename and seed, so no run ID or hash changes; only `config_resolved` in new manifests
   carries the new keys.
+
+### Read-out (probe results, e4->e5 Cartesian, 1M steps, eval seed 20000)
+
+* Placement success (D27, `final_model`, 300 stochastic episodes, Wilson 95%): seed 0 297/300 = 99.0% [97.1, 99.7];
+  seed 1 0/300 = 0.0% [0, 1.3]; seed 2 287/300 = 95.7% [92.7, 97.5]. Rule met on seeds 0 and 2, not on seed 1.
+* Truncated-in-S2 tripwire (>= 10% of episodes on any PPO seed) did not fire at `final_model`: seed 0 0/300, seed 1
+  0/300, seed 2 0/300 (seed 2's `rc_500000` reached 13/300 = 4.3%, still below the tripwire; the rule is judged on
+  `final_model` only, as decided above).
+* Push-assisted, among `final_model` successes: seed 0 0/297 = 0%, seed 2 0/287 = 0% (seed 1 has no successes).
+* The D18 grasp comparison (`grasp_ever`; `_grasp_success`, `robochess/tasks/t1_pick_and_place.py:218-247`: piece
+  origin more than `rest_tolerance` (10 mm) above the board, AND gripper qpos >= `gripper_open_threshold` (0.2), AND
+  both pads on the piece, AND the piece not touching the board, all on the same step) FIRED on all three seeds at
+  `final_model`: 46/300 = 15.3%, 40/300 = 13.3%, 137/300 = 45.7%, each below the 50% floor the diagnostic was written
+  against, while the D27 "held" stage (pads on the piece, no board contact, no aperture or lift gate) is 99.7 to 100%
+  and two of the three seeds place 95.7 to 99.0%. Recorded as a flawed pre-registered diagnostic: D18's simultaneous
+  lift-and-closed-aperture-and-contact test, calibrated for the pick-up task, does not track grasp/hold behaviour in
+  place mode, where the gripper carries the piece at a smaller aperture and lift than D18's floor.
+* Seed 1 (0% placed) grasps near the start square and holds without carrying: 217/300 (72.3%) of episodes truncate
+  in S1, final-step horizontal distance to target 73.2 to 108.8 mm (median 87.4 mm) against a 78.0 mm start-to-target
+  distance on e4->e5, with 191/217 still held at the final step -- pinched and held without the piece having moved
+  toward the target.
+* SAC (0% placed at both `final_model` and `rc_500000`) lifts far past the 30 mm bar and holds there instead of
+  carrying to the target: of the 282 (`final_model`) / 299 (`rc_500000`) episodes that truncate in S1, the max lift
+  reached is a median 270.7 / 206.2 mm (up to 344.8 / 412.8 mm) and the final-step lift is a median 255.9 / 193.4 mm,
+  while the final-step horizontal distance to target stays at a median 113.1 / 191.4 mm.
+* Release height and XY error, among `final_model` successes (D27 `release_height_mm` / `release_xy_error_mm` at the
+  final step): seed 0 (n=297) height 0.02 to 14.76 mm (median 7.08), XY error 10.38 to 29.96 mm (median 22.34); seed 2
+  (n=287) height 0.04 to 13.56 mm (median 3.99), XY error 1.14 to 28.67 mm (median 14.30). Both within the 15 mm
+  release-height ceiling and the 30 mm goal tolerance by construction (D27).
+* Cross-check: `scripts/eval_probe.py` unmodified (300 stochastic, seed 20000, frozen VecNormalize) on seed 0
+  `final_model` reproduces the custom evaluation exactly: placed 297/300, held 300/300, grasp 46/300, `rms_same` True.
+* Underlying data, scripts and per-episode JSONs: `results/d28_place_reward/eval/` (untracked no longer; committed
+  with this read-out).
