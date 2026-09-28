@@ -2581,3 +2581,45 @@ candidate if D29 PPO fails rule 1.
    fraction, shaping total per episode, and (D29) per seed the fraction of S1 steps with `posture_gate < 1` in
    placed episodes and the max S1 tilt in placed episodes.
 5. Then widen to random squares with the adopted PPO variant; that rule is pre-registered before launch.
+
+### Read-out (rules 1 and 2, SAC, failure taxonomy)
+
+300 stochastic episodes per `final_model`, seed 20000, torch-seeded, frozen VecNormalize (PPO; SAC carries
+none). Full detail, every script, and every number's provenance: `results/d29_place_reward_v2/eval/README.md`
+and `results/d29_place_reward_v2/eval/section6_summary.md`.
+
+* **Rule 1**: default **FAILS (3/5 seeds pass)** -- seeds 2, 3, 4 pass (96.0%, 97.7%, 98.0%); seeds 0 and 1
+  are stuck at 0.0%. Squash **PASSES (4/5 seeds pass)** -- seeds 0, 2, 3, 4 pass (92.3%, 96.0%, 99.3%,
+  97.3%); seed 1 is stuck at 0.0%. All ten Wilson 95% CIs in the summary linked above.
+* **Rule 2**: squash **ADOPTED**, on a one-seed margin (4/5 vs 3/5) decided by seed 0 alone. Fisher exact
+  test on the 4/5-vs-3/5 table: **p = 1.0** (not significant) -- among seeds passing on both variants (2, 3,
+  4), placement rates are close (e.g. seed 2: 96.0% vs 96.0%). This is adoption under the pre-registered
+  rule, not evidence squash performs better than default PPO. `ppo_mean_squash`
+  (`robochess/policies.py`'s `SquashedMultiInputActorCriticPolicy`) is accordingly a **documented deviation
+  from SB3 defaults**: it tanh's the Gaussian mean before building the action distribution, in every
+  codepath that builds one.
+* **SAC** (reported, no rule): **0/300 placed**. Toppled-hold fraction (tilt > 45 deg while pinched at step
+  150) **94.0% to 0.0%** with the posture gate and carry potential both on (D28 SAC seed0, gate+potential
+  off: 282/300; D29 SAC seed0, gate+potential on: 0/300 -- one seed each, consistent with the posture gate,
+  not attributed to it as sole cause on this n=1 comparison). SAC's failure is carrying and descending, not
+  releasing: never within 3 cm of the target across all 300 episodes; S1 medians lift 110.3 mm, xy-distance
+  45.9 mm (D28 baseline, re-measured with the same methodology: lift 244.7 mm, xy-distance 119.7 mm).
+* **Failure taxonomy**:
+  - Default s0 holds 19 mm from target, upright and low, and never releases -- a **local optimum, not a
+    reward loophole** (its real discounted return, G0 mean 234, is well below a real placement's, G0 mean
+    555; from a held-within-30mm step, 434 vs ~1015).
+  - Default s1 grasps and never carries -- holds 124 mm from the target.
+  - Squash s1 carries the piece the full distance and places it correctly (all 6 of 7 success terms true at
+    the final step in all 87 of its S2-ending episodes) but never opens the gripper past the release
+    threshold (`gripper_released` False in 87/87). A tip-grip lead (elevated grip position on the piece) was
+    tested and **not confirmed** -- squash s1's pad-contact height while held (31.4 mm) is normal, matching
+    default s3 (29.4 mm) and squash s3 (30.5 mm); it is squash s0, a *placing* seed, whose held pad height
+    is elevated (57.9 mm, 7.9 mm above the piece's own 50 mm total height).
+  - SAC holds the piece 110 mm high and 46 mm from the target and never descends toward it.
+* **Open items**: squash seed 0's training-log/evaluation gap (97.4% training-log last-500 vs 92.3%
+  evaluation, unexplained); the tip-grip lead for squash s1 (unconfirmed, see taxonomy); squash s1 holds at
+  qpos 0.775 (closed-on-air is 0.782) at a normal pad height -- unexplained, parked; seed 1 fails across
+  every variant measured (D28 default, D29 default, D29 squash), each a different failure mode; SAC's next
+  diagnostic step (observation-only VecNormalize, untested -- SAC's config currently carries none).
+
+ROADMAP.md sync pending (separate docs commit).

@@ -1,0 +1,646 @@
+{
+  "ppo_seed0": {
+    "placed_rate": 0.0,
+    "truncated_in_s2": {
+      "k": 22,
+      "n": 300,
+      "wilson_lo": 0.048923631132474436,
+      "wilson_hi": 0.10853209579892667,
+      "final_gripper_qpos": [
+        0.5187,
+        0.5265,
+        0.5734,
+        0.5744,
+        0.5759,
+        0.5771,
+        0.6095,
+        0.6254,
+        0.6584,
+        0.7214,
+        0.7302,
+        0.7578,
+        0.7715,
+        0.7761,
+        0.78,
+        0.78,
+        0.7801,
+        0.7809,
+        0.7818,
+        0.7822,
+        0.7822,
+        0.7822
+      ]
+    },
+    "push_assisted": null,
+    "gate_fraction_lt1": null,
+    "gate_max_s1_tilt": null,
+    "state_fraction": {
+      "S0": 0.2032032589096899,
+      "S1": 0.7026356209514057,
+      "S2": 0.018787703403601717,
+      "S3": 0.07537341673530262
+    },
+    "saturation": {
+      "n_held_steps": 55544,
+      "frac_any_dim_gt_0p9": 0.9921323635316146,
+      "frac_dx_gt_0p9": 0.9506337318162178,
+      "frac_dy_gt_0p9": 0.6783811032694801,
+      "frac_dz_gt_0p9": 0.5837894282010658
+    },
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 10642,
+      "n": 55544,
+      "fraction": 0.19159585193720294
+    },
+    "toppled_hold_step150": {
+      "k": 1,
+      "n": 300,
+      "fraction": 0.0033333333333333335
+    },
+    "shaping_total_per_episode_median": 8.178057079087012,
+    "s1": {
+      "n_steps": 63129,
+      "median_lift_mm": 2.2061114311218155,
+      "median_dxy_mm": 19.26780864596367,
+      "median_tilt_deg": 2.943927693126491,
+      "median_state_reward": 5.047015980063138,
+      "median_shaping": 0.02983919158577919
+    },
+    "first_held": {
+      "n_with_held": 300,
+      "n_without_held": 0,
+      "median_first_held_step": 62.0
+    }
+  },
+  "ppo_seed1": {
+    "placed_rate": 0.0,
+    "truncated_in_s2": {
+      "k": 0,
+      "n": 300,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "final_gripper_qpos": []
+    },
+    "push_assisted": null,
+    "gate_fraction_lt1": null,
+    "gate_max_s1_tilt": null,
+    "state_fraction": {
+      "S0": 0.2042244091852447,
+      "S1": 0.6934234897681373,
+      "S2": 0.0,
+      "S3": 0.10235210104661802
+    },
+    "saturation": {
+      "n_held_steps": 58057,
+      "frac_any_dim_gt_0p9": 0.9133610072859432,
+      "frac_dx_gt_0p9": 0.29412473948016604,
+      "frac_dy_gt_0p9": 0.2685981018654081,
+      "frac_dz_gt_0p9": 0.792307559811909
+    },
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 7295,
+      "n": 58057,
+      "fraction": 0.1256523761131302
+    },
+    "toppled_hold_step150": {
+      "k": 6,
+      "n": 300,
+      "fraction": 0.02
+    },
+    "shaping_total_per_episode_median": 14.805563397705555,
+    "s1": {
+      "n_steps": 62146,
+      "median_lift_mm": 3.809684991836537,
+      "median_dxy_mm": 124.05389174818993,
+      "median_tilt_deg": 11.863354448487534,
+      "median_state_reward": 2.8741122825205467,
+      "median_shaping": 0.05425355210900307
+    },
+    "first_held": {
+      "n_with_held": 300,
+      "n_without_held": 0,
+      "median_first_held_step": 62.0
+    }
+  },
+  "ppo_seed2": {
+    "placed_rate": 0.96,
+    "truncated_in_s2": {
+      "k": 0,
+      "n": 300,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "final_gripper_qpos": []
+    },
+    "push_assisted": 0.0,
+    "gate_fraction_lt1": 0.5159533073929962,
+    "gate_max_s1_tilt": 107.12883814266107,
+    "state_fraction": {
+      "S0": 0.7010920908438196,
+      "S1": 0.11075841741299172,
+      "S2": 0.0923175754827495,
+      "S3": 0.0958319162604391
+    },
+    "saturation": {
+      "n_held_steps": 2720,
+      "frac_any_dim_gt_0p9": 0.6294117647058823,
+      "frac_dx_gt_0p9": 0.021323529411764706,
+      "frac_dy_gt_0p9": 0.04301470588235294,
+      "frac_dz_gt_0p9": 0.6077205882352941
+    },
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 393,
+      "n": 2720,
+      "fraction": 0.14448529411764705
+    },
+    "toppled_hold_step150": {
+      "k": 1,
+      "n": 300,
+      "fraction": 0.0033333333333333335
+    },
+    "shaping_total_per_episode_median": 5.969242558348924,
+    "s1": {
+      "n_steps": 2931,
+      "median_lift_mm": 5.372429370880116,
+      "median_dxy_mm": 45.96390202641487,
+      "median_tilt_deg": 12.240428063080797,
+      "median_state_reward": 3.263217338400848,
+      "median_shaping": 0.3936300575733185
+    },
+    "first_held": {
+      "n_with_held": 300,
+      "n_without_held": 0,
+      "median_first_held_step": 61.5
+    }
+  },
+  "ppo_seed3": {
+    "placed_rate": 0.9766666666666667,
+    "truncated_in_s2": {
+      "k": 0,
+      "n": 300,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "final_gripper_qpos": []
+    },
+    "push_assisted": 0.0034129692832764505,
+    "gate_fraction_lt1": 0.4520263249047454,
+    "gate_max_s1_tilt": 86.17861516012013,
+    "state_fraction": {
+      "S0": 0.8045306904305821,
+      "S1": 0.1210543849421171,
+      "S2": 0.05480136586990922,
+      "S3": 0.01961355875739152
+    },
+    "saturation": {
+      "n_held_steps": 2521,
+      "frac_any_dim_gt_0p9": 0.9091630305434352,
+      "frac_dx_gt_0p9": 0.0035700119000396666,
+      "frac_dy_gt_0p9": 0.20785402618008728,
+      "frac_dz_gt_0p9": 0.9071796905989686
+    },
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 91,
+      "n": 2521,
+      "fraction": 0.03609678698928996
+    },
+    "toppled_hold_step150": {
+      "k": 0,
+      "n": 300,
+      "fraction": 0.0
+    },
+    "shaping_total_per_episode_median": 5.751734050922096,
+    "s1": {
+      "n_steps": 2907,
+      "median_lift_mm": 3.8662796020507706,
+      "median_dxy_mm": 36.041565239429474,
+      "median_tilt_deg": 7.989757852431923,
+      "median_state_reward": 3.362825851248801,
+      "median_shaping": 0.3667714037001133
+    },
+    "first_held": {
+      "n_with_held": 295,
+      "n_without_held": 5,
+      "median_first_held_step": 61.0
+    }
+  },
+  "ppo_seed4": {
+    "placed_rate": 0.98,
+    "truncated_in_s2": {
+      "k": 0,
+      "n": 300,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "final_gripper_qpos": []
+    },
+    "push_assisted": 0.0,
+    "gate_fraction_lt1": 0.006252791424743189,
+    "gate_max_s1_tilt": 14.700828801692918,
+    "state_fraction": {
+      "S0": 0.7675767620376832,
+      "S1": 0.09944173063503141,
+      "S2": 0.08182135380321005,
+      "S3": 0.051160153524075366
+    },
+    "saturation": {
+      "n_held_steps": 2187,
+      "frac_any_dim_gt_0p9": 0.5198902606310014,
+      "frac_dx_gt_0p9": 0.1111111111111111,
+      "frac_dy_gt_0p9": 0.3639689071787837,
+      "frac_dz_gt_0p9": 0.17101051668952905
+    },
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 72,
+      "n": 2187,
+      "fraction": 0.03292181069958848
+    },
+    "toppled_hold_step150": {
+      "k": 0,
+      "n": 300,
+      "fraction": 0.0
+    },
+    "shaping_total_per_episode_median": 5.97532879805658,
+    "s1": {
+      "n_steps": 2280,
+      "median_lift_mm": 6.281221389770497,
+      "median_dxy_mm": 39.4221656024456,
+      "median_tilt_deg": 0.6016905336155085,
+      "median_state_reward": 3.7492029934185447,
+      "median_shaping": 0.4288955442607403
+    },
+    "first_held": {
+      "n_with_held": 299,
+      "n_without_held": 1,
+      "median_first_held_step": 59.0
+    }
+  },
+  "ppotanh_seed0": {
+    "placed_rate": 0.9233333333333333,
+    "truncated_in_s2": {
+      "k": 0,
+      "n": 300,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "final_gripper_qpos": []
+    },
+    "push_assisted": 0.0,
+    "gate_fraction_lt1": 0.375,
+    "gate_max_s1_tilt": 22.701762848131743,
+    "state_fraction": {
+      "S0": 0.7472575214510698,
+      "S1": 0.07964954201513341,
+      "S2": 0.10897505521161435,
+      "S3": 0.0641178813221824
+    },
+    "saturation": {
+      "n_held_steps": 2195,
+      "frac_any_dim_gt_0p9": 0.0,
+      "frac_dx_gt_0p9": 0.0,
+      "frac_dy_gt_0p9": 0.0,
+      "frac_dz_gt_0p9": 0.0
+    },
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 203,
+      "n": 2195,
+      "fraction": 0.09248291571753986
+    },
+    "toppled_hold_step150": {
+      "k": 0,
+      "n": 300,
+      "fraction": 0.0
+    },
+    "shaping_total_per_episode_median": 5.897579851211049,
+    "s1": {
+      "n_steps": 2200,
+      "median_lift_mm": 10.405862808227528,
+      "median_dxy_mm": 52.03377455472946,
+      "median_tilt_deg": 8.666642514488618,
+      "median_state_reward": 3.9190031742443407,
+      "median_shaping": 0.47822273802012205
+    },
+    "first_held": {
+      "n_with_held": 285,
+      "n_without_held": 15,
+      "median_first_held_step": 54.0
+    }
+  },
+  "ppotanh_seed1": {
+    "placed_rate": 0.0,
+    "truncated_in_s2": {
+      "k": 87,
+      "n": 300,
+      "wilson_lo": 0.2415637129951771,
+      "wilson_hi": 0.3437465276038718,
+      "final_gripper_qpos": [
+        0.5141,
+        0.5254,
+        0.5402,
+        0.5773,
+        0.5863,
+        0.588,
+        0.5907,
+        0.5929,
+        0.5931,
+        0.6006,
+        0.604,
+        0.6072,
+        0.6204,
+        0.6235,
+        0.6286,
+        0.6331,
+        0.6396,
+        0.6524,
+        0.6561,
+        0.6569,
+        0.6597,
+        0.6639,
+        0.673,
+        0.6731,
+        0.6767,
+        0.6788,
+        0.6799,
+        0.68,
+        0.6809,
+        0.6809,
+        0.6815,
+        0.6816,
+        0.6825,
+        0.6902,
+        0.6905,
+        0.6922,
+        0.6922,
+        0.7014,
+        0.7048,
+        0.7049,
+        0.7101,
+        0.714,
+        0.7148,
+        0.7182,
+        0.7188,
+        0.7211,
+        0.723,
+        0.7257,
+        0.7282,
+        0.7283,
+        0.7295,
+        0.7296,
+        0.7324,
+        0.7328,
+        0.7346,
+        0.7367,
+        0.7417,
+        0.7425,
+        0.7428,
+        0.743,
+        0.7439,
+        0.7466,
+        0.7549,
+        0.7556,
+        0.7559,
+        0.7582,
+        0.7593,
+        0.7601,
+        0.7609,
+        0.768,
+        0.77,
+        0.7713,
+        0.7745,
+        0.7748,
+        0.7755,
+        0.7757,
+        0.7761,
+        0.7762,
+        0.7768,
+        0.7771,
+        0.7778,
+        0.7796,
+        0.7803,
+        0.7812,
+        0.7813,
+        0.7815,
+        0.7821
+      ]
+    },
+    "push_assisted": null,
+    "gate_fraction_lt1": null,
+    "gate_max_s1_tilt": null,
+    "state_fraction": {
+      "S0": 0.6492780832327567,
+      "S1": 0.004581824683742345,
+      "S2": 0.17621027222743732,
+      "S3": 0.16992981985606365
+    },
+    "saturation": {
+      "n_held_steps": 237,
+      "frac_any_dim_gt_0p9": 0.0,
+      "frac_dx_gt_0p9": 0.0,
+      "frac_dy_gt_0p9": 0.0,
+      "frac_dz_gt_0p9": 0.0
+    },
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 7,
+      "n": 237,
+      "fraction": 0.029535864978902954
+    },
+    "toppled_hold_step150": {
+      "k": 0,
+      "n": 300,
+      "fraction": 0.0
+    },
+    "shaping_total_per_episode_median": 7.91639829101041,
+    "s1": {
+      "n_steps": 410,
+      "median_lift_mm": 0.058436870574940514,
+      "median_dxy_mm": 34.152742475271225,
+      "median_tilt_deg": 0.1367029654784282,
+      "median_state_reward": 3.4541205774597907,
+      "median_shaping": 0.11235858406871557
+    },
+    "first_held": {
+      "n_with_held": 150,
+      "n_without_held": 150,
+      "median_first_held_step": 82.0
+    }
+  },
+  "ppotanh_seed2": {
+    "placed_rate": 0.96,
+    "truncated_in_s2": {
+      "k": 0,
+      "n": 300,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "final_gripper_qpos": []
+    },
+    "push_assisted": 0.006944444444444444,
+    "gate_fraction_lt1": 0.19312362838332114,
+    "gate_max_s1_tilt": 88.81045359369897,
+    "state_fraction": {
+      "S0": 0.7186597571106452,
+      "S1": 0.11420546698840935,
+      "S2": 0.06808022469243245,
+      "S3": 0.09905455120851299
+    },
+    "saturation": {
+      "n_held_steps": 2722,
+      "frac_any_dim_gt_0p9": 0.0,
+      "frac_dx_gt_0p9": 0.0,
+      "frac_dy_gt_0p9": 0.0,
+      "frac_dz_gt_0p9": 0.0
+    },
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 1084,
+      "n": 2722,
+      "fraction": 0.3982365907421014
+    },
+    "toppled_hold_step150": {
+      "k": 0,
+      "n": 300,
+      "fraction": 0.0
+    },
+    "shaping_total_per_episode_median": 6.029823663877323,
+    "s1": {
+      "n_steps": 2887,
+      "median_lift_mm": 4.825199127197255,
+      "median_dxy_mm": 48.804111778736115,
+      "median_tilt_deg": 2.2825241594641676,
+      "median_state_reward": 3.42004261986097,
+      "median_shaping": 0.4106655539944768
+    },
+    "first_held": {
+      "n_with_held": 300,
+      "n_without_held": 0,
+      "median_first_held_step": 61.0
+    }
+  },
+  "ppotanh_seed3": {
+    "placed_rate": 0.9933333333333333,
+    "truncated_in_s2": {
+      "k": 0,
+      "n": 300,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "final_gripper_qpos": []
+    },
+    "push_assisted": 0.006711409395973154,
+    "gate_fraction_lt1": 0.25163256421419244,
+    "gate_max_s1_tilt": 71.70234947417457,
+    "state_fraction": {
+      "S0": 0.782244196044712,
+      "S1": 0.0997420464316423,
+      "S2": 0.08538263112639725,
+      "S3": 0.032631126397248494
+    },
+    "saturation": {
+      "n_held_steps": 2158,
+      "frac_any_dim_gt_0p9": 0.0,
+      "frac_dx_gt_0p9": 0.0,
+      "frac_dy_gt_0p9": 0.0,
+      "frac_dz_gt_0p9": 0.0
+    },
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 410,
+      "n": 2158,
+      "fraction": 0.18999073215940684
+    },
+    "toppled_hold_step150": {
+      "k": 0,
+      "n": 300,
+      "fraction": 0.0
+    },
+    "shaping_total_per_episode_median": 5.785256766015664,
+    "s1": {
+      "n_steps": 2320,
+      "median_lift_mm": 5.6587998867034806,
+      "median_dxy_mm": 45.70514336228371,
+      "median_tilt_deg": 3.7862304015020265,
+      "median_state_reward": 3.478296050587022,
+      "median_shaping": 0.46906792372465134
+    },
+    "first_held": {
+      "n_with_held": 300,
+      "n_without_held": 0,
+      "median_first_held_step": 62.0
+    }
+  },
+  "ppotanh_seed4": {
+    "placed_rate": 0.9733333333333334,
+    "truncated_in_s2": {
+      "k": 0,
+      "n": 300,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "final_gripper_qpos": []
+    },
+    "push_assisted": 0.0,
+    "gate_fraction_lt1": 0.0027122321670735015,
+    "gate_max_s1_tilt": 14.711093775252191,
+    "state_fraction": {
+      "S0": 0.6977308917197452,
+      "S1": 0.1480095541401274,
+      "S2": 0.08602707006369427,
+      "S3": 0.06823248407643312
+    },
+    "saturation": {
+      "n_held_steps": 3674,
+      "frac_any_dim_gt_0p9": 0.0,
+      "frac_dx_gt_0p9": 0.0,
+      "frac_dy_gt_0p9": 0.0,
+      "frac_dz_gt_0p9": 0.0
+    },
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 487,
+      "n": 3674,
+      "fraction": 0.13255307566684812
+    },
+    "toppled_hold_step150": {
+      "k": 0,
+      "n": 300,
+      "fraction": 0.0
+    },
+    "shaping_total_per_episode_median": 6.125451827887446,
+    "s1": {
+      "n_steps": 3718,
+      "median_lift_mm": 11.04786443710326,
+      "median_dxy_mm": 62.3013861477375,
+      "median_tilt_deg": 1.066479967069081,
+      "median_state_reward": 3.92428317717215,
+      "median_shaping": 0.27781280409544706
+    },
+    "first_held": {
+      "n_with_held": 299,
+      "n_without_held": 1,
+      "median_first_held_step": 59.0
+    }
+  },
+  "sac_seed0": {
+    "state_fraction": {
+      "S0": 0.18373333333333333,
+      "S1": 0.8162666666666667,
+      "S2": 0.0,
+      "S3": 0.0
+    },
+    "saturation": "N/A: SAC's actor is a squashed (tanh) Gaussian -- action = tanh(sample) is always in (-1, 1), there is no literal clip boundary the way there is for PPO's clipped Gaussian; not computed.",
+    "gripper_cmd_lt_0p9_while_held": {
+      "k": 71,
+      "n": 73463,
+      "fraction": 0.0009664729183398445
+    },
+    "toppled_hold_step150": {
+      "k": 0,
+      "n": 300,
+      "fraction": 0.0
+    },
+    "shaping_total_per_episode_median": 10.329253986477852,
+    "s1": {
+      "n_steps": 73464,
+      "median_lift_mm": 110.28500843048094,
+      "median_dxy_mm": 45.94098590314388,
+      "median_tilt_deg": 0.1992445420132571,
+      "median_state_reward": 5.101387574218179,
+      "median_shaping": 0.028822092339396477
+    },
+    "first_held": {
+      "n_with_held": 300,
+      "n_without_held": 0,
+      "median_first_held_step": 56.0
+    }
+  }
+}

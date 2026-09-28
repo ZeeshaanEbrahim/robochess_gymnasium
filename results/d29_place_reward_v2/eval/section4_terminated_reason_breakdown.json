@@ -1,0 +1,67 @@
+{
+  "ppo_seed0": {
+    "n_non_placed": 300,
+    "reasons": {
+      "time_limit": 299,
+      "piece_off_board": 1
+    }
+  },
+  "ppo_seed1": {
+    "n_non_placed": 300,
+    "reasons": {
+      "time_limit": 298,
+      "piece_off_board": 2
+    }
+  },
+  "ppo_seed2": {
+    "n_non_placed": 12,
+    "reasons": {
+      "time_limit": 11,
+      "piece_off_board": 1
+    }
+  },
+  "ppo_seed3": {
+    "n_non_placed": 7,
+    "reasons": {
+      "time_limit": 7
+    }
+  },
+  "ppo_seed4": {
+    "n_non_placed": 6,
+    "reasons": {
+      "time_limit": 6
+    }
+  },
+  "ppotanh_seed0": {
+    "n_non_placed": 23,
+    "reasons": {
+      "time_limit": 23
+    }
+  },
+  "ppotanh_seed1": {
+    "n_non_placed": 300,
+    "reasons": {
+      "time_limit": 296,
+      "piece_off_board": 4
+    }
+  },
+  "ppotanh_seed2": {
+    "n_non_placed": 12,
+    "reasons": {
+      "time_limit": 10,
+      "piece_off_board": 2
+    }
+  },
+  "ppotanh_seed3": {
+    "n_non_placed": 2,
+    "reasons": {
+      "time_limit": 2
+    }
+  },
+  "ppotanh_seed4": {
+    "n_non_placed": 8,
+    "reasons": {
+      "time_limit": 8
+    }
+  }
+}

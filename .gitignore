@@ -20,3 +20,11 @@ assets/robotiq_2f85/assets/
 .coverage
 runs/
 runs_test/
+
+# D29 eval: full per-step trace dumps (13-64 MB each) -- archived under
+# ~/robochess_archive/d29_eval_traces/, never committed. See
+# results/d29_place_reward_v2/eval/README.md for how to regenerate them.
+results/d29_place_reward_v2/eval/section4_followup_ppo_seed*.json
+results/d29_place_reward_v2/eval/section4_followup_ppotanh_seed*.json
+results/d29_place_reward_v2/eval/section4_followup2_ppo_seed*.json
+results/d29_place_reward_v2/eval/section4_followup2_ppotanh_seed*.json

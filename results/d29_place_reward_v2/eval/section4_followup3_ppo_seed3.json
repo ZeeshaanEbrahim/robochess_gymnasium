@@ -1,0 +1,8 @@
+{
+  "run": "_probe_cart_place29_ppo_seed3",
+  "n_episodes": 150,
+  "n_held": 1287,
+  "median_height_above_base_mm_held": 29.442920315634446,
+  "n_pinched": 1488,
+  "median_height_above_base_mm_pinched": 29.51839975683712
+}
