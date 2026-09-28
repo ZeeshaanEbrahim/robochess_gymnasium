@@ -1,8 +1,9 @@
 # D29 place-reward-v2 eval summary (results/d29_place_reward_v2/eval/section6_summary.md)
 
-Branch `place-reward-v2` @ `41ae8e542c60a17802f92d668a872896bf6b7026`. 11 runs (10 PPO, 1 SAC), 300 stochastic
-episodes each, seed 20000, torch-seeded, frozen VecNormalize (PPO only; SAC carries no VecNormalize). All
-numbers below are drawn from the eval outputs already produced in this directory; none are new claims.
+Runs trained at 41ae8e5; evaluation committed at c4032a8. Branch `place-reward-v2`. 11 runs (10 PPO, 1 SAC),
+300 stochastic episodes each, seed 20000, torch-seeded, frozen VecNormalize (PPO only; SAC carries no
+VecNormalize). All numbers below are drawn from the eval outputs already produced in this directory; none
+are new claims.
 
 ## (a) Rule 1
 
@@ -59,10 +60,10 @@ within 3 cm of the target across all 300 episodes; its failure is carrying and d
   well below a real placement's (default s3 placed G0 mean 555, from-held mean 1013; squash s3 similar).
 - **Default s1**: grasps and never carries -- holds 124 mm from the target (far outside the goal tolerance)
   and does not close the distance.
-- **Squash s1**: carries the piece the full distance and **places it correctly** (piece on-square, resting,
-  settled, still, upright at the final step in all 87 of its S2-ending episodes) **but never opens the
-  gripper past the release threshold** (`gripper_released` False in 87/87). Tip-grip lead (holds at a
-  different qpos than a normal grasp) is **unconfirmed** -- see open items.
+- **Squash s1**: carries the piece the full distance and sets it down on square, upright and settled (all 87
+  S2-ending episodes), but never opens the gripper past the release threshold (`gripper_released` False in
+  87/87); success therefore never fires. Tip-grip lead (holds at a different qpos than a normal grasp) is
+  **unconfirmed** -- see open items.
 - **SAC**: holds the piece 110 mm high and 46 mm from the target and never descends toward it; the posture
   gate eliminated its D28-era toppling (94.0% to 0.0%) without producing any placements.
 
@@ -72,10 +73,11 @@ within 3 cm of the target across all 300 episodes; its failure is carrying and d
   unexplained; does not affect rule 1 (squash seed 0 still passes at 92.3%).
 - The tip-grip lead for squash s1 -- tested and **not confirmed**: squash s1's held qpos (0.775) is well
   above default s3's (0.546) and squash s3's (0.546), matching the original observation, but the measured
-  pad-contact height above the piece base while held is **not** elevated for squash s1 (median 31.4 mm) --
-  it is close to default s3 (29.4 mm) and squash s3 (30.5 mm). It is **squash s0** (a placing seed) whose
-  held pad height is elevated (57.9 mm), the opposite of what the lead predicted. The qpos difference is
-  real but not explained by grip height on the piece.
+  pinch-site height above the piece base (`ur_gripper_pinch` site z minus piece body origin z; not a
+  pad-contact measurement) while held is **not** elevated for squash s1 (median 31.4 mm) -- it is close to
+  default s3 (29.4 mm) and squash s3 (30.5 mm). It is **squash s0** (a placing seed) whose held pinch-site
+  height is elevated (57.9 mm), the opposite of what the lead predicted. The qpos difference is real but not
+  explained by pinch-site height on the piece.
   - **(i) Pad-height definition, for reconciling against D28's ~13 mm figure.** This pass measured
     `data.site_xpos[pinch_site]_z - data.xpos[piece_body]_z`, i.e. the fixed `ur_gripper_pinch` site (the
     same reference point the reward/geometry code uses throughout, `robochess/tasks/t1_pick_and_place.py`'s
@@ -89,9 +91,9 @@ within 3 cm of the target across all 300 episodes; its failure is carrying and d
     figure was not something this pass could locate in committed D28 outputs (checked `DECISIONS.md`, the
     D28 diag/eval JSONs); it may use a different reference point (e.g. an actual contact-solver position
     rather than the fixed pinch site), so the two numbers are not yet known to be comparable.
-  - **(ii) Squash s1 holds at qpos 0.775 (closed-on-air is 0.782) at a normal pad height (31.4 mm, not
-    elevated).** So it grips almost as tightly as physically possible, at a normal position on the piece.
-    Unexplained; parked.
+  - **(ii) Squash s1 holds at qpos 0.775 (closed-on-air is 0.782) at a normal pinch-site height (31.4 mm,
+    not elevated).** So it grips almost as tightly as physically possible, at a normal position on the
+    piece. Unexplained; parked.
 - Seed 1 fails across every variant measured so far: D28 default PPO seed 1, D29 default PPO seed 1, and D29
   squash seed 1 (a different failure mode in each case -- see taxonomy above and the section 4 follow-up
   trap-state analysis).
@@ -104,3 +106,13 @@ within 3 cm of the target across all 300 episodes; its failure is carrying and d
   a documented deviation from SB3's default `MultiInputActorCriticPolicy`: it tanh's the Gaussian mean before
   building the action distribution, in every codepath that builds one (`forward`, `predict`,
   `get_distribution`, `evaluate_actions`). Adopted per rule 2 above.
+
+## (g) Pre-registered diagnostics (reported, not gates)
+
+- **Truncated-in-S2 tripwire** (at least 10%): fired on squash s1 at **29.0%**, consistent with its
+  sets-down-but-never-opens pattern; not fired on any other run (7.3% or less).
+- **Saturation** (held steps with P(clipped) > 0.9 on dx, dy or dz): cannot fire for the squash variant by
+  construction (a tanh-bounded mean caps P(clipped) at about 0.5), so it is uninformative for the adopted
+  variant. The default-variant values are in `section4_summary.json`.
+- **Toppled hold at step 150**: 0.0 to 2.0% on all PPO runs, 0.0% SAC.
+- **Push-assisted fraction of successes**: 0.0 to 0.69%.
