@@ -13,6 +13,24 @@ REPO = Path(__file__).resolve().parents[1]
 PY = sys.executable
 
 
+def _tensorboard_importable() -> bool:
+    # scripts/train.py configures a tensorboard logger; SB3 imports it through torch.
+    try:
+        import torch.utils.tensorboard  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
+# Same convention as tests/test_d29_place_reward_v2.py's requires_d28_place_ppo_seed0:
+# a dependency that is absent from the CI environment (requirements-ci.txt has no
+# tensorboard) skips the tests that need it, with the reason stated, instead of failing.
+requires_tensorboard = pytest.mark.skipif(
+    not _tensorboard_importable(),
+    reason="train.py's tensorboard logger needs tensorboard, which requirements-ci.txt "
+           "does not install (requirements.txt pins it)")
+
+
 def _run(args, **kw):
     return subprocess.run([PY, *map(str, args)], cwd=REPO, capture_output=True, text=True, **kw)
 
@@ -35,6 +53,7 @@ def _eval(root, out, *extra, episodes=4):
                  "--deterministic", "--seed", 7, "--out", out, *extra])
 
 
+@requires_tensorboard
 def test_pairs_cycle_in_order(tiny_run, tmp_path):
     out = tmp_path / "o.json"
     r = _eval(tiny_run, out, "--pairs", "e4:e5,a1:h8", episodes=4)
@@ -44,6 +63,7 @@ def test_pairs_cycle_in_order(tiny_run, tmp_path):
         ("e4", "e5"), ("a1", "h8"), ("e4", "e5"), ("a1", "h8")]
 
 
+@requires_tensorboard
 def test_pairs_refuses_episodes_not_a_multiple(tiny_run, tmp_path):
     out = tmp_path / "o.json"
     r = _eval(tiny_run, out, "--pairs", "e4:e5,a1:h8", episodes=3)
@@ -51,6 +71,7 @@ def test_pairs_refuses_episodes_not_a_multiple(tiny_run, tmp_path):
     assert not out.exists()
 
 
+@requires_tensorboard
 def test_without_pairs_output_identical_to_before(tiny_run, tmp_path):
     parent = subprocess.run(["git", "show", "8cf881b:scripts/eval_probe.py"], cwd=REPO,
                             capture_output=True, text=True)
