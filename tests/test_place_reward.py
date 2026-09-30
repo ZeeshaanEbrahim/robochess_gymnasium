@@ -564,7 +564,7 @@ def test_defaults_leave_everything_off():
         env.close()
 
 
-def test_place_mode_builds_the_wrapper_and_adds_only_place_state_to_monitor():
+def test_place_mode_builds_the_wrapper_and_adds_place_state_and_squares_to_monitor():
     c = resolve_config(PLACE_CFG, config_path="t.yaml")
     env = train.build_env(c)
     try:
@@ -573,7 +573,7 @@ def test_place_mode_builds_the_wrapper_and_adds_only_place_state_to_monitor():
         env.close()
     assert train.monitor_info_keywords(c) == (
         "terminated_reason", "gripper_self_contact", "ik_rejects",
-        "ever_held", "release_height_mm", "place_state")
+        "ever_held", "release_height_mm", "place_state", "start_square", "target_square")  # RS29
     assert "place_state" not in train.monitor_info_keywords(
         resolve_config(dict(BASE_CFG, pickup_obs=True, pickup_mode=True), config_path="t.yaml"))
 

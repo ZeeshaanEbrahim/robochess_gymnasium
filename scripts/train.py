@@ -225,7 +225,7 @@ N_ENVS = 1
 def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:
     """Which info keys reach monitor.monitor.csv for this config.
 
-    `pickup_success` (pick-up mode) and `place_state` (D28 place mode) are added ONLY there, because Monitor raises a
+    `pickup_success` (pick-up mode) and `place_state`, `start_square`, `target_square` (D28 place mode) are added ONLY there, because Monitor raises a
     KeyError for any keyword missing from a finished episode's info, and only
     PickupReward puts that key there. Adding it unconditionally would break
     every non-pick-up run.
@@ -233,7 +233,9 @@ def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:
     if cfg.get("pickup_mode", False):
         return MONITOR_INFO_KEYWORDS + ("pickup_success",)
     if cfg.get("place_mode", False):
-        return MONITOR_INFO_KEYWORDS + ("place_state",)
+        # RS29: the per-episode squares, so a random-squares run's monitor CSV
+        # records which pair each episode was (T1 puts both in every info).
+        return MONITOR_INFO_KEYWORDS + ("place_state", "start_square", "target_square")
     return MONITOR_INFO_KEYWORDS
 
 
