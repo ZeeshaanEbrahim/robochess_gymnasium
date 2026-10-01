@@ -28,3 +28,7 @@ results/d29_place_reward_v2/eval/section4_followup_ppo_seed*.json
 results/d29_place_reward_v2/eval/section4_followup_ppotanh_seed*.json
 results/d29_place_reward_v2/eval/section4_followup2_ppo_seed*.json
 results/d29_place_reward_v2/eval/section4_followup2_ppotanh_seed*.json
+
+# RS29 eval: per-step trace dumps (about 1.2 MB each, 11 files) -- archived under
+# ~/robochess_archive/rs29_eval_traces/, never committed (regeneration commands in its README).
+results/**/trace_*.json.gz
