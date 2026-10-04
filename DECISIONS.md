@@ -2623,3 +2623,21 @@ and `results/d29_place_reward_v2/eval/section6_summary.md`.
   diagnostic step (observation-only VecNormalize, untested -- SAC's config currently carries none).
 
 ROADMAP.md sync pending (separate docs commit).
+
+## D30: T1 benchmark task is the fixed move e4->e5 (4 Oct 2026)
+- Context: RS29 (pre-registered, results/rs29_random_squares/) trained PPO with mean
+  squash (D29) on uniform random start/target pairs (d1, e1 excluded, D26), 400-step
+  budget, 3M steps, 6 seeds. Result: 0 of 6 seeds learn; 0/300 placements per seed on
+  the 20 fixed evaluation pairs. Positive control (D29 squash seed 3 on e4:e5 at
+  1c215fe) placed 298/300, so the code is not at fault.
+- Diagnostics: holds are brief and slip (median 2-6 steps held in 5 of 6 seeds), no
+  net progress toward targets, failure on short pairs too (so not distance), grasping
+  degraded with more training in seeds 1 and 4. Exploratory zero-shot: D29 squash
+  models place only on e4:e5 (15/15) and on no other pair; the fixed-move policy does
+  not transfer to other start squares.
+- Decision: the T1 benchmark task is the fixed move e4->e5 with the D29 squash
+  configuration (configs/_probe_cart_place29_ppotanh_seed*.yaml settings). T2 and T3
+  will also use fixed configurations, specified in their own specs. Random-square
+  generalisation is reported as a pre-registered negative result and a documented
+  limitation of the benchmark. A start-square curriculum is future work. Warm-starting
+  from a PPO policy is rejected for the factorial because SAC cells could not use it.
