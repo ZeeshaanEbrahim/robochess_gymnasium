@@ -144,6 +144,9 @@ def build_env(cfg: dict):
     # the task wrapper's own random sampling (square=None means "sample it").
     squares = dict(start_square=cfg.get("start_square"), target_square=cfg.get("target_square"),
                    excluded_squares=tuple(cfg.get("excluded_squares", ())))
+    # RS30: only passed when set, so a config without it builds exactly as before.
+    if cfg.get("train_pairs") is not None:
+        squares["train_pairs"] = tuple(tuple(p.split(":")) for p in cfg["train_pairs"])
     if cfg["task"] == "t1":
         base = RoboChessEnv(**env_kwargs)
         task = T1PickAndPlaceTask(base, **squares)
@@ -339,7 +342,8 @@ def build_model(cfg: dict, env):
 
             common["policy"] = SquashedMultiInputActorCriticPolicy
         # On-policy: no replay buffer exists to swap, so HER cannot apply.
-        model = PPO(**common)
+        # RS30: ppo_ent_coef (default 0.0 = SB3's own default).
+        model = PPO(**common, ent_coef=cfg.get("ppo_ent_coef", 0.0))
     elif algorithm == "sac":
         if reward_type == "sparse":
             model = SAC(

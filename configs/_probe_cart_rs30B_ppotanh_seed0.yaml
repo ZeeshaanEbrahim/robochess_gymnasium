@@ -1,0 +1,32 @@
+# RS30 arm B (entropy bonus ON, ppo_ent_coef 0.01): copy of _probe_cart_place29_ppotanh_seed0.yaml with start_square / target_square
+# removed and train_pairs [e4:e5, d4:d5, f4:f5, e3:e4] added (one drawn uniformly per episode); 2M steps,
+# 300-step episodes (unchanged). Arm B differs from arm A only by ppo_ent_coef.
+# See results/rs30_four_pairs/PREREGISTRATION.md.
+#
+# run_name is pinned to the file stem.
+
+task: t1
+algorithm: ppo
+reward_type: shaped
+observation: state
+seed: 0
+total_timesteps: 2000000
+device: cpu
+num_threads: 1
+action_mode: cartesian
+max_episode_steps: 300
+n_obstacles: 0
+train_pairs: ["e4:e5", "d4:d5", "f4:f5", "e3:e4"]
+shaped_staged: false
+place_mode: true
+pickup_obs: true
+place_obs: true
+vecnormalize_clip_reward: 1000
+place_posture_gate: true
+place_carry_potential: true
+ppo_mean_squash: true
+ppo_ent_coef: 0.01
+checkpoint_freq: 100000
+output_root: runs
+run_name: _probe_cart_rs30B_ppotanh_seed0
+notes: "RS30 four fixed pairs"

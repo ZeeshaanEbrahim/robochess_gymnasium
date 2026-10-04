@@ -64,6 +64,10 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     # D26: squares no task role (start, target, obstacle) may use. Empty ->
     # all 64 squares, identical to every run so far.
     "excluded_squares": [],
+    # RS30: a list of "start:target" training pairs, one drawn uniformly per
+    # episode. None -> the wrapper's own sampling. T1 only; excludes
+    # start_square / target_square.
+    "train_pairs": None,
     # Staged shaped reward (DECISIONS.md D20). Default OFF: with this false the
     # shaped reward is exactly the one every pilot and sanity run used so far.
     "shaped_staged": False,
@@ -115,6 +119,8 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "place_carry_potential": False,
     "place_carry_potential_k": 50.0,
     "ppo_mean_squash": False,
+    # RS30: PPO entropy coefficient, passed as ent_coef. 0.0 is SB3's default.
+    "ppo_ent_coef": 0.0,
     "output_root": "runs",
     "run_name": None,          # None -> derived from the config filename + seed
     "notes": "",
@@ -214,6 +220,31 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
         raise ConfigError(str(exc)) from exc
     cfg["excluded_squares"] = list(excluded)
 
+    if cfg["train_pairs"] is not None:
+        tp = cfg["train_pairs"]
+        if not isinstance(tp, (list, tuple)) or not tp:
+            raise ConfigError(f"train_pairs must be a non-empty list of 'start:target' strings, got {tp!r}")
+        for item in tp:
+            if not isinstance(item, str) or item.count(":") != 1:
+                raise ConfigError(f"train_pairs entries must be 'start:target' strings, got {item!r}")
+            s, t = item.split(":")
+            for sq in (s, t):
+                if sq not in ALL_SQUARES:
+                    raise ConfigError(f"train_pairs {item!r}: {sq!r} is not a board square")
+            if s == t:
+                raise ConfigError(f"train_pairs {item!r}: start and target must differ")
+            try:
+                reject_excluded("train_pairs", (s, t), excluded)
+            except ValueError as exc:
+                raise ConfigError(str(exc)) from exc
+        if len(set(tp)) != len(tp):
+            raise ConfigError("train_pairs must be distinct")
+        if cfg["start_square"] is not None or cfg["target_square"] is not None:
+            raise ConfigError("train_pairs cannot be combined with start_square/target_square")
+        if cfg["task"] != "t1":
+            raise ConfigError(f"train_pairs with task={cfg['task']!r}: T1 only")
+        cfg["train_pairs"] = list(tp)
+
     if not isinstance(cfg["shaped_staged"], bool):
         raise ConfigError(f"shaped_staged must be a bool, got {cfg['shaped_staged']!r}")
     if not isinstance(cfg["pickup_obs"], bool):
@@ -306,6 +337,14 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
     if cfg["ppo_mean_squash"] and cfg["algorithm"] != "ppo":
         raise ConfigError(
             f"ppo_mean_squash=True with algorithm={cfg['algorithm']!r}: PPO only.")
+    ent = cfg["ppo_ent_coef"]
+    if isinstance(ent, bool) or not isinstance(ent, (int, float)):
+        raise ConfigError(f"ppo_ent_coef must be a number, got {ent!r}")
+    if ent < 0:
+        raise ConfigError(f"ppo_ent_coef must be >= 0, got {ent}")
+    if "ppo_ent_coef" in raw and cfg["algorithm"] != "ppo":
+        raise ConfigError(f"ppo_ent_coef with algorithm={cfg['algorithm']!r}: PPO only.")
+    cfg["ppo_ent_coef"] = float(ent)
     if cfg["place_obs"] and not cfg["pickup_obs"]:
         raise ConfigError("place_obs=True needs pickup_obs=True (the target features follow them).")
     if cfg["place_obs"] and cfg["task"] != "t1":

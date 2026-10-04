@@ -87,6 +87,7 @@ class T1PickAndPlaceTask(gym.Wrapper):
         target_square: str | None = None,
         reachable_squares: tuple[str, ...] = REACHABLE_SQUARES,
         excluded_squares: tuple[str, ...] = (),
+        train_pairs: tuple[tuple[str, str], ...] | None = None,
     ):
         super().__init__(env)
         base = self.unwrapped
@@ -107,6 +108,10 @@ class T1PickAndPlaceTask(gym.Wrapper):
             raise ValueError("Need >= 2 reachable_squares to pick a distinct start/target pair.")
         self.start_square = self._check_fixed("start_square", start_square)
         self.target_square = self._check_fixed("target_square", target_square)
+        # RS30: a fixed list of (start, target) pairs, one drawn uniformly per
+        # reset when neither square is fixed. None -> the sampling above, with
+        # no extra RNG draw (every run so far).
+        self.train_pairs = self._check_train_pairs(train_pairs)
 
         # Piece height at rest, read from the model's own spawn keyframe
         # rather than hardcoded, so a change to piece geometry propagates here.
@@ -148,6 +153,29 @@ class T1PickAndPlaceTask(gym.Wrapper):
             raise ValueError(f"{name}={sq!r} is not in reachable_squares.")
         return sq
 
+    def _check_train_pairs(
+        self, train_pairs: tuple[tuple[str, str], ...] | None
+    ) -> tuple[tuple[str, str], ...] | None:
+        if train_pairs is None:
+            return None
+        if self.start_square is not None or self.target_square is not None:
+            raise ValueError("train_pairs cannot be combined with a fixed start_square/target_square.")
+        pairs = []
+        for pair in train_pairs:
+            if (not isinstance(pair, (tuple, list)) or len(pair) != 2
+                    or not all(isinstance(sq, str) for sq in pair)):
+                raise ValueError(f"train_pairs entries must be (start, target) square names, got {pair!r}.")
+            start = self._check_fixed("train_pairs start", pair[0])
+            target = self._check_fixed("train_pairs target", pair[1])
+            if start == target:
+                raise ValueError(f"train_pairs pair {pair!r}: start and target must differ.")
+            pairs.append((start, target))
+        if not pairs:
+            raise ValueError("train_pairs must not be empty.")
+        if len(set(pairs)) != len(pairs):
+            raise ValueError("train_pairs must be distinct.")
+        return tuple(pairs)
+
     def _resolve_squares(self, start: str | None, target: str | None) -> tuple[str, str]:
         rng = self._base.np_random
         start = self._check_fixed("start_square", start)
@@ -157,6 +185,8 @@ class T1PickAndPlaceTask(gym.Wrapper):
                 raise ValueError("start_square and target_square must differ.")
             return start, target
         if start is None and target is None:
+            if self.train_pairs is not None:
+                return self.train_pairs[int(rng.integers(len(self.train_pairs)))]
             idx = rng.choice(len(self.reachable_squares), size=2, replace=False)
             return self.reachable_squares[idx[0]], self.reachable_squares[idx[1]]
         choices = [s for s in self.reachable_squares if s != (start or target)]
