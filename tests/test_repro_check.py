@@ -51,7 +51,8 @@ rc.run(cfg, 150, "A", out)      # > SAC's 100 learning_starts
 rc.run(cfg, 150, "B", out)
 A, B = dict(np.load(out / "trace_A.npz")), dict(np.load(out / "trace_B.npz"))
 identical = A.keys() == B.keys() and all(np.array_equal(A[k], B[k]) for k in A)
-print(json.dumps(dict(learned=learned, identical=bool(identical))))
+has_digest = "final_state_sha256" in A and A["final_state_sha256"].shape == (32,) and A["final_state_sha256"].dtype == np.uint8
+print(json.dumps(dict(learned=learned, identical=bool(identical), has_digest=bool(has_digest))))
 """
 
 
@@ -67,3 +68,32 @@ def test_run_trains_the_algorithm_the_config_names(config, expected):
     result = json.loads(proc.stdout.strip().splitlines()[-1])
     assert result["learned"] == [expected, expected]      # run A and run B
     assert result["identical"], "two same-seed runs diverged"
+    assert result["has_digest"], "trace carries no final-weights digest"
+
+
+def test_state_digest_tracks_weights_names_and_log_ent_coef():
+    """state_digest hashes the weights (not just shapes), tensor names, and SAC's log_ent_coef."""
+    import importlib.util
+
+    import torch
+
+    spec = importlib.util.spec_from_file_location("repro_check", REPO / "scripts" / "repro_check.py")
+    rc = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rc)
+
+    class Fake:
+        def __init__(self, w=0.0, name="lin", ent=None):
+            self.policy = torch.nn.Sequential()
+            self.policy.add_module(name, torch.nn.Linear(2, 2))
+            with torch.no_grad():
+                getattr(self.policy, name).weight.fill_(w)
+                getattr(self.policy, name).bias.zero_()
+            if ent is not None:
+                self.log_ent_coef = torch.tensor([ent])
+
+    base = rc.state_digest(Fake())
+    assert base == rc.state_digest(Fake()) and len(base) == 64
+    assert base != rc.state_digest(Fake(w=1e-7))                  # a single weight change
+    assert base != rc.state_digest(Fake(name="other"))            # a renamed tensor
+    assert rc.state_digest(Fake(ent=0.0)) != base                 # SAC's entropy coefficient is covered
+    assert rc.state_digest(Fake(ent=0.0)) != rc.state_digest(Fake(ent=1e-7))

@@ -115,6 +115,12 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "place_carry_potential": False,
     "place_carry_potential_k": 50.0,
     "ppo_mean_squash": False,
+    # SAC observation normalisation, for parity with PPO (default OFF: with this
+    # false SAC trains on raw observations exactly as every SAC run so far did).
+    # Observation-only VecNormalize with PPO's settings (norm_obs_keys
+    # ["observation"], clip_obs 10, gamma 0.99) and norm_reward False. SAC
+    # without HER only -- the HER combination is untested.
+    "sac_obs_normalize": False,
     "output_root": "runs",
     "run_name": None,          # None -> derived from the config filename + seed
     "notes": "",
@@ -287,7 +293,7 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
             "reward replaces reward_type entirely; leave it at 'shaped'.")
     if cfg["place_mode"] and not cfg["pickup_obs"]:
         raise ConfigError("place_mode=True needs pickup_obs=True.")
-    for key in ("place_posture_gate", "place_carry_potential", "ppo_mean_squash"):
+    for key in ("place_posture_gate", "place_carry_potential", "ppo_mean_squash", "sac_obs_normalize"):
         if not isinstance(cfg[key], bool):
             raise ConfigError(f"{key} must be a bool, got {cfg[key]!r}")
     for key in ("place_gate_tilt_lo_deg", "place_gate_tilt_hi_deg", "place_carry_potential_k"):
@@ -306,6 +312,16 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
     if cfg["ppo_mean_squash"] and cfg["algorithm"] != "ppo":
         raise ConfigError(
             f"ppo_mean_squash=True with algorithm={cfg['algorithm']!r}: PPO only.")
+    if cfg["sac_obs_normalize"] and cfg["algorithm"] != "sac":
+        raise ConfigError(
+            f"sac_obs_normalize=True with algorithm={cfg['algorithm']!r}: SAC only "
+            "(PPO always normalises observations).")
+    if cfg["sac_obs_normalize"] and cfg["reward_type"] == "sparse":
+        # scripts/train.py's HER_CELLS is {("sac", "sparse")}; train.py imports this
+        # module, so the condition is repeated here and tests pin the two together.
+        raise ConfigError(
+            "sac_obs_normalize=True with SAC + sparse reward (the HER cell): the "
+            "combination is untested and HER is off project-wide. Use reward_type shaped.")
     if cfg["place_obs"] and not cfg["pickup_obs"]:
         raise ConfigError("place_obs=True needs pickup_obs=True (the target features follow them).")
     if cfg["place_obs"] and cfg["task"] != "t1":

@@ -69,7 +69,7 @@ def main() -> int:
     Algo = PPO if cfg["algorithm"] == "ppo" else SAC
     model = Algo.load(str(a.run_dir / f"checkpoints/rc_{a.checkpoint}_steps.zip"), device="cpu")
     vn = None
-    if cfg["algorithm"] == "ppo":
+    if train.uses_vecnormalize(cfg):
         vn = VecNormalize.load(str(a.run_dir / f"checkpoints/rc_vecnormalize_{a.checkpoint}_steps.pkl"),
                                DummyVecEnv([lambda: Monitor(train.build_env(cfg))]))
         vn.training = False

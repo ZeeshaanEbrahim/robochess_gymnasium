@@ -71,6 +71,29 @@ def _recorder_class():
     return TraceRecorder
 
 
+def state_digest(model) -> str:
+    """sha256 over the learner's final weights, so two runs can be compared on
+    the model they ended with and not only on the trajectory they produced.
+
+    Covers every tensor of `model.policy.state_dict()` (PPO: the actor-critic;
+    SAC: actor, critic and critic_target) in sorted key order, plus SAC's
+    `log_ent_coef` when present. Key names are hashed too, so a renamed or
+    missing tensor changes the digest.
+    """
+    import hashlib
+
+    h = hashlib.sha256()
+    state = model.policy.state_dict()
+    for k in sorted(state):
+        h.update(k.encode())
+        h.update(state[k].detach().cpu().contiguous().numpy().tobytes())
+    ent = getattr(model, "log_ent_coef", None)
+    if ent is not None:
+        h.update(b"log_ent_coef")
+        h.update(ent.detach().cpu().contiguous().numpy().tobytes())
+    return h.hexdigest()
+
+
 def run(cfg: dict, steps: int, tag: str, outdir: Path) -> Path:
     """Train once and write the full trace to `outdir/trace_<tag>.npz`."""
     import numpy as np
@@ -86,7 +109,13 @@ def run(cfg: dict, steps: int, tag: str, outdir: Path) -> Path:
     obs = {k: np.concatenate([o[k] for o in venv.obs], axis=0) for k in venv.obs[0]}
     rews = np.concatenate(venv.rewards, axis=0)
     path = outdir / f"trace_{tag}.npz"
-    np.savez(path, actions=acts, rewards=rews, **{f"obs_{k}": v for k, v in obs.items()})
+    # The digest rides in the same npz as a uint8 array so diff() compares it
+    # like any other array (bit-identical or not, first differing "step" n/a).
+    digest = state_digest(model)
+    print(f"  final state digest ({tag}): {digest}")
+    np.savez(path, actions=acts, rewards=rews,
+             final_state_sha256=np.frombuffer(bytes.fromhex(digest), dtype=np.uint8),
+             **{f"obs_{k}": v for k, v in obs.items()})
     venv.close()
     return path
 

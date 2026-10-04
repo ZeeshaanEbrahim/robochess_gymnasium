@@ -106,7 +106,7 @@ venv = DummyVecEnv([mk])
 ck = a.checkpoint
 mp = run_dir / ("final_model.zip" if ck is None else f"checkpoints/rc_{ck}_steps.zip")
 rms_before = rms_after = None
-if cfg["algorithm"] == "ppo":
+if train.uses_vecnormalize(cfg):
     vn = run_dir / ("final_vecnormalize.pkl" if ck is None else f"checkpoints/rc_vecnormalize_{ck}_steps.pkl")
     venv = VecNormalize.load(str(vn), venv); venv.training = False; venv.norm_reward = False
     snap = lambda: {k: (copy.deepcopy(np.asarray(v.mean)), copy.deepcopy(np.asarray(v.var)), float(v.count)) for k, v in

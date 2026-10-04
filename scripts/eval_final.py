@@ -118,7 +118,7 @@ def main() -> int:
     venv = DummyVecEnv([lambda: Monitor(ApproachMetrics(train.build_env(cfg)))])
     ck = a.checkpoint
     model_path = a.run_dir / ("final_model.zip" if ck is None else f"checkpoints/rc_{ck}_steps.zip")
-    if cfg["algorithm"] == "ppo":
+    if train.uses_vecnormalize(cfg):
         vn = a.run_dir / ("final_vecnormalize.pkl" if ck is None else f"checkpoints/rc_vecnormalize_{ck}_steps.pkl")
         venv = VecNormalize.load(str(vn), venv)
         venv.training = False

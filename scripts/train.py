@@ -87,19 +87,33 @@ def _reward_wrappers() -> dict:
     return {"shaped": ShapedPickAndPlaceReward, "sparse": SparsePickAndPlaceReward}
 
 # --- VecNormalize policy --------------------------------------------------
-# The standing decision is that observation/reward normalisation applies to the
-# PPO branch ONLY, never to SAC. PPO is on-policy and its value target moves
-# with the reward scale, so running normalisation helps it; SAC's replay buffer
-# holds transitions whose normalisation statistics would drift out from under
-# them as the running mean updates, making stored transitions inconsistent with
-# current ones.
+# PPO always gets VecNormalize (observations AND reward). SAC gets it only when
+# the config sets `sac_obs_normalize` (default false = raw observations, as
+# every SAC run so far): observation-only, with PPO's own settings, so the PPO
+# vs SAC comparison is not confounded by one learner seeing raw inputs.
 #
-# This set is the single source of truth, and `build_vec_env` below branches on
-# it with an exhaustive if/elif/else that RAISES on an unrecognised algorithm.
-# Deliberately not a config key, not a dict `.get(..., default)`, and not
-# anything that depends on key ordering: a silent default is precisely how this
-# would one day get applied to SAC without anyone noticing.
+# SAC's replay buffer is safe under VecNormalize: SB3 stores the ORIGINAL
+# observations and normalises at sampling time with the CURRENT statistics
+# (stable_baselines3 2.9.0 off_policy_algorithm._store_transition, buffers
+# _get_samples), so stored transitions never go stale; what drifts is the input
+# scale the critic sees. norm_reward stays False for SAC (sampled rewards are
+# then untouched).
+#
+# `VECNORMALIZE_ALGORITHMS` is the always-on set; `uses_vecnormalize` below is
+# the one function that decides for a config, and `build_vec_env` branches on
+# the algorithm with an exhaustive if/elif/else that RAISES on an unrecognised
+# one. Not a `.get(..., default)`: a silent default is how this would one day
+# get applied to an algorithm without anyone noticing.
 VECNORMALIZE_ALGORITHMS = frozenset({"ppo"})
+
+
+def uses_vecnormalize(cfg: dict) -> bool:
+    """Whether this config's training env is a VecNormalize (and so whether a
+    run directory holds VecNormalize statistics that evaluation must load).
+    `.get`: configs and manifests written before sac_obs_normalize existed
+    trained without it."""
+    return cfg["algorithm"] in VECNORMALIZE_ALGORITHMS or (
+        cfg["algorithm"] == "sac" and bool(cfg.get("sac_obs_normalize", False)))
 
 # Only "observation" is normalised, not the goal keys. achieved_goal and
 # desired_goal are both piece positions in the same world frame, and what the
@@ -240,7 +254,7 @@ def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:
 
 
 def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
-    """Vectorise the env, applying VecNormalize to the PPO branch only.
+    """Vectorise the env, applying VecNormalize per `uses_vecnormalize`.
 
     The algorithm branch here is the one visible place this decision is made.
 
@@ -280,9 +294,20 @@ def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
             gamma=0.99,
         )
     elif algorithm == "sac":
-        # Intentionally left bare. SAC is never wrapped in VecNormalize; see
-        # VECNORMALIZE_ALGORITHMS above for why.
-        pass
+        if cfg.get("sac_obs_normalize", False):
+            # Same observation settings as PPO; the reward is left raw.
+            if (algorithm, cfg["reward_type"]) in HER_CELLS:
+                raise ValueError(
+                    "sac_obs_normalize with the SAC+HER cell is untested and not allowed")
+            venv = VecNormalize(
+                venv,
+                norm_obs=True,
+                norm_reward=False,
+                norm_obs_keys=VECNORMALIZE_OBS_KEYS,
+                clip_obs=10.0,
+                gamma=0.99,
+            )
+        # else: intentionally left bare (raw observations), see the policy above.
     else:
         # resolve_config validates the enum, so reaching here means a new
         # algorithm was added without deciding its normalisation. Fail rather
@@ -293,7 +318,7 @@ def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
         )
 
     applied = isinstance(venv, VecNormalize)
-    expected = algorithm in VECNORMALIZE_ALGORITHMS
+    expected = uses_vecnormalize(cfg)
     # Cheap invariant, kept in the running code rather than only in a test:
     # the branch above and the declared policy must agree, always.
     assert applied == expected, (
@@ -417,7 +442,7 @@ def main() -> int:
             extra={"resolved": {
                 "device_requested": cfg["device"],
                 "device_actual": resolved_device,
-                "vecnormalize": cfg["algorithm"] in VECNORMALIZE_ALGORITHMS,
+                "vecnormalize": uses_vecnormalize(cfg),
                 "her": (cfg["algorithm"], cfg["reward_type"]) in HER_CELLS,
                 "threads": threads,
                 "n_envs": N_ENVS,
@@ -470,7 +495,8 @@ def main() -> int:
     # save_vecnormalize matters for the PPO branch: a policy reloaded without
     # the running observation/reward statistics it was trained under sees
     # differently-scaled inputs and does not reproduce its own behaviour.
-    # It is a no-op when the env is not a VecNormalize (the SAC branch).
+    # It is a no-op when the env is not a VecNormalize (SAC without
+    # sac_obs_normalize).
     ckpt_dir = run_dir / "checkpoints"
     checkpoint_cb = CheckpointCallback(
         save_freq=cfg["checkpoint_freq"],
