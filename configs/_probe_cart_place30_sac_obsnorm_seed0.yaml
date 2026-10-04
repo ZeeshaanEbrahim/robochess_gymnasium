@@ -28,4 +28,4 @@ sac_obs_normalize: true
 checkpoint_freq: 100000
 output_root: runs
 run_name: _probe_cart_place30_sac_obsnorm_seed0
-notes: "D29 probe: D28 pick-and-place reward plus posture gate + carry potential, SAC, Cartesian, e4->e5, 1M steps, 300-step budget"
+notes: "SAC obs-norm test: D29 SAC config with sac_obs_normalize true (observation-only VecNormalize, parity with PPO). Prereg: results/sac_obsnorm_seed0/PREREGISTRATION.md."
