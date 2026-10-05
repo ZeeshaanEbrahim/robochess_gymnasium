@@ -226,8 +226,12 @@ PPO_LR = 3e-4
 
 
 def linear_lr(progress_remaining: float) -> float:
-    """RS31 ppo_lr_schedule "linear": SB3 calls this with progress_remaining 1 -> 0."""
-    return PPO_LR * progress_remaining
+    """RS31 ppo_lr_schedule "linear": SB3 calls this with progress_remaining 1 -> 0.
+
+    SB3 does not clip progress_remaining, and the last rollout overshoots
+    total_timesteps (n_envs x n_steps per rollout), so it ends slightly below 0;
+    clamped so the learning rate never goes negative."""
+    return PPO_LR * max(progress_remaining, 0.0)
 
 
 def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:

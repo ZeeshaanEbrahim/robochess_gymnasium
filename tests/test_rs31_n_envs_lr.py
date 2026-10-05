@@ -188,6 +188,14 @@ def test_linear_values_at_progress_one_half_zero():
     assert values == [3e-4, 1.5e-4, 0.0]
 
 
+@pytest.mark.parametrize("progress", [-0.01, -0.0022, -0.23])
+def test_linear_never_goes_negative_past_the_end(progress):
+    """SB3 leaves progress_remaining unclipped; the last rollout overshoots total_timesteps."""
+    from scripts.train import linear_lr
+
+    assert linear_lr(progress) == 0.0
+
+
 # ---------------------------------------------------------------- real runs
 def _run(args):
     return subprocess.run([PY, *map(str, args)], cwd=REPO, capture_output=True, text=True)
