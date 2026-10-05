@@ -27,7 +27,7 @@
     "assets/scene.xml": "63b27b93a75529263167706e5d83bdff7601b39c312f4f7fa3d0c0033add3bd9",
     "assets/scene_t2.xml": "66c9828d38cfd7eed7271988f1dc9d9fd50fb7de4300424d9064c8530b01c9d6",
     "robochess/envs/robochess_env.py": "9daa0aa83b622fa81aa41824c852fc92f22121ec8ec39bd76fc86a7e9b2ac205",
-    "robochess/tasks/t1_pick_and_place.py": "ace0e2fa79c140b364ef7478499848f6965188b7153398dee528fc8539f77909",
+    "robochess/tasks/t1_pick_and_place.py": "c81adde4a651ca78259ae7290de6cc2d32a2c0c4ee8e0e9ebe6633296129458c",
     "robochess/tasks/t2_obstacle_pick_and_place.py": "7b3e5692c838d612e6aab5a4878a17de9745ca21dddf9308d920d97cf81539b8",
     "scripts/scripted_expert.py": "803a00ef0f3bed01f2667fd36746048d27e60b4f31201855987cb7b229e2498c",
     "tests/test_cartesian_mode.py": "d45e0bb2d69d2859e65ea71df81798cc40a20659c24fbb6b96edf2fdb4103e74",
