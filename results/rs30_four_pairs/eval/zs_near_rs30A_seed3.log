@@ -1,0 +1,2 @@
+_probe_cart_rs30A_ppotanh_seed3 None place {'held': '140/150', 'lifted_30mm': '3/150', 'carried_within_3cm': '0/150', 'released': '10/150', 'placed': '1/150'} truncated_in_S2 4 effective_n 150
+_probe_cart_rs30A_ppotanh_seed3 None n 150 pickup 0 grasp 80 rms_same True

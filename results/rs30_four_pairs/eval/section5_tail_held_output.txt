@@ -1,0 +1,5 @@
+window = episodes whose end step (cumulative sum of Monitor `l`) is within the last N steps of the Monitor total
+A0: Monitor steps 2000671; last 20k: 55/75 = 73.3%; last 100k: 299/379 = 78.9%; chunk10 76.6%; eval held 145/300 = 48.3%
+A1: Monitor steps 2000824; last 20k: 48/83 = 57.8%; last 100k: 259/404 = 64.1%; chunk10 68.6%; eval held 209/300 = 69.7%
+A3: Monitor steps 2000673; last 20k: 46/67 = 68.7%; last 100k: 231/334 = 69.2%; chunk10 80.4%; eval held 175/300 = 58.3%
+B1: Monitor steps 2000805; last 20k: 81/91 = 89.0%; last 100k: 390/468 = 83.3%; chunk10 79.6%; eval held 240/300 = 80.0%

@@ -1,0 +1,30 @@
+a/b. placements k/75 per training pair (Wilson 95%, z=1.96, no continuity correction, in %)
+run                           e4:e5                 d4:d5                 f4:f5                 e3:e4   total/300  learns(>=15 on each)
+rs30A_seed0       0/75 [  0.0,  4.9]     0/75 [  0.0,  4.9]     0/75 [  0.0,  4.9]     0/75 [  0.0,  4.9]       0/300  False
+rs30A_seed1      52/75 [ 58.2, 78.6]     1/75 [  0.2,  7.2]    24/75 [ 22.5, 43.2]    39/75 [ 40.9, 62.9]     116/300  False
+rs30A_seed2      24/75 [ 22.5, 43.2]    18/75 [ 15.8, 34.8]    49/75 [ 54.1, 75.1]     6/75 [  3.7, 16.4]      97/300  False
+rs30A_seed3       0/75 [  0.0,  4.9]     1/75 [  0.2,  7.2]     0/75 [  0.0,  4.9]     0/75 [  0.0,  4.9]       1/300  False
+rs30B_seed0      70/75 [ 85.3, 97.1]    63/75 [ 74.1, 90.6]    52/75 [ 58.2, 78.6]    65/75 [ 77.2, 92.6]     250/300  True
+rs30B_seed1      45/75 [ 48.7, 70.3]    35/75 [ 35.8, 57.8]    35/75 [ 35.8, 57.8]    56/75 [ 63.8, 83.1]     171/300  True
+rs30B_seed2      71/75 [ 87.1, 97.9]    69/75 [ 83.6, 96.3]    68/75 [ 82.0, 95.4]    63/75 [ 74.1, 90.6]     271/300  True
+rs30B_seed3      66/75 [ 78.7, 93.6]    66/75 [ 78.7, 93.6]    62/75 [ 72.6, 89.6]    52/75 [ 58.2, 78.6]     246/300  True
+
+c. seed-learns flag and arm verdict
+  seed flags arm A: [False, False, False, False]
+  arm A verdict: 0/4 seeds learn -> FAIL (needs >= 3)
+  seed flags arm B: [True, True, True, True]
+  arm B verdict: 4/4 seeds learn -> PASS (needs >= 3)
+
+d. e4:e5 placed per seed (k/75, %) vs D29 squash seeds 0-4 (%) [92.3, 0, 96.0, 99.3, 97.3]
+  arm A: s0: 0/75=0.0%, s1: 52/75=69.3%, s2: 24/75=32.0%, s3: 0/75=0.0%
+  arm B: s0: 70/75=93.3%, s1: 45/75=60.0%, s2: 71/75=94.7%, s3: 66/75=88.0%
+
+e. terminated_reason histogram; success endings vs placed
+  rs30A_seed0: {'bad_contact': 16, 'piece_off_board': 2, 'time_limit': 282}  success=0 placed=0 MATCH
+  rs30A_seed1: {'bad_contact': 5, 'piece_off_board': 3, 'success': 116, 'time_limit': 176}  success=116 placed=116 MATCH
+  rs30A_seed2: {'bad_contact': 2, 'piece_off_board': 23, 'success': 97, 'time_limit': 178}  success=97 placed=97 MATCH
+  rs30A_seed3: {'bad_contact': 3, 'piece_off_board': 18, 'success': 1, 'time_limit': 278}  success=1 placed=1 MATCH
+  rs30B_seed0: {'bad_contact': 1, 'piece_off_board': 2, 'success': 250, 'time_limit': 47}  success=250 placed=250 MATCH
+  rs30B_seed1: {'bad_contact': 3, 'piece_off_board': 7, 'success': 171, 'time_limit': 119}  success=171 placed=171 MATCH
+  rs30B_seed2: {'success': 271, 'time_limit': 29}  success=271 placed=271 MATCH
+  rs30B_seed3: {'bad_contact': 1, 'piece_off_board': 11, 'success': 246, 'time_limit': 42}  success=246 placed=246 MATCH
