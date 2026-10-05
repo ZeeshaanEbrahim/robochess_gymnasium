@@ -1,5 +1,10 @@
 # SAC observation normalisation, seed 0: pre-registration (written 4 Oct 2026, before any training)
 
+> **The rule in the section "Pre-registered rule (4 Oct, SUPERSEDED)" below is SUPERSEDED** by the section
+> "Superseding rule, 5 Oct, written before any 1M result exists" at the end of this file. The 4 Oct text is kept
+> unchanged for the record. The Question and Training sections still apply.
+
+
 ## Question
 Does D29 SAC (e4->e5, posture gate + carry potential) place when its observations are
 normalised as PPO's are (`sac_obs_normalize: true`)? The flag exists for parity with PPO,
@@ -18,10 +23,35 @@ not a general claim about SAC.
 - D29 SAC baselines (run `_probe_cart_place29_sac_seed0`, 300 stochastic episodes, seed 20000):
   placement 0/300, per-episode min d_xy median 37.9 mm, S1 lift median 110.7 mm.
 
-## Pre-registered rule
+## Pre-registered rule (4 Oct, SUPERSEDED)
 Verbatim from the decision of 4 Oct 2026:
 
 * Eval: final model and the 500k checkpoint, 300 stochastic episodes, eval seed 20000, torch-seeded, frozen VecNormalize loaded via `uses_vecnormalize`. Report placement (env success), grasp, lift >= 30 mm, per-episode min d_xy, S1 lift (median, p10, p90) and S0 to S3 occupancy, against the D29 SAC baselines (placement 0/300, min d_xy median 37.9 mm, S1 lift median 110.7 mm).
 * Placement >= 10% at the final model: obs-norm on becomes the SAC configuration for factorial tiers 0 and 1.
 * Placement > 0 and < 10%, and higher at 1M than at 500k: extend to 2M before judging.
 * Placement 0: obs-norm alone is insufficient. The reward is not changed (it is shared with PPO). The next step is chosen from the diagnostics, in a separate decision.
+
+## Superseding rule, 5 Oct, written before any 1M result exists
+This section replaces the 4 Oct rule above. Only a 20k-step smoke run exists at the time of writing; no 1M
+result does.
+
+- **Run:** 1 seed (0), 1,000,000 steps, e4->e5 only (D30, the fixed move for T1), SAC with
+  `sac_obs_normalize` true, D29 settings otherwise. D29 is the 27 Sep comparison where PPO reached about 92 to
+  99% on e4->e5 and SAC placed 0/300.
+- **Gate:** evaluate the FINAL model on 300 episodes, stochastic, eval seed 20000, with frozen VecNormalize
+  statistics (`final_vecnormalize.pkl`; `training` False, `norm_reward` False), via `scripts/eval_probe.py`.
+  **Pass = placement of 60/300 (20%) or more.** The D29 SAC baseline is 0/300. This gate does not change after
+  results.
+- **Pass** means the observation-normalisation fix works and SAC enters the factorial. Reading tiers,
+  descriptive only: 60 to 239 out of 300 means a documented weaker SAC cell; 240 or more (80%) meets the
+  development target.
+- **Descriptive reporting, no effect on pass or fail:** Wilson 95% interval, `terminated_reason` counts, grasp,
+  lift of 30 mm or more, min d_xy, S1 lift, S0 to S3 occupancy. Reported for the final model and for the 500k
+  checkpoint (same 300 episodes and seed, using that checkpoint's own VecNormalize pickle).
+- **Fail** (below the gate): first report the `critic_loss` and `actor_loss` trends from the training log
+  (minus `actor_loss` is a rough Q proxy) and placement at 500k vs 1M. D17 (SAC critic divergence, likely raw
+  reward scale, which observation normalisation does not address) is a competing cause. Then the next step is
+  chosen in a separate dated decision. Candidates: finite-horizon bootstrapping (after about step 149, holding
+  on target looks better than placing), D17, and a 2M-step run if placement rises from 500k to 1M.
+- **Replaced from the 4 Oct text:** the 30/300 (10%) gate, the 500k-checkpoint gate, and the automatic 2M
+  branch. The 500k checkpoint is now descriptive only, and 2M is a candidate for a later decision, not automatic.
