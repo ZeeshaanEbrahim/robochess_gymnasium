@@ -221,8 +221,13 @@ MONITOR_INFO_KEYWORDS = (
     "ever_held", "release_height_mm",  # D27
 )
 
-# Number of parallel environments; recorded in the manifest.
-N_ENVS = 1
+# RS31: SB3's PPO default learning rate; the "linear" schedule decays it to 0.
+PPO_LR = 3e-4
+
+
+def linear_lr(progress_remaining: float) -> float:
+    """RS31 ppo_lr_schedule "linear": SB3 calls this with progress_remaining 1 -> 0."""
+    return PPO_LR * progress_remaining
 
 
 def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:
@@ -263,12 +268,20 @@ def build_vec_env(cfg: dict, monitor_dir: Path | None = None):
     what Monitor requires.
     """
     from stable_baselines3.common.monitor import Monitor
-    from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
+    from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize
 
     monitor_path = str(monitor_dir / "monitor") if monitor_dir is not None else None
-    venv = DummyVecEnv([lambda: Monitor(build_env(cfg), filename=monitor_path,
-                                        info_keywords=monitor_info_keywords(cfg))
-                        for _ in range(N_ENVS)])
+    n_envs = cfg.get("n_envs", 1)
+    if n_envs == 1:
+        venv = DummyVecEnv([lambda: Monitor(build_env(cfg), filename=monitor_path,
+                                            info_keywords=monitor_info_keywords(cfg))])
+    else:
+        # RS31: one Monitor file per worker (logs/monitor_{i}.monitor.csv).
+        venv = SubprocVecEnv([
+            lambda i=i: Monitor(build_env(cfg),
+                                filename=None if monitor_path is None else f"{monitor_path}_{i}",
+                                info_keywords=monitor_info_keywords(cfg))
+            for i in range(n_envs)])
 
     algorithm = cfg["algorithm"]
     if algorithm == "ppo":
@@ -343,6 +356,10 @@ def build_model(cfg: dict, env):
             common["policy"] = SquashedMultiInputActorCriticPolicy
         # On-policy: no replay buffer exists to swap, so HER cannot apply.
         # RS30: ppo_ent_coef (default 0.0 = SB3's own default).
+        # RS31: learning_rate is only passed for "linear", so "constant" builds
+        # exactly as before (SB3's own default, PPO_LR).
+        if cfg.get("ppo_lr_schedule", "constant") == "linear":
+            common["learning_rate"] = linear_lr
         model = PPO(**common, ent_coef=cfg.get("ppo_ent_coef", 0.0))
     elif algorithm == "sac":
         if reward_type == "sparse":
@@ -424,7 +441,7 @@ def main() -> int:
                 "vecnormalize": cfg["algorithm"] in VECNORMALIZE_ALGORITHMS,
                 "her": (cfg["algorithm"], cfg["reward_type"]) in HER_CELLS,
                 "threads": threads,
-                "n_envs": N_ENVS,
+                "n_envs": cfg["n_envs"],
                 # Stated in every manifest so a result can never be read as
                 # reproducible under a different thread count. Measured, not
                 # assumed: PPO and SAC+HER are both bit-identical across
@@ -469,6 +486,16 @@ def main() -> int:
     print(f"vecnormalize: {isinstance(env, VecNormalize)} (algorithm={cfg['algorithm']})")
     model = build_model(cfg, env)
     model.set_logger(logger)
+    # RS31: the learner hyperparameters as built, read off the model object.
+    if cfg["algorithm"] == "ppo":
+        manifest["resolved"]["sb3"] = {
+            "n_steps": model.n_steps, "batch_size": model.batch_size, "n_epochs": model.n_epochs,
+            "gamma": model.gamma, "gae_lambda": model.gae_lambda, "clip_range": model.clip_range(1.0),
+            "ent_coef": model.ent_coef, "n_envs": model.n_envs, "net_arch": model.policy.net_arch,
+            "learning_rate": {"schedule": cfg["ppo_lr_schedule"],
+                              **{f"at_{p}": model.lr_schedule(p) for p in (1.0, 0.5, 0.0)}},
+        }
+        write_manifest(run_dir, manifest)
 
     # --- checkpointing -------------------------------------------------
     # save_vecnormalize matters for the PPO branch: a policy reloaded without
@@ -477,7 +504,9 @@ def main() -> int:
     # It is a no-op when the env is not a VecNormalize (the SAC branch).
     ckpt_dir = run_dir / "checkpoints"
     checkpoint_cb = CheckpointCallback(
-        save_freq=cfg["checkpoint_freq"],
+        # SB3 counts callback calls, one per n_envs steps; resolve_config
+        # guarantees divisibility, so files land at checkpoint_freq multiples.
+        save_freq=cfg["checkpoint_freq"] // cfg["n_envs"],
         save_path=str(ckpt_dir),
         name_prefix=CHECKPOINT_PREFIX,
         save_vecnormalize=True,

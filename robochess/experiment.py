@@ -121,6 +121,12 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "ppo_mean_squash": False,
     # RS30: PPO entropy coefficient, passed as ent_coef. 0.0 is SB3's default.
     "ppo_ent_coef": 0.0,
+    # RS31: PPO learning-rate schedule. "constant" is SB3's default 3e-4;
+    # "linear" is lr(progress_remaining) = 3e-4 * progress_remaining.
+    "ppo_lr_schedule": "constant",
+    # RS31: parallel environments. 1 -> DummyVecEnv exactly as before;
+    # > 1 -> SubprocVecEnv (PPO only).
+    "n_envs": 1,
     "output_root": "runs",
     "run_name": None,          # None -> derived from the config filename + seed
     "notes": "",
@@ -345,6 +351,19 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
     if "ppo_ent_coef" in raw and cfg["algorithm"] != "ppo":
         raise ConfigError(f"ppo_ent_coef with algorithm={cfg['algorithm']!r}: PPO only.")
     cfg["ppo_ent_coef"] = float(ent)
+    if cfg["ppo_lr_schedule"] not in ("constant", "linear"):
+        raise ConfigError(
+            f"ppo_lr_schedule={cfg['ppo_lr_schedule']!r} is not one of ['constant', 'linear']")
+    if "ppo_lr_schedule" in raw and cfg["algorithm"] != "ppo":
+        raise ConfigError(f"ppo_lr_schedule with algorithm={cfg['algorithm']!r}: PPO only.")
+    n_envs = cfg["n_envs"]
+    if not isinstance(n_envs, int) or isinstance(n_envs, bool) or n_envs < 1:
+        raise ConfigError(f"n_envs must be an int >= 1, got {n_envs!r}")
+    if n_envs > 1 and cfg["algorithm"] != "ppo":
+        raise ConfigError(f"n_envs={n_envs} with algorithm={cfg['algorithm']!r}: PPO only.")
+    if cfg["checkpoint_freq"] % n_envs:
+        raise ConfigError(
+            f"checkpoint_freq={cfg['checkpoint_freq']} is not divisible by n_envs={n_envs}")
     if cfg["place_obs"] and not cfg["pickup_obs"]:
         raise ConfigError("place_obs=True needs pickup_obs=True (the target features follow them).")
     if cfg["place_obs"] and cfg["task"] != "t1":
