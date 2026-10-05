@@ -17,6 +17,12 @@ Derived from scripts/eval_final.py (deterministic only, no g, no pickup metrics)
     python scripts/eval_probe.py _probe_cart_pickup_ppo_seed0 --episodes 300 --out x.json
     python scripts/eval_probe.py <run> --checkpoint 500000 --episodes 100 --out x.json
     python scripts/eval_probe.py <run> --episodes 20 --deterministic --out x.json
+    python scripts/eval_probe.py <run> --episodes 40 --pairs e4:e5,a1:h8 --out x.json
+
+--pairs s:t,s:t,...: every reset injects options={"start_square": s, "target_square": t},
+cycling through the list in order (episode i uses pair i % len(pairs)); --episodes must be
+a multiple of the pair count, and each episode's start_square / target_square are recorded
+in the output. Without --pairs the output is unchanged.
 
 Aggregate the outputs with scripts/eval_probe_agg.py. Reads runs/, writes only --out.
 """
@@ -30,9 +36,17 @@ p = argparse.ArgumentParser()
 p.add_argument("run"); p.add_argument("--checkpoint", type=int, default=None)
 p.add_argument("--episodes", type=int, default=100); p.add_argument("--seed", type=int, default=20000)
 p.add_argument("--deterministic", action="store_true"); p.add_argument("--steps", action="store_true")
+p.add_argument("--pairs", default=None, help="s:t,s:t,... fixed (start, target) list, cycled in order")
 p.add_argument("--out", type=Path, required=True)
 p.add_argument("--runs-dir", type=Path, default=REPO / "runs")
 a = p.parse_args()
+pairs = None
+if a.pairs is not None:
+    pairs = [tuple(x.split(":")) for x in a.pairs.split(",")]
+    if any(len(x) != 2 for x in pairs):
+        p.error(f"--pairs must be start:target,start:target,...; got {a.pairs!r}")
+    if a.episodes % len(pairs) != 0:
+        p.error(f"--episodes {a.episodes} is not a multiple of the pair count {len(pairs)}")
 run_dir = a.runs_dir / a.run
 cfg = json.loads((run_dir / "manifest.json").read_text())["config_resolved"]
 train.apply_thread_pinning(1)
@@ -40,13 +54,18 @@ train.apply_thread_pinning(1)
 import gymnasium as gym, numpy as np
 from stable_baselines3 import PPO, SAC
 from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from robochess.tasks.t1_pick_and_place import _pinch_site_id, find_contacts_owner
+# D29: unconditional (not lazy like build_model's), so a ppo_mean_squash
+# model's pickled policy class always resolves on load, whether or not this
+# particular run used it.
+from robochess.policies import SquashedMultiInputActorCriticPolicy  # noqa: F401
 
 class Rec(gym.Wrapper):
     """Pass-through; records per-step geometry, harvests a finished episode on done."""
-    def __init__(self, env):
-        super().__init__(env); self.b = env.unwrapped; self.sid = _pinch_site_id(self.b.model)
+    def __init__(self, env, pairs=None):
+        super().__init__(env); self.pairs = pairs; self.n_resets = 0; self.b = env.unwrapped; self.sid = _pinch_site_id(self.b.model)
         self.owner = find_contacts_owner(self.env, "need _piece_contacts"); self.episodes = []; self.cur = []
         self.dz = None
     def _geo(self):
@@ -57,6 +76,9 @@ class Rec(gym.Wrapper):
         l, r, bd = self.owner._piece_contacts()
         return rel, tilt, bool(l), bool(r), bool(bd), float(b.data.qpos[b._grip_qadr]), float(b._piece_tilt_deg()), float(piece[2] - b._board_surface_z)
     def reset(self, **kw):
+        if self.pairs is not None:
+            s_, t_ = self.pairs[self.n_resets % len(self.pairs)]; self.n_resets += 1
+            kw["options"] = dict(kw.get("options") or {}, start_square=s_, target_square=t_)
         out = self.env.reset(**kw); self.cur = []; return out
     def step(self, act):
         obs, r, term, trunc, info = self.env.step(act)
@@ -68,16 +90,18 @@ class Rec(gym.Wrapper):
                              ps=bool(info.get("pickup_success", False)), gsc=bool(info.get("gripper_self_contact", False)))
         if "place_terms" in info:      # D28: only place runs carry these keys (other output unchanged)
             row.update(st=info["place_state"], dxy=float(info["place_terms"]["d_xy"]), succ=bool(info["is_success"]),
-                       pxy=[float(v) for v in self.b._achieved_goal()[:2]], gxy=[float(v) for v in self.b._desired_goal[:2]])
+                       pxy=[float(v) for v in self.b._achieved_goal()[:2]], gxy=[float(v) for v in self.b._desired_goal[:2]],
+                       pg=float(info["place_terms"].get("posture_gate", 1.0)))  # D29, reported not gated
         self.cur.append(row)
         if term or trunc:
             self.episodes.append(dict(rows=self.cur, reason=info.get("terminated_reason") or "time_limit",
-                                      ik=int(info.get("ik_rejects", 0)), n=int(info["elapsed_steps"]))); self.cur = []
+                                      ik=int(info.get("ik_rejects", 0)), n=int(info["elapsed_steps"]),
+                                      start=info.get("start_square"), target=info.get("target_square"))); self.cur = []
         return obs, r, term, trunc, info
 
 holder = {}
 def mk():
-    w = Rec(train.build_env(cfg)); holder["w"] = w; return Monitor(w)
+    w = Rec(train.build_env(cfg), pairs); holder["w"] = w; return Monitor(w)
 venv = DummyVecEnv([mk])
 ck = a.checkpoint
 mp = run_dir / ("final_model.zip" if ck is None else f"checkpoints/rc_{ck}_steps.zip")
@@ -89,6 +113,11 @@ if cfg["algorithm"] == "ppo":
                     (venv.obs_rms.items() if isinstance(venv.obs_rms, dict) else [("obs", venv.obs_rms)])}
     rms_before = snap()
 model = (PPO if cfg["algorithm"] == "ppo" else SAC).load(str(mp), env=venv, device="cpu")
+# D29: seed the learner's own RNGs (python/numpy/torch, action_space, and --
+# model.set_random_seed also calls env.seed internally -- see the D29
+# DECISIONS entry) so a stochastic rollout is reproducible run to run.
+set_random_seed(a.seed)
+model.set_random_seed(a.seed)
 venv.seed(a.seed); obs = venv.reset(); w = holder["w"]
 while len(w.episodes) < a.episodes:
     act, _ = model.predict(obs, deterministic=a.deterministic)
@@ -115,6 +144,8 @@ for e in eps:
              steps_after_first=None if ps_first is None else len(R) - ps_first,
              grasp_after_first=None if ps_first is None else sum(x["grasp"] for x in R[ps_first:]),
              lifted_at_end=lifted[-1], grasp_at_end=R[-1]["grasp"], max_lift_mm=max(x["lift"] for x in R) * 1e3)
+    if pairs is not None:
+        s["start_square"], s["target_square"] = e["start"], e["target"]
     summ.append(s)
 place = None
 if cfg.get("place_mode"):

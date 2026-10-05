@@ -1,0 +1,120 @@
+{
+  "per_seed": {
+    "ppo_seed0": {
+      "k": 0,
+      "n": 300,
+      "rate": 0.0,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "passes_10pct": false,
+      "rms_same": true,
+      "training_log_last500_rate": 0.0,
+      "training_log_last500_in_eval_ci": true
+    },
+    "ppo_seed1": {
+      "k": 0,
+      "n": 300,
+      "rate": 0.0,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "passes_10pct": false,
+      "rms_same": true,
+      "training_log_last500_rate": 0.0,
+      "training_log_last500_in_eval_ci": true
+    },
+    "ppo_seed2": {
+      "k": 288,
+      "n": 300,
+      "rate": 0.96,
+      "wilson_lo": 0.9313951365400219,
+      "wilson_hi": 0.9769729078620613,
+      "passes_10pct": true,
+      "rms_same": true,
+      "training_log_last500_rate": 0.926,
+      "training_log_last500_in_eval_ci": false
+    },
+    "ppo_seed3": {
+      "k": 293,
+      "n": 300,
+      "rate": 0.9766666666666667,
+      "wilson_lo": 0.952627445667121,
+      "wilson_hi": 0.9886524844017043,
+      "passes_10pct": true,
+      "rms_same": true,
+      "training_log_last500_rate": 0.958,
+      "training_log_last500_in_eval_ci": true
+    },
+    "ppo_seed4": {
+      "k": 294,
+      "n": 300,
+      "rate": 0.98,
+      "wilson_lo": 0.9570598132699448,
+      "wilson_hi": 0.9908024939322289,
+      "passes_10pct": true,
+      "rms_same": true,
+      "training_log_last500_rate": 0.968,
+      "training_log_last500_in_eval_ci": true
+    },
+    "ppotanh_seed0": {
+      "k": 277,
+      "n": 300,
+      "rate": 0.9233333333333333,
+      "wilson_lo": 0.8875891334382622,
+      "wilson_hi": 0.9483727624969882,
+      "passes_10pct": true,
+      "rms_same": true,
+      "training_log_last500_rate": 0.974,
+      "training_log_last500_in_eval_ci": false
+    },
+    "ppotanh_seed1": {
+      "k": 0,
+      "n": 300,
+      "rate": 0.0,
+      "wilson_lo": 0.0,
+      "wilson_hi": 0.012643429997735661,
+      "passes_10pct": false,
+      "rms_same": true,
+      "training_log_last500_rate": 0.0,
+      "training_log_last500_in_eval_ci": true
+    },
+    "ppotanh_seed2": {
+      "k": 288,
+      "n": 300,
+      "rate": 0.96,
+      "wilson_lo": 0.9313951365400219,
+      "wilson_hi": 0.9769729078620613,
+      "passes_10pct": true,
+      "rms_same": true,
+      "training_log_last500_rate": 0.976,
+      "training_log_last500_in_eval_ci": true
+    },
+    "ppotanh_seed3": {
+      "k": 298,
+      "n": 300,
+      "rate": 0.9933333333333333,
+      "wilson_lo": 0.9760219257685385,
+      "wilson_hi": 0.9981698899670288,
+      "passes_10pct": true,
+      "rms_same": true,
+      "training_log_last500_rate": 0.986,
+      "training_log_last500_in_eval_ci": true
+    },
+    "ppotanh_seed4": {
+      "k": 292,
+      "n": 300,
+      "rate": 0.9733333333333334,
+      "wilson_lo": 0.9482704597024538,
+      "wilson_hi": 0.9864270932330232,
+      "passes_10pct": true,
+      "rms_same": true,
+      "training_log_last500_rate": 0.974,
+      "training_log_last500_in_eval_ci": true
+    }
+  },
+  "default_seeds_passing": 3,
+  "tanh_seeds_passing": 4,
+  "rule1_default_passes": false,
+  "rule1_tanh_passes": true,
+  "rule2_adopted": "squash",
+  "adoption_wording_note": "Squash is adopted on a one-seed margin (4/5 vs 3/5) decided by seed 0 alone (squash seed 0 passes at 92.3%; default's non-passing seeds 0 and 1 are stuck at 0.0%, not near the 10% line). Fisher exact test on the 4/5-vs-3/5 contingency table gives p = 1.0000 (not significant). Among seeds that pass on both variants (2, 3, 4), placement rates are similar between default and squash (e.g. seed 2: 96.0% vs 96.0%; seed 4: 98.0% vs 97.3%). This is adoption under the pre-registered rule (D29 rule 2), not evidence that squash performs better than default PPO."
+}

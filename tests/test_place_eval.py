@@ -17,10 +17,15 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import place_eval as pe  # noqa: E402
 
 
-def row(st, held=False, pinched=False, lift=0.0, dxy=0.2, ap=0.0, succ=False, pxy=None, gxy=None):
+def row(st, held=False, pinched=False, lift=0.0, dxy=0.2, ap=0.0, succ=False, pxy=None, gxy=None,
+        ptilt=None, pg=None):
     r = dict(st=st, held=held, pinched=pinched, lift=lift, dxy=dxy, ap=ap, succ=succ)
     if pxy is not None:
         r.update(pxy=pxy, gxy=gxy)
+    if ptilt is not None:
+        r["ptilt"] = ptilt
+    if pg is not None:
+        r["pg"] = pg
     return r
 
 
@@ -67,6 +72,44 @@ def test_truncated_in_s2_and_its_final_gripper_qpos():
     assert not pe.place_episode_summary(rows, "bad_contact")["truncated_in_s2"]     # negative: not a timeout
     rep = pe.place_report([s, pe.place_episode_summary(clean_place(), "success")])
     assert rep["truncated_in_s2"]["k"] == 1 and rep["truncated_in_s2"]["final_gripper_qpos"] == [0.42]
+
+
+def test_s1_gate_fields_default_off_and_missing_ptilt():
+    # no ptilt/pg on the rows at all (the documented minimal contract): defaults cleanly
+    s = pe.place_episode_summary(clean_place(), "success")
+    assert s["s1_steps"] == 2 and s["s1_gate_lt1_steps"] == 0 and s["max_s1_tilt"] is None
+
+
+def test_s1_gate_fields_count_and_max_tilt():
+    rows = ([row("S0")]
+           + [row("S1", True, True, 0.0, 0.08, ptilt=1.0, pg=1.0)]
+           + [row("S1", True, True, 0.0, 0.02, ptilt=60.0, pg=0.0)]
+           + [row("S1", True, True, 0.0, 0.01, ptilt=30.0, pg=0.5)]
+           + [row("S2", ap=0.5, succ=True)])
+    s = pe.place_episode_summary(rows, "success")
+    assert s["s1_steps"] == 3 and s["s1_gate_lt1_steps"] == 2 and s["max_s1_tilt"] == 60.0
+
+
+def test_gate_diagnostics_placed_episodes_only():
+    placed_with_gate = pe.place_episode_summary(
+        [row("S1", True, True, 0.0, 0.08, ptilt=50.0, pg=0.0)] * 4
+        + [row("S1", True, True, 0.0, 0.01, ptilt=2.0, pg=1.0)] * 6
+        + [row("S2", ap=0.5, succ=True)], "success")
+    not_placed_with_gate = pe.place_episode_summary(
+        [row("S1", True, True, 0.0, 0.08, ptilt=80.0, pg=0.0)] * 10, "time_limit")
+    g = pe.gate_diagnostics([placed_with_gate, not_placed_with_gate])
+    assert g["placed"] == 1                          # the not-placed episode is excluded entirely
+    assert g["s1_steps"] == 10 and g["s1_gate_lt1_steps"] == 4
+    assert g["fraction_gate_lt1"] == pytest.approx(0.4)
+    assert g["max_s1_tilt_deg"] == 50.0
+    assert pe.gate_diagnostics([not_placed_with_gate]) == dict(
+        label="gate (placed episodes only)", placed=0, s1_steps=0, s1_gate_lt1_steps=0,
+        fraction_gate_lt1=None, max_s1_tilt_deg=None)
+
+
+def test_place_report_carries_gate_diagnostics():
+    rep = pe.place_report([pe.place_episode_summary(clean_place(), "success")])
+    assert rep["gate"]["placed"] == 1 and rep["gate"]["fraction_gate_lt1"] == 0.0    # clean_place has no ptilt/pg
 
 
 def test_deterministic_twenty_episodes_are_one_observation():

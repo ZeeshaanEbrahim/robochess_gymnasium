@@ -2417,3 +2417,227 @@ produce an independent, steppable copy.
   Stochastic evaluations in this project are therefore not bit-repeatable across separate invocations, though
   aggregate outcomes are often stable in practice because several action dimensions clip with high probability
   (Section 3c/4c). Not changed as part of this diagnosis.
+
+## D29 — Posture gate, carry-potential shaping, PPO mean squash, eval seeding (each default off)
+
+### Decision
+
+Four independent additions on top of D28's `PlaceReward`, each behind its own config key, default off,
+byte-identical to D28 when off (verified against a real `git worktree add d28-final`: 4 replay types -- joint
+expert, Cartesian expert, each through `PickupReward` and `PlaceReward` -- sha256-identical on both sides; frozen
+in `tests/test_cartesian_mode.py`'s idiom as `_D29_FLAG_OFF_HASHES`).
+
+1. **Posture gate** (`place_posture_gate` false, `place_gate_tilt_lo_deg` 10.0, `place_gate_tilt_hi_deg` 45.0). In
+   S1 only: `g = 1` at tilt <= lo, `g = 0` at tilt >= hi, `0.5 (1 + cos(pi (tilt - lo) / (hi - lo)))` between;
+   `recurring = g * D28's S1 + (1 - g) * (D21 position + closing)`. `place_terms` gains `posture_gate` (always
+   1.0 off S1 or with the flag off) and reuses the piece tilt D28's S2 gate already reads
+   (`_piece_tilt_deg`). Validated: `lo < hi`; requires `place_mode`.
+2. **Carry potential** (`place_carry_potential` false, `place_carry_potential_k` 50.0/m). `Phi(s) = -k * d_xy`, all
+   states; `F = gamma * Phi(s') - Phi(s)` added to the reward on every valid step, including a terminal one (`Phi`
+   at a terminal step is its actual post-step value, never zeroed -- the shaping is therefore not strictly
+   policy-invariant; the D28 cheat ordering under it is re-verified empirically, not assumed, in 4b below). An
+   invalid-transition step (F7): `F = 0`, the stored `Phi` is left at its last valid value, `place_terms["shaping"]`
+   reports 0.0. `Phi` at reset is read from `_achieved_goal()`/`_desired_goal`, the same source
+   `info["xy_distance_to_goal"]` is built from after the env's own F10 refresh. Validated: `k > 0`; requires
+   `place_mode`. A stationary piece: `F = (1 - gamma) k d_xy` per step -- 0 at the target, otherwise a small
+   positive leak (not exactly 0; exact only at `d_xy = 0`).
+3. **PPO mean squash** (`ppo_mean_squash` false, PPO only -- rejected for any other algorithm).
+   `robochess/policies.py`'s `SquashedMultiInputActorCriticPolicy(MultiInputActorCriticPolicy)` overrides only
+   `_get_action_dist_from_latent` to `tanh` the Gaussian mean before building the distribution -- the one method
+   `forward`/`predict`/`get_distribution`/`evaluate_actions` all route through, so training and eval agree. Noise
+   (`log_std`), action clipping and the log-prob formula are unchanged. `build_model()` imports the module (and
+   swaps `common["policy"]`) only when the flag is on; off, `policy="MultiInputPolicy"` stays the literal string
+   D28 used, byte-identical. `scripts/eval_probe.py` imports the class unconditionally at module scope so
+   `PPO.load()`'s cloudpickle-by-reference resolution always finds it.
+4. **Eval seeding**. `scripts/eval_probe.py` calls `stable_baselines3.common.utils.set_random_seed(seed)` then
+   `model.set_random_seed(seed)` right after `.load()`, before the existing `venv.seed(seed)` (SB3 2.9.0's
+   `set_random_seed` also calls `self.env.seed(seed)` when `self.env` is set, so this is a harmless double-seed of
+   the env, kept for a minimal diff). This can change a stochastic (default) eval's action sequence relative to an
+   unseeded run at the same `--seed`, since it now also seeds the policy's own torch RNG; deterministic evals are
+   unaffected (no sampling). Old stochastic-eval outputs were not regenerated. The env's own first-reset observation
+   for a given seed is unchanged by this (verified: built the real pipeline twice, with and without the two new
+   calls, identical `venv.reset()` output both times). `place_eval.py` needed no change -- it never loads a model or
+   samples an action, confirmed by inspection (pure functions over already-recorded rows).
+
+`place_terms` always carries `posture_gate` and `shaping`, flag on or off, so downstream code needs no conditional
+key access.
+
+### Rule 4 diagnostics gained two fields (report only, not gated)
+
+`scripts/eval_probe.py`'s place-mode rows gained `pg` (`place_terms["posture_gate"]`); `place_eval.py`'s
+`place_episode_summary` gained `s1_steps`, `s1_gate_lt1_steps`, `max_s1_tilt`; a new `gate_diagnostics()`, wired
+into `place_report()["gate"]` alongside `push_assisted`, reports -- over PLACED episodes only -- the fraction of
+S1 steps the gate discounted (`posture_gate < 1`) and the max S1 tilt reached. Both are 0.0/None with the gate off
+or no placed episodes.
+
+### Pre-launch report-only replay of D28 PPO seeds 0 and 2
+
+50 episodes each, seed 20000, stochastic, torch-seeded, frozen VecNormalize, e4->e5. Seed 0: median S1 tilt 2.0
+deg, p90 4.7 deg, max 125.1 deg, 6.5% of S1 steps > 10 deg, 4.0% > 20 deg, mean gate D29 would assign 0.960. Seed
+2: median 6.4 deg, p90 66.7 deg, max 80.5 deg, 43.1% > 10 deg, 26.6% > 20 deg, mean gate 0.777. Split by episode
+outcome and by phase (before the first loss of pinch / after a re-grip): in **placed** episodes, seed 2 carries at
+tilt > 27.5 deg on 19.8% of S1 steps (max 80.45 deg) and always releases below 10 deg; seed 0 on 0.0%. Neither
+seed's not-placed episodes ever reach a re-grip (0 after-loss steps -- they get stuck on the first attempt).
+
+Tilt alone cannot separate these carries from SAC's toppled hold (D28 diagnosis: 72 to 90 deg). Gate kept at 10/45
+by decision; the gate discounts swinging carries by design. A persistence- or grip-height-based gate is the
+candidate if D29 PPO fails rule 1.
+
+### Acceptance (pre-registered; `results/d29_place_reward_v2/acceptance.py`, `analyze.py`, `acceptance.json`)
+
+**ALL PRE-REGISTERED CHECKS PASS.** Gate and potential on throughout (defaults: tilt 10/45 deg, k 50/m).
+
+* 4a, Cartesian gate expert, e4->e5 / a1->h8 / c1->f6 / b7->g2, gate and potential on: recurring reward
+  non-decreasing through all nine checkpoints on every pair, S2 non-decreasing and >= 8, placed in [8, 9]; state
+  reward equals the D28 value EXACTLY (diff 0.0, not just within tolerance) at every S1 step with tilt <= 10 deg
+  (56 to 138 such steps per pair); max per-step reward change attributable to the gate is 0.0 on every pair -- the
+  gate never actually engages on a clean expert path (tilt stays under 1 deg throughout); shaping totals per pair
+  +7.5 to +94.0.
+* 4b, every D28 cheat plus `shaping_farm` (oscillate toward/away from the target while held, to timeout) and
+  `toppled_hold` (e4->e5 only -- see below) below the clean place in all four discounted-return comparisons
+  (step-0, from-release, both bootstrapped at truncation) on every pair, 48/48 judged cases "ok"; the two literal
+  cheats (`release_then_topple_open_gripper`, `release_lift_reclose_literal`) remain n/a, success still fires
+  before the mechanism runs; `push_then_grasp_release_on_target` (push most of the way, then a genuine grasp and
+  place) reported only, not judged. Parking margin from the release step, bootstrapped: 8/8 pass (>= 100 required;
+  actual 112.1 to 160.1, matching D28's own figures, confirming the new terms did not disturb this margin).
+* **`toppled_hold`** (e4->e5 only): rather than script an in-grasp topple -- four maneuvers tried (violent lateral
+  shake while gripped, a sideways drag at grasp height, a shake with a loosened grip, slamming straight down into
+  the board while gripped) all failed; the stem-clamp grasp is either too rigid (tilt stayed under 8 deg) or drops
+  the piece the moment it loosens -- this cheat replays the exact 150 actions recorded from a real D28 SAC seed0
+  episode (seed 20000, stochastic, torch-seeded; found on the very first of up to 20 scanned episodes: pinched,
+  tilt 90.61 deg at step 150) through the D29-flagged env, confirmed bit-identical to the original physics at
+  t=150 (piece xyz max abs diff 0.0 m, tilt identical to full float precision -- reward doesn't touch physics),
+  then holds (zero displacement, closed gripper) to timeout. 240 pinched steps, 226 with `posture_gate < 1`, 196
+  with tilt >= 45 deg; mean D28-equivalent S1 payout over those 196 steps 4.03/step (max 4.21), mean D29 payout
+  0.78/step.
+* **4c**: S1 reward <= 2.2 whenever tilt >= 45 deg -- PASS, 0 violations of 196 qualifying steps in the
+  `toppled_hold` replay (actual max paid 0.77).
+* Scripts and artifacts committed: `acceptance.py`, `analyze.py`, `acceptance.json`, `analyze_output.txt`,
+  `find_topple_episode.py` (the SAC-episode search, its own process -- building an SB3 model alongside
+  `acceptance.py`'s many `RoboChessEnv` instances in one process risks the same intermittent segfault noted in
+  D28's test-suite notes), `topple_actions.json` (its output, replayed with no model needed),
+  `tilt_distribution.py` / `tilt_distribution_detailed.py` and their JSON outputs.
+
+### Test-suite notes
+
+* `tests/test_d29_place_reward_v2.py` (41 tests) plus 4 new tests in `tests/test_place_eval.py`: gate values at
+  the pre-registered tilts (continuity confirmed exactly at tilt 10 and 45 deg), S1 equals D28 when the gate is off
+  or tilt <= 10, gate-on/tilt>=45 equals `position + closing` to 1e-12; shaping sign and telescoping-identity tests
+  (`sum(gamma^i F_i) == gamma^n Phi(final) - Phi(initial)` to 1e-9 on a zero-invalid-step replay, and separately on
+  a real Cartesian-expert replay: n=171, invalid=0, diff 2.665e-15); invalid-step F=0/Phi-held; the closed-form
+  stationary-piece check; mean-squash bounds for extreme latents via both `get_distribution` and
+  `evaluate_actions`; save/load round-trip and an end-to-end `eval_probe.py` subprocess run on a fabricated
+  `tmp_path` run (never the real `runs/`); the two eval-seeding tests (`skipif` when
+  `runs/_probe_cart_place_ppo_seed0` is absent -- verified by moving it aside, both tests skip cleanly, then
+  restoring it, both pass); the gamma guard (`check_place_gamma` direct calls, and a monkeypatched spy through a
+  real `build_model()` call); one test per config-validation branch; the 4 frozen flag-off hashes.
+* Same segfault risk D28's own notes flag (building a real SB3 model inside the full pytest process segfaults
+  torch intermittently, exit 139): three tests that originally built or loaded a model in-process were rewritten
+  to do it in a throwaway subprocess (`subprocess.run([sys.executable, "-c", code], ...)`, mirroring
+  `test_place_eval.py`'s `_make_run`) -- the gamma-guard build test, the mean-squash build/save/reload test, and
+  the eval-seeding first-reset-obs test (`PPO.load()` also reconstructs a model).
+* Full suite: 517 passed (475 pre-existing + 41 new in `test_d29_place_reward_v2.py` + 1 net in
+  `test_place_eval.py`), 0 failures, `-W error::UserWarning`, exit status 0.
+* CI failed on exactly the 4 frozen flag-off hash tests: CI's CPU produces different contact-rich expert
+  trajectories (the joint expert logs a 1.79 mm pinch residual there) from this machine's, the same numeric-kernel
+  sensitivity D28's own test-suite notes recorded for the D27 push test. The flag-off identity itself was proven
+  locally against a real `d28-final` worktree (see the Decision section above); the 4 tests now skip when
+  `CI` is set in the environment, with the frozen hash values left unchanged.
+
+### Probe configs and smoke
+
+* `configs/_probe_cart_place29_{ppo_seed0..4, ppotanh_seed0..4, sac_seed0}.yaml` (11 files): copies of their D28
+  counterparts (`_probe_cart_place_ppo_seed{0,1,2}`/`_sac_seed0` for seeds 0-2/SAC; D28 had no seed 3/4, so those
+  are copies of `_probe_cart_place_ppo_seed0` with only `seed` differing besides the keys below) with
+  `place_posture_gate: true`, `place_carry_potential: true` (and `ppo_mean_squash: true` for the ppotanh files)
+  added; verified programmatically (resolved-config dict diff) that no other key differs besides `seed`, `run_name`,
+  `notes`. `vecnormalize_clip_reward` stays 1000 in every PPO config (confirmed).
+* All 11 5k-step smokes run concurrently (12 cores): 8/11 succeeded immediately; 3 hit a transient
+  `torch.AcceleratorError: CUDA-capable device(s) is/are busy or unavailable` under the 11-way concurrent launch
+  despite `device: cpu` in every config -- a real GPU is present (RTX 2060 via WSL2 passthrough), and its driver
+  transiently refused context creation for 3 of the 11 simultaneous processes. Retried those 3 sequentially with
+  `CUDA_VISIBLE_DEVICES=""` and they completed cleanly; all 11 have a `final_model.zip`. **Launch note: concurrent
+  launches hit a transient CUDA context error despite `device: cpu`; all D29 runs launch with
+  `CUDA_VISIBLE_DEVICES=""` (CPU-only, no effect on results).**
+* fps (genuinely concurrent runs only, excluding the 3 retried sequentially): PPO/ppotanh 123 to 129 (mean 126),
+  SAC 31. Estimated wall-clock for the full 11-run batch at 1M steps, set by the slowest: PPO-family ~2.3 h, SAC
+  ~9.0 h -- **~9 hours overall**, dominated by SAC. Monitor CSV carries `place_state` (confirmed in a PPO, ppotanh
+  and SAC smoke run's header). `place_eval` ran end to end on the `ppotanh_seed0` smoke model (5 episodes,
+  1000-model-load subprocess via `eval_probe.py`): no errors, confirms `PPO.load()` resolves
+  `SquashedMultiInputActorCriticPolicy` from the saved zip in a fresh process; 0/5 placed (5k steps, expected) with
+  the new `gate` diagnostic correctly null when no episode is placed.
+* Smoke run directories (`runs/_smoke29_*`) are not committed (gitignored, as with every prior smoke run).
+
+### Pre-registered rules for the full launch (recorded verbatim before any 1M-step run)
+
+1. Each PPO variant: placement >= 10% on >= 4 of 5 seeds at `final_model` (300 stochastic, seed 20000, torch-seeded,
+   frozen VecNormalize).
+2. The benchmark adopts `ppo_mean_squash` only if it passes rule 1 on more seeds than PPO default; ties keep SB3
+   defaults.
+3. SAC: reported, no rule (n = 1). **Expected (a lead, not a rule):** SAC's toppled-hold fraction (tilt > 45 deg
+   while pinched at step 150) falls from its D28 level.
+4. Diagnostics, reported not gated: saturation (fraction of held steps with `P(clipped) > 0.9` on dx, dy or dz),
+   gripper command < 0.9 while held, truncated in S2 (tripwire >= 10%), push-assisted fraction, toppled-hold
+   fraction, shaping total per episode, and (D29) per seed the fraction of S1 steps with `posture_gate < 1` in
+   placed episodes and the max S1 tilt in placed episodes.
+5. Then widen to random squares with the adopted PPO variant; that rule is pre-registered before launch.
+
+### Read-out (rules 1 and 2, SAC, failure taxonomy)
+
+300 stochastic episodes per `final_model`, seed 20000, torch-seeded, frozen VecNormalize (PPO; SAC carries
+none). Full detail, every script, and every number's provenance: `results/d29_place_reward_v2/eval/README.md`
+and `results/d29_place_reward_v2/eval/section6_summary.md`.
+
+* **Rule 1**: default **FAILS (3/5 seeds pass)** -- seeds 2, 3, 4 pass (96.0%, 97.7%, 98.0%); seeds 0 and 1
+  are stuck at 0.0%. Squash **PASSES (4/5 seeds pass)** -- seeds 0, 2, 3, 4 pass (92.3%, 96.0%, 99.3%,
+  97.3%); seed 1 is stuck at 0.0%. All ten Wilson 95% CIs in the summary linked above.
+* **Rule 2**: squash **ADOPTED**, on a one-seed margin (4/5 vs 3/5) decided by seed 0 alone. Fisher exact
+  test on the 4/5-vs-3/5 table: **p = 1.0** (not significant) -- among seeds passing on both variants (2, 3,
+  4), placement rates are close (e.g. seed 2: 96.0% vs 96.0%). This is adoption under the pre-registered
+  rule, not evidence squash performs better than default PPO. `ppo_mean_squash`
+  (`robochess/policies.py`'s `SquashedMultiInputActorCriticPolicy`) is accordingly a **documented deviation
+  from SB3 defaults**: it tanh's the Gaussian mean before building the action distribution, in every
+  codepath that builds one.
+* **SAC** (reported, no rule): **0/300 placed**. Toppled-hold fraction (tilt > 45 deg while pinched at step
+  150) **94.0% to 0.0%** with the posture gate and carry potential both on (D28 SAC seed0, gate+potential
+  off: 282/300; D29 SAC seed0, gate+potential on: 0/300 -- one seed each, consistent with the posture gate,
+  not attributed to it as sole cause on this n=1 comparison). SAC's failure is carrying and descending, not
+  releasing: never within 3 cm of the target across all 300 episodes; S1 medians lift 110.3 mm, xy-distance
+  45.9 mm (D28 baseline, re-measured with the same methodology: lift 244.7 mm, xy-distance 119.7 mm).
+* **Failure taxonomy**:
+  - Default s0 holds 19 mm from target, upright and low, and never releases -- a **local optimum, not a
+    reward loophole** (its real discounted return, G0 mean 234, is well below a real placement's, G0 mean
+    555; from a held-within-30mm step, 434 vs ~1015).
+  - Default s1 grasps and never carries -- holds 124 mm from the target.
+  - Squash s1 carries the piece the full distance and places it correctly (all 6 of 7 success terms true at
+    the final step in all 87 of its S2-ending episodes) but never opens the gripper past the release
+    threshold (`gripper_released` False in 87/87). A tip-grip lead (elevated grip position on the piece) was
+    tested and **not confirmed** -- squash s1's pad-contact height while held (31.4 mm) is normal, matching
+    default s3 (29.4 mm) and squash s3 (30.5 mm); it is squash s0, a *placing* seed, whose held pad height
+    is elevated (57.9 mm, 7.9 mm above the piece's own 50 mm total height).
+  - SAC holds the piece 110 mm high and 46 mm from the target and never descends toward it.
+* **Open items**: squash seed 0's training-log/evaluation gap (97.4% training-log last-500 vs 92.3%
+  evaluation, unexplained); the tip-grip lead for squash s1 (unconfirmed, see taxonomy); squash s1 holds at
+  qpos 0.775 (closed-on-air is 0.782) at a normal pad height -- unexplained, parked; seed 1 fails across
+  every variant measured (D28 default, D29 default, D29 squash), each a different failure mode; SAC's next
+  diagnostic step (observation-only VecNormalize, untested -- SAC's config currently carries none).
+
+ROADMAP.md sync pending (separate docs commit).
+
+## D30: T1 benchmark task is the fixed move e4->e5 (4 Oct 2026)
+- Context: RS29 (pre-registered, results/rs29_random_squares/) trained PPO with mean
+  squash (D29) on uniform random start/target pairs (d1, e1 excluded, D26), 400-step
+  budget, 3M steps, 6 seeds. Result: 0 of 6 seeds learn; 0/300 placements per seed on
+  the 20 fixed evaluation pairs. Positive control (D29 squash seed 3 on e4:e5 at
+  1c215fe) placed 298/300, so the code is not at fault.
+- Diagnostics: holds are brief and slip (median 2-6 steps held in 5 of 6 seeds), no
+  net progress toward targets, failure on short pairs too (so not distance), grasping
+  degraded with more training in seeds 1 and 4. Exploratory zero-shot: D29 squash
+  models place only on e4:e5 (15/15) and on no other pair; the fixed-move policy does
+  not transfer to other start squares.
+- Decision: the T1 benchmark task is the fixed move e4->e5 with the D29 squash
+  configuration (configs/_probe_cart_place29_ppotanh_seed*.yaml settings). T2 and T3
+  will also use fixed configurations, specified in their own specs. Random-square
+  generalisation is reported as a pre-registered negative result and a documented
+  limitation of the benchmark. A start-square curriculum is future work. Warm-starting
+  from a PPO policy is rejected for the factorial because SAC cells could not use it.

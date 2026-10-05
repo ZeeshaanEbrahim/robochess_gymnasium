@@ -1,0 +1,31 @@
+# D29 probe: copy of _probe_cart_place_ppo_seed0.yaml with the posture gate and carry-potential shaping
+# turned on (place_posture_gate, place_carry_potential; default tilt 10/45 deg,
+# k=50/m). Everything else -- action mode, squares, budget, timesteps, seed --
+# is identical to that D28 probe.
+#
+# run_name is pinned, as in the D28 probes.
+
+task: t1
+algorithm: ppo
+reward_type: shaped
+observation: state
+seed: 0
+total_timesteps: 1000000
+device: cpu
+num_threads: 1
+action_mode: cartesian
+max_episode_steps: 300
+n_obstacles: 0
+start_square: e4
+target_square: e5
+shaped_staged: false
+place_mode: true
+pickup_obs: true
+place_obs: true
+vecnormalize_clip_reward: 1000
+place_posture_gate: true
+place_carry_potential: true
+checkpoint_freq: 100000
+output_root: runs
+run_name: _probe_cart_place29_ppo_seed0
+notes: "D29 probe: D28 pick-and-place reward plus posture gate + carry potential, Cartesian, e4->e5, 1M steps, 300-step budget"

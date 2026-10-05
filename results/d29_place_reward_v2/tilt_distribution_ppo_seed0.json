@@ -1,0 +1,11 @@
+{
+ "run": "_probe_cart_place_ppo_seed0",
+ "n_episodes": 50,
+ "n_s1_steps": 398,
+ "median_tilt_deg": 2.0097613149207474,
+ "p90_tilt_deg": 4.694929944485937,
+ "max_tilt_deg": 125.10477154646239,
+ "frac_tilt_gt_10": 0.06532663316582915,
+ "frac_tilt_gt_20": 0.04020100502512563,
+ "mean_gate_value": 0.9600147133855335
+}

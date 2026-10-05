@@ -1,0 +1,53 @@
+{
+  "run": "_probe_cart_place29_ppo_seed1",
+  "algo": "ppo",
+  "seed": 20000,
+  "n_episodes": 300,
+  "n_steps_total": 89622,
+  "rms_same": true,
+  "state_fraction": {
+    "S0": 0.2042244091852447,
+    "S1": 0.6934234897681373,
+    "S2": 0.0,
+    "S3": 0.10235210104661802
+  },
+  "state_counts": {
+    "S0": 18303,
+    "S1": 62146,
+    "S2": 0,
+    "S3": 9173
+  },
+  "s1": {
+    "n_steps": 62146,
+    "median_lift_mm": 3.809684991836537,
+    "median_dxy_mm": 124.05389174818993,
+    "median_tilt_deg": 11.863354448487534,
+    "median_state_reward": 2.8741122825205467,
+    "median_shaping": 0.05425355210900307
+  },
+  "first_held": {
+    "n_with_held": 300,
+    "n_without_held": 0,
+    "median_first_held_step": 62.0
+  },
+  "gripper_cmd_lt_0p9_while_held": {
+    "k": 7295,
+    "n": 58057,
+    "fraction": 0.1256523761131302
+  },
+  "saturation": {
+    "n_held_steps": 58057,
+    "frac_any_dim_gt_0p9": 0.9133610072859432,
+    "frac_dx_gt_0p9": 0.29412473948016604,
+    "frac_dy_gt_0p9": 0.2685981018654081,
+    "frac_dz_gt_0p9": 0.792307559811909
+  },
+  "toppled_hold_step150": {
+    "k": 6,
+    "n": 300,
+    "fraction": 0.02
+  },
+  "shaping_total_per_episode_median": 14.805563397705555,
+  "idle_baseline_per_step": 0.039000000000000035,
+  "idle_baseline_episode_total_300steps": 11.70000000000001
+}

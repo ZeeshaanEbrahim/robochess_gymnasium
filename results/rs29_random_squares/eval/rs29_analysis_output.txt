@@ -1,0 +1,122 @@
+CHECK: trace rerun reproduces final_seed*.json exactly (reason, length, held steps, pair) for all 6 x 300 episodes; obs_rms identical: [True, True, True, True, True, True]
+
+=== 3a. placement per pair (placed/15) per seed; held-episodes/15 in brackets ===
+pair      d_mm  s0  s1  s2  s3  s4  s5
+e4:e5      78.0   0[9]  0[15]   0[0]  0[11]   0[0]  0[15]
+c1:c2      78.0   0[0]   0[0]   0[0]   0[0]   0[0]   0[1]
+d2:e2      78.0   0[0]   0[4]   0[0]   0[4]   0[0]   0[9]
+a6:a5      78.0   0[0]  0[13]   0[0]   0[9]   0[0]  0[15]
+e8:d7     110.3   0[0]   0[0]   0[0]   0[7]   0[0]   0[2]
+d4:e5     110.3   0[1]  0[12]   0[0]  0[11]   0[0]  0[15]
+f3:c6     330.9   0[0]  0[14]   0[0]   0[0]   0[0]  0[15]
+h5:d3     348.8   0[0]   0[1]   0[1]   0[2]   0[5]   0[3]
+g5:b3     420.0  0[11]  0[14]   0[0]   0[9]   0[7]  0[12]
+c1:f6     454.8   0[0]   0[0]   0[0]   0[0]   0[0]   0[6]
+h1:h8     546.0   0[0]   0[0]   0[0]   0[0]   0[0]   0[0]
+h8:h1     546.0   0[0]   0[0]   0[0]   0[6]   0[0]   0[0]
+a4:h4     546.0   0[0]  0[13]   0[0]  0[12]   0[0]  0[13]
+b7:g2     551.5   0[3]  0[15]   0[0]   0[3]   0[0]  0[14]
+b2:g7     551.5   0[0]   0[0]   0[0]   0[1]   0[5]   0[4]
+f1:c8     594.0   0[0]   0[0]   0[0]   0[0]   0[0]   0[0]
+a1:h8     772.2   0[0]   0[4]   0[0]   0[0]  0[13]   0[5]
+h8:a1     772.2   0[0]   0[0]   0[0]   0[7]   0[0]   0[2]
+h1:a8     772.2   0[0]   0[0]   0[0]   0[0]   0[0]   0[1]
+a8:h1     772.2  0[11]   0[3]   0[0]   0[1]   0[0]   0[3]
+
+per band: placed (Wilson95) | held episodes   [n = 15 x pairs]
+short    (n=90 per seed): s0 0/90 (0.0%, [0.0,4.1]) held 10 ; s1 0/90 (0.0%, [0.0,4.1]) held 44 ; s2 0/90 (0.0%, [0.0,4.1]) held 0 ; s3 0/90 (0.0%, [0.0,4.1]) held 42 ; s4 0/90 (0.0%, [0.0,4.1]) held 0 ; s5 0/90 (0.0%, [0.0,4.1]) held 57
+mid      (n=60 per seed): s0 0/60 (0.0%, [0.0,6.0]) held 11 ; s1 0/60 (0.0%, [0.0,6.0]) held 29 ; s2 0/60 (0.0%, [0.0,6.0]) held 1 ; s3 0/60 (0.0%, [0.0,6.0]) held 11 ; s4 0/60 (0.0%, [0.0,6.0]) held 12 ; s5 0/60 (0.0%, [0.0,6.0]) held 36
+long     (n=90 per seed): s0 0/90 (0.0%, [0.0,4.1]) held 3 ; s1 0/90 (0.0%, [0.0,4.1]) held 28 ; s2 0/90 (0.0%, [0.0,4.1]) held 0 ; s3 0/90 (0.0%, [0.0,4.1]) held 22 ; s4 0/90 (0.0%, [0.0,4.1]) held 5 ; s5 0/90 (0.0%, [0.0,4.1]) held 31
+diagonal (n=60 per seed): s0 0/60 (0.0%, [0.0,6.0]) held 11 ; s1 0/60 (0.0%, [0.0,6.0]) held 7 ; s2 0/60 (0.0%, [0.0,6.0]) held 0 ; s3 0/60 (0.0%, [0.0,6.0]) held 8 ; s4 0/60 (0.0%, [0.0,6.0]) held 13 ; s5 0/60 (0.0%, [0.0,6.0]) held 11
+
+start-to-target < 0.4 m (8 pairs: e4:e5,c1:c2,d2:e2,a6:a5,e8:d7,d4:e5,f3:c6,h5:d3) vs >= 0.4 m (12 pairs: g5:b3,c1:f6,h1:h8,h8:h1,a4:h4,b7:g2,b2:g7,f1:c8,a1:h8,h8:a1,h1:a8,a8:h1)
+< 0.4 m  : s0 placed 0/120 (0.0%, [0.0,3.1]) held 10/120 ; s1 placed 0/120 (0.0%, [0.0,3.1]) held 59/120 ; s2 placed 0/120 (0.0%, [0.0,3.1]) held 1/120 ; s3 placed 0/120 (0.0%, [0.0,3.1]) held 44/120 ; s4 placed 0/120 (0.0%, [0.0,3.1]) held 5/120 ; s5 placed 0/120 (0.0%, [0.0,3.1]) held 75/120
+>= 0.4 m : s0 placed 0/180 (0.0%, [0.0,2.1]) held 25/180 ; s1 placed 0/180 (0.0%, [0.0,2.1]) held 49/180 ; s2 placed 0/180 (0.0%, [0.0,2.1]) held 0/180 ; s3 placed 0/180 (0.0%, [0.0,2.1]) held 39/180 ; s4 placed 0/180 (0.0%, [0.0,2.1]) held 25/180 ; s5 placed 0/180 (0.0%, [0.0,2.1]) held 60/180
+
+=== 3b. funnel per seed (n=300; eval place_report + eval_probe grasp_ever) ===
+s0: grasp_ever(D18) 0/300 (0.0%, [0.0,1.3]) | held(D27) 35/300 (11.7%, [8.5,15.8]) | lifted_30mm 0/300 (0.0%, [0.0,1.3]) | carried_within_3cm 0/300 (0.0%, [0.0,1.3]) | released 0/300 (0.0%, [0.0,1.3]) | placed 0/300 (0.0%, [0.0,1.3])
+s1: grasp_ever(D18) 5/300 (1.7%, [0.7,3.8]) | held(D27) 108/300 (36.0%, [30.8,41.6]) | lifted_30mm 0/300 (0.0%, [0.0,1.3]) | carried_within_3cm 0/300 (0.0%, [0.0,1.3]) | released 2/300 (0.7%, [0.2,2.4]) | placed 0/300 (0.0%, [0.0,1.3])
+s2: grasp_ever(D18) 1/300 (0.3%, [0.1,1.9]) | held(D27) 1/300 (0.3%, [0.1,1.9]) | lifted_30mm 0/300 (0.0%, [0.0,1.3]) | carried_within_3cm 0/300 (0.0%, [0.0,1.3]) | released 0/300 (0.0%, [0.0,1.3]) | placed 0/300 (0.0%, [0.0,1.3])
+s3: grasp_ever(D18) 6/300 (2.0%, [0.9,4.3]) | held(D27) 83/300 (27.7%, [22.9,33.0]) | lifted_30mm 0/300 (0.0%, [0.0,1.3]) | carried_within_3cm 0/300 (0.0%, [0.0,1.3]) | released 0/300 (0.0%, [0.0,1.3]) | placed 0/300 (0.0%, [0.0,1.3])
+s4: grasp_ever(D18) 1/300 (0.3%, [0.1,1.9]) | held(D27) 30/300 (10.0%, [7.1,13.9]) | lifted_30mm 0/300 (0.0%, [0.0,1.3]) | carried_within_3cm 0/300 (0.0%, [0.0,1.3]) | released 0/300 (0.0%, [0.0,1.3]) | placed 0/300 (0.0%, [0.0,1.3])
+s5: grasp_ever(D18) 43/300 (14.3%, [10.8,18.8]) | held(D27) 135/300 (45.0%, [39.5,50.7]) | lifted_30mm 3/300 (1.0%, [0.3,2.9]) | carried_within_3cm 0/300 (0.0%, [0.0,1.3]) | released 3/300 (1.0%, [0.3,2.9]) | placed 0/300 (0.0%, [0.0,1.3])
+
+=== 3c. failure classification (all six seeds fail the rule); measured numbers ===
+s0: grasps but never carries (held-phase displacement median < 50% of start-to-target; never within 3 cm of target while lifted)
+    held episodes 35/300; held steps/ep median 2.0 (p10 1.0, p90 6.4); first-held step median 266.0; max lift while held, median 0.2 mm (p90 2.2, max 7.0); episodes with lift>=30mm while held 0; closest d_xy to target while held, median 427.5 mm; held-phase displacement / start-to-target, median 0.1%; released 0
+s1: grasps but never carries (held-phase displacement median < 50% of start-to-target; never within 3 cm of target while lifted)
+    held episodes 108/300; held steps/ep median 5.5 (p10 1.0, p90 28.2); first-held step median 184.0; max lift while held, median 2.7 mm (p90 6.7, max 18.0); episodes with lift>=30mm while held 0; closest d_xy to target while held, median 334.6 mm; held-phase displacement / start-to-target, median 7.2%; released 2
+s2: never grasps (held in <5/300 episodes)
+    held episodes 1/300; held steps/ep median 2.0 (p10 2.0, p90 2.0); first-held step median 391.0; max lift while held, median 19.0 mm (p90 19.0, max 19.0); episodes with lift>=30mm while held 0; closest d_xy to target while held, median 311.1 mm; held-phase displacement / start-to-target, median 1.9%; released 0
+s3: grasps but never carries (held-phase displacement median < 50% of start-to-target; never within 3 cm of target while lifted)
+    held episodes 83/300; held steps/ep median 3.0 (p10 1.0, p90 9.0); first-held step median 127.0; max lift while held, median 1.9 mm (p90 6.5, max 19.1); episodes with lift>=30mm while held 0; closest d_xy to target while held, median 148.5 mm; held-phase displacement / start-to-target, median 6.5%; released 0
+s4: grasps but never carries (held-phase displacement median < 50% of start-to-target; never within 3 cm of target while lifted)
+    held episodes 30/300; held steps/ep median 3.5 (p10 1.9, p90 46.2); first-held step median 209.5; max lift while held, median 3.0 mm (p90 6.8, max 23.6); episodes with lift>=30mm while held 0; closest d_xy to target while held, median 534.7 mm; held-phase displacement / start-to-target, median 2.4%; released 0
+s5: grasps but never carries (held-phase displacement median < 50% of start-to-target; never within 3 cm of target while lifted)
+    held episodes 135/300; held steps/ep median 30.0 (p10 2.4, p90 72.6); first-held step median 94.0; max lift while held, median 7.7 mm (p90 18.2, max 41.8); episodes with lift>=30mm while held 3; closest d_xy to target while held, median 331.9 mm; held-phase displacement / start-to-target, median 22.6%; released 3
+
+=== 3d. truncated-in-S2 tripwire and shaping total per episode ===
+s0: truncated_in_S2 0/300 (tripwire >= 10% -> not tripped) | shaping total/episode: median 81.93, mean 78.86, min 6.46, max 154.86 | idle baseline (0.5*d_pair*steps) median 84.01 | total - idle: median -0.00
+s1: truncated_in_S2 0/300 (tripwire >= 10% -> not tripped) | shaping total/episode: median 86.23, mean 76.63, min 4.25, max 155.73 | idle baseline (0.5*d_pair*steps) median 87.77 | total - idle: median -0.00
+s2: truncated_in_S2 0/300 (tripwire >= 10% -> not tripped) | shaping total/episode: median 84.01, mean 81.63, min 8.55, max 158.07 | idle baseline (0.5*d_pair*steps) median 84.01 | total - idle: median -0.00
+s3: truncated_in_S2 0/300 (tripwire >= 10% -> not tripped) | shaping total/episode: median 55.76, mean 61.93, min -0.35, max 158.23 | idle baseline (0.5*d_pair*steps) median 55.84 | total - idle: median -0.64
+s4: truncated_in_S2 0/300 (tripwire >= 10% -> not tripped) | shaping total/episode: median 90.96, mean 82.77, min 12.44, max 156.66 | idle baseline (0.5*d_pair*steps) median 90.96 | total - idle: median -0.00
+s5: truncated_in_S2 0/300 (tripwire >= 10% -> not tripped) | shaping total/episode: median 65.87, mean 66.58, min -1.01, max 158.56 | idle baseline (0.5*d_pair*steps) median 66.19 | total - idle: median -0.30
+
+=== k. [EXPLORATORY] held-but-not-lifted episodes (lift < 30 mm throughout), per seed; source: trace rerun (all 300 episodes, per-step) ===
+s0: held 35/300; held-but-not-lifted 35
+    first-held step: median 266 (p10 225, p90 392, min 199)
+    steps held: median 2 (p10 1, p90 6, max 10)
+    max lift while held (mm): median 0.2 (p90 2.2, max 7.0)
+    gripper command while held (0 open .. 1 closed, per-episode median): median 0.917 (p10 0.783); lowest single-step 0.653
+    gripper aperture qpos while held (per-episode median): median 0.6060 (p10 0.5339, p90 0.6310)
+    piece tilt while held (deg): per-episode median 0.2; max over episodes 15.3; episodes with tilt>45 at some held step 0
+    how the (last) hold ended: {'slipped (cmd>=0.5, not held)': 21, 'gripper opening (cmd<0.5) -> not held': 14}
+s1: held 108/300; held-but-not-lifted 108
+    first-held step: median 184 (p10 128, p90 309, min 66)
+    steps held: median 6 (p10 1, p90 28, max 53)
+    max lift while held (mm): median 2.7 (p90 6.7, max 18.0)
+    gripper command while held (0 open .. 1 closed, per-episode median): median 0.843 (p10 0.732); lowest single-step 0.597
+    gripper aperture qpos while held (per-episode median): median 0.5758 (p10 0.5413, p90 0.6438)
+    piece tilt while held (deg): per-episode median 1.2; max over episodes 103.2; episodes with tilt>45 at some held step 3
+    how the (last) hold ended: {'gripper opening (cmd<0.5) -> not held': 37, 'gripper opening (cmd<0.5) -> not held; episode then piece_off_board': 1, 'slipped (cmd>=0.5, not held)': 65, 'time limit (still held)': 3, 'slipped (cmd>=0.5, not held); episode then piece_off_board': 2}
+s2: held 1/300; held-but-not-lifted 1
+    first-held step: median 391 (p10 391, p90 391, min 391)
+    steps held: median 2 (p10 2, p90 2, max 2)
+    max lift while held (mm): median 19.0 (p90 19.0, max 19.0)
+    gripper command while held (0 open .. 1 closed, per-episode median): median 0.892 (p10 0.892); lowest single-step 0.842
+    gripper aperture qpos while held (per-episode median): median 0.6402 (p10 0.6402, p90 0.6402)
+    piece tilt while held (deg): per-episode median 102.9; max over episodes 104.1; episodes with tilt>45 at some held step 1
+    how the (last) hold ended: {'slipped (cmd>=0.5, not held)': 1}
+s3: held 83/300; held-but-not-lifted 83
+    first-held step: median 127 (p10 87, p90 287, min 77)
+    steps held: median 3 (p10 1, p90 9, max 18)
+    max lift while held (mm): median 1.9 (p90 6.5, max 19.1)
+    gripper command while held (0 open .. 1 closed, per-episode median): median 0.935 (p10 0.866); lowest single-step 0.595
+    gripper aperture qpos while held (per-episode median): median 0.5487 (p10 0.5122, p90 0.6075)
+    piece tilt while held (deg): per-episode median 2.1; max over episodes 103.9; episodes with tilt>45 at some held step 5
+    how the (last) hold ended: {'gripper opening (cmd<0.5) -> not held': 50, 'slipped (cmd>=0.5, not held)': 13, 'gripper opening (cmd<0.5) -> not held; episode then piece_off_board': 15, 'gripper opening (cmd<0.5) -> not held; episode then bad_contact': 2, 'slipped (cmd>=0.5, not held); episode then piece_off_board': 3}
+s4: held 30/300; held-but-not-lifted 30
+    first-held step: median 210 (p10 123, p90 335, min 113)
+    steps held: median 4 (p10 2, p90 46, max 149)
+    max lift while held (mm): median 3.0 (p90 6.8, max 23.6)
+    gripper command while held (0 open .. 1 closed, per-episode median): median 0.868 (p10 0.783); lowest single-step 0.642
+    gripper aperture qpos while held (per-episode median): median 0.6332 (p10 0.5322, p90 0.6402)
+    piece tilt while held (deg): per-episode median 2.4; max over episodes 52.0; episodes with tilt>45 at some held step 1
+    how the (last) hold ended: {'slipped (cmd>=0.5, not held)': 17, 'gripper opening (cmd<0.5) -> not held': 8, 'gripper opening (cmd<0.5) -> not held; episode then piece_off_board': 1, 'slipped (cmd>=0.5, not held); episode then piece_off_board': 3, 'time limit (still held)': 1}
+s5: held 135/300; held-but-not-lifted 132
+    first-held step: median 94 (p10 71, p90 178, min 54)
+    steps held: median 30 (p10 3, p90 73, max 238)
+    max lift while held (mm): median 7.6 (p90 16.7, max 28.7)
+    gripper command while held (0 open .. 1 closed, per-episode median): median 0.958 (p10 0.927); lowest single-step 0.596
+    gripper aperture qpos while held (per-episode median): median 0.6333 (p10 0.5554, p90 0.6482)
+    piece tilt while held (deg): per-episode median 2.3; max over episodes 124.8; episodes with tilt>45 at some held step 18
+    how the (last) hold ended: {'slipped (cmd>=0.5, not held)': 63, 'gripper opening (cmd<0.5) -> not held': 27, 'slipped (cmd>=0.5, not held); episode then piece_off_board': 10, 'gripper opening (cmd<0.5) -> not held; episode then piece_off_board': 13, 'piece_off_board (while held)': 7, 'time limit (still held)': 9, 'released into S2': 1, 'gripper opening (cmd<0.5) -> not held; episode then bad_contact': 2}
+
+piece_off_board episodes (all 300 episodes per seed): ever held? / state and held flag at the final step
+s0: piece_off_board 15; ever D27-held in episode before leaving: 0/15; phase at the final step: {'approach (never held)': 15}
+s1: piece_off_board 61; ever D27-held in episode before leaving: 3/61; phase at the final step: {'approach (never held)': 58, 'after hold lost (S3)': 3}
+s2: piece_off_board 23; ever D27-held in episode before leaving: 0/23; phase at the final step: {'approach (never held)': 23}
+s3: piece_off_board 73; ever D27-held in episode before leaving: 18/73; phase at the final step: {'approach (never held)': 55, 'after hold lost (S3)': 18}
+s4: piece_off_board 17; ever D27-held in episode before leaving: 4/17; phase at the final step: {'approach (never held)': 13, 'after hold lost (S3)': 4}
+s5: piece_off_board 98; ever D27-held in episode before leaving: 32/98; phase at the final step: {'approach (never held)': 66, 'after hold lost (S3)': 25, 'while held': 7}

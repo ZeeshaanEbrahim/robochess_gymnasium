@@ -1,0 +1,93 @@
+[
+  {
+    "run": "_probe_cart_place29_ppo_seed0",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps": "1001472"
+  },
+  {
+    "run": "_probe_cart_place29_ppo_seed1",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps": "1001472"
+  },
+  {
+    "run": "_probe_cart_place29_ppo_seed2",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps": "1001472"
+  },
+  {
+    "run": "_probe_cart_place29_ppo_seed3",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps": "1001472"
+  },
+  {
+    "run": "_probe_cart_place29_ppo_seed4",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps": "1001472"
+  },
+  {
+    "run": "_probe_cart_place29_ppotanh_seed0",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps": "1001472"
+  },
+  {
+    "run": "_probe_cart_place29_ppotanh_seed1",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps": "1001472"
+  },
+  {
+    "run": "_probe_cart_place29_ppotanh_seed2",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps": "1001472"
+  },
+  {
+    "run": "_probe_cart_place29_ppotanh_seed3",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps": "1001472"
+  },
+  {
+    "run": "_probe_cart_place29_ppotanh_seed4",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps": "1001472"
+  },
+  {
+    "run": "_probe_cart_place29_sac_seed0",
+    "sha": "41ae8e542c60a17802f92d668a872896bf6b7026",
+    "sha_matches_head": true,
+    "dirty_tracked": false,
+    "final_model_zip": true,
+    "final_total_timesteps_progress_csv_last_row": "998966",
+    "final_total_timesteps_model_num_timesteps": 1000000,
+    "monitor_csv_completed_episode_length_sum": 999866,
+    "note": "progress.csv last row (998966) lags the true end; confirmed via SAC.load().num_timesteps == 1000000, cross-checked against monitor CSV completed-episode length sum 999866 (134 short, consistent with the final episode still in progress at save time)"
+  }
+]

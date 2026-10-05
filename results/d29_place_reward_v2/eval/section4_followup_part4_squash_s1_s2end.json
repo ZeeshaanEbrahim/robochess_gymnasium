@@ -1,0 +1,807 @@
+{
+  "n_s2_end": 87,
+  "n_total": 300,
+  "ever_held_count": 87,
+  "disp_mm_stats": {
+    "mean": 69.50798478015986,
+    "median": 69.37346111141392,
+    "min": 64.49848063900083,
+    "max": 74.27690991551204
+  },
+  "false_at_final": {
+    "piece_on_square": 0,
+    "piece_resting": 0,
+    "gripper_released": 87,
+    "piece_settled": 1,
+    "piece_still": 1,
+    "piece_upright": 0,
+    "release_ok": 0
+  },
+  "per_episode": [
+    {
+      "ever_held": true,
+      "disp_mm": 67.9,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.8,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 71.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.8,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.8,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.8,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.7,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.5,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 72.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 72.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 73.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.8,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 73.6,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 72.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 71.7,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.3,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 74.3,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 73.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.8,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.6,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.7,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.6,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 71.3,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 71.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 64.5,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 71.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.9,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 72.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.9,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.8,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.5,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.8,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.9,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.3,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.7,
+      "n": 300,
+      "false_terms": [
+        "gripper_released",
+        "piece_settled",
+        "piece_still"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 71.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.9,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 71.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.8,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 66.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.9,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 72.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.9,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.8,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 71.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.5,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 70.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 66.3,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.6,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.1,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.0,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.7,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 71.6,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.6,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 68.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 69.2,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    },
+    {
+      "ever_held": true,
+      "disp_mm": 67.4,
+      "n": 300,
+      "false_terms": [
+        "gripper_released"
+      ],
+      "terminated_reason": null
+    }
+  ]
+}

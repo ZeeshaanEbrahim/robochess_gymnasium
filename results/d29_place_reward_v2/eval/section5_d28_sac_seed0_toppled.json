@@ -1,0 +1,47 @@
+{
+  "run": "_probe_cart_place_sac_seed0",
+  "algo": "sac",
+  "seed": 20000,
+  "n_episodes": 300,
+  "n_steps_total": 89452,
+  "rms_same": null,
+  "state_fraction": {
+    "S0": 0.20150471761391583,
+    "S1": 0.768389750927872,
+    "S2": 0.0,
+    "S3": 0.030105531458212226
+  },
+  "state_counts": {
+    "S0": 18025,
+    "S1": 68734,
+    "S2": 0,
+    "S3": 2693
+  },
+  "s1": {
+    "n_steps": 68734,
+    "median_lift_mm": 244.65515661239624,
+    "median_dxy_mm": 119.73975971341133,
+    "median_tilt_deg": 72.59484438642417,
+    "median_state_reward": 4.712341768116232,
+    "median_shaping": 0.0
+  },
+  "first_held": {
+    "n_with_held": 300,
+    "n_without_held": 0,
+    "median_first_held_step": 61.0
+  },
+  "gripper_cmd_lt_0p9_while_held": {
+    "k": 278,
+    "n": 67751,
+    "fraction": 0.00410326046848017
+  },
+  "saturation": "N/A: SAC's actor is a squashed (tanh) Gaussian -- action = tanh(sample) is always in (-1, 1), there is no literal clip boundary the way there is for PPO's clipped Gaussian; not computed.",
+  "toppled_hold_step150": {
+    "k": 282,
+    "n": 300,
+    "fraction": 0.94
+  },
+  "shaping_total_per_episode_median": 0.0,
+  "idle_baseline_per_step": 0.039000000000000035,
+  "idle_baseline_episode_total_300steps": 11.70000000000001
+}

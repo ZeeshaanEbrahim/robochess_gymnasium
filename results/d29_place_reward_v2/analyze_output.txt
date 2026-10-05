@@ -1,0 +1,118 @@
+== 4a
+e4->e5 PASS | non_decreasing True placed in [8,9] True S2 nondecr>=8 True | gate steps 146
+   recurring: home=0.239 hover=0.482 close=1.892 first_held=3.028 lifted_30mm=4.867 mid_carry=5.199 over_target_at_height=5.898 set_down_pinched=7.277 placed=8.273
+   shaping  : home=+0.0390 hover=+0.0390 close=+0.0406 first_held=+0.0069 lifted_30mm=+0.0199 mid_carry=+0.4759 over_target_at_height=+0.3081 set_down_pinched=-0.0494 placed=+0.0112 | shaping_total +7.5146
+   D29 vs D28 (S1, tilt<=10): 56 steps, max|diff| 0.000e+00 | max gate-caused per-step jump 0.0000 (must be <= 1.0) PASS
+a1->h8 PASS | non_decreasing True placed in [8,9] True S2 nondecr>=8 True | gate steps 236
+   recurring: home=0.205 hover=0.471 close=1.923 first_held=2.154 lifted_30mm=4.000 mid_carry=4.184 over_target_at_height=5.937 set_down_pinched=7.651 placed=8.271
+   shaping  : home=+0.3861 hover=+0.3861 close=+0.3864 first_held=+0.3882 lifted_30mm=+0.3819 mid_carry=+0.7796 over_target_at_height=+0.1836 set_down_pinched=+0.0156 placed=-0.0100 | shaping_total +93.9976
+   D29 vs D28 (S1, tilt<=10): 138 steps, max|diff| 0.000e+00 | max gate-caused per-step jump 0.0000 (must be <= 1.0) PASS
+c1->f6 PASS | non_decreasing True placed in [8,9] True S2 nondecr>=8 True | gate steps 207
+   recurring: home=0.218 hover=0.473 close=1.935 first_held=2.001 lifted_30mm=4.000 mid_carry=4.523 over_target_at_height=5.864 set_down_pinched=7.924 placed=8.385
+   shaping  : home=+0.2274 hover=+0.2274 close=+0.2274 first_held=+0.2161 lifted_30mm=+0.2213 mid_carry=+0.6529 over_target_at_height=+0.2983 set_down_pinched=+0.0228 placed=+0.0000 | shaping_total +51.8294
+   D29 vs D28 (S1, tilt<=10): 117 steps, max|diff| 0.000e+00 | max gate-caused per-step jump 0.0000 (must be <= 1.0) PASS
+b7->g2 PASS | non_decreasing True placed in [8,9] True S2 nondecr>=8 True | gate steps 193
+   recurring: home=0.222 hover=0.476 close=1.787 first_held=2.082 lifted_30mm=4.000 mid_carry=4.435 over_target_at_height=5.813 set_down_pinched=7.040 placed=8.274
+   shaping  : home=+0.2758 hover=+0.2758 close=+0.2740 first_held=+0.3083 lifted_30mm=+0.2964 mid_carry=+0.6383 over_target_at_height=+0.0682 set_down_pinched=+0.0002 placed=+0.0191 | shaping_total +58.4639
+   D29 vs D28 (S1, tilt<=10): 106 steps, max|diff| 0.000e+00 | max gate-caused per-step jump 0.0000 (must be <= 1.0) PASS
+== 4b   (Δ = cheat - clean; discounted gamma=0.99)
+e4->e5 clean: success step 171, first release/S2 step 167; disc0 360.43, from-release 1033.23, shaping_total +8.336
+   push_then_open                           succ=False end=None  step0   -300.37  from-release   -973.47  boot-step0   -296.41  boot-release   -952.46  undisc   -1374.5  shaping_total  +8.624  ok
+   drop_30mm                                succ=False end=None  step0   -205.84  from-release   -965.87  boot-step0   -201.38  boot-release   -942.18  undisc   -1067.0  shaping_total  +8.552  ok
+   drop_80mm                                succ=False end=None  step0   -215.64  from-release   -998.48  boot-step0   -213.34  boot-release   -986.27  undisc   -1142.8  shaping_total  +8.531  ok
+   hold_pinched_on_target                   succ=False end=None  step0    -99.83  from-release   -529.42  boot-step0    -66.55  boot-release   -352.97  undisc    -163.3  shaping_total  +8.597  ok
+   hover_lifted_over_target                 succ=False end=None  step0   -117.65  from-release   -593.15  boot-step0    -88.49  boot-release   -438.49  undisc    -305.4  shaping_total  +8.547  ok
+   release_regrasp_release                  succ=True  end=success  step0     -1.85  from-release     -9.80  boot-step0     -1.85  boot-release     -9.80  undisc     +30.9  shaping_total  +8.357  ok
+   release_then_topple_open_gripper         succ=True  end=success  step0     +0.00  from-release     +0.00  boot-step0     +0.00  boot-release     +0.00  undisc      +0.0  shaping_total  +8.336  n/a (cheat never ran: success first)
+   drop_off_target                          succ=False end=None  step0   -209.84  from-release   -959.43  boot-step0   -204.97  boot-release   -933.57  undisc   -1068.4  shaping_total +14.872  ok
+   release_lift_reclose_literal             succ=True  end=success  step0     -0.00  from-release     -0.00  boot-step0     -0.00  boot-release     -0.00  undisc      -0.0  shaping_total  +8.336  n/a (cheat never ran: success first)
+   release_partial_open_hold_0p40           succ=False end=None  step0    -72.36  from-release   -383.75  boot-step0    -29.92  boot-release   -158.66  undisc     +94.5  shaping_total  +8.605  ok
+   release_partial_open_hold_0p203          succ=False end=None  step0    -67.71  from-release   -359.11  boot-step0    -23.59  boot-release   -125.10  undisc    +139.7  shaping_total  +8.605  ok
+   release_partial_open_topple              succ=False end=None  step0   -180.04  from-release   -954.84  boot-step0   -177.69  boot-release   -942.37  undisc    -966.6  shaping_total  +7.285  ok
+   shaping_farm                             succ=False end=None  step0   -144.10  from-release   -667.79  boot-step0   -120.04  boot-release   -540.20  undisc    -490.5  shaping_total +11.542  ok
+   push_then_grasp_release_on_target        succ=True  end=success  step0   -170.49  from-release   -271.25  boot-step0   -170.49  boot-release   -271.25  undisc     +20.8  shaping_total  +8.764  report only (not judged)
+   toppled_hold                             succ=False end=None  step0   -262.54  from-release   -964.46  boot-step0   -257.99  boot-release   -940.32  undisc   -1284.4  shaping_total +22.817  ok
+a1->h8 clean: success step 252, first release/S2 step 249; disc0 309.26, from-release 1034.44, shaping_total +98.532
+   push_then_open                           succ=False end=None  step0   -211.73  from-release  -1009.32  boot-step0   -208.95  boot-release   -975.72  undisc   -1709.7  shaping_total +110.028  ok
+   drop_30mm                                succ=False end=None  step0    -95.25  from-release  -1010.59  boot-step0    -92.37  boot-release   -975.85  undisc   -1162.5  shaping_total +98.481  ok
+   drop_80mm                                succ=False end=None  step0   -105.69  from-release  -1014.65  boot-step0   -103.31  boot-release   -985.82  undisc   -1263.6  shaping_total +98.529  ok
+   hold_pinched_on_target                   succ=False end=None  step0    -61.12  from-release   -738.97  boot-step0    -25.71  boot-release   -310.85  undisc    -688.2  shaping_total +98.483  ok
+   hover_lifted_over_target                 succ=False end=None  step0    -70.51  from-release   -793.80  boot-step0    -41.51  boot-release   -443.21  undisc    -808.7  shaping_total +98.522  ok
+   release_regrasp_release                  succ=True  end=success  step0     -0.85  from-release    -10.33  boot-step0     -0.85  boot-release    -10.33  undisc     +40.7  shaping_total +98.513  ok
+   release_then_topple_open_gripper         succ=True  end=success  step0     +0.00  from-release     +0.00  boot-step0     +0.00  boot-release     +0.00  undisc      +0.0  shaping_total +98.532  n/a (cheat never ran: success first)
+   drop_off_target                          succ=False end=piece_off_board  step0   -123.74  from-release  -1034.44  boot-step0   -123.74  boot-release  -1034.44  undisc   -1418.4  shaping_total +94.659  ok
+   release_lift_reclose_literal             succ=True  end=success  step0     -0.00  from-release     -0.00  boot-step0     -0.00  boot-release     -0.00  undisc      -0.0  shaping_total +98.532  n/a (cheat never ran: success first)
+   release_partial_open_hold_0p40           succ=False end=None  step0    -55.67  from-release   -673.14  boot-step0    -13.24  boot-release   -160.06  undisc    -606.2  shaping_total +98.560  ok
+   release_partial_open_hold_0p203          succ=False end=None  step0    -54.58  from-release   -659.92  boot-step0    -10.46  boot-release   -126.49  undisc    -589.2  shaping_total +98.560  ok
+   release_partial_open_topple              succ=False end=None  step0    -79.14  from-release   -956.96  boot-step0    -75.19  boot-release   -909.09  undisc    -978.4  shaping_total +97.251  ok
+   shaping_farm                             succ=False end=None  step0    -93.44  from-release   -855.99  boot-step0    -71.72  boot-release   -593.43  undisc   -1012.8  shaping_total +115.572  ok
+   push_then_grasp_release_on_target        succ=False end=None  step0   -211.73  from-release  -1009.32  boot-step0   -208.95  boot-release   -975.72  undisc   -1709.7  shaping_total +110.028  report only (not judged)
+c1->f6 clean: success step 238, first release/S2 step 235; disc0 296.75, from-release 1034.46, shaping_total +57.442
+   push_then_open                           succ=False end=bad_contact  step0   -264.82  from-release  -1034.46  boot-step0   -264.82  boot-release  -1034.46  undisc   -1892.8  shaping_total +18.420  ok
+   drop_30mm                                succ=False end=None  step0   -110.32  from-release  -1000.21  boot-step0   -106.86  boot-release   -963.82  undisc   -1159.2  shaping_total +57.494  ok
+   drop_80mm                                succ=False end=None  step0   -124.03  from-release  -1010.92  boot-step0   -121.65  boot-release   -985.91  undisc   -1277.4  shaping_total +57.477  ok
+   hold_pinched_on_target                   succ=False end=None  step0    -63.17  from-release   -663.59  boot-step0    -25.74  boot-release   -270.43  undisc    -560.7  shaping_total +57.498  ok
+   hover_lifted_over_target                 succ=False end=None  step0    -80.42  from-release   -755.88  boot-step0    -52.24  boot-release   -459.90  undisc    -759.3  shaping_total +57.495  ok
+   release_regrasp_release                  succ=True  end=success  step0     -0.99  from-release    -10.42  boot-step0     -0.99  boot-release    -10.42  undisc     +40.6  shaping_total +57.439  ok
+   release_then_topple_open_gripper         succ=True  end=success  step0     -0.00  from-release     -0.00  boot-step0     -0.00  boot-release     -0.00  undisc      -0.0  shaping_total +57.442  n/a (cheat never ran: success first)
+   drop_off_target                          succ=False end=None  step0   -116.70  from-release   -960.16  boot-step0   -111.70  boot-release   -907.56  undisc   -1174.7  shaping_total +60.331  ok
+   release_lift_reclose_literal             succ=True  end=success  step0     -0.00  from-release     -0.00  boot-step0     -0.00  boot-release     -0.00  undisc      -0.0  shaping_total +57.442  n/a (cheat never ran: success first)
+   release_partial_open_hold_0p40           succ=False end=None  step0    -57.67  from-release   -605.77  boot-step0    -15.23  boot-release   -160.00  undisc    -485.1  shaping_total +57.513  ok
+   release_partial_open_hold_0p203          succ=False end=None  step0    -56.16  from-release   -589.88  boot-step0    -12.04  boot-release   -126.44  undisc    -463.2  shaping_total +57.513  ok
+   release_partial_open_topple              succ=False end=None  step0    -87.90  from-release   -923.31  boot-step0    -82.53  boot-release   -866.91  undisc    -933.7  shaping_total +55.795  ok
+   shaping_farm                             succ=False end=None  step0   -107.68  from-release   -829.55  boot-step0    -87.06  boot-release   -612.96  undisc    -990.9  shaping_total +68.083  ok
+   push_then_grasp_release_on_target        succ=False end=bad_contact  step0   -264.82  from-release  -1034.46  boot-step0   -264.82  boot-release  -1034.46  undisc   -1892.8  shaping_total +18.420  report only (not judged)
+b7->g2 clean: success step 229, first release/S2 step 214; disc0 295.11, from-release 1008.40, shaping_total +68.776
+   push_then_open                           succ=False end=None  step0   -215.83  from-release   -984.11  boot-step0   -214.07  boot-release   -969.16  undisc   -1614.5  shaping_total +73.776  ok
+   drop_30mm                                succ=False end=None  step0   -112.96  from-release   -954.10  boot-step0   -109.83  boot-release   -927.46  undisc   -1094.4  shaping_total +68.833  ok
+   drop_80mm                                succ=False end=None  step0   -121.58  from-release   -980.05  boot-step0   -119.19  boot-release   -959.76  undisc   -1170.3  shaping_total +68.822  ok
+   hold_pinched_on_target                   succ=False end=None  step0    -65.06  from-release   -553.37  boot-step0    -28.13  boot-release   -239.25  undisc    -488.9  shaping_total +68.810  ok
+   hover_lifted_over_target                 succ=False end=None  step0    -81.04  from-release   -675.88  boot-step0    -53.07  boot-release   -437.94  undisc    -677.3  shaping_total +68.820  ok
+   release_regrasp_release                  succ=True  end=success  step0     -1.09  from-release     -9.24  boot-step0     -1.09  boot-release     -9.24  undisc     +40.6  shaping_total +68.761  ok
+   release_then_topple_open_gripper         succ=True  end=success  step0     -0.00  from-release     -0.00  boot-step0     -0.00  boot-release     -0.00  undisc      -0.0  shaping_total +68.776  n/a (cheat never ran: success first)
+   drop_off_target                          succ=False end=piece_off_board  step0   -142.73  from-release  -1008.40  boot-step0   -142.73  boot-release  -1008.40  undisc   -1338.9  shaping_total +61.112  ok
+   release_lift_reclose_literal             succ=True  end=success  step0     -0.00  from-release     -0.00  boot-step0     -0.00  boot-release     -0.00  undisc      -0.0  shaping_total +68.776  n/a (cheat never ran: success first)
+   release_partial_open_hold_0p40           succ=False end=None  step0    -59.11  from-release   -502.78  boot-step0    -16.68  boot-release   -141.84  undisc    -407.2  shaping_total +68.842  ok
+   release_partial_open_hold_0p203          succ=False end=None  step0    -57.30  from-release   -487.35  boot-step0    -13.18  boot-release   -112.09  undisc    -382.2  shaping_total +68.842  ok
+   release_partial_open_topple              succ=False end=None  step0    -95.55  from-release   -812.71  boot-step0    -90.73  boot-release   -771.71  undisc    -924.2  shaping_total +67.503  ok
+   shaping_farm                             succ=False end=None  step0   -107.15  from-release   -759.24  boot-step0    -86.36  boot-release   -582.41  undisc    -895.8  shaping_total +82.563  ok
+   push_then_grasp_release_on_target        succ=False end=None  step0   -215.83  from-release   -984.11  boot-step0   -214.07  boot-release   -969.16  undisc   -1614.5  shaping_total +73.776  report only (not judged)
+== parking margin from the release step (must be >= 100)
+   e4->e5 release_partial_open_hold_0p40     plain  -383.75  bootstrapped  -158.66  PASS
+   e4->e5 release_partial_open_hold_0p203    plain  -359.11  bootstrapped  -125.10  PASS
+   a1->h8 release_partial_open_hold_0p40     plain  -673.14  bootstrapped  -160.06  PASS
+   a1->h8 release_partial_open_hold_0p203    plain  -659.92  bootstrapped  -126.49  PASS
+   c1->f6 release_partial_open_hold_0p40     plain  -605.77  bootstrapped  -160.00  PASS
+   c1->f6 release_partial_open_hold_0p203    plain  -589.88  bootstrapped  -126.44  PASS
+   b7->g2 release_partial_open_hold_0p40     plain  -502.78  bootstrapped  -141.84  PASS
+   b7->g2 release_partial_open_hold_0p203    plain  -487.35  bootstrapped  -112.09  PASS
+== 4c / toppled_hold (e4->e5, real physics: replays a recorded D28 SAC seed0 episode, then holds to timeout)
+   source: replays 150 actions recorded from a real D28 SAC seed0 episode (seed 20000, episode 0), then holds to timeout
+   pose match at t=150: xyz_max_abs_diff 0.000e+00 m, tilt original 90.6147 vs replay 90.6147
+   pose match: PASS
+   240 pinched steps, 226 with gate<1, 196 with tilt>=45 deg
+   4c: S1 reward <= 2.2 whenever tilt >= 45 deg: PASS (0 violations out of 196 such steps)
+   per pinched step (t, state, tilt, gate, D28 S1, D29 S1 paid):
+     t= 61 S0 tilt=  0.978 gate=1.0000 d28_s1=None d29_s1_paid=None gate<1=False
+     t= 62 S1 tilt=  1.033 gate=1.0000 d28_s1=2.9689 d29_s1_paid=2.9689 gate<1=False
+     t= 63 S1 tilt=  0.944 gate=1.0000 d28_s1=3.2688 d29_s1_paid=3.2688 gate<1=False
+     t= 64 S1 tilt=  0.934 gate=1.0000 d28_s1=3.5994 d29_s1_paid=3.5994 gate<1=False
+     t= 65 S1 tilt=  0.934 gate=1.0000 d28_s1=3.9117 d29_s1_paid=3.9117 gate<1=False
+     t=148 S1 tilt= 90.519 gate=0.0000 d28_s1=3.8204 d29_s1_paid=0.7722 gate<1=True
+     t=149 S1 tilt= 90.550 gate=0.0000 d28_s1=3.9458 d29_s1_paid=0.7722 gate<1=True
+     t=150 S1 tilt= 90.615 gate=0.0000 d28_s1=4.0448 d29_s1_paid=0.7711 gate<1=True
+     t=151 S1 tilt= 90.662 gate=0.0000 d28_s1=4.1262 d29_s1_paid=0.7702 gate<1=True
+     t=152 S1 tilt= 90.700 gate=0.0000 d28_s1=4.1928 d29_s1_paid=0.7695 gate<1=True
+     t=153 S1 tilt= 90.729 gate=0.0000 d28_s1=4.2065 d29_s1_paid=0.7689 gate<1=True
+     t=154 S1 tilt= 90.752 gate=0.0000 d28_s1=4.2015 d29_s1_paid=0.7684 gate<1=True
+     t=155 S1 tilt= 90.770 gate=0.0000 d28_s1=4.1975 d29_s1_paid=0.7681 gate<1=True
+     t=156 S1 tilt= 90.785 gate=0.0000 d28_s1=4.1942 d29_s1_paid=0.7678 gate<1=True
+     t=200 S1 tilt= 90.938 gate=0.0000 d28_s1=4.1791 d29_s1_paid=0.7661 gate<1=True
+     t=250 S1 tilt= 91.056 gate=0.0000 d28_s1=4.1792 d29_s1_paid=0.7651 gate<1=True
+     t=296 S1 tilt= 91.156 gate=0.0000 d28_s1=4.1792 d29_s1_paid=0.7641 gate<1=True
+     t=297 S1 tilt= 91.158 gate=0.0000 d28_s1=4.1792 d29_s1_paid=0.7641 gate<1=True
+     t=298 S1 tilt= 91.160 gate=0.0000 d28_s1=4.1792 d29_s1_paid=0.764 gate<1=True
+     t=299 S1 tilt= 91.162 gate=0.0000 d28_s1=4.1792 d29_s1_paid=0.764 gate<1=True
+     t=300 S1 tilt= 91.164 gate=0.0000 d28_s1=4.1792 d29_s1_paid=0.764 gate<1=True
+   (240 pinched-step rows total; showing t<=65 and the hold-transition/timeout windows)
+ALL PRE-REGISTERED CHECKS PASS

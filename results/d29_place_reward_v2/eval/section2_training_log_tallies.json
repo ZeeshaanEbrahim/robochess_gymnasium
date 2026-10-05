@@ -1,0 +1,199 @@
+{
+  "_probe_cart_place29_ppo_seed0": {
+    "episodes": 3348,
+    "placement_successes_all": 0,
+    "placement_successes_all_rate": 0.0,
+    "placement_successes_last100": 0,
+    "placement_successes_last100_rate": 0.0,
+    "placement_successes_last500": 0,
+    "placement_successes_last500_rate": 0.0,
+    "terminated_reason_counts": {
+      "": 3312,
+      "piece_off_board": 34,
+      "bad_contact": 2
+    },
+    "mean_return_last100": 1132.22550397,
+    "n_last100": 100,
+    "n_last500": 500
+  },
+  "_probe_cart_place29_ppo_seed1": {
+    "episodes": 3352,
+    "placement_successes_all": 1,
+    "placement_successes_all_rate": 0.0002983293556085919,
+    "placement_successes_last100": 0,
+    "placement_successes_last100_rate": 0.0,
+    "placement_successes_last500": 0,
+    "placement_successes_last500_rate": 0.0,
+    "terminated_reason_counts": {
+      "": 3303,
+      "piece_off_board": 34,
+      "success": 1,
+      "bad_contact": 14
+    },
+    "mean_return_last100": 644.22547517,
+    "n_last100": 100,
+    "n_last500": 500
+  },
+  "_probe_cart_place29_ppo_seed2": {
+    "episodes": 7812,
+    "placement_successes_all": 6265,
+    "placement_successes_all_rate": 0.8019713261648745,
+    "placement_successes_last100": 92,
+    "placement_successes_last100_rate": 0.92,
+    "placement_successes_last500": 463,
+    "placement_successes_last500_rate": 0.926,
+    "terminated_reason_counts": {
+      "": 1422,
+      "bad_contact": 39,
+      "piece_off_board": 86,
+      "success": 6265
+    },
+    "mean_return_last100": 1093.410089,
+    "n_last100": 100,
+    "n_last500": 500
+  },
+  "_probe_cart_place29_ppo_seed3": {
+    "episodes": 6836,
+    "placement_successes_all": 4675,
+    "placement_successes_all_rate": 0.6838794616734932,
+    "placement_successes_last100": 96,
+    "placement_successes_last100_rate": 0.96,
+    "placement_successes_last500": 479,
+    "placement_successes_last500_rate": 0.958,
+    "terminated_reason_counts": {
+      "": 2088,
+      "piece_off_board": 68,
+      "bad_contact": 5,
+      "success": 4675
+    },
+    "mean_return_last100": 1121.86424685,
+    "n_last100": 100,
+    "n_last500": 500
+  },
+  "_probe_cart_place29_ppo_seed4": {
+    "episodes": 7718,
+    "placement_successes_all": 6060,
+    "placement_successes_all_rate": 0.7851775071261985,
+    "placement_successes_last100": 99,
+    "placement_successes_last100_rate": 0.99,
+    "placement_successes_last500": 484,
+    "placement_successes_last500_rate": 0.968,
+    "terminated_reason_counts": {
+      "": 1568,
+      "bad_contact": 17,
+      "piece_off_board": 73,
+      "success": 6060
+    },
+    "mean_return_last100": 1175.00884023,
+    "n_last100": 100,
+    "n_last500": 500
+  },
+  "_probe_cart_place29_ppotanh_seed0": {
+    "episodes": 9075,
+    "placement_successes_all": 7801,
+    "placement_successes_all_rate": 0.8596143250688705,
+    "placement_successes_last100": 99,
+    "placement_successes_last100_rate": 0.99,
+    "placement_successes_last500": 487,
+    "placement_successes_last500_rate": 0.974,
+    "terminated_reason_counts": {
+      "": 1193,
+      "piece_off_board": 79,
+      "bad_contact": 2,
+      "success": 7801
+    },
+    "mean_return_last100": 1169.0631396,
+    "n_last100": 100,
+    "n_last500": 500
+  },
+  "_probe_cart_place29_ppotanh_seed1": {
+    "episodes": 3347,
+    "placement_successes_all": 10,
+    "placement_successes_all_rate": 0.002987750224081267,
+    "placement_successes_last100": 0,
+    "placement_successes_last100_rate": 0.0,
+    "placement_successes_last500": 0,
+    "placement_successes_last500_rate": 0.0,
+    "terminated_reason_counts": {
+      "": 3311,
+      "piece_off_board": 19,
+      "bad_contact": 7,
+      "success": 10
+    },
+    "mean_return_last100": 706.07367079,
+    "n_last100": 100,
+    "n_last500": 500
+  },
+  "_probe_cart_place29_ppotanh_seed2": {
+    "episodes": 8381,
+    "placement_successes_all": 6972,
+    "placement_successes_all_rate": 0.8318816370361533,
+    "placement_successes_last100": 98,
+    "placement_successes_last100_rate": 0.98,
+    "placement_successes_last500": 488,
+    "placement_successes_last500_rate": 0.976,
+    "terminated_reason_counts": {
+      "": 1304,
+      "bad_contact": 19,
+      "piece_off_board": 86,
+      "success": 6972
+    },
+    "mean_return_last100": 1139.64455143,
+    "n_last100": 100,
+    "n_last500": 500
+  },
+  "_probe_cart_place29_ppotanh_seed3": {
+    "episodes": 7415,
+    "placement_successes_all": 5580,
+    "placement_successes_all_rate": 0.7525286581254215,
+    "placement_successes_last100": 98,
+    "placement_successes_last100_rate": 0.98,
+    "placement_successes_last500": 493,
+    "placement_successes_last500_rate": 0.986,
+    "terminated_reason_counts": {
+      "": 1753,
+      "bad_contact": 5,
+      "piece_off_board": 77,
+      "success": 5580
+    },
+    "mean_return_last100": 1142.63967168,
+    "n_last100": 100,
+    "n_last500": 500
+  },
+  "_probe_cart_place29_ppotanh_seed4": {
+    "episodes": 7057,
+    "placement_successes_all": 5507,
+    "placement_successes_all_rate": 0.7803599263142978,
+    "placement_successes_last100": 98,
+    "placement_successes_last100_rate": 0.98,
+    "placement_successes_last500": 487,
+    "placement_successes_last500_rate": 0.974,
+    "terminated_reason_counts": {
+      "": 1503,
+      "bad_contact": 10,
+      "piece_off_board": 37,
+      "success": 5507
+    },
+    "mean_return_last100": 1161.47078399,
+    "n_last100": 100,
+    "n_last500": 500
+  },
+  "_probe_cart_place29_sac_seed0": {
+    "episodes": 3379,
+    "placement_successes_all": 1,
+    "placement_successes_all_rate": 0.0002959455460195324,
+    "placement_successes_last100": 0,
+    "placement_successes_last100_rate": 0.0,
+    "placement_successes_last500": 0,
+    "placement_successes_last500_rate": 0.0,
+    "terminated_reason_counts": {
+      "": 3253,
+      "bad_contact": 43,
+      "piece_off_board": 82,
+      "success": 1
+    },
+    "mean_return_last100": 1259.91720194,
+    "n_last100": 100,
+    "n_last500": 500
+  }
+}

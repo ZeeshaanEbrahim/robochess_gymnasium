@@ -176,6 +176,13 @@ def build_env(cfg: dict):
             lift_bonus=cfg.get("place_lift_bonus", 5.0),
             success_bonus=cfg.get("place_success_bonus", 20.0),
             failure_penalty=cfg.get("place_failure_penalty", 5.0),
+            # D29, each .get default matching resolve_config's own default so
+            # a pre-D29 manifest (no such key) resolves to the D28 reward.
+            posture_gate=cfg.get("place_posture_gate", False),
+            gate_tilt_lo_deg=cfg.get("place_gate_tilt_lo_deg", 10.0),
+            gate_tilt_hi_deg=cfg.get("place_gate_tilt_hi_deg", 45.0),
+            carry_potential=cfg.get("place_carry_potential", False),
+            carry_potential_k=cfg.get("place_carry_potential_k", 50.0),
         )
     # .get: manifests written before the pick-up stage existed carry no such
     # key and must resolve to the travelling reward they actually trained on.
@@ -218,7 +225,7 @@ N_ENVS = 1
 def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:
     """Which info keys reach monitor.monitor.csv for this config.
 
-    `pickup_success` (pick-up mode) and `place_state` (D28 place mode) are added ONLY there, because Monitor raises a
+    `pickup_success` (pick-up mode) and `place_state`, `start_square`, `target_square` (D28 place mode) are added ONLY there, because Monitor raises a
     KeyError for any keyword missing from a finished episode's info, and only
     PickupReward puts that key there. Adding it unconditionally would break
     every non-pick-up run.
@@ -226,7 +233,9 @@ def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:
     if cfg.get("pickup_mode", False):
         return MONITOR_INFO_KEYWORDS + ("pickup_success",)
     if cfg.get("place_mode", False):
-        return MONITOR_INFO_KEYWORDS + ("place_state",)
+        # RS29: the per-episode squares, so a random-squares run's monitor CSV
+        # records which pair each episode was (T1 puts both in every info).
+        return MONITOR_INFO_KEYWORDS + ("place_state", "start_square", "target_square")
     return MONITOR_INFO_KEYWORDS
 
 
@@ -322,6 +331,13 @@ def build_model(cfg: dict, env):
 
     algorithm, reward_type = cfg["algorithm"], cfg["reward_type"]
     if algorithm == "ppo":
+        # D29: only imported (and only replaces the policy string) when asked
+        # for -- resolve_config already rejects this key for any other
+        # algorithm, so this branch is PPO-only by construction.
+        if cfg.get("ppo_mean_squash", False):
+            from robochess.policies import SquashedMultiInputActorCriticPolicy
+
+            common["policy"] = SquashedMultiInputActorCriticPolicy
         # On-policy: no replay buffer exists to swap, so HER cannot apply.
         model = PPO(**common)
     elif algorithm == "sac":

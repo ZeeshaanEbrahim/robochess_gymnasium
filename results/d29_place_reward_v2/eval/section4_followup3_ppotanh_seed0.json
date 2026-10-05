@@ -1,0 +1,8 @@
+{
+  "run": "_probe_cart_place29_ppotanh_seed0",
+  "n_episodes": 150,
+  "n_held": 1128,
+  "median_height_above_base_mm_held": 57.87802668754427,
+  "n_pinched": 1189,
+  "median_height_above_base_mm_pinched": 57.88432659136866
+}

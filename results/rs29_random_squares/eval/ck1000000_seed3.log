@@ -1,0 +1,2 @@
+_probe_cart_randsq29_ppotanh_seed3 1000000 place {'held': '123/300', 'lifted_30mm': '0/300', 'carried_within_3cm': '0/300', 'released': '1/300', 'placed': '0/300'} truncated_in_S2 0 effective_n 300
+_probe_cart_randsq29_ppotanh_seed3 1000000 n 300 pickup 0 grasp 23 rms_same True
