@@ -55,3 +55,15 @@ result does.
   on target looks better than placing), D17, and a 2M-step run if placement rises from 500k to 1M.
 - **Replaced from the 4 Oct text:** the 30/300 (10%) gate, the 500k-checkpoint gate, and the automatic 2M
   branch. The 500k checkpoint is now descriptive only, and 2M is a candidate for a later decision, not automatic.
+
+## Interruption note, 6 Oct
+- The first launch (SHA f20916f, tmux session sac_obsnorm_1m, started 00:02:32 SAST on 6 Oct) stopped at about
+  250,000 steps at about 02:09 SAST, when its process tree was killed: no EXIT line, no traceback, no OOM.
+  PID 1 of the WSL distribution started at 02:10:36 SAST, one minute after the stop.
+- No model from that run was evaluated. Only its training-log step counts, fps and loss lines were viewed; no
+  evaluation result of any kind was seen. Its outputs are kept, renamed, as
+  `runs/_probe_cart_place30_sac_obsnorm_seed0_aborted_250k` (and the matching `_aborted_250k_train.log`) and
+  are not evaluated.
+- The relaunch uses the identical config, seed 0 and code. Its diff from f20916f is this documentation change
+  only. Every rule above is unchanged, and the gate (the Superseding rule, 5 Oct) applies to the final model of
+  the relaunch.
