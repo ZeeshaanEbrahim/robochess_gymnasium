@@ -7,7 +7,7 @@ Expected results, stated before the run:
   * seeds are 0, 100, 200, 300, 400, 500 (spaced by 100: SB3 seeds env i with seed + i, so
     no two runs share an env seed at n_envs 4);
   * the six configs differ from each other only in seed and run_name, and from the RS31 D
-    config only in train_pairs, total_timesteps (5,000,000), seed and run_name.
+    config only in train_pairs, total_timesteps (5,000,000), seed, run_name and notes.
 """
 
 from __future__ import annotations
@@ -76,7 +76,7 @@ def test_configs_differ_only_in_the_allowed_keys():
     rs31 = yaml.safe_load(RS31_D.read_text())
     base = _raw(0)
     assert {k for k in set(rs31) | set(base) if rs31.get(k) != base.get(k)} == {
-        "train_pairs", "total_timesteps", "run_name"}  # seed is 0 in both
+        "train_pairs", "total_timesteps", "run_name", "notes"}  # seed is 0 in both
     for seed in SEEDS[1:]:
         other = _raw(seed)
         assert {k for k in set(base) | set(other) if base.get(k) != other.get(k)} == {

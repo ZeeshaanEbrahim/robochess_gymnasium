@@ -31,4 +31,4 @@ n_envs: 4
 checkpoint_freq: 100000
 output_root: runs
 run_name: _probe_cart_rs32D_ppotanh_seed100
-notes: "RS31 24 pairs"
+notes: "RS32: 48 start-target pairs (30 neighbour, 18 longer), D recipe, 6 seeds, 5M steps"
