@@ -1,0 +1,156 @@
+{
+ "start": "2026-10-06T17:35:49+02:00",
+ "git_start": {
+  "head": "ac84418e4b6165fc50280a32981f111332b9b8a3",
+  "branch": "rs31",
+  "tracked_dirty_count": 0,
+  "tracked_dirty_paths": [],
+  "untracked_paths": [
+   "results/rs31_24_pairs/eval/"
+  ]
+ },
+ "pairs": [
+  "c2:c3",
+  "c3:c4",
+  "c4:c5",
+  "c5:c6",
+  "c6:c7",
+  "c7:c8",
+  "d2:d3",
+  "d3:d4",
+  "d4:d5",
+  "d5:d6",
+  "d6:d7",
+  "d7:d8",
+  "e2:e3",
+  "e3:e4",
+  "e4:e5",
+  "e5:e6",
+  "e6:e7",
+  "e7:e8",
+  "f2:f3",
+  "f3:f4",
+  "f4:f5",
+  "f5:f6",
+  "f6:f7",
+  "f7:f8"
+ ],
+ "episodes": 1200,
+ "seed": 20000,
+ "sha256": {
+  "scripts/eval_probe.py": "9fef13052189138835fc8157f3fbf274d7075e9eb2acf0a771e42a88a41e6692",
+  "results/rs31_24_pairs/PREREGISTRATION.md": "7dabd40e614b6325a3c32d15a1cb5907392994e0e5c7d8779832f6cde25c7c78",
+  "runs/_probe_cart_rs31C_ppotanh_seed0/final_model.zip": "ce7309eed4b4c9e6fef96a0d541ad578f304d752c76fb35c1cba8987f6dca416",
+  "runs/_probe_cart_rs31C_ppotanh_seed0/final_vecnormalize.pkl": "5ea2f9d9120e5dc9b23d132b48ebe808f6de880bceec055d9d012d7192e1082f",
+  "runs/_probe_cart_rs31C_ppotanh_seed1/final_model.zip": "d81a343490a5a7a3782c0f916336b7da4de8789cf666ea05787c20a080391a24",
+  "runs/_probe_cart_rs31C_ppotanh_seed1/final_vecnormalize.pkl": "f6c8868bab28623c38b5929c10840b21ebdaac880685d332f7f2854ada37cbde",
+  "runs/_probe_cart_rs31D_ppotanh_seed0/final_model.zip": "6ca6970fd9557ae21fbf8c93a1a728af3af97d0d18918548468113549592bae8",
+  "runs/_probe_cart_rs31D_ppotanh_seed0/final_vecnormalize.pkl": "87f3e61a6cc6d08a5e90245d9882e3730f0a37381086778857fdf88d39811e9f",
+  "runs/_probe_cart_rs31D_ppotanh_seed1/final_model.zip": "7b4ec156f3113bb1443cde68f3afe74c415484f1ebb2f92f816d14229a19400b",
+  "runs/_probe_cart_rs31D_ppotanh_seed1/final_vecnormalize.pkl": "5505a6c27ed81db363cf878ab99db962115f35030a147e706092d8e17322bb09"
+ },
+ "free_m_at_start": "               total        used        free      shared  buff/cache   available\nMem:            7861        1904        3768          80        2188        5721\nSwap:           2048           0        2047\n",
+ "evals": [
+  {
+   "label": "rs31C_seed0",
+   "run": "_probe_cart_rs31C_ppotanh_seed0",
+   "cmd": "/root/venvs/robochess/bin/python results/rs31_24_pairs/eval/rms_wrapper.py _probe_cart_rs31C_ppotanh_seed0 --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31C_seed0_final.json",
+   "equivalent_eval_probe_cmd": "/root/venvs/robochess/bin/python scripts/eval_probe.py --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31C_seed0_final.json",
+   "seed": 20000,
+   "episodes": 1200,
+   "deterministic": false,
+   "start": "2026-10-06T17:35:49+02:00",
+   "end": "2026-10-06T18:01:29+02:00",
+   "exit": 0,
+   "log": "results/rs31_24_pairs/eval/rs31C_seed0_final.log",
+   "model_sha256": "ce7309eed4b4c9e6fef96a0d541ad578f304d752c76fb35c1cba8987f6dca416",
+   "vecnormalize_sha256": "5ea2f9d9120e5dc9b23d132b48ebe808f6de880bceec055d9d012d7192e1082f",
+   "output_json_sha256": "65fb57022c7ece3ad166cf0f6ea9a45fe5c30a01c6dcc6c8be74de1065bf3e4a",
+   "rms_json_sha256": "a583c1655d304081a50984714892cc86b26861983827f58ece1f7ca70b182a1b"
+  },
+  {
+   "label": "rs31C_seed1",
+   "run": "_probe_cart_rs31C_ppotanh_seed1",
+   "cmd": "/root/venvs/robochess/bin/python results/rs31_24_pairs/eval/rms_wrapper.py _probe_cart_rs31C_ppotanh_seed1 --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31C_seed1_final.json",
+   "equivalent_eval_probe_cmd": "/root/venvs/robochess/bin/python scripts/eval_probe.py --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31C_seed1_final.json",
+   "seed": 20000,
+   "episodes": 1200,
+   "deterministic": false,
+   "start": "2026-10-06T17:35:49+02:00",
+   "end": "2026-10-06T17:55:59+02:00",
+   "exit": 0,
+   "log": "results/rs31_24_pairs/eval/rs31C_seed1_final.log",
+   "model_sha256": "d81a343490a5a7a3782c0f916336b7da4de8789cf666ea05787c20a080391a24",
+   "vecnormalize_sha256": "f6c8868bab28623c38b5929c10840b21ebdaac880685d332f7f2854ada37cbde",
+   "output_json_sha256": "9544e01358f5475c2e7ef0599cb05a3ed5116c5026ccbad616f7f93f02947ba7",
+   "rms_json_sha256": "b4bb2520bf6d1466efb6ac776a7ebe3a663d45fc588c77a8e7364c98a335b74d"
+  },
+  {
+   "label": "rs31D_seed0",
+   "run": "_probe_cart_rs31D_ppotanh_seed0",
+   "cmd": "/root/venvs/robochess/bin/python results/rs31_24_pairs/eval/rms_wrapper.py _probe_cart_rs31D_ppotanh_seed0 --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31D_seed0_final.json",
+   "equivalent_eval_probe_cmd": "/root/venvs/robochess/bin/python scripts/eval_probe.py --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31D_seed0_final.json",
+   "seed": 20000,
+   "episodes": 1200,
+   "deterministic": false,
+   "start": "2026-10-06T17:35:49+02:00",
+   "end": "2026-10-06T17:49:39+02:00",
+   "exit": 0,
+   "log": "results/rs31_24_pairs/eval/rs31D_seed0_final.log",
+   "model_sha256": "6ca6970fd9557ae21fbf8c93a1a728af3af97d0d18918548468113549592bae8",
+   "vecnormalize_sha256": "87f3e61a6cc6d08a5e90245d9882e3730f0a37381086778857fdf88d39811e9f",
+   "output_json_sha256": "009f49232f08a81ff7e5388edb2a13afa2d6448ce8bc28fe78b00c1e13c2c5ce",
+   "rms_json_sha256": "6a7431460f44419568001308f1f9b32d19e97fc9403f278197ad974e29965a03"
+  },
+  {
+   "label": "rs31D_seed1",
+   "run": "_probe_cart_rs31D_ppotanh_seed1",
+   "cmd": "/root/venvs/robochess/bin/python results/rs31_24_pairs/eval/rms_wrapper.py _probe_cart_rs31D_ppotanh_seed1 --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31D_seed1_final.json",
+   "equivalent_eval_probe_cmd": "/root/venvs/robochess/bin/python scripts/eval_probe.py --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31D_seed1_final.json",
+   "seed": 20000,
+   "episodes": 1200,
+   "deterministic": false,
+   "start": "2026-10-06T17:49:39+02:00",
+   "end": "2026-10-06T18:01:29+02:00",
+   "exit": 0,
+   "log": "results/rs31_24_pairs/eval/rs31D_seed1_final.log",
+   "model_sha256": "7b4ec156f3113bb1443cde68f3afe74c415484f1ebb2f92f816d14229a19400b",
+   "vecnormalize_sha256": "5505a6c27ed81db363cf878ab99db962115f35030a147e706092d8e17322bb09",
+   "output_json_sha256": "b3473f623dc732c5fba3195bc65627304eccae774cfa6b0cac7a75cdf45b6067",
+   "rms_json_sha256": "5740c089c2a6dc0ef8b214812c26b12cac2f336409b00fdcc2cf1fe47889ec9d"
+  }
+ ],
+ "end": "2026-10-06T18:01:29+02:00",
+ "free_m_before_launch": [
+  {
+   "label": "rs31C_seed0",
+   "at": "2026-10-06T17:35:49+02:00",
+   "free_m": "               total        used        free      shared  buff/cache   available\nMem:            7861        1910        3762          80        2188        5715\nSwap:           2048           0        2047\n"
+  },
+  {
+   "label": "rs31C_seed1",
+   "at": "2026-10-06T17:35:49+02:00",
+   "free_m": "               total        used        free      shared  buff/cache   available\nMem:            7861        1910        3762          80        2188        5715\nSwap:           2048           0        2047\n"
+  },
+  {
+   "label": "rs31D_seed0",
+   "at": "2026-10-06T17:35:49+02:00",
+   "free_m": "               total        used        free      shared  buff/cache   available\nMem:            7861        1911        3761          80        2188        5714\nSwap:           2048           0        2047\n"
+  },
+  {
+   "label": "rs31D_seed1",
+   "at": "2026-10-06T17:49:39+02:00",
+   "free_m": "               total        used        free      shared  buff/cache   available\nMem:            7861        3585        2064          80        2210        4040\nSwap:           2048           0        2047\n"
+  }
+ ],
+ "git_end": {
+  "head": "ac84418e4b6165fc50280a32981f111332b9b8a3",
+  "branch": "rs31",
+  "tracked_dirty_count": 0,
+  "tracked_dirty_paths": [],
+  "untracked_paths": [
+   "results/rs31_24_pairs/eval/"
+  ]
+ },
+ "free_m_at_end": "               total        used        free      shared  buff/cache   available\nMem:            7861        1939        3705          80        2216        5686\nSwap:           2048           0        2047\n"
+}

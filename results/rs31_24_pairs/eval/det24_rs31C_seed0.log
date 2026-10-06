@@ -1,0 +1,3 @@
+_probe_cart_rs31C_ppotanh_seed0 None place {'held': '36/48', 'lifted_30mm': '10/48', 'carried_within_3cm': '0/48', 'released': '4/48', 'placed': '0/48'} truncated_in_S2 0 effective_n 48
+_probe_cart_rs31C_ppotanh_seed0 None n 48 pickup 0 grasp 34 rms_same True
+rms_wrapper _probe_cart_rs31C_ppotanh_seed0 rms_identical_before_after True pkl_unchanged True keys ['obs_rms/observation', 'ret_rms']

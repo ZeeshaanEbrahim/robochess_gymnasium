@@ -1,0 +1,3 @@
+_probe_cart_rs31C_ppotanh_seed0 None place {'held': '939/1200', 'lifted_30mm': '34/1200', 'carried_within_3cm': '1/1200', 'released': '4/1200', 'placed': '2/1200'} truncated_in_S2 0 effective_n 1200
+_probe_cart_rs31C_ppotanh_seed0 None n 1200 pickup 0 grasp 453 rms_same True
+rms_wrapper _probe_cart_rs31C_ppotanh_seed0 rms_identical_before_after True pkl_unchanged True keys ['obs_rms/observation', 'ret_rms']

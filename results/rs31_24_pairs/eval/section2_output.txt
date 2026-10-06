@@ -1,0 +1,79 @@
+EVAL command (one per model; wrapper runs scripts/eval_probe.py unmodified, same argv):
+  rs31C_seed0: /root/venvs/robochess/bin/python results/rs31_24_pairs/eval/rms_wrapper.py _probe_cart_rs31C_ppotanh_seed0 --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31C_seed0_final.json
+  rs31C_seed1: /root/venvs/robochess/bin/python results/rs31_24_pairs/eval/rms_wrapper.py _probe_cart_rs31C_ppotanh_seed1 --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31C_seed1_final.json
+  rs31D_seed0: /root/venvs/robochess/bin/python results/rs31_24_pairs/eval/rms_wrapper.py _probe_cart_rs31D_ppotanh_seed0 --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31D_seed0_final.json
+  rs31D_seed1: /root/venvs/robochess/bin/python results/rs31_24_pairs/eval/rms_wrapper.py _probe_cart_rs31D_ppotanh_seed1 --episodes 1200 --pairs c2:c3,c3:c4,c4:c5,c5:c6,c6:c7,c7:c8,d2:d3,d3:d4,d4:d5,d5:d6,d6:d7,d7:d8,e2:e3,e3:e4,e4:e5,e5:e6,e6:e7,e7:e8,f2:f3,f3:f4,f4:f5,f5:f6,f6:f7,f7:f8 --seed 20000 --out results/rs31_24_pairs/eval/rs31D_seed1_final.json
+
+Exit status / times (manifest):
+  rs31C_seed0: exit=0 start=2026-10-06T17:35:49+02:00 end=2026-10-06T18:01:29+02:00
+  rs31C_seed1: exit=0 start=2026-10-06T17:35:49+02:00 end=2026-10-06T17:55:59+02:00
+  rs31D_seed0: exit=0 start=2026-10-06T17:35:49+02:00 end=2026-10-06T17:49:39+02:00
+  rs31D_seed1: exit=0 start=2026-10-06T17:49:39+02:00 end=2026-10-06T18:01:29+02:00
+
+VecNormalize frozen check (before = pkl read before eval; after = loaded venv after rollout; keys: obs_rms/observation, ret_rms)
+  rs31C_seed0: identical before/after (obs_rms + ret_rms, mean/var/count) = yes; eval_probe own obs_rms flag = True; pkl sha256 unchanged = True
+  rs31C_seed1: identical before/after (obs_rms + ret_rms, mean/var/count) = yes; eval_probe own obs_rms flag = True; pkl sha256 unchanged = True
+  rs31D_seed0: identical before/after (obs_rms + ret_rms, mean/var/count) = yes; eval_probe own obs_rms flag = True; pkl sha256 unchanged = True
+  rs31D_seed1: identical before/after (obs_rms + ret_rms, mean/var/count) = yes; eval_probe own obs_rms flag = True; pkl sha256 unchanged = True
+
+1. pooled placements k/1200 (Wilson 95%, %)
+  rs31C_seed0: 2/1200 = 0.17%  [0.05, 0.61]
+  rs31C_seed1: 530/1200 = 44.17%  [41.38, 46.99]
+  rs31D_seed0: 904/1200 = 75.33%  [72.82, 77.69]
+  rs31D_seed1: 1052/1200 = 87.67%  [85.69, 89.41]
+
+2. per pair k/50 [Wilson 95%, %], preregistration order
+  pair                rs31C_seed0             rs31C_seed1             rs31D_seed0             rs31D_seed1
+  c2:c3        0/50 [  0.0,  7.1]     26/50 [ 38.5, 65.2]     45/50 [ 78.6, 95.7]     42/50 [ 71.5, 91.7]
+  c3:c4        0/50 [  0.0,  7.1]     35/50 [ 56.2, 80.9]     37/50 [ 60.4, 84.1]     42/50 [ 71.5, 91.7]
+  c4:c5        0/50 [  0.0,  7.1]     35/50 [ 56.2, 80.9]     42/50 [ 71.5, 91.7]     44/50 [ 76.2, 94.4]
+  c5:c6        0/50 [  0.0,  7.1]     31/50 [ 48.2, 74.1]     39/50 [ 64.8, 87.2]     42/50 [ 71.5, 91.7]
+  c6:c7        0/50 [  0.0,  7.1]     13/50 [ 15.9, 39.6]     39/50 [ 64.8, 87.2]     44/50 [ 76.2, 94.4]
+  c7:c8        1/50 [  0.4, 10.5]     15/50 [ 19.1, 43.8]     33/50 [ 52.2, 77.6]     44/50 [ 76.2, 94.4]
+  d2:d3        0/50 [  0.0,  7.1]     17/50 [ 22.4, 47.8]     37/50 [ 60.4, 84.1]     43/50 [ 73.8, 93.0]
+  d3:d4        0/50 [  0.0,  7.1]     26/50 [ 38.5, 65.2]     42/50 [ 71.5, 91.7]     44/50 [ 76.2, 94.4]
+  d4:d5        0/50 [  0.0,  7.1]     40/50 [ 67.0, 88.8]     36/50 [ 58.3, 82.5]     45/50 [ 78.6, 95.7]
+  d5:d6        0/50 [  0.0,  7.1]     36/50 [ 58.3, 82.5]     46/50 [ 81.2, 96.8]     42/50 [ 71.5, 91.7]
+  d6:d7        0/50 [  0.0,  7.1]     25/50 [ 36.6, 63.4]     38/50 [ 62.6, 85.7]     48/50 [ 86.5, 98.9]
+  d7:d8        0/50 [  0.0,  7.1]     25/50 [ 36.6, 63.4]     40/50 [ 67.0, 88.8]     39/50 [ 64.8, 87.2]
+  e2:e3        0/50 [  0.0,  7.1]      6/50 [  5.6, 23.8]     40/50 [ 67.0, 88.8]     36/50 [ 58.3, 82.5]
+  e3:e4        0/50 [  0.0,  7.1]     10/50 [ 11.2, 33.0]     39/50 [ 64.8, 87.2]     43/50 [ 73.8, 93.0]
+  e4:e5        0/50 [  0.0,  7.1]     22/50 [ 31.2, 57.7]     39/50 [ 64.8, 87.2]     48/50 [ 86.5, 98.9]
+  e5:e6        0/50 [  0.0,  7.1]     38/50 [ 62.6, 85.7]     37/50 [ 60.4, 84.1]     45/50 [ 78.6, 95.7]
+  e6:e7        0/50 [  0.0,  7.1]     21/50 [ 29.4, 55.8]     39/50 [ 64.8, 87.2]     46/50 [ 81.2, 96.8]
+  e7:e8        0/50 [  0.0,  7.1]     30/50 [ 46.2, 72.4]     33/50 [ 52.2, 77.6]     44/50 [ 76.2, 94.4]
+  f2:f3        0/50 [  0.0,  7.1]      2/50 [  1.1, 13.5]     36/50 [ 58.3, 82.5]     40/50 [ 67.0, 88.8]
+  f3:f4        0/50 [  0.0,  7.1]      5/50 [  4.3, 21.4]     34/50 [ 54.2, 79.2]     44/50 [ 76.2, 94.4]
+  f4:f5        1/50 [  0.4, 10.5]     14/50 [ 17.5, 41.7]     35/50 [ 56.2, 80.9]     46/50 [ 81.2, 96.8]
+  f5:f6        0/50 [  0.0,  7.1]     24/50 [ 34.8, 61.5]     38/50 [ 62.6, 85.7]     46/50 [ 81.2, 96.8]
+  f6:f7        0/50 [  0.0,  7.1]     14/50 [ 17.5, 41.7]     33/50 [ 52.2, 77.6]     48/50 [ 86.5, 98.9]
+  f7:f8        0/50 [  0.0,  7.1]     20/50 [ 27.6, 53.8]     27/50 [ 40.4, 67.0]     47/50 [ 83.8, 97.9]
+
+3. pairs below 10/50
+  rs31C_seed0: 24 pairs: c2:c3 0/50, c3:c4 0/50, c4:c5 0/50, c5:c6 0/50, c6:c7 0/50, c7:c8 1/50, d2:d3 0/50, d3:d4 0/50, d4:d5 0/50, d5:d6 0/50, d6:d7 0/50, d7:d8 0/50, e2:e3 0/50, e3:e4 0/50, e4:e5 0/50, e5:e6 0/50, e6:e7 0/50, e7:e8 0/50, f2:f3 0/50, f3:f4 0/50, f4:f5 1/50, f5:f6 0/50, f6:f7 0/50, f7:f8 0/50
+  rs31C_seed1: 3 pairs: e2:e3 6/50, f2:f3 2/50, f3:f4 5/50
+  rs31D_seed0: 0 pairs: none
+  rs31D_seed1: 0 pairs: none
+
+4. terminated_reason counts (success endings vs placed checked equal by assertion)
+  rs31C_seed0: {'bad_contact': 65, 'piece_off_board': 110, 'success': 2, 'time_limit': 1023}
+  rs31C_seed1: {'bad_contact': 15, 'piece_off_board': 88, 'success': 530, 'time_limit': 567}
+  rs31D_seed0: {'bad_contact': 4, 'piece_off_board': 114, 'success': 904, 'time_limit': 178}
+  rs31D_seed1: {'bad_contact': 8, 'piece_off_board': 41, 'success': 1052, 'time_limit': 99}
+
+5. funnel counts /1200 (grasp_ever = lift over 10 mm (undercounts); held = both pads on piece, no piece-board contact; released = S2 reached; placed = env is_success)
+  rs31C_seed0: grasp_ever (lift over 10 mm, undercounts) 453/1200  held 939/1200  released 4/1200  placed 2/1200
+  rs31C_seed1: grasp_ever (lift over 10 mm, undercounts) 264/1200  held 1017/1200  released 628/1200  placed 530/1200
+  rs31D_seed0: grasp_ever (lift over 10 mm, undercounts) 266/1200  held 1171/1200  released 945/1200  placed 904/1200
+  rs31D_seed1: grasp_ever (lift over 10 mm, undercounts) 58/1200  held 1153/1200  released 1081/1200  placed 1052/1200
+
+6. MECHANICAL RULE TABLE (PREREGISTRATION.md rules 1 to 5)
+  model            pooled  pooled>=600  pairs<10/50  RULE1 learns  failing conditions   rule5 pooled>=960
+  rs31C_seed0       2/1200           no           24            no  pooled 2<600; 24 pair(s) <10/50: c2:c3, c3:c4, c4:c5, c5:c6, c6:c7, c7:c8, d2:d3, d3:d4, d4:d5, d5:d6, d6:d7, d7:d8, e2:e3, e3:e4, e4:e5, e5:e6, e6:e7, e7:e8, f2:f3, f3:f4, f4:f5, f5:f6, f6:f7, f7:f8  no
+  rs31C_seed1     530/1200           no            3            no  pooled 530<600; 3 pair(s) <10/50: e2:e3, f2:f3, f3:f4  no
+  rs31D_seed0     904/1200          yes            0           yes  none                  no
+  rs31D_seed1    1052/1200          yes            0           yes  none                  yes
+  Rule 2: seeds that learn: C 0 of 2, D 2 of 2
+  Rule 3: D learns on 2 seeds, C on 0 -> D replaces C
+  Rule 4: not triggered (at least one seed learns)
+  Rule 5 (reported, not gated): rs31C_seed0 no, rs31C_seed1 no, rs31D_seed0 no, rs31D_seed1 yes
