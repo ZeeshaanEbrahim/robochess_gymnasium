@@ -1,0 +1,104 @@
+R1. REPRODUCTION of the committed eval by the diagnostic rollout (episode-for-episode: end reason, length, placed, start and target square)
+   seed0      480/480 episodes identical
+   seed100    480/480 episodes identical
+   seed200    480/480 episodes identical
+   seed300    480/480 episodes identical
+   seed400    480/480 episodes identical
+   seed500    480/480 episodes identical
+
+R2. EXCLUSIVE EPISODE OUTCOMES, 480 episodes per seed (every row sums to 480; asserted). Evaluated in this order:
+   placed = env is_success at the last step; toppled = piece tilt > 45 deg at ANY step of the episode (includes every piece_off_board end that tilted);
+   upright, pinching/lost = not toppled, ended by time limit in place state S1 (both pads on the piece) / S3 (held once, now lost, not in S2);
+   other = everything else: not toppled and (time limit in S2 [released, but not success] or in S0 [never held], or ended by bad_contact / piece_off_board without tilt > 45).
+outcome                                         seed0  seed100  seed200  seed300  seed400  seed500
+placed                                            218      337      199      348      352      213
+toppled                                           144      133      181      121       57      131
+upright, still pinching at time limit              30        3       21        0       28       53
+upright, lost (S3) at time limit                   82        6       72        8       37       72
+other                                               6        1        7        3        6       11
+SUM                                               480      480      480      480      480      480
+   composition of 'other' (reason / final place state S0..S3):
+   seed0      {'time_limit/S2': 6}
+   seed100    {'time_limit/S2': 1}
+   seed200    {'time_limit/S2': 7}
+   seed300    {'bad_contact/S0': 1, 'piece_off_board/S3': 1, 'time_limit/S2': 1}
+   seed400    {'time_limit/S2': 6}
+   seed500    {'time_limit/S2': 11}
+   UPRIGHT-AND-STUCK = 'still pinching' + 'lost at time limit':
+   seed0      30 + 82 = 112    toppled 144
+   seed100    3 + 6 = 9    toppled 133
+   seed200    21 + 72 = 93    toppled 181
+   seed300    0 + 8 = 8    toppled 121
+   seed400    28 + 37 = 65    toppled 57
+   seed500    53 + 72 = 125    toppled 131
+
+R2b. the same outcomes by pair category (episodes per category per seed: neigh_fwd/lat 280, neigh_back 20, long_fwd/lat 130, long_back 50)
+-- neigh_fwd/lat
+   placed                                         182      243      185      245      254      168
+   toppled                                         56       33       64       31       18       46
+   upright, still pinching at time limit           14        1        5        0        0       30
+   upright, lost (S3) at time limit                24        2       25        4        8       28
+   other                                            4        1        1        0        0        8
+-- neigh_back
+   placed                                           0       20        0       16       12        2
+   toppled                                          0        0        5        4        2        1
+   upright, still pinching at time limit            1        0        4        0        3        4
+   upright, lost (S3) at time limit                19        0       11        0        2       12
+   other                                            0        0        0        0        1        1
+-- long_fwd/lat
+   placed                                          36       61       14       72       86       43
+   toppled                                         69       64       88       53       29       64
+   upright, still pinching at time limit            6        2        7        0        5        9
+   upright, lost (S3) at time limit                17        3       15        2        5       12
+   other                                            2        0        6        3        5        2
+-- long_back
+   placed                                           0       13        0       15        0        0
+   toppled                                         19       36       24       33        8       20
+   upright, still pinching at time limit            9        0        5        0       20       10
+   upright, lost (S3) at time limit                22        1       21        2       22       20
+   other                                            0        0        0        0        0        0
+
+R3. BACKWARD NEIGHBOUR PAIRS e5:e4 and c6:c5, n = 20 episodes per seed (10 per pair) from this 480-episode re-run; progress = piece displacement along start->target / pair distance at the last step (<0 = ended on the far side of its start square)
+   seed0      n=20: placed 0, time-limit ends 20 (final state S1: 1, S3: 19), toppled 0; non-placed with progress<0: 16/20; median progress of non-placed -0.27
+   seed100    n=20: placed 20, time-limit ends 0 (final state S1: 0, S3: 0), toppled 0; non-placed with progress<0: 0/0; median progress of non-placed nan
+   seed200    n=20: placed 0, time-limit ends 20 (final state S1: 4, S3: 16), toppled 5; non-placed with progress<0: 16/20; median progress of non-placed -0.23
+   seed300    n=20: placed 16, time-limit ends 3 (final state S1: 0, S3: 3), toppled 4; non-placed with progress<0: 0/4; median progress of non-placed 1.75
+   seed400    n=20: placed 12, time-limit ends 8 (final state S1: 3, S3: 4), toppled 2; non-placed with progress<0: 0/8; median progress of non-placed 0.60
+   seed500    n=20: placed 2, time-limit ends 18 (final state S1: 4, S3: 13), toppled 1; non-placed with progress<0: 5/18; median progress of non-placed 0.10
+
+R4. WHERE THE PIECE ENDS IN THE UPRIGHT-AND-STUCK EPISODES (piece-target xy distance at the last step, mm; groups with n>=5)
+   upright, still pinching at time limit       seed0 n=30  p25    40 p50    58 p75   159  share<30mm 0.17
+   upright, still pinching at time limit     seed200 n=21  p25    58 p50    97 p75   133  share<30mm 0.05
+   upright, still pinching at time limit     seed400 n=28  p25    49 p50    92 p75   120  share<30mm 0.04
+   upright, still pinching at time limit     seed500 n=53  p25    35 p50    61 p75    79  share<30mm 0.17
+   upright, lost (S3) at time limit            seed0 n=82  p25    57 p50    90 p75   124  share<30mm 0.04
+   upright, lost (S3) at time limit          seed100 n=6   p25    45 p50    52 p75    71  share<30mm 0.00
+   upright, lost (S3) at time limit          seed200 n=72  p25    62 p50    90 p75   139  share<30mm 0.00
+   upright, lost (S3) at time limit          seed300 n=8   p25    35 p50    49 p75    81  share<30mm 0.00
+   upright, lost (S3) at time limit          seed400 n=37  p25    43 p50    68 p75   108  share<30mm 0.05
+   upright, lost (S3) at time limit          seed500 n=72  p25    59 p50    80 p75   121  share<30mm 0.01
+   number of separate grasp phases (runs of place state S1) per episode:
+   seed0      placed 11.0 per episode; upright-and-stuck 21.3 per episode (n=112)
+   seed100    placed 5.6 per episode; upright-and-stuck 14.3 per episode (n=9)
+   seed200    placed 9.1 per episode; upright-and-stuck 19.3 per episode (n=93)
+   seed300    placed 5.4 per episode; upright-and-stuck 11.8 per episode (n=8)
+   seed400    placed 8.9 per episode; upright-and-stuck 30.5 per episode (n=65)
+   seed500    placed 9.7 per episode; upright-and-stuck 25.8 per episode (n=125)
+
+R5. WHEN DOES THE PIECE TOPPLE (first step with tilt > 45 deg): place state at that step, and time since the last pinched step
+   seed0      toppled episodes 148/480 (long pairs 90), placed after toppling 4; state at first topple step: S0 24, S1 19, S3 105; not pinched at topple: median steps since last pinch 4, pinch-site-to-piece distance median 21 mm, tool tilt median 0.1 deg
+   seed100    toppled episodes 135/480 (long pairs 101), placed after toppling 2; state at first topple step: S0 64, S1 15, S3 56; not pinched at topple: median steps since last pinch 6, pinch-site-to-piece distance median 29 mm, tool tilt median 0.1 deg
+   seed200    toppled episodes 186/480 (long pairs 115), placed after toppling 5; state at first topple step: S0 52, S1 10, S3 124; not pinched at topple: median steps since last pinch 6, pinch-site-to-piece distance median 26 mm, tool tilt median 0.1 deg
+   seed300    toppled episodes 125/480 (long pairs 88), placed after toppling 4; state at first topple step: S0 39, S1 12, S3 74; not pinched at topple: median steps since last pinch 6, pinch-site-to-piece distance median 27 mm, tool tilt median 0.1 deg
+   seed400    toppled episodes 61/480 (long pairs 41), placed after toppling 4; state at first topple step: S0 6, S1 23, S3 32; not pinched at topple: median steps since last pinch 2, pinch-site-to-piece distance median 20 mm, tool tilt median 0.1 deg
+   seed500    toppled episodes 134/480 (long pairs 86), placed after toppling 3; state at first topple step: S0 22, S1 39, S3 73; not pinched at topple: median steps since last pinch 4, pinch-site-to-piece distance median 23 mm, tool tilt median 0.1 deg
+
+R6. HOW PLACED EPISODES MOVE THE PIECE (placed episodes only; step level, 480-episode re-run). Along-target displacement D_t = (piece_t - piece_{t-1}) . u, u = unit vector start->target; shares of the SUM of D_t over steps
+seed       placed  max_lift>10mm   share of D at steps with lift<=10mm  share of D at pinched steps  pinched steps with lift>10mm  share of D at pinched steps with lift<=10mm
+seed0         218      47 = 21.6%                                 97.8%                        61.1%                          1.0%                                        59.4%
+seed100       337      28 =  8.3%                                 99.0%                        51.4%                          1.0%                                        50.6%
+seed200       199      29 = 14.6%                                 98.0%                        54.9%                          0.9%                                        54.2%
+seed300       348      34 =  9.8%                                 99.2%                        38.0%                          1.0%                                        37.8%
+seed400       352      18 =  5.1%                                 99.6%                        67.9%                          0.3%                                        67.5%
+seed500       213      38 = 17.8%                                 99.3%                        65.1%                          0.9%                                        64.4%
+   (lift = eval_probe's per-step piece lift in mm. A step with lift <= 10 mm can still have the piece pressed by the pads; this table does not tell dragging from pushing.)

@@ -1,0 +1,95 @@
+A. PLACEMENT BY PAIR CATEGORY (full 2400 episodes per seed, 50 per pair). back = target rank below start rank. k/n and %
+category         pairs  n/seed           seed0         seed100         seed200         seed300         seed400         seed500
+neigh_fwd/lat       28    1400     899/1400  64%    1216/1400  87%     937/1400  67%    1220/1400  87%    1250/1400  89%     837/1400  60%
+neigh_back           2     100       1/100    1%      89/100   89%       0/100    0%      83/100   83%      57/100   57%       8/100    8%
+long_fwd/lat        13     650     174/650   27%     339/650   52%      92/650   14%     380/650   58%     411/650   63%     246/650   38%
+long_back            5     250       0/250    0%      60/250   24%       0/250    0%      90/250   36%       2/250    1%       0/250    0%
+
+B. GAP DECOMPOSITION: mean pooled placement of seeds 100,300,400 minus mean of seeds 0,200,500, split by category (pts of the 48-pair pooled rate)
+   (seeds 100, 300 and 400 are grouped here only by their pooled result; see section 2 of DIAGNOSIS.md: seed 400 differs from seeds 100 and 300)
+   neigh_fwd/lat    pairs 28  failing-seed mean  63.6%  good-seed mean  87.8%  contribution  14.1 pts (50.6% of 27.8)
+   neigh_back       pairs  2  failing-seed mean   3.0%  good-seed mean  76.3%  contribution   3.1 pts (11.0% of 27.8)
+   long_fwd/lat     pairs 13  failing-seed mean  26.3%  good-seed mean  57.9%  contribution   8.6 pts (30.9% of 27.8)
+   long_back        pairs  5  failing-seed mean   0.0%  good-seed mean  20.3%  contribution   2.1 pts ( 7.6% of 27.8)
+
+C. NEIGHBOUR (30) PAIRS BELOW 10/50 AND BELOW 25/50, per seed (also the 18 long pairs and all 48)
+seed            neigh <10/50  neigh <25/50  long <10/50  long <25/50  all48 <10  all48 <25
+seed0                      3             7            9           17         12         24
+seed100                    0             0            4           10          4         10
+seed200                    2             5           15           18         17         23
+seed300                    0             0            3            8          3          8
+seed400                    0             1            5            6          5          7
+seed500                    4            11            6           17         10         28
+   neighbour pairs below 25/50, listed:
+   seed0       d7:d8 22, e7:e8 18, f6:f7 21, f7:f8 6, c4:d4 13, e5:e4 0, c6:c5 1
+   seed100     none
+   seed200     f2:f3 23, c4:d4 23, f5:e5 10, e5:e4 0, c6:c5 0
+   seed300     none
+   seed400     e5:e4 16
+   seed500     c6:c7 11, c7:c8 1, d6:d7 16, d7:d8 1, e6:e7 20, e7:e8 13, f7:f8 19, c4:d4 17, e6:d7 19, e5:e4 0, c6:c5 8
+
+D. BACKWARD PAIRS, placed counts from the FULL 2400-episode eval (50 episodes per pair)
+   neigh_back pairs: ['e5:e4', 'c6:c5']
+   seed0        1/100 = 1.0%   per pair e5:e4 0 c6:c5 1
+   seed100      89/100 = 89.0%   per pair e5:e4 43 c6:c5 46
+   seed200      0/100 = 0.0%   per pair e5:e4 0 c6:c5 0
+   seed300      83/100 = 83.0%   per pair e5:e4 42 c6:c5 41
+   seed400      57/100 = 57.0%   per pair e5:e4 16 c6:c5 41
+   seed500      8/100 = 8.0%   per pair e5:e4 0 c6:c5 8
+   long_back pairs: ['d7:d4', 'g7:d4', 'b7:d5', 'h6:e4', 'g6:e3']
+   seed0        0/250 = 0.0%   per pair d7:d4 0 g7:d4 0 b7:d5 0 h6:e4 0 g6:e3 0
+   seed100      60/250 = 24.0%   per pair d7:d4 22 g7:d4 0 b7:d5 31 h6:e4 2 g6:e3 5
+   seed200      0/250 = 0.0%   per pair d7:d4 0 g7:d4 0 b7:d5 0 h6:e4 0 g6:e3 0
+   seed300      90/250 = 36.0%   per pair d7:d4 25 g7:d4 7 b7:d5 31 h6:e4 18 g6:e3 9
+   seed400      2/250 = 0.8%   per pair d7:d4 0 g7:d4 0 b7:d5 2 h6:e4 0 g6:e3 0
+   seed500      0/250 = 0.0%   per pair d7:d4 0 g7:d4 0 b7:d5 0 h6:e4 0 g6:e3 0
+
+E. LIFT AMONG PLACED EPISODES (full 2400; max_lift_mm = eval_probe's per-episode maximum of the piece lift, mm)
+   The question: do placements come from sliding the piece along the board (low lift) or from lifting and carrying?
+seed          placed  placed with max_lift>10mm   >20mm   >30mm  median max_lift (placed)    p90  carry_mm<50% of dist (push-assisted, place_report)
+seed0           1074           213 =  19.8%    1.5%    0.2%                       7.1   12.1            58/1074 = 5.4%
+seed100         1704           174 =  10.2%    1.6%    0.2%                       5.6   10.0           593/1704 = 34.8%
+seed200         1029           157 =  15.3%    2.6%    0.5%                       6.6   11.5           126/1029 = 12.2%
+seed300         1773           145 =   8.2%    2.4%    0.2%                       4.8    9.2           880/1773 = 49.6%
+seed400         1720           112 =   6.5%    1.0%    0.1%                       5.8    9.3            95/1720 = 5.5%
+seed500         1091           182 =  16.7%    2.6%    0.0%                       6.5   11.7           134/1091 = 12.3%
+   lift_30mm-style flags are not used (known unreliable); only max_lift_mm thresholds above.
+
+F. OUTCOME BY WHETHER THE PIECE EVER LIFTED > 10 mm (association only; lift can be a consequence of what happens in the episode)
+   all 48 pairs:
+   seed0        episodes with max_lift>10mm 1089 (45.4%)  placed|lift>10  19.6%  placed|lift<=10  65.7%
+   seed100      episodes with max_lift>10mm  826 (34.4%)  placed|lift>10  21.1%  placed|lift<=10  97.2%
+   seed200      episodes with max_lift>10mm 1172 (48.8%)  placed|lift>10  13.4%  placed|lift<=10  71.0%
+   seed300      episodes with max_lift>10mm  709 (29.5%)  placed|lift>10  20.5%  placed|lift<=10  96.3%
+   seed400      episodes with max_lift>10mm  469 (19.5%)  placed|lift>10  23.9%  placed|lift<=10  83.3%
+   seed500      episodes with max_lift>10mm 1013 (42.2%)  placed|lift>10  18.0%  placed|lift<=10  65.5%
+   neighbour forward/lateral pairs only (28 pairs, 1400 episodes):
+   seed0        episodes with max_lift>10mm  502 (35.9%)  placed|lift>10  30.3%  placed|lift<=10  83.2%
+   seed100      episodes with max_lift>10mm  247 (17.6%)  placed|lift>10  30.4%  placed|lift<=10  99.0%
+   seed200      episodes with max_lift>10mm  458 (32.7%)  placed|lift>10  28.2%  placed|lift<=10  85.8%
+   seed300      episodes with max_lift>10mm  216 (15.4%)  placed|lift>10  24.5%  placed|lift<=10  98.6%
+   seed400      episodes with max_lift>10mm  150 (10.7%)  placed|lift>10  30.0%  placed|lift<=10  96.4%
+   seed500      episodes with max_lift>10mm  448 (32.0%)  placed|lift>10  24.3%  placed|lift<=10  76.5%
+
+G. DETERMINISTIC vs STOCHASTIC (UNITS DIFFER). deterministic: 96 episodes = 2 per pair; the two episodes of every pair were identical in all six seeds,
+   so its denominator is 48 PAIRS (a pair is placed or not). stochastic: 2400 EPISODES (50 per pair). Wilson 95% of each is over its own unit.
+   seed0        deterministic: 17/48 pairs placed = 35.4% [23.4, 49.6]   stochastic: 1074/2400 episodes = 44.8% [42.8, 46.7] (= mean over the 48 pairs of per-pair placement 44.7%)
+   seed100      deterministic: 35/48 pairs placed = 72.9% [59.0, 83.4]   stochastic: 1704/2400 episodes = 71.0% [69.2, 72.8] (= mean over the 48 pairs of per-pair placement 71.0%)
+   seed200      deterministic: 17/48 pairs placed = 35.4% [23.4, 49.6]   stochastic: 1029/2400 episodes = 42.9% [40.9, 44.9] (= mean over the 48 pairs of per-pair placement 42.9%)
+   seed300      deterministic: 38/48 pairs placed = 79.2% [65.7, 88.3]   stochastic: 1773/2400 episodes = 73.9% [72.1, 75.6] (= mean over the 48 pairs of per-pair placement 73.9%)
+   seed400      deterministic: 32/48 pairs placed = 66.7% [52.5, 78.3]   stochastic: 1720/2400 episodes = 71.7% [69.8, 73.4] (= mean over the 48 pairs of per-pair placement 71.7%)
+   seed500      deterministic: 16/48 pairs placed = 33.3% [21.7, 47.5]   stochastic: 1091/2400 episodes = 45.5% [43.5, 47.5] (= mean over the 48 pairs of per-pair placement 45.5%)
+
+H. ZERO-SHOT OVERLAP CHECK (from the pairs actually present in the committed zs_*.json files, against the 48 trained pairs)
+   seed0        zero-shot (a) b/g pairs: 12 distinct pairs, 300 episodes; overlap with the 48 trained pairs: none
+   seed0        zero-shot (b) RS29 pairs: 20 distinct pairs, 300 episodes; overlap with the 48 trained pairs: ['e4:e5']
+   seed100      zero-shot (a) b/g pairs: 12 distinct pairs, 300 episodes; overlap with the 48 trained pairs: none
+   seed100      zero-shot (b) RS29 pairs: 20 distinct pairs, 300 episodes; overlap with the 48 trained pairs: ['e4:e5']
+   seed200      zero-shot (a) b/g pairs: 12 distinct pairs, 300 episodes; overlap with the 48 trained pairs: none
+   seed200      zero-shot (b) RS29 pairs: 20 distinct pairs, 300 episodes; overlap with the 48 trained pairs: ['e4:e5']
+   seed300      zero-shot (a) b/g pairs: 12 distinct pairs, 300 episodes; overlap with the 48 trained pairs: none
+   seed300      zero-shot (b) RS29 pairs: 20 distinct pairs, 300 episodes; overlap with the 48 trained pairs: ['e4:e5']
+   seed400      zero-shot (a) b/g pairs: 12 distinct pairs, 300 episodes; overlap with the 48 trained pairs: none
+   seed400      zero-shot (b) RS29 pairs: 20 distinct pairs, 300 episodes; overlap with the 48 trained pairs: ['e4:e5']
+   seed500      zero-shot (a) b/g pairs: 12 distinct pairs, 300 episodes; overlap with the 48 trained pairs: none
+   seed500      zero-shot (b) RS29 pairs: 20 distinct pairs, 300 episodes; overlap with the 48 trained pairs: ['e4:e5']
