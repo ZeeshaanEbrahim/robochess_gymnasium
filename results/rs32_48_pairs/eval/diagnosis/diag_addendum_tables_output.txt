@@ -1,0 +1,110 @@
+X1. PIECE GEOMETRY (measured from assets/scene.xml with MuJoCo: world z extent of piece_a's collision geoms above the piece origin, at the home keyframe)
+   piece_a_base   z from   0.0 to  18.0 mm above the piece origin
+   piece_a_stem   z from  18.0 to  34.0 mm above the piece origin
+   piece_a_head   z from  30.0 to  50.0 mm above the piece origin
+   piece height 50.0 mm (origin at the base); base diameter 30 mm; board square pitch 78 mm
+   bodies named piece*: ['piece_a'] (the scene holds ONE piece); n_obstacles in the six configs: [0]
+   `lift` (eval_probe max_lift_mm) = piece ORIGIN z minus its resting z at the home keyframe (pickup_geometry in t1_pick_and_place.py). It is the rise of the piece base.
+   A piece of the same height standing on a neighbouring square would have its top 50 mm above the board, so a carried piece clears it only if its BASE is lifted by more than 50 mm
+   (more with margin). This task has no neighbouring piece (one piece, n_obstacles 0); the comparison is for scale only.
+
+X2. MAXIMUM PIECE LIFT (mm) PER EPISODE, PLACED EPISODES ONLY, full 2400-episode eval
+seed         placed  median    p90    p99    max         >10mm   >30mm   >50mm
+seed0          1074     7.1   12.1   21.3   36.2    213 =19.8%       2       0
+seed100        1704     5.6   10.0   21.3   32.7    174 =10.2%       3       0
+seed200        1029     6.6   11.5   26.0   35.7    157 =15.3%       5       0
+seed300        1773     4.8    9.2   23.5   34.1    145 = 8.2%       3       0
+seed400        1720     5.8    9.3   20.3   30.2    112 = 6.5%       1       0
+seed500        1091     6.5   11.7   23.0   29.0    182 =16.7%       0       0
+   same, FAILED episodes (for scale):
+   seed0       n=1326  median  19.8  p90  26.2  max 125.9  >50mm: 15
+   seed100     n=696   median  21.9  p90  28.1  max  78.3  >50mm: 4
+   seed200     n=1371  median  21.0  p90  27.4  max  62.6  >50mm: 11
+   seed300     n=627   median  21.8  p90  25.8  max  54.1  >50mm: 1
+   seed400     n=680   median  10.7  p90  25.6  max  51.9  >50mm: 2
+   seed500     n=1309  median  17.7  p90  25.2  max  66.2  >50mm: 3
+
+X3. PAIR e4:e5 ONLY (50 episodes per seed in the full eval): placed episodes whose max piece lift exceeded 10 mm
+seed          placed  lift>10mm   share  median max lift (placed)    p90    max
+seed0          43/50          9     21%                       8.2   11.2   15.4
+seed100        44/50          2      5%                       5.3    9.1   21.4
+seed200        32/50          1      3%                       5.6    8.3   11.2
+seed300        41/50          3      7%                       3.9    7.2   12.9
+seed400        47/50          0      0%                       5.4    7.8    9.6
+seed500        46/50          4      9%                       5.6    9.4   14.0
+
+X4. LONG PAIRS (18) BELOW 25/50 AND BELOW 10/50, per seed (placed k/50 in the full eval)
+seed          long <10/50  long <25/50   long pairs below 25/50 (k/50)
+seed0                   9           17   b2:b4 22, g3:g6 2, d7:d4 0, a5:c5 9, h4:e4 14, b6:e6 16, a3:c5 20, c3:f6 10, h3:f5 12, g7:d4 0, b7:d5 0, e2:g4 7, a3:d5 18, h6:e4 0, c2:e5 13, f3:d6 6, g6:e3 0
+seed100                 4           10   g3:g6 24, d7:d4 22, h4:e4 19, c3:f6 19, g7:d4 0, e2:g4 23, h6:e4 2, c2:e5 19, f3:d6 8, g6:e3 5
+seed200                15           18   b2:b4 11, g3:g6 6, d7:d4 0, a5:c5 19, h4:e4 1, b6:e6 5, a3:c5 7, c3:f6 6, h3:f5 6, g7:d4 0, b7:d5 0, e2:g4 4, a3:d5 10, h6:e4 0, c2:e5 6, f3:d6 8, b4:e6 3, g6:e3 0
+seed300                 3            8   g3:g6 24, c3:f6 21, h3:f5 20, g7:d4 7, h6:e4 18, c2:e5 24, f3:d6 9, g6:e3 9
+seed400                 5            6   d7:d4 0, g7:d4 0, b7:d5 2, h6:e4 0, f3:d6 23, g6:e3 0
+seed500                 6           17   b2:b4 13, g3:g6 8, d7:d4 0, h4:e4 21, b6:e6 18, a3:c5 21, c3:f6 12, h3:f5 23, g7:d4 0, b7:d5 0, e2:g4 20, a3:d5 22, h6:e4 0, c2:e5 16, f3:d6 11, b4:e6 24, g6:e3 0
+
+X5. WAS TRAINING PLACEMENT STILL RISING AT THE END OF TRAINING?  (Monitor terminated_reason == success, pooled over the 4 files)
+    100k bins as in ../section3_train_output.txt (25k steps of each file; bin j = training steps (j-1)*100k+1..j*100k); the partial bin after 5.0M is excluded.
+    slope = weighted least-squares slope of the bin placement rates against bin index, in percentage points per 100k steps, with a nominal binomial SE
+    (episodes of one evolving policy are not independent, so the SE is only nominal). 'rising' = slope - 1.96 SE > 0; 'falling' = slope + 1.96 SE < 0; else 'no detectable change'.
+    diff = placement in 4.5-5.0M minus 4.0-4.5M (episode counts pooled), points, with an approximate 95% interval (unpooled normal).
+seed                                                          last10 bins (4.1-5.0M) %
+seed0                       25.6  30.6  31.3  35.8  39.1  41.5  41.1  42.3  45.6  42.9
+seed100                     67.3  65.9  62.8  68.6  69.1  72.0  71.7  72.1  74.0  71.7
+seed200                     41.6  37.9  37.9  39.4  40.4  41.6  38.7  41.5  40.6  45.8
+seed300                     69.0  68.8  68.1  68.8  71.2  71.8  75.7  75.1  74.3  71.4
+seed400                     25.7  39.2  54.0  59.8  62.5  64.1  65.1  69.9  70.3  70.7
+seed500                     25.7  28.2  27.2  31.6  37.7  42.2  43.0  43.3  44.7  42.7
+
+seed         4.0-4.5M  4.5-5.0M        diff pts [95%]   slope last10 (pts/100k)           slope last5   verdicts (diff / last10 slope / last5 slope)
+seed0           32.6%     42.7%    +10.1 [+7.1,+13.0]         +2.00 +/- 0.50       +0.73 +/- 1.48   rising / rising / no detectable change
+seed100         66.8%     72.3%     +5.5 [+3.2,+7.8]         +0.93 +/- 0.41       +0.16 +/- 1.12   rising / rising / no detectable change
+seed200         39.4%     41.6%     +2.2 [-0.7,+5.1]         +0.45 +/- 0.51       +1.05 +/- 1.46   no detectable change / no detectable change / no detectable change
+seed300         69.2%     73.7%     +4.5 [+2.2,+6.8]         +0.71 +/- 0.41       -0.23 +/- 1.15   rising / rising / no detectable change
+seed400         49.7%     68.1%    +18.4 [+15.7,+21.1]         +4.13 +/- 0.46       +1.84 +/- 1.26   rising / rising / rising
+seed500         30.2%     43.2%    +13.0 [+10.1,+15.9]         +2.33 +/- 0.50       +0.27 +/- 1.47   rising / rising / no detectable change
+    Learning rate at 4.0M, 4.5M, 5.0M steps (linear decay 3e-4 to 0 over 5,000,000 steps): 6.0e-05, 3.0e-05, 0.0e+00
+
+X6. PAIR ORDER CHECK against PREREGISTRATION.md (every file that carries the 48 pairs; order and content)
+   MATCH    PREREGISTRATION.md 'Training pairs' line, parsed here as whitespace tokens vs rs32_lib.PAIRS (regex parse)
+   MATCH    ../EVAL_MANIFEST.json  pairs
+   MATCH    ../EVAL_MANIFEST.json  --pairs in the command of rs32D_seed0
+   MATCH    ../EVAL_MANIFEST.json  --pairs in the command of rs32D_seed100
+   MATCH    ../EVAL_MANIFEST.json  --pairs in the command of rs32D_seed200
+   MATCH    ../EVAL_MANIFEST.json  --pairs in the command of rs32D_seed300
+   MATCH    ../EVAL_MANIFEST.json  --pairs in the command of rs32D_seed400
+   MATCH    ../EVAL_MANIFEST.json  --pairs in the command of rs32D_seed500
+   MATCH    ../EVAL_MANIFEST_section3.json  pairs48
+   MATCH    ../EVAL_MANIFEST_section3.json  --pairs in the command of det48_rs32D_seed0
+   MATCH    ../EVAL_MANIFEST_section3.json  --pairs in the command of det48_rs32D_seed100
+   MATCH    ../EVAL_MANIFEST_section3.json  --pairs in the command of det48_rs32D_seed200
+   MATCH    ../EVAL_MANIFEST_section3.json  --pairs in the command of det48_rs32D_seed300
+   MATCH    ../EVAL_MANIFEST_section3.json  --pairs in the command of det48_rs32D_seed400
+   MATCH    ../EVAL_MANIFEST_section3.json  --pairs in the command of det48_rs32D_seed500
+   MATCH    ../rs32D_seed0_final.json  episode i is pair ref[i mod 48] for all 2400 episodes
+   MATCH    ../det48_rs32D_seed0.json  episode i is pair ref[i mod 48] for all 96 episodes
+   MATCH    ../rs32D_seed100_final.json  episode i is pair ref[i mod 48] for all 2400 episodes
+   MATCH    ../det48_rs32D_seed100.json  episode i is pair ref[i mod 48] for all 96 episodes
+   MATCH    ../rs32D_seed200_final.json  episode i is pair ref[i mod 48] for all 2400 episodes
+   MATCH    ../det48_rs32D_seed200.json  episode i is pair ref[i mod 48] for all 96 episodes
+   MATCH    ../rs32D_seed300_final.json  episode i is pair ref[i mod 48] for all 2400 episodes
+   MATCH    ../det48_rs32D_seed300.json  episode i is pair ref[i mod 48] for all 96 episodes
+   MATCH    ../rs32D_seed400_final.json  episode i is pair ref[i mod 48] for all 2400 episodes
+   MATCH    ../det48_rs32D_seed400.json  episode i is pair ref[i mod 48] for all 96 episodes
+   MATCH    ../rs32D_seed500_final.json  episode i is pair ref[i mod 48] for all 2400 episodes
+   MATCH    ../det48_rs32D_seed500.json  episode i is pair ref[i mod 48] for all 96 episodes
+   MATCH    configs/_probe_cart_rs32D_ppotanh_seed0.yaml  train_pairs
+   MATCH    runs/_probe_cart_rs32D_ppotanh_seed0/manifest.json  config_resolved.train_pairs (what the run used)
+   MATCH    configs/_probe_cart_rs32D_ppotanh_seed100.yaml  train_pairs
+   MATCH    runs/_probe_cart_rs32D_ppotanh_seed100/manifest.json  config_resolved.train_pairs (what the run used)
+   MATCH    configs/_probe_cart_rs32D_ppotanh_seed200.yaml  train_pairs
+   MATCH    runs/_probe_cart_rs32D_ppotanh_seed200/manifest.json  config_resolved.train_pairs (what the run used)
+   MATCH    configs/_probe_cart_rs32D_ppotanh_seed300.yaml  train_pairs
+   MATCH    runs/_probe_cart_rs32D_ppotanh_seed300/manifest.json  config_resolved.train_pairs (what the run used)
+   MATCH    configs/_probe_cart_rs32D_ppotanh_seed400.yaml  train_pairs
+   MATCH    runs/_probe_cart_rs32D_ppotanh_seed400/manifest.json  config_resolved.train_pairs (what the run used)
+   MATCH    configs/_probe_cart_rs32D_ppotanh_seed500.yaml  train_pairs
+   MATCH    runs/_probe_cart_rs32D_ppotanh_seed500/manifest.json  config_resolved.train_pairs (what the run used)
+   MATCH    results/rs32_48_pairs/expert_gate/TABLE.md  first 48 rows
+        (that table has 54 rows: 48 pairs + 6 reserves; reserves not in the 48: True)
+   MATCH    the (start, target) pairs that occur in the six runs' Monitor CSVs are exactly the 48 pairs (48 distinct; episodes per pair min 2417 max 2664, all six runs pooled)
+   Note: training draws one pair uniformly at random per episode, so the ORDER of train_pairs does not affect training; order matters for the eval (episode i uses pair i mod 48) and for the tables.
