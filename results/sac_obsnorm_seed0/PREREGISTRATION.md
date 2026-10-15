@@ -67,3 +67,14 @@ result does.
 - The relaunch uses the identical config, seed 0 and code. Its diff from f20916f is this documentation change
   only. Every rule above is unchanged, and the gate (the Superseding rule, 5 Oct) applies to the final model of
   the relaunch.
+
+## Seeds 1 to 3, 16 Oct
+- Written 16 Oct 2026, after the seed-0 result (`RESULT.md`, d6b06e0: 0/300 against the 60/300 gate) and before any
+  seed 1 to 3 result exists.
+- These are the factorial T1 SAC seeds: configs `configs/_probe_cart_place30_sac_obsnorm_seed{1,2,3}.yaml`, identical
+  to the seed-0 config (`sac_obs_normalize` true, e4->e5, 1,000,000 steps, checkpoints every 100k) except `seed` and
+  `run_name`.
+- Same protocol as above: final model, 300 episodes, stochastic, eval seed 20000, frozen VecNormalize statistics
+  (`final_vecnormalize.pkl`; `training` False, `norm_reward` False), via `scripts/eval_probe.py`.
+- Per-seed gate: 60/300 (20%) placement. No threshold changes.
+- The cell is reported as k seeds passing out of N, whatever the outcome.

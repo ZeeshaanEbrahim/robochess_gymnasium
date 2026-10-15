@@ -1,0 +1,31 @@
+# D29 SAC config with sac_obs_normalize: true and nothing else changed (observation-only
+# VecNormalize for SAC, parity with PPO: norm_obs_keys ["observation"], clip_obs 10,
+# gamma 0.99, norm_reward False; goal keys raw). Pre-registration:
+# results/sac_obsnorm_seed0/PREREGISTRATION.md.
+#
+# run_name is pinned, as in the D28/D29 probes.
+
+task: t1
+algorithm: sac
+reward_type: shaped
+observation: state
+seed: 2
+total_timesteps: 1000000
+device: cpu
+num_threads: 1
+action_mode: cartesian
+max_episode_steps: 300
+n_obstacles: 0
+start_square: e4
+target_square: e5
+shaped_staged: false
+place_mode: true
+pickup_obs: true
+place_obs: true
+place_posture_gate: true
+place_carry_potential: true
+sac_obs_normalize: true
+checkpoint_freq: 100000
+output_root: runs
+run_name: _probe_cart_place30_sac_obsnorm_seed2
+notes: "SAC obs-norm test: D29 SAC config with sac_obs_normalize true (observation-only VecNormalize, parity with PPO). Prereg: results/sac_obsnorm_seed0/PREREGISTRATION.md."
