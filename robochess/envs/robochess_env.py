@@ -282,6 +282,12 @@ PIECE_TILT_TOL_DEG = 10.0  # degrees between the piece's z axis and world z
 # any result was seen; do not tune it against outcomes.
 PLACEMENT_RELEASE_MAX_HEIGHT = 0.015  # m
 
+# D33 (require_lift, default off): when on, a placement counts only after the piece has been lifted
+# at least this far above its resting height while both pads were on it (the latch). 20 mm, fixed in
+# the D33 pre-registration before any run: above RS32's 90th percentile of max lift among placed
+# episodes (9 to 12 mm), below the 30 mm cap of the shaped lift term.
+DEFAULT_LIFT_LATCH_M = 0.020  # m
+
 
 class RoboChessEnv(gym.Env):
     """UR5e + Robotiq 2F-85 manipulating a chess piece on a 78 mm board.
@@ -323,6 +329,8 @@ class RoboChessEnv(gym.Env):
         render_width: int = 640,
         render_height: int = 480,
         piece_body: str = "piece_a",
+        require_lift: bool = False,
+        lift_latch_m: float = DEFAULT_LIFT_LATCH_M,
     ):
         super().__init__()
 
@@ -340,6 +348,11 @@ class RoboChessEnv(gym.Env):
         self.frame_skip = int(frame_skip)
         self.goal_tolerance = float(goal_tolerance)
         self.rest_tolerance = float(rest_tolerance)
+        # D33. Default off: every code path below is then exactly what it was.
+        self.require_lift = bool(require_lift)
+        self.lift_latch_m = float(lift_latch_m)
+        if not self.lift_latch_m > 0:
+            raise ValueError(f"lift_latch_m must be > 0, got {lift_latch_m!r}")
         self.gripper_open_threshold = float(gripper_open_threshold)
         self.normalize_action = bool(normalize_action)
         if action_mode not in ACTION_MODES:
@@ -570,6 +583,9 @@ class RoboChessEnv(gym.Env):
         self._contact_flags: tuple[bool, bool, bool] = (False, False, False)
         self._ever_held = False
         self._release_record: tuple[float, float] | None = None
+        # D33: set the first time the piece is >= lift_latch_m above rest while both pads are on it;
+        # cleared only in reset(). Only read when require_lift is on.
+        self._lift_latched = False
 
     # ------------------------------------------------------------------ ids
     def _body_id(self, name: str) -> int:
@@ -923,6 +939,7 @@ class RoboChessEnv(gym.Env):
         # _augment_info reads real flags (home: no pad, board contact).
         self._ever_held = False
         self._release_record = None
+        self._lift_latched = False  # D33: cleared only here
         self._refresh_contact_flags()
 
         obs = self._get_obs()
@@ -1107,6 +1124,11 @@ class RoboChessEnv(gym.Env):
         """
         if not self._ever_held or self._release_record is None:
             return False
+        # D33: with require_lift the lift latch must have been set. release_ok feeds is_success, the
+        # termination reason "success", and (through info["release_ok"]) PlaceReward's S2 entry, so
+        # S2, the placed bonus, the success lump and the success flag all change together.
+        if self.require_lift and not self._lift_latched:
+            return False
         xy_error, height = self._release_record
         return bool(xy_error <= self.goal_tolerance and height <= PLACEMENT_RELEASE_MAX_HEIGHT)
 
@@ -1235,7 +1257,7 @@ class RoboChessEnv(gym.Env):
         )
         unstable = self._solver_instability()
         record = self._release_record
-        return {
+        info = {
             "is_success": bool(
                 on_square and resting and released and settled and still and upright
                 and release_ok and not unstable
@@ -1281,6 +1303,9 @@ class RoboChessEnv(gym.Env):
             "terminated_reason": terminated_reason,
             "elapsed_steps": int(self._elapsed_steps),
         }
+        if self.require_lift:  # D33: only present when the flag is on, so flag-off info is unchanged
+            info["lift_latched"] = bool(self._lift_latched)
+        return info
 
     def step(
         self, action: np.ndarray
@@ -1350,6 +1375,11 @@ class RoboChessEnv(gym.Env):
             if left and right:  # pinched
                 if not board:  # held
                     self._ever_held = True
+                # D33: the lift latch. Pinched (a superset of held) and lifted far enough; the first
+                # time only. Skipped on an unstable step like the rest of this block.
+                if (self.require_lift and not self._lift_latched
+                        and self._piece_height_above_board() >= self.lift_latch_m):
+                    self._lift_latched = True
                 # Overwritten on EVERY pinched step, so it is the state at the
                 # last step the pads were on the piece, i.e. the release.
                 self._release_record = (

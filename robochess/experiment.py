@@ -123,6 +123,12 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "place_carry_potential": False,
     "place_carry_potential_k": 50.0,
     "ppo_mean_squash": False,
+    # D33: success needs a real lift (default off, byte-identical to D29 when off). The env latches the
+    # first time the piece is >= place_lift_latch_m above rest while both pads are on it; until then
+    # S2, the placed bonus, the success lump and the success flag are all withheld, and the one-time
+    # lift bonus pays at the latch. Requires place_mode.
+    "place_require_lift": False,
+    "place_lift_latch_m": 0.020,
     # RS30: PPO entropy coefficient, passed as ent_coef. 0.0 is SB3's default.
     "ppo_ent_coef": 0.0,
     # RS31: PPO learning-rate schedule. "constant" is SB3's default 3e-4;
@@ -338,6 +344,15 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
     if cfg["place_carry_potential_k"] <= 0:
         raise ConfigError(
             f"place_carry_potential_k must be > 0, got {cfg['place_carry_potential_k']}")
+    if not isinstance(cfg["place_require_lift"], bool):
+        raise ConfigError(f"place_require_lift must be a bool, got {cfg['place_require_lift']!r}")
+    lm = cfg["place_lift_latch_m"]
+    if isinstance(lm, bool) or not isinstance(lm, (int, float)) or not lm > 0:
+        raise ConfigError(f"place_lift_latch_m must be a number > 0 (metres), got {lm!r}")
+    if cfg["place_require_lift"] and not cfg["place_mode"]:
+        raise ConfigError("place_require_lift=True needs place_mode=True.")
+    if "place_lift_latch_m" in raw and not cfg["place_require_lift"]:
+        raise ConfigError("place_lift_latch_m is set but place_require_lift is false: it would do nothing.")
     if (cfg["place_posture_gate"] or cfg["place_carry_potential"]) and not cfg["place_mode"]:
         raise ConfigError(
             "place_posture_gate/place_carry_potential=True needs place_mode=True.")

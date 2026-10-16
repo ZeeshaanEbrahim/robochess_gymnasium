@@ -140,6 +140,10 @@ def build_env(cfg: dict):
     # the only mode they could have trained with.
     env_kwargs = dict(max_episode_steps=cfg["max_episode_steps"],
                       action_mode=cfg.get("action_mode", "absolute"))
+    # D33: only passed when set, so a config without it builds exactly as before. The lift latch lives
+    # in the env (it gates release_ok); PlaceReward below gets the same flag and checks they agree.
+    if cfg.get("place_require_lift", False):
+        env_kwargs.update(require_lift=True, lift_latch_m=cfg.get("place_lift_latch_m", 0.020))
     # .get: pre-existing configs and manifests carry no square keys and keep
     # the task wrapper's own random sampling (square=None means "sample it").
     squares = dict(start_square=cfg.get("start_square"), target_square=cfg.get("target_square"),
@@ -190,6 +194,7 @@ def build_env(cfg: dict):
             gate_tilt_hi_deg=cfg.get("place_gate_tilt_hi_deg", 45.0),
             carry_potential=cfg.get("place_carry_potential", False),
             carry_potential_k=cfg.get("place_carry_potential_k", 50.0),
+            require_lift=cfg.get("place_require_lift", False),
         )
     # .get: manifests written before the pick-up stage existed carry no such
     # key and must resolve to the travelling reward they actually trained on.

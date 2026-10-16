@@ -1194,6 +1194,13 @@ class PlaceReward(gym.Wrapper):
 
     ``place_terms`` gains ``posture_gate`` (1.0 when the gate is off or the
     state is not S1) and ``shaping`` (0.0 when the potential is off) either way.
+
+    D33 (``require_lift``, default off): the env must be built with the same flag. The env then
+    requires its lift latch (piece >= ``lift_latch_m`` above rest while both pads are on it, set
+    once, cleared at reset) before ``release_ok`` can be true, which is what S2 entry, the placed
+    bonus, the success lump and the success flag all hang on; this wrapper additionally pays the
+    one-time ``lift_bonus`` at the latch instead of at 30 mm held for 5 steps. ``place_terms`` then
+    carries ``lift_latched``.
     """
 
     def __init__(
@@ -1214,12 +1221,21 @@ class PlaceReward(gym.Wrapper):
         gate_tilt_hi_deg: float = 45.0,
         carry_potential: bool = False,
         carry_potential_k: float = 50.0,
+        require_lift: bool = False,
     ):
         super().__init__(env)
         base = self.unwrapped
         if not isinstance(base, RoboChessEnv):
             raise TypeError(f"Expects a RoboChessEnv underneath; got {type(base).__name__}.")
         self._base: RoboChessEnv = base
+        # D33: the lift latch lives in the env (it gates release_ok, hence S2, the placed bonus, the lump
+        # and the success flag together); this wrapper only reads info["lift_latched"] for the +5. The two
+        # flags must agree, or the reward would silently price a criterion the env does not apply.
+        self.require_lift = bool(require_lift)
+        if self.require_lift != bool(base.require_lift):
+            raise ValueError(
+                f"PlaceReward(require_lift={self.require_lift}) over a RoboChessEnv with "
+                f"require_lift={base.require_lift}: build both from the same place_require_lift.")
         self._pinch_sid = _pinch_site_id(base.model)
         self.carry_weight = float(carry_weight)
         self.lower_weight = float(lower_weight)
@@ -1348,12 +1364,17 @@ class PlaceReward(gym.Wrapper):
             self._held_once = True
             reward += self.first_grasp_bonus
 
-        # D21's hold test: grasp_success with the piece >= 30 mm up, consecutive.
-        if bool(info.get("grasp_success", False)) and lift >= PLACE_HOLD_LIFT:
-            self._lift_streak += 1
+        if self.require_lift:
+            # D33: the one-time lift bonus pays at the step the env's lift latch is first set, not at
+            # 30 mm held for 5 steps.
+            lift_fired = bool(info.get("lift_latched", False)) and not self._lift_bonus_paid
         else:
-            self._lift_streak = 0
-        lift_fired = self._lift_streak >= PLACE_HOLD_STEPS and not self._lift_bonus_paid
+            # D21's hold test: grasp_success with the piece >= 30 mm up, consecutive.
+            if bool(info.get("grasp_success", False)) and lift >= PLACE_HOLD_LIFT:
+                self._lift_streak += 1
+            else:
+                self._lift_streak = 0
+            lift_fired = self._lift_streak >= PLACE_HOLD_STEPS and not self._lift_bonus_paid
         if lift_fired:
             self._lift_bonus_paid = True
             reward += self.lift_bonus
@@ -1395,6 +1416,8 @@ class PlaceReward(gym.Wrapper):
             posture_gate=gate, shaping=shaping,
             pinched=pinched, held=held, piece_tilt_deg=piece_tilt, t=self._t,
         )
+        if self.require_lift:  # D33: only present with the flag on, so flag-off terms are unchanged
+            terms["lift_latched"] = bool(info.get("lift_latched", False))
         self._last_terms = dict(terms)
         info = dict(info)
         info["place_state"] = state
