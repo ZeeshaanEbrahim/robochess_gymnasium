@@ -1,0 +1,27 @@
+PLACEMENT, 500k checkpoint vs final model (1M); 300 stochastic episodes, eval seed 20000, each with its own frozen VecNormalize pickle
+seed | 500k placed          Wilson95                reasons rms_same | 1M placed          Wilson95                reasons
+   0 |     0/300   [ 0.00%, 1.26%]    {'time_limit': 300}     True |    0/300  [ 0.00%, 1.26%]    {'time_limit': 300}
+   1 |     0/300   [ 0.00%, 1.26%] {'time_limit': 296, 'piece_off_board': 4}     True |    0/300  [ 0.00%, 1.26%]    {'time_limit': 300}
+   2 |     0/300   [ 0.00%, 1.26%] {'time_limit': 299, 'bad_contact': 1}     True |    0/300  [ 0.00%, 1.26%]    {'time_limit': 300}
+   3 |     0/300   [ 0.00%, 1.26%]    {'time_limit': 300}     True |    0/300  [ 0.00%, 1.26%]    {'time_limit': 300}
+
+other 500k eval fields (descriptive): 
+  seed0: grasp_ever 300/300 | held 300 | lifted_30mm 300 | carried_within_3cm 297 | reached S2 0
+  seed1: grasp_ever 300/300 | held 300 | lifted_30mm 300 | carried_within_3cm 0 | reached S2 0
+  seed2: grasp_ever 0/300 | held 300 | lifted_30mm 0 | carried_within_3cm 0 | reached S2 0
+  seed3: grasp_ever 299/300 | held 299 | lifted_30mm 298 | carried_within_3cm 296 | reached S2 0
+
+TRAINING-LOG LOSSES: mean over a +-5k-step window of logged rows (1M window one-sided; ends ~999k-1,000k); -actor_loss is a rough Q proxy
+seed     step rows  critic_loss  actor_loss  -actor_loss  ent_coef  ent_coef_loss
+   0   100000    8        38.88     -177.25       177.25    0.0906         0.1332
+   0   500000    8        17.57     -455.12       455.12    0.0853        -0.1893
+   0  1000000    5         8.02     -508.47       508.47    0.0534        -0.0350
+   1   100000   10         8.31      -74.34        74.34    0.0380         0.1797
+   1   500000    8        23.75     -294.03       294.03    0.1247         0.0151
+   1  1000000    4        75.11     -373.37       373.37    0.0740        -0.1365
+   2   100000    8         0.32      -79.24        79.24    0.0189        -0.1984
+   2   500000    9         0.52     -164.20       164.20    0.0327         0.0813
+   2  1000000    4         1.22     -252.88       252.88    0.0689         0.1246
+   3   100000    9        14.88     -113.29       113.29    0.0579         0.1478
+   3   500000    9        32.10     -427.28       427.28    0.1007        -0.0640
+   3  1000000    4         8.49     -514.91       514.91    0.0465         0.0488
