@@ -24,6 +24,12 @@ cycling through the list in order (episode i uses pair i % len(pairs)); --episod
 a multiple of the pair count, and each episode's start_square / target_square are recorded
 in the output. Without --pairs the output is unchanged.
 
+--d32 (default off; without it the output is byte-identical to before): adds the D32 recorder (see
+scripts/d32_eval.py): per episode `d32` = lift_gt10mm / lift_gt50mm and, on a T2 run, the obstacle block
+(peak displacement and tilt, the first latch step, displacement and tilt at that step, which condition
+fired); and a top-level `d32_report` with success / placement-only counts, lift shares among placed
+episodes, and the latch causes among T2 failures.
+
 Aggregate the outputs with scripts/eval_probe_agg.py. Reads runs/, writes only --out.
 """
 import argparse, collections, importlib.util, json, sys, copy
@@ -37,6 +43,7 @@ p.add_argument("run"); p.add_argument("--checkpoint", type=int, default=None)
 p.add_argument("--episodes", type=int, default=100); p.add_argument("--seed", type=int, default=20000)
 p.add_argument("--deterministic", action="store_true"); p.add_argument("--steps", action="store_true")
 p.add_argument("--pairs", default=None, help="s:t,s:t,... fixed (start, target) list, cycled in order")
+p.add_argument("--d32", action="store_true", help="add the D32 recorder (lift shares, T2 obstacle latch cause)")
 p.add_argument("--out", type=Path, required=True)
 p.add_argument("--runs-dir", type=Path, default=REPO / "runs")
 a = p.parse_args()
@@ -57,6 +64,8 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from robochess.tasks.t1_pick_and_place import _pinch_site_id, find_contacts_owner
+sys.path.insert(0, str(REPO / "scripts"))
+import d32_eval
 # D29: unconditional (not lazy like build_model's), so a ppo_mean_squash
 # model's pickled policy class always resolves on load, whether or not this
 # particular run used it.
@@ -64,8 +73,9 @@ from robochess.policies import SquashedMultiInputActorCriticPolicy  # noqa: F401
 
 class Rec(gym.Wrapper):
     """Pass-through; records per-step geometry, harvests a finished episode on done."""
-    def __init__(self, env, pairs=None):
+    def __init__(self, env, pairs=None, d32=False):
         super().__init__(env); self.pairs = pairs; self.n_resets = 0; self.b = env.unwrapped; self.sid = _pinch_site_id(self.b.model)
+        self.t2 = d32_eval.find_t2(env) if d32 else None   # --d32 on a T2 run only
         self.owner = find_contacts_owner(self.env, "need _piece_contacts"); self.episodes = []; self.cur = []
         self.dz = None
     def _geo(self):
@@ -92,6 +102,8 @@ class Rec(gym.Wrapper):
             row.update(st=info["place_state"], dxy=float(info["place_terms"]["d_xy"]), succ=bool(info["is_success"]),
                        pxy=[float(v) for v in self.b._achieved_goal()[:2]], gxy=[float(v) for v in self.b._desired_goal[:2]],
                        pg=float(info["place_terms"].get("posture_gate", 1.0)))  # D29, reported not gated
+        if self.t2 is not None:
+            row["ob"] = d32_eval.obstacle_row(self.t2, info)
         self.cur.append(row)
         if term or trunc:
             self.episodes.append(dict(rows=self.cur, reason=info.get("terminated_reason") or "time_limit",
@@ -101,7 +113,7 @@ class Rec(gym.Wrapper):
 
 holder = {}
 def mk():
-    w = Rec(train.build_env(cfg), pairs); holder["w"] = w; return Monitor(w)
+    w = Rec(train.build_env(cfg), pairs, a.d32); holder["w"] = w; return Monitor(w)
 venv = DummyVecEnv([mk])
 ck = a.checkpoint
 mp = run_dir / ("final_model.zip" if ck is None else f"checkpoints/rc_{ck}_steps.zip")
@@ -147,6 +159,12 @@ for e in eps:
     if pairs is not None:
         s["start_square"], s["target_square"] = e["start"], e["target"]
     summ.append(s)
+if a.d32:
+    t2 = w.t2
+    for s_, e_ in zip(summ, eps):
+        s_["d32"] = d32_eval.episode_extra(
+            s_, [x["ob"] for x in e_["rows"]] if t2 is not None else None,
+            None if t2 is None else t2.displacement_tol * 1e3, None if t2 is None else t2.tilt_tol)
 place = None
 if cfg.get("place_mode"):
     sys.path.insert(0, str(REPO / "scripts"))
@@ -160,6 +178,8 @@ out = dict(run=a.run, checkpoint=ck, model=str(mp.relative_to(run_dir)), seed=a.
            n=len(eps), obs_rms_identical_before_after=same, episodes=summ)
 if place is not None:
     out["place_report"] = place
+if a.d32:
+    out["d32_report"] = d32_eval.d32_report(summ, w.t2 is not None)
 if a.steps or a.deterministic:
     out["traj"] = [[{k: x[k] for k in ("rel", "ap", "l", "r", "board", "d", "tilt", "lift")} for x in e["rows"]] for e in eps]
 a.out.parent.mkdir(parents=True, exist_ok=True); a.out.write_text(json.dumps(out))
