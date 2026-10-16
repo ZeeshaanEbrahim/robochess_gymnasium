@@ -2641,3 +2641,19 @@ ROADMAP.md sync pending (separate docs commit).
   generalisation is reported as a pre-registered negative result and a documented
   limitation of the benchmark. A start-square curriculum is future work. Warm-starting
   from a PPO policy is rejected for the factorial because SAC cells could not use it.
+
+## D31: The D recipe is the default PPO recipe (16 Oct 2026)
+- Recipe: n_envs 4, ppo_lr_schedule linear (3e-4 decayed to 0), ppo_ent_coef 0.01; SB3 defaults
+  otherwise (n_steps 2048 per env, batch 64, 300-step episodes).
+- Evidence: RS31 (pre-registered, results/rs31_24_pairs/) compared arm C (ent_coef 0.01, n_envs 1,
+  constant lr 3e-4) with arm D (C + n_envs 4 + linear lr decay), seeds 0 and 1 per arm, 3M steps, 24
+  start squares: 2 of 2 D seeds learned, 0 of 2 C seeds (results/rs31_24_pairs/eval/README.md, rule 2).
+- Caveats: (1) the recipe is a bundle; n_envs 4 and the linear decay changed together, so no
+  attribution to either is claimed, and ent_coef 0.01 was common to both RS31 arms. (2) Two seeds per
+  arm. (3) PPO only: SAC is unaffected (n_envs > 1 and ppo_* keys are rejected for SAC). (4) RS32 then
+  ran the D recipe on 48 start-target pairs, 6 seeds, 5M steps: 0 of 6 seeds meet the pre-registered
+  rule (results/rs32_48_pairs/eval/), so the recipe is the default for the fixed-cell benchmark and is
+  not evidence of multi-start generalisation beyond the RS31 24-pair result.
+- Decision: new PPO cells use the D recipe unless a pre-registration says otherwise. Existing
+  configs are unchanged (the schema defaults are not edited: n_envs 1, constant lr, ent_coef 0.0 remain
+  the resolve_config defaults, so old manifests still resolve to what they trained on).
