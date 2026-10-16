@@ -1,0 +1,17 @@
+seed0: placed 0/300  Wilson95 [0.00%, 1.26%]  verdict FAIL (gate 60/300)
+   run _probe_cart_place30_sac_obsnorm_seed0 model final_model.zip eval seed 20000 deterministic False obs_rms_identical_before_after True
+   terminated_reason {'time_limit': 300}
+   grasp_ever 300/300 | held 300/300 | lifted_30mm 300/300 | carried_within_3cm 300/300 | reached S2 (released) 0/300
+seed1: placed 0/300  Wilson95 [0.00%, 1.26%]  verdict FAIL (gate 60/300)
+   run _probe_cart_place30_sac_obsnorm_seed1 model final_model.zip eval seed 20000 deterministic False obs_rms_identical_before_after True
+   terminated_reason {'time_limit': 300}
+   grasp_ever 300/300 | held 300/300 | lifted_30mm 300/300 | carried_within_3cm 0/300 | reached S2 (released) 0/300
+seed2: placed 0/300  Wilson95 [0.00%, 1.26%]  verdict FAIL (gate 60/300)
+   run _probe_cart_place30_sac_obsnorm_seed2 model final_model.zip eval seed 20000 deterministic False obs_rms_identical_before_after True
+   terminated_reason {'time_limit': 300}
+   grasp_ever 0/300 | held 300/300 | lifted_30mm 0/300 | carried_within_3cm 0/300 | reached S2 (released) 0/300
+seed3: placed 0/300  Wilson95 [0.00%, 1.26%]  verdict FAIL (gate 60/300)
+   run _probe_cart_place30_sac_obsnorm_seed3 model final_model.zip eval seed 20000 deterministic False obs_rms_identical_before_after True
+   terminated_reason {'time_limit': 300}
+   grasp_ever 300/300 | held 300/300 | lifted_30mm 300/300 | carried_within_3cm 300/300 | reached S2 (released) 0/300
+CELL: 0 of 4 seeds pass the per-seed gate of 60/300 (N = 4; the prereg defines no cell-level threshold)
