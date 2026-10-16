@@ -1,0 +1,34 @@
+# D33 (results/d33_t1/PREREGISTRATION.md): the D32 T1 control cell with success that requires a real lift:
+# place_require_lift true, place_lift_latch_m 0.020 (20 mm). Seed 200, 3,000,000 steps. Identical to configs/d32_t1_e4e5_seed200.yaml
+# except those two keys and run_name (pinned to the file stem). The notes line is deliberately the control's, unchanged.
+
+task: t1
+algorithm: ppo
+reward_type: shaped
+observation: state
+seed: 200
+total_timesteps: 3000000
+device: cpu
+num_threads: 1
+action_mode: cartesian
+max_episode_steps: 300
+n_obstacles: 0
+start_square: e4
+target_square: e5
+shaped_staged: false
+place_mode: true
+pickup_obs: true
+place_obs: true
+vecnormalize_clip_reward: 1000
+place_posture_gate: true
+place_carry_potential: true
+place_require_lift: true
+place_lift_latch_m: 0.020
+ppo_mean_squash: true
+ppo_ent_coef: 0.01
+ppo_lr_schedule: linear
+n_envs: 4
+checkpoint_freq: 100000
+output_root: runs
+run_name: d33_t1_e4e5_seed200
+notes: "D32 T1 control: fixed e4:e5, no obstacles, D29 config, D31 recipe, 3M steps"
