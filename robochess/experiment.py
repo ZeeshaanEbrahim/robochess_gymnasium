@@ -44,6 +44,10 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "device": None,            # None -> resolved from `observation` (see below)
     "max_episode_steps": 100,
     "n_obstacles": 0,          # t2 only; must stay 0 for t1
+    # D32: fixed obstacle squares (t2 only), a list of exactly n_obstacles squares. None ->
+    # the wrapper's own random placement, which is what every run so far used. Needs
+    # start_square and target_square fixed, so a sampled start/target cannot land on one.
+    "obstacle_squares": None,
     # "absolute" keeps every pilot-matrix config byte-for-byte reproducible;
     # "delta" is RoboChessEnv's per-step joint-target delta mode.
     "action_mode": "absolute",
@@ -73,8 +77,8 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "shaped_staged": False,
     "grasp_bonus": 1.0,
     "lift_bonus": 0.5,
-    # Pick-up stage observation features (T1 only). Default OFF: with this
-    # false the observation vector is the 21-entry one every run so far used,
+    # Pick-up stage observation features (T1, and T2 since D32). Default OFF: with this
+    # false the observation vector is the 21-entry one every run so far used (29 on T2),
     # so a config that omits this key is unchanged by its existence.
     "pickup_obs": False,
     # Pick-up training stage (T1 only). Default OFF: with this false the reward
@@ -93,7 +97,7 @@ OPTIONAL_DEFAULTS: dict[str, Any] = {
     "pickup_lift_weight": 2.0,
     "pickup_success_weight": 1.0,
     "pickup_first_grasp_bonus": 5.0,
-    # D28 pick-and-place reward (T1 only). Default OFF: with this false the
+    # D28 pick-and-place reward (T1, and T2 since D32). Default OFF: with this false the
     # reward stack is exactly the one every run so far used. When true it
     # REPLACES the reward and needs reward_type shaped and pickup_obs.
     # place_obs appends (target - piece) to the observation, after pickup_obs.
@@ -307,9 +311,6 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
         raise ConfigError(
             "need place_placed_floor <= place_placed_ceiling < place_placed_reward, got "
             f"{cfg['place_placed_floor']}, {cfg['place_placed_ceiling']}, {cfg['place_placed_reward']}")
-    if cfg["place_mode"] and cfg["task"] != "t1":
-        raise ConfigError(
-            f"place_mode=True with task={cfg['task']!r}: the pick-and-place reward is T1 only.")
     if cfg["place_mode"] and cfg["pickup_mode"]:
         raise ConfigError(
             "place_mode=True with pickup_mode=True: both replace the reward, "
@@ -366,14 +367,8 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
             f"checkpoint_freq={cfg['checkpoint_freq']} is not divisible by n_envs={n_envs}")
     if cfg["place_obs"] and not cfg["pickup_obs"]:
         raise ConfigError("place_obs=True needs pickup_obs=True (the target features follow them).")
-    if cfg["place_obs"] and cfg["task"] != "t1":
-        raise ConfigError(f"place_obs=True with task={cfg['task']!r}: T1 only.")
-    if cfg["pickup_obs"] and cfg["task"] != "t1":
-        raise ConfigError(
-            f"pickup_obs=True with task={cfg['task']!r}: the pick-up observation "
-            "features are T1 only. T2 and later tasks extend the observation "
-            "vector themselves (D12), so the two extensions would collide."
-        )
+    # D32: pickup_obs / place_obs / place_mode are allowed on t2. T2 appends its 8 obstacle entries
+    # to the base 21 first (21:29), the pick-up (15) and place (3) features follow (29:44, 44:47).
     for key in ("grasp_bonus", "lift_bonus"):
         if isinstance(cfg[key], bool) or not isinstance(cfg[key], (int, float)):
             raise ConfigError(f"{key} must be a number, got {cfg[key]!r}")
@@ -386,13 +381,25 @@ def resolve_config(raw: dict[str, Any], config_path: str | Path | None = None) -
         )
 
     # F11: the same validator the T2 constructor and reset() use, so the range
-    # rule lives in one place. Count only; obstacle squares are not configurable.
+    # rule lives in one place. D32 adds the optional fixed obstacle squares, checked
+    # against the fixed start/target and the excluded squares by that same validator.
     from robochess.tasks import t2_obstacle_pick_and_place as _t2
 
+    if cfg["obstacle_squares"] is not None:
+        if cfg["task"] != "t2":
+            raise ConfigError(f"obstacle_squares with task={cfg['task']!r}: obstacles only exist on t2")
+        if cfg["start_square"] is None or cfg["target_square"] is None:
+            raise ConfigError(
+                "obstacle_squares needs start_square and target_square to be fixed, otherwise a "
+                "sampled start or target can land on an obstacle square."
+            )
     try:
-        _t2.validate_obstacle_config(cfg["n_obstacles"], None)
+        _, fixed = _t2.validate_obstacle_config(
+            cfg["n_obstacles"], cfg["obstacle_squares"],
+            start=cfg["start_square"], target=cfg["target_square"], excluded=excluded)
     except ValueError as exc:
         raise ConfigError(str(exc)) from exc
+    cfg["obstacle_squares"] = None if fixed is None else list(fixed)
 
     if cfg["task"] == "t1" and cfg["n_obstacles"] != 0:
         raise ConfigError(

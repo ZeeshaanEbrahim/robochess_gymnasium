@@ -152,7 +152,11 @@ def build_env(cfg: dict):
         task = T1PickAndPlaceTask(base, **squares)
     elif cfg["task"] == "t2":
         base = make_t2_env(**env_kwargs)
-        task = T2ObstacleTask(base, n_obstacles=cfg["n_obstacles"], **squares)
+        # D32: .get so configs and manifests written before obstacle_squares existed build as before
+        # (None -> the wrapper's own random placement).
+        fixed = cfg.get("obstacle_squares")
+        task = T2ObstacleTask(base, n_obstacles=cfg["n_obstacles"],
+                              obstacle_squares=None if fixed is None else tuple(fixed), **squares)
     else:  # unreachable -- resolve_config validates the enum
         raise ValueError(f"unknown task {cfg['task']!r}")
     # Pick-up observation features sit between the task and the reward, so the
@@ -242,13 +246,18 @@ def monitor_info_keywords(cfg: dict) -> tuple[str, ...]:
     PickupReward puts that key there. Adding it unconditionally would break
     every non-pick-up run.
     """
+    keys = MONITOR_INFO_KEYWORDS
     if cfg.get("pickup_mode", False):
-        return MONITOR_INFO_KEYWORDS + ("pickup_success",)
-    if cfg.get("place_mode", False):
+        keys = keys + ("pickup_success",)
+    elif cfg.get("place_mode", False):
         # RS29: the per-episode squares, so a random-squares run's monitor CSV
         # records which pair each episode was (T1 puts both in every info).
-        return MONITOR_INFO_KEYWORDS + ("place_state", "start_square", "target_square")
-    return MONITOR_INFO_KEYWORDS
+        keys = keys + ("place_state", "start_square", "target_square")
+    # D32: T2 puts the disturbance latch in every info (task wrapper, below any reward wrapper), so
+    # the episode-level flag reaches the CSV; T1 has no such key and Monitor raises on a missing one.
+    if cfg.get("task") == "t2":
+        keys = keys + ("obstacles_ever_disturbed",)
+    return keys
 
 
 def build_vec_env(cfg: dict, monitor_dir: Path | None = None):

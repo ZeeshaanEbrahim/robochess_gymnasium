@@ -583,7 +583,6 @@ def test_place_mode_builds_the_wrapper_and_adds_place_state_and_squares_to_monit
     dict(place_mode=True, pickup_obs=True, shaped_staged=True),
     dict(place_mode=True, pickup_obs=True, reward_type="sparse"),
     dict(place_mode=True, pickup_obs=False),
-    dict(place_mode=True, pickup_obs=True, task="t2", n_obstacles=1),
     dict(place_obs=True, pickup_obs=False),
     dict(place_mode="yes", pickup_obs=True),
     dict(place_mode=True, pickup_obs=True, place_carry_weight=-1.0),

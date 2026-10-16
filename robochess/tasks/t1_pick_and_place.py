@@ -738,9 +738,11 @@ class PickupObservation(gym.Wrapper):
     and RoboChessEnv's own `observation_space` and `_get_obs` are untouched.
     The base 21 entries keep their indices and their values exactly.
 
-    T1 only. T2 already extends the observation with its obstacle slots at the
-    same tail position, so stacking both would produce two different layouts
-    behind one shape; that is rejected rather than ordered.
+    T1 and T2 (D32). The layout is fixed by the wrapper order: this wrapper sits
+    OUTSIDE the task, so it appends after whatever the task already appended.
+    On T1 that is 21 base + 15 pick-up (21:36); on T2 it is 21 base + 8 obstacle
+    slots (21:29, D12) + 15 pick-up (29:44). A task that extends the observation
+    itself and is not T1 or T2 would need its own layout decision.
     """
 
     def __init__(self, env: gym.Env):
@@ -749,11 +751,9 @@ class PickupObservation(gym.Wrapper):
         if not isinstance(base, RoboChessEnv):
             raise TypeError(f"Expects a RoboChessEnv underneath; got {type(base).__name__}.")
         task = self._find_task(env)
-        if type(task) is not T1PickAndPlaceTask:
+        if not isinstance(task, T1PickAndPlaceTask):
             raise TypeError(
-                f"pickup_obs is T1 only; found task wrapper {type(task).__name__}. "
-                "T2 and later tasks extend the observation vector themselves "
-                "(D12), so the two extensions would share one tail."
+                f"pickup_obs needs a T1PickAndPlaceTask (or a subclass, T2); found {type(task).__name__}."
             )
         self._base: RoboChessEnv = base
         self._pinch_sid = _pinch_site_id(base.model)
@@ -1096,7 +1096,8 @@ class PlaceObservation(gym.Wrapper):
     Sits on top of `PickupObservation`, so the entries land after its 15. The
     target is already visible to the policy as ``desired_goal``; this gives it
     the relative form inside ``observation`` (which VecNormalize covers).
-    T1 only, like the pick-up features. F7: an invalid step returns this
+    T1 and T2 (D32), like the pick-up features: the 3 entries are the last of
+    the vector (36:39 on T1, 44:47 on T2). F7: an invalid step returns this
     wrapper's own last good observation.
     """
 
@@ -1110,7 +1111,7 @@ class PlaceObservation(gym.Wrapper):
                 break
             node = getattr(node, "env", None)
         if not isinstance(node, PickupObservation):
-            raise TypeError("place_obs needs pickup_obs (PickupObservation) beneath it, T1 only.")
+            raise TypeError("place_obs needs pickup_obs (PickupObservation) beneath it.")
         obs_space = self.env.observation_space["observation"]
         pad = np.full(N_PLACE_OBS, 5.0).astype(obs_space.dtype)
         self.observation_space = gym.spaces.Dict({
@@ -1150,7 +1151,7 @@ class PlaceObservation(gym.Wrapper):
 
 
 class PlaceReward(gym.Wrapper):
-    """D28 pick-and-place reward (place_mode, default off). T1 only.
+    """D28 pick-and-place reward (place_mode, default off). T1, and T2 since D32.
 
     Design rule: finishing the move pays more than any way of stalling or
     cheating, in total and discounted return. Per-step reward by state::

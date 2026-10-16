@@ -393,9 +393,11 @@ def test_pickup_mode_is_rejected_alongside_shaped_staged():
         cfg(pickup_mode=True, shaped_staged=True)
 
 
-def test_pickup_obs_is_rejected_for_non_t1():
-    with pytest.raises(ConfigError, match="T1 only"):
-        cfg(pickup_obs=True, task="t2", n_obstacles=1)
+def test_pickup_obs_is_accepted_on_t2():
+    """D32 flipped this: pickup_obs on t2 used to be a ConfigError ("T1 only"). pickup_mode, the
+    pick-up REWARD, is still T1 only (test_pickup_mode_is_rejected_for_non_t1)."""
+    c = cfg(pickup_obs=True, task="t2", n_obstacles=1)
+    assert c["pickup_obs"] is True and c["task"] == "t2"
 
 
 def test_unknown_keys_are_still_rejected():
@@ -436,13 +438,21 @@ def test_pickup_obs_appends_fifteen_entries_from_the_shared_helper():
         env.close()
 
 
-def test_pickup_obs_rejects_a_t2_stack():
+def test_pickup_obs_extends_a_t2_stack_after_the_obstacle_block():
+    """D32 flipped this: PickupObservation over T2 used to raise TypeError ("T1 only"). The layout is
+    the wrapper order: 21 base, 8 obstacle (21:29), 15 pick-up (29:44)."""
     from robochess.tasks import T2ObstacleTask, make_t2_env
 
     env = make_t2_env(max_episode_steps=50)
     try:
-        with pytest.raises(TypeError, match="T1 only"):
-            PickupObservation(T2ObstacleTask(env, n_obstacles=1))
+        t2 = T2ObstacleTask(env, n_obstacles=1, start_square="e4", target_square="e5",
+                            obstacle_squares=("c3",))
+        wrapped = PickupObservation(t2)
+        obs, _ = wrapped.reset(seed=0)
+        assert obs["observation"].shape == (44,) == wrapped.observation_space["observation"].shape
+        np.testing.assert_allclose(obs["observation"][21:29], t2._obstacle_xy().ravel(), atol=1e-5)
+        np.testing.assert_allclose(obs["observation"][29:44], pickup_features(wrapped.geometry()),
+                                   atol=1e-5)
     finally:
         env.close()
 
