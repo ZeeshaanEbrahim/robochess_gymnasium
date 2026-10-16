@@ -78,3 +78,5 @@ result does.
   (`final_vecnormalize.pkl`; `training` False, `norm_reward` False), via `scripts/eval_probe.py`.
 - Per-seed gate: 60/300 (20%) placement. No threshold changes.
 - The cell is reported as k seeds passing out of N, whatever the outcome.
+- Seed 0 (0/300, d6b06e0) counts in the cell and is not dropped or replaced.
+- N = 4 for seeds 0 to 3. N = 5 only if seed 4 is launched before any result of seeds 1 to 3 is read.
