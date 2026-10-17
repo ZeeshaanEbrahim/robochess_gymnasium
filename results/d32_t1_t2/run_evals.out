@@ -1,0 +1,51 @@
+=== 2026-10-17 01:31:36 before d32_t1_e4e5_seed0:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       802Mi       9.5Gi       3.0Mi       396Mi       9.7Gi
+Swap:          8.0Gi       136Mi       7.9Gi
+=== 2026-10-17 01:37:02 d32_t1_e4e5_seed0 eval exit=0 : d32_t1_e4e5_seed0 None n 200 pickup 0 grasp 150 rms_same True
+=== 2026-10-17 01:37:02 before d32_t1_e4e5_seed100:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       820Mi       8.0Gi       3.0Mi       1.9Gi       9.7Gi
+Swap:          8.0Gi       136Mi       7.9Gi
+=== 2026-10-17 01:38:54 d32_t1_e4e5_seed100 eval exit=0 : d32_t1_e4e5_seed100 None n 200 pickup 0 grasp 12 rms_same True
+=== 2026-10-17 01:38:54 before d32_t1_e4e5_seed200:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       785Mi       8.0Gi       3.0Mi       1.9Gi       9.8Gi
+Swap:          8.0Gi       136Mi       7.9Gi
+=== 2026-10-17 01:40:49 d32_t1_e4e5_seed200 eval exit=0 : d32_t1_e4e5_seed200 None n 200 pickup 0 grasp 3 rms_same True
+=== 2026-10-17 01:40:49 before d32_t1_e4e5_seed300:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       760Mi       8.1Gi       3.0Mi       1.9Gi       9.8Gi
+Swap:          8.0Gi       136Mi       7.9Gi
+=== 2026-10-17 01:42:52 d32_t1_e4e5_seed300 eval exit=0 : d32_t1_e4e5_seed300 None n 200 pickup 0 grasp 14 rms_same True
+=== 2026-10-17 01:42:52 before d32_t1_e4e5_seed400:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       758Mi       8.1Gi       3.0Mi       1.9Gi       9.8Gi
+Swap:          8.0Gi       136Mi       7.9Gi
+=== 2026-10-17 01:44:26 d32_t1_e4e5_seed400 eval exit=0 : d32_t1_e4e5_seed400 None n 200 pickup 0 grasp 4 rms_same True
+=== 2026-10-17 01:44:26 before d32_t2_d4f4_seed0:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       750Mi       8.1Gi       3.0Mi       1.9Gi       9.8Gi
+Swap:          8.0Gi       136Mi       7.9Gi
+=== 2026-10-17 01:47:00 d32_t2_d4f4_seed0 eval exit=0 : d32_t2_d4f4_seed0 None n 200 pickup 0 grasp 4 rms_same True
+=== 2026-10-17 01:47:00 before d32_t2_d4f4_seed100:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       752Mi       8.1Gi       3.0Mi       1.9Gi       9.8Gi
+Swap:          8.0Gi       136Mi       7.9Gi
+=== 2026-10-17 01:49:12 d32_t2_d4f4_seed100 eval exit=0 : d32_t2_d4f4_seed100 None n 200 pickup 0 grasp 8 rms_same True
+=== 2026-10-17 01:49:12 before d32_t2_d4f4_seed200:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       739Mi       8.1Gi       3.0Mi       1.9Gi       9.8Gi
+Swap:          8.0Gi       136Mi       7.9Gi
+=== 2026-10-17 01:52:06 d32_t2_d4f4_seed200 eval exit=0 : d32_t2_d4f4_seed200 None n 200 pickup 0 grasp 34 rms_same True
+=== 2026-10-17 01:52:06 before d32_t2_d4f4_seed300:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       751Mi       8.1Gi       3.0Mi       1.9Gi       9.8Gi
+Swap:          8.0Gi       136Mi       7.9Gi
+=== 2026-10-17 01:54:31 d32_t2_d4f4_seed300 eval exit=0 : d32_t2_d4f4_seed300 None n 200 pickup 0 grasp 19 rms_same True
+=== 2026-10-17 01:54:31 before d32_t2_d4f4_seed400:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       745Mi       8.1Gi       3.0Mi       1.9Gi       9.8Gi
+Swap:          8.0Gi       136Mi       7.9Gi
+=== 2026-10-17 01:57:03 d32_t2_d4f4_seed400 eval exit=0 : d32_t2_d4f4_seed400 None n 200 pickup 0 grasp 4 rms_same True
+ALL EVALS DONE 2026-10-17 01:57:03

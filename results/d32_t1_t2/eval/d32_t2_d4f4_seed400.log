@@ -1,0 +1,2 @@
+d32_t2_d4f4_seed400 None place {'held': '196/200', 'lifted_30mm': '0/200', 'carried_within_3cm': '0/200', 'released': '195/200', 'placed': '192/200'} truncated_in_S2 0 effective_n 200
+d32_t2_d4f4_seed400 None n 200 pickup 0 grasp 4 rms_same True

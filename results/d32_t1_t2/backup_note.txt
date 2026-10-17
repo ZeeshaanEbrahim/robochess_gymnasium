@@ -1,0 +1,7 @@
+Backup made before any evaluation (2026-10-17):
+  /mnt/c/Users/HP/d32_runs_backup_20261017.tar.gz
+  contents: robochess_recipe/runs and robochess_t2d29_run/runs (the 10 finished run directories with their _train.log and _time.txt), 710 files
+  created with: tar -czf <file> robochess_recipe/runs robochess_t2d29_run/runs   (from /root/projects)
+  verified with: tar --compare -zf <file> -C /root/projects   -> exit 0, no differences printed
+  sha256 d8c01540f7f2af2245dee2237117d7e0b52fb23568493553a3490fe3672b81e2
+  size 64668937 bytes

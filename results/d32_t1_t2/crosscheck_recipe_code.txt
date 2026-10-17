@@ -1,0 +1,8 @@
+Cross-check: the five T1 control models evaluated with the recipe worktree's own scripts/eval_probe.py (53ccc06, the code they were trained under; no --d32)
+against the committed evaluation made with the t2-d29 worktree (7b3bebd, --d32). Compared: every key of the old output; the new output has only extra d32 keys.
+seed 0: identical output (all 200 episodes, place_report, rms flag): True   [old success 42/200, new 42/200]
+seed 100: identical output (all 200 episodes, place_report, rms flag): True   [old success 189/200, new 189/200]
+seed 200: identical output (all 200 episodes, place_report, rms flag): True   [old success 181/200, new 181/200]
+seed 300: identical output (all 200 episodes, place_report, rms flag): True   [old success 172/200, new 172/200]
+seed 400: identical output (all 200 episodes, place_report, rms flag): True   [old success 193/200, new 193/200]
+ALL FIVE IDENTICAL: True

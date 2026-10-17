@@ -1,0 +1,16 @@
+Run status as of 2026-10-17 (read-only check before any evaluation)
+d32_t1_e4e5_seed0        EXIT=0  steps  3006464 wall  3:31:00 final_model.zip True final_vecnormalize.pkl True sha 53ccc06 dirty_tracked False
+d32_t1_e4e5_seed100      EXIT=0  steps  3006464 wall  2:45:40 final_model.zip True final_vecnormalize.pkl True sha 53ccc06 dirty_tracked False
+d32_t1_e4e5_seed200      EXIT=0  steps  3006464 wall  2:48:29 final_model.zip True final_vecnormalize.pkl True sha 53ccc06 dirty_tracked False
+d32_t1_e4e5_seed300      EXIT=0  steps  3006464 wall  2:44:52 final_model.zip True final_vecnormalize.pkl True sha 53ccc06 dirty_tracked False
+d32_t1_e4e5_seed400      EXIT=0  steps  3006464 wall  2:33:06 final_model.zip True final_vecnormalize.pkl True sha 53ccc06 dirty_tracked False
+d32_t2_d4f4_seed0        EXIT=0  steps  3006464 wall  3:28:26 final_model.zip True final_vecnormalize.pkl True sha 87b6710 dirty_tracked False
+d32_t2_d4f4_seed100      EXIT=0  steps  3006464 wall  3:25:15 final_model.zip True final_vecnormalize.pkl True sha 87b6710 dirty_tracked False
+d32_t2_d4f4_seed200      EXIT=0  steps  3006464 wall  3:24:31 final_model.zip True final_vecnormalize.pkl True sha 87b6710 dirty_tracked False
+d32_t2_d4f4_seed300      EXIT=0  steps  3006464 wall  3:22:57 final_model.zip True final_vecnormalize.pkl True sha 87b6710 dirty_tracked False
+d32_t2_d4f4_seed400      EXIT=0  steps  3006464 wall  2:51:44 final_model.zip True final_vecnormalize.pkl True sha 87b6710 dirty_tracked False
+d33_t1_e4e5_seed0        NO RUN DIRECTORY (robochess_d33)
+d33_t1_e4e5_seed100      NO RUN DIRECTORY (robochess_d33)
+d33_t1_e4e5_seed200      NO RUN DIRECTORY (robochess_d33)
+d33_t1_e4e5_seed300      NO RUN DIRECTORY (robochess_d33)
+d33_t1_e4e5_seed400      NO RUN DIRECTORY (robochess_d33)
