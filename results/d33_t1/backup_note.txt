@@ -1,0 +1,6 @@
+Backups made before any D33 evaluation (2026-10-18):
+  /mnt/c/Users/HP/d33_runs_backup_20261018.tar.gz  30366225 bytes, sha256 13262fe3a711d0c683125d5f4e048bb49e6904eb71165e4b125a5efdb72505f8
+    command (from /root/projects): tar -czf <file> robochess_d33/runs/d33_t1_e4e5_seed{0,100,200,300,400} and each run's _time.txt and _train.log
+    gzip -t: exit 0; tar --compare -zf <file> -C /root/projects: exit 0 (355 files)
+  /mnt/c/Users/HP/d32_runs_backup_20261017.tar.gz  64668937 bytes (D32 control and T2 runs, made 2026-10-17, already present)
+    re-verified 2026-10-18: gzip -t exit 0; tar --compare exit 0; sha256 d8c01540f7f2af2245dee2237117d7e0b52fb23568493553a3490fe3672b81e2

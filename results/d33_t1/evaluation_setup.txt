@@ -1,0 +1,8 @@
+D33 evaluation setup (2026-10-18)
+  training SHA (all five manifests): 0aad3ddbc23c4a755aec64dc5baf3d40bab948d6 (branch d33), dirty_tracked False, place_require_lift True, place_lift_latch_m 0.02
+  evaluation worktree: /root/projects/robochess_d33_eval, branch d33-eval, based on 0aad3dd with commit E (7b3bebd) cherry-picked
+  cherry-pick result: 43c2ceb D32 evaluation recorder: scripts/eval_probe.py --d32 (obstacle latch cause per T2 episode, l ; files differing from 0aad3dd: scripts/d32_eval.py, scripts/eval_probe.py, tests/test_d32_eval.py only (no env, reward or config code)
+  flag-off proof in that worktree: the six baseline trace entries identical to the pre-edit values; tests/test_d29_place_reward_v2.py, test_cartesian_mode.py, test_t2_d29_stack.py, test_d33_require_lift.py, test_d32_eval.py: 129 passed, 2 skipped, exit 0
+  pre-evaluation check from the seed-0 manifest config: observation size 39, env.require_lift True, env.lift_latch_m 0.02, PlaceReward.require_lift True; dragged placement (grasped at rest height, piece put on the target at under 10 mm lift): release_ok never true, no S2, no placed bonus, no lump, no success, episode ends at the time limit in S3
+  timing: 1 episode (300 steps) 5.39 s wall incl. start-up; 11 episodes 16.83 s -> 1.14 s per 300-step episode, about 4.3 s start-up; estimate <= 4 min per seed (200 episodes), about 10 to 12 min for all five with two at a time
+  command per run: scripts/eval_probe.py <run> --runs-dir /root/projects/robochess_d33/runs --episodes 200 --seed 20000 --d32 --out results/d33_t1/eval/<run>.json  (nice -n 19)

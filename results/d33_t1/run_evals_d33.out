@@ -1,0 +1,27 @@
+=== 2026-10-18 11:53:11 before d33_t1_e4e5_seed0:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       807Mi       7.8Gi       3.0Mi       2.1Gi       9.7Gi
+Swap:          8.0Gi       116Mi       7.9Gi
+=== 2026-10-18 11:57:28 d33_t1_e4e5_seed0 eval exit=0 : d33_t1_e4e5_seed0 None n 200 pickup 0 grasp 7 rms_same True
+=== 2026-10-18 11:57:28 before d33_t1_e4e5_seed200:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       1.5Gi       7.1Gi       3.0Mi       2.1Gi       9.1Gi
+Swap:          8.0Gi       116Mi       7.9Gi
+=== 2026-10-18 12:03:41 d33_t1_e4e5_seed200 eval exit=0 : d33_t1_e4e5_seed200 None n 200 pickup 0 grasp 0 rms_same True
+=== 2026-10-18 12:03:41 before d33_t1_e4e5_seed400:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       1.5Gi       7.1Gi       3.0Mi       2.1Gi       9.1Gi
+Swap:          8.0Gi       116Mi       7.9Gi
+=== 2026-10-18 12:09:01 d33_t1_e4e5_seed400 eval exit=0 : d33_t1_e4e5_seed400 None n 200 pickup 0 grasp 4 rms_same True
+CHAIN DONE (0 200 400) 2026-10-18 12:09:01
+=== 2026-10-18 11:53:11 before d33_t1_e4e5_seed100:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       807Mi       7.8Gi       3.0Mi       2.1Gi       9.7Gi
+Swap:          8.0Gi       116Mi       7.9Gi
+=== 2026-10-18 11:59:11 d33_t1_e4e5_seed100 eval exit=0 : d33_t1_e4e5_seed100 None n 200 pickup 0 grasp 11 rms_same True
+=== 2026-10-18 11:59:11 before d33_t1_e4e5_seed300:
+               total        used        free      shared  buff/cache   available
+Mem:            10Gi       1.4Gi       7.2Gi       3.0Mi       2.1Gi       9.1Gi
+Swap:          8.0Gi       116Mi       7.9Gi
+=== 2026-10-18 12:05:19 d33_t1_e4e5_seed300 eval exit=0 : d33_t1_e4e5_seed300 None n 200 pickup 0 grasp 64 rms_same True
+CHAIN DONE (100 300) 2026-10-18 12:05:19
